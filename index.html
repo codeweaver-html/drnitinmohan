@@ -5393,7 +5393,11 @@ input,select,textarea{font-size:16px;max-width:100%}
  const ctx=canvas.getContext('2d',{alpha:true});canvas.style.opacity=String(reduce?CONFIG.reducedOpacity:(coarse?CONFIG.mobileOpacity:CONFIG.opacity));
  const selectors=['.header','.hero-grid > div:first-child','.newsletter-section','.social-intro','.footer-contact-band','.footer-bottom'];
  const panels=[];let W=0,H=0,D=1,raf=0,last=0,scrollQueued=false,frameInterval=0,slowFrames=0,fastFrames=0,lastPerfCheck=0;
- function makePanel(el){
+ function makePanel(el,panelIndex){
+  // Give each panel its own launch phase. Identical vehicles are deliberately
+  // staggered so the five scenes never begin their launch cycles together.
+  const launchStagger=Math.max(0,Number(panelIndex)||0)*4000;
+  const repeatStagger=Math.max(0,Number(panelIndex)||0)*1100;
   const baseCount=el.matches('.header')?7:(el.matches('.social-intro')?9:(el.matches('.footer-bottom')?6:7));
   const count=Math.max(1,Math.round(baseCount*(saverMode?.34:.5)));
   const cols=Math.ceil(Math.sqrt(count*1.35)),rows=Math.ceil(count/cols);
@@ -5413,12 +5417,12 @@ input,select,textarea{font-size:16px;max-width:100%}
    };
   });
   const sparks=Array.from({length:46},()=>({x:rand(.025,.975),y:rand(.04,.96),phase:rand(0,TAU),speed:rand(.22,.72),size:rand(.45,1.15),streak:Math.random()<.16?1:0}));
-  return {el,lastActiveAt:performance.now(),bodies,collisionPairs:Object.create(null),collisionEffects:[],iss:rand(0,TAU),voyager:null,ship:null,shuttle:null,shuttleParts:[],skyCrane:null,marsRover:null,nextSkyCrane:performance.now()+rand(6500,10500),astronaut:null,nextAstronaut:performance.now()+rand(1800,4200),satellite:null,nextSatellite:performance.now()+rand(3500,6500),asteroid:null,nextAsteroid:performance.now()+rand(900,1800),hubble:null,nextHubble:performance.now()+rand(5000,9000),orion:null,nextOrion:performance.now()+rand(4000,7500),halley:null,nextHalley:performance.now()+rand(7000,12000),nextShuttle:performance.now()+rand(2200,4800),nextVoyager:performance.now()+rand(...CONFIG.voyagerInitialDelay),nextShip:performance.now()+rand(...CONFIG.starshipInitialDelay),r:null,blocked:[],safePoints:[],sparks};
+  return {el,panelIndex,launchStagger,repeatStagger,lastActiveAt:performance.now(),bodies,collisionPairs:Object.create(null),collisionEffects:[],iss:rand(0,TAU),voyager:null,ship:null,shuttle:null,shuttleParts:[],skyCrane:null,marsRover:null,nextSkyCrane:performance.now()+rand(6500,10500)+launchStagger,astronaut:null,nextAstronaut:performance.now()+rand(1800,4200),satellite:null,nextSatellite:performance.now()+rand(3500,6500),asteroid:null,nextAsteroid:performance.now()+rand(900,1800),hubble:null,nextHubble:performance.now()+rand(5000,9000),orion:null,nextOrion:performance.now()+rand(4000,7500),halley:null,nextHalley:performance.now()+rand(7000,12000),nextShuttle:performance.now()+rand(2200,4800)+launchStagger,nextVoyager:performance.now()+rand(...CONFIG.voyagerInitialDelay),nextShip:performance.now()+rand(...CONFIG.starshipInitialDelay)+launchStagger,r:null,blocked:[],safePoints:[],sparks};
  }
  function scan(){
   selectors.forEach(sel=>document.querySelectorAll(sel).forEach(el=>{
    if(el.closest('#hospital-location')||el.dataset.kgSpacePanel==='1')return;
-   el.dataset.kgSpacePanel='1';el.classList.add('kg-space-panel');panels.push(makePanel(el));
+   el.dataset.kgSpacePanel='1';el.classList.add('kg-space-panel');panels.push(makePanel(el,panels.length));
   }));
  }
  function measure(){
@@ -5928,7 +5932,7 @@ input,select,textarea{font-size:16px;max-width:100%}
    if(animate&&now>=panel.nextShuttle&&!panel.shuttle){
     const launchX=clamp(cx+rand(-r.width*.18,r.width*.18),x0+28,x1-28);
     panel.shuttle={x:launchX,y:y1+30,vx:rand(-3,3),vy:-rand(42,55),dir:1,phase:rand(0,TAU),age:0,stage:0,heading:-Math.PI/2,launchX};
-    panel.shuttleParts=[];panel.nextShuttle=now+rand(...CONFIG.shuttleInterval);
+    panel.shuttleParts=[];panel.nextShuttle=now+rand(...CONFIG.shuttleInterval)+panel.repeatStagger;
    }
    if(panel.shuttle){
     const st=panel.shuttle;
@@ -5964,7 +5968,7 @@ input,select,textarea{font-size:16px;max-width:100%}
     const sx=clamp(cx+rand(-r.width*.22,r.width*.22),x0+45,x1-45);
     panel.skyCrane={x:sx,y:y0+18,vx:rand(-1,1),vy:0,age:0,phase:rand(0,TAU),stage:1,angle:0};
     panel.marsRover={x:sx,y:y0+45,vx:0,vy:0,age:0,angle:0,landed:false,released:false,roll:0};
-    panel.nextSkyCrane=now+rand(19000,28000);
+    panel.nextSkyCrane=now+rand(19000,28000)+panel.repeatStagger;
    }
    if(panel.skyCrane){
     const crane=panel.skyCrane,rover=panel.marsRover;
@@ -6006,7 +6010,7 @@ input,select,textarea{font-size:16px;max-width:100%}
     if(rover){drawMarsRover(ctx,rover.x,rover.y,rover.angle,roverSize,rover.roll);movingThings.push({id:'marsRover',x:rover.x,y:rover.y,r:12,vx:rover.vx,vy:rover.vy,obj:rover});if(rover.x<x0-70||rover.x>x1+70||rover.y>y1+100)panel.marsRover=null;}
     if(crane.y<y0-100||crane.x<x0-120||crane.x>x1+120)panel.skyCrane=null;
    }
-   if(animate&&now>=panel.nextShip&&!panel.ship){const dir=Math.random()<.5?1:-1;const lane=panel.safePoints.length?panel.safePoints[Math.floor(Math.random()*panel.safePoints.length)]:{y:r.height*.5};panel.ship=lane?{x:dir>0?x0-95:x1+95,y:y0+lane.y,vx:dir*rand(125,155),vy:rand(-10,10),dir,phase:rand(0,TAU),age:0}:null;panel.nextShip=now+rand(...CONFIG.starshipInterval);}
+   if(animate&&now>=panel.nextShip&&!panel.ship){const dir=Math.random()<.5?1:-1;const lane=panel.safePoints.length?panel.safePoints[Math.floor(Math.random()*panel.safePoints.length)]:{y:r.height*.5};panel.ship=lane?{x:dir>0?x0-95:x1+95,y:y0+lane.y,vx:dir*rand(125,155),vy:rand(-10,10),dir,phase:rand(0,TAU),age:0}:null;panel.nextShip=now+rand(...CONFIG.starshipInterval)+panel.repeatStagger;}
    if(panel.ship){const sh=panel.ship;if(animate){sh.age+=dt;sh.phase+=dt*.55;sh.vx+=sh.dir*12*dt;sh.vy+=Math.sin(sh.phase*.7)*2.2*dt;sh.x+=sh.vx*dt;sh.y+=sh.vy*dt;}drawStarship(ctx,sh.x,sh.y,Math.atan2(sh.vy,sh.vx),sh.phase);movingThings.push({id:'starship',x:sh.x,y:sh.y,r:13,vx:sh.vx,vy:sh.vy,obj:sh});if(sh.x<x0-150||sh.x>x1+150)panel.ship=null;}
   }
   // Random astronaut lasso attempts. The loop is a moving physical tether:
