@@ -1,1 +1,7 @@
-User-agent: *\nAllow: /\n\nSitemap: https://drnitinmohan.com/sitemap.xml\n
+User-agent: *
+Allow: /
+Disallow: /admin/
+Disallow: /private/
+Disallow: /updates.html
+
+Sitemap: https://drnitinmohan.com/sitemap.xml
