@@ -1,51 +1,52 @@
 {
   "schemaVersion": 2,
+  "configContract": "kidsgastro-manual-settings-v2",
   "formTitle": "KidsGastro Website Change Request",
   "doctor": "Dr. Nitin Mohan",
-  "createdAt": "2026-10-31T11:29:59.196Z",
+  "createdAt": "2026-11-02T07:55:42.998Z",
   "timezone": "Asia/Kolkata",
   "targetFile": "configuration/change-request.json",
   "notice": "This is a request only. It does not modify or publish the website.",
   "changes": {
-    "enableAppointmentButton": "no",
-    "disableAppointmentButton": "yes",
-    "enableWhatsAppBookingOption": "no",
-    "disableWhatsAppBookingOption": "yes",
-    "enableRezeptRxBookingOption": "no",
-    "disableRezeptRxBookingOption": "yes",
-    "showWhatsAppButton": "no",
-    "hideWhatsAppButton": "yes",
+    "enableAppointmentButton": "yes",
+    "disableAppointmentButton": "no",
+    "enableWhatsAppBookingOption": "yes",
+    "disableWhatsAppBookingOption": "no",
+    "enableRezeptRxBookingOption": "yes",
+    "disableRezeptRxBookingOption": "no",
+    "showWhatsAppButton": "yes",
+    "hideWhatsAppButton": "no",
     "changeAnnouncement": "yes",
-    "announcementMode": "edit",
+    "announcementMode": "add",
     "mainStripBackgroundColor": "#ffc400",
     "photoOfMonthAction": "update",
     "updatePhotoOfMonth": "yes",
     "disablePhotoOfMonth": "no",
     "settingActions": {
-      "appointmentButton": "continue",
-      "whatsappBookingOption": "continue",
-      "rezepRxBookingOption": "continue",
-      "announcementMarquee": "edit",
+      "appointmentButton": "enable",
+      "whatsappBookingOption": "enable",
+      "rezepRxBookingOption": "enable",
+      "announcementMarquee": "add",
       "photoOfTheMonth": "continue"
     }
   },
   "changeSchedules": {
     "settings": {
-      "whatsappBookingOption": {
-        "duration": "temporary",
-        "scheduleGroupId": "schedule-1"
-      },
-      "rezepRxBookingOption": {
-        "duration": "temporary",
-        "scheduleGroupId": "schedule-1"
-      },
       "photoOfTheMonth": {
         "duration": "permanent",
         "scheduleGroupId": null
       },
       "appointmentButton": {
-        "duration": "temporary",
-        "scheduleGroupId": "new-schedule-1"
+        "duration": "permanent",
+        "scheduleGroupId": null
+      },
+      "whatsappBookingOption": {
+        "duration": "permanent",
+        "scheduleGroupId": null
+      },
+      "rezepRxBookingOption": {
+        "duration": "permanent",
+        "scheduleGroupId": null
       },
       "announcementMarquee": {
         "duration": "temporary",
@@ -54,26 +55,9 @@
     },
     "groups": [
       {
-        "id": "schedule-1",
-        "startDateTime": "2026-10-31T15:23",
-        "endDateTime": "2026-11-01T23:59",
-        "settings": [
-          "whatsappBookingOption",
-          "rezepRxBookingOption"
-        ]
-      },
-      {
         "id": "new-schedule-1",
-        "startDateTime": "2026-10-31T15:48",
-        "endDateTime": "2026-11-01T03:59",
-        "settings": [
-          "appointmentButton"
-        ]
-      },
-      {
-        "id": "new-schedule-1",
-        "startDateTime": "2026-10-31T16:59",
-        "endDateTime": "2026-11-01T23:59",
+        "startDateTime": "2026-11-02T13:25",
+        "endDateTime": "2026-11-03T10:00",
         "settings": [
           "announcementMarquee"
         ]
@@ -82,51 +66,45 @@
     "activateTemporary": true
   },
   "details": {
-    "announcementText": "Appointments unavailable between 31/10/26 to 1/11/26.                       Kindly cooperate",
+    "announcementText": "APPOINTMENT BOOKING HAS NOW BEEN OPENED!",
     "defaultAnnouncementText": "OFFLINE APPOINTMENTS AVAILABLE RIGHT NOW.               CLICK THE APPOINTMENT BUTTON BELOW TO PROCEED.",
     "mainStripTextColor": "#0759a8",
     "mainStripBackgroundColor": "#ffc400",
     "announcementTextColors": {
       "defaultStrip": "#0759a8",
-      "customStrip": "#da1043"
+      "customStrip": "#d22d2d"
     },
     "announcementBackgroundColors": {
       "mainStrip": "#ffc400",
-      "secondStrip": "#f3a6c8"
+      "secondStrip": "#ffffff"
     },
     "announcementMarqueeSpeedsSeconds": {
       "standardStrip": 83,
-      "customStrip": 13
+      "customStrip": 7
     },
     "photoOfMonthAction": "update",
     "photoOfMonth": "configuration/photo-of-the-month/abcd.jpg",
     "photoOfMonthFileName": "abcd.jpg",
     "photoOfMonthDestinationFolder": "configuration/photo-of-the-month/",
     "photoCaption": "An infant and his mother visiting Dr. Nitin Mohan",
-    "otherInstructions": ""
+    "otherInstructions": "",
+    "mainStripText": "OFFLINE APPOINTMENTS AVAILABLE RIGHT NOW.               CLICK THE APPOINTMENT BUTTON BELOW TO PROCEED.",
+    "additionalStripText": "APPOINTMENT BOOKING HAS NOW BEEN OPENED!",
+    "announcementTextPreservation": {
+      "whiteSpace": "pre",
+      "preserveRepeatedSpaces": true,
+      "preserveLeadingTrailingSpaces": true,
+      "preserveLineBreaks": true,
+      "sourceValueIsUntrimmed": true
+    }
   },
   "duration": "mixed",
   "schedule": {
     "type": "mixed",
     "periods": [
       {
-        "startDateTime": "2026-10-31T15:23",
-        "endDateTime": "2026-11-01T23:59",
-        "settings": [
-          "whatsappBookingOption",
-          "rezepRxBookingOption"
-        ]
-      },
-      {
-        "startDateTime": "2026-10-31T15:48",
-        "endDateTime": "2026-11-01T03:59",
-        "settings": [
-          "appointmentButton"
-        ]
-      },
-      {
-        "startDateTime": "2026-10-31T16:59",
-        "endDateTime": "2026-11-01T23:59",
+        "startDateTime": "2026-11-02T13:25",
+        "endDateTime": "2026-11-03T10:00",
         "settings": [
           "announcementMarquee"
         ]
@@ -136,12 +114,12 @@
   },
   "mergeMetadata": {
     "baselineFile": "change-request.json",
-    "generatedAt": "2026-10-31T11:29:59.195Z",
+    "generatedAt": "2026-11-02T07:55:42.997Z",
     "actions": {
-      "appointmentButton": "continue",
-      "whatsappBookingOption": "continue",
-      "rezepRxBookingOption": "continue",
-      "announcementMarquee": "edit",
+      "appointmentButton": "enable",
+      "whatsappBookingOption": "enable",
+      "rezepRxBookingOption": "enable",
+      "announcementMarquee": "add",
       "photoOfTheMonth": "continue"
     },
     "note": "Settings marked continue were carried forward from the loaded previous configuration where available."
