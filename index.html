@@ -5895,12 +5895,36 @@ input,select,textarea{font-size:16px;max-width:100%}
     const o=panel.orion;
     if(animate){
      o.phase+=o.phaseSpeed*dt;o.maneuver+=dt;
-     // Gentle changing thrust vectors make the capsule turn and manoeuvre rather than slide rigidly.
-     const desired=Math.atan2(o.vy+Math.sin(o.maneuver*1.1)*16,o.vx+Math.cos(o.maneuver*.72)*22);
+     // Orion alone predicts nearby object's closest approach and steers away
+     // before a collision. Other spacecraft retain their original trajectories.
+     let avoidX=0,avoidY=0,avoidStrength=0;
+     movingThings.forEach(other=>{
+      if(!other||other.id==='orion'||!other.obj)return;
+      const rx=o.x-other.x,ry=o.y-other.y;
+      const rvx=o.vx-(other.vx||0),rvy=o.vy-(other.vy||0);
+      const vv=rvx*rvx+rvy*rvy;
+      if(vv<1)return;
+      const t=-(rx*rvx+ry*rvy)/vv;
+      if(t<=0||t>1.65)return;
+      const cx=rx+rvx*t,cy=ry+rvy*t,d=Math.hypot(cx,cy);
+      const safe=(other.r||8)+19;
+      if(d<safe+35){
+       const urgency=clamp((safe+35-d)/35,0,1)*(1-t/1.65);
+       const inv=Math.max(1,d);
+       avoidX+=(cx/inv)*urgency;avoidY+=(cy/inv)*urgency;
+       avoidStrength=Math.max(avoidStrength,urgency);
+      }
+     });
+     const avoidAngle=Math.hypot(avoidX,avoidY)>.01?Math.atan2(-avoidY,-avoidX):o.heading;
+     const cruiseAngle=Math.atan2(o.vy+Math.sin(o.maneuver*1.1)*16,o.vx+Math.cos(o.maneuver*.72)*22);
+     const desired=avoidStrength>.08
+      ?Math.atan2(Math.sin(avoidAngle)*avoidStrength+Math.sin(cruiseAngle)*(1-avoidStrength),Math.cos(avoidAngle)*avoidStrength+Math.cos(cruiseAngle)*(1-avoidStrength))
+      :cruiseAngle;
      let delta=Math.atan2(Math.sin(desired-o.heading),Math.cos(desired-o.heading));
      o.heading+=clamp(delta,-o.turn*dt,o.turn*dt);
      const speed=Math.hypot(o.vx,o.vy);
-     o.vx+=Math.cos(o.heading)*12*dt;o.vy+=Math.sin(o.heading)*12*dt;
+     const thrust=avoidStrength>.08?20:12;
+     o.vx+=Math.cos(o.heading)*thrust*dt;o.vy+=Math.sin(o.heading)*thrust*dt;
      const damp=.992;o.vx*=damp;o.vy*=damp;
      const cap=165;if(Math.hypot(o.vx,o.vy)>cap){const k=cap/Math.hypot(o.vx,o.vy);o.vx*=k;o.vy*=k;}
      o.x+=o.vx*dt;o.y+=o.vy*dt;
@@ -5946,35 +5970,12 @@ input,select,textarea{font-size:16px;max-width:100%}
    }
    if(panel.astronaut){
     const au=panel.astronaut;
-    let threat=null,escapeX=0,escapeY=0,closest=Infinity;
-    if(panel.asteroid){
-     const ast=panel.asteroid,rx=au.x-ast.x,ry=au.y-ast.y;
-     const rvx=au.vx-ast.vx,rvy=au.vy-ast.vy;
-     const vv=rvx*rvx+rvy*rvy;
-     const t=vv>1?( -(rx*rvx+ry*rvy)/vv ):0;
-     const tc=clamp(t,0,1.35),cx=rx+rvx*tc,cy=ry+rvy*tc;
-     closest=Math.hypot(cx,cy);
-     // Predict the asteroid's closest pass, not just its current distance.
-     // This gives the astronaut time to react to a genuine near-death miss.
-     if(t>0&&t<1.35&&closest<66){
-      threat=ast;const d=Math.max(1,closest);escapeX=cx/d;escapeY=cy/d;
-     }
-    }
     if(animate){
+     // The astronaut no longer performs collision-avoidance manoeuvres.
+     // Orion is the sole craft with predictive collision-avoidance behaviour.
      au.phase+=dt*.65;
-     if(threat&&now-au.lastThreatReact>650){
-      au.lastThreatReact=now;au.evadeUntil=now+1450;au.swimUntil=now+2850;
-      // A human-like reflex: brace, push once in the safe direction, then coast.
-      au.evadeX=escapeX*48;au.evadeY=escapeY*48;
-      au.vx+=escapeX*34;au.vy+=escapeY*34;
-     }
-     if(now<au.evadeUntil){
-      au.vx+=(au.evadeX-au.vx)*Math.min(1,dt*1.25);
-      au.vy+=(au.evadeY-au.vy)*Math.min(1,dt*1.25);
-     }else{
-      au.vx+=(Math.sin(au.phase*.7)*7-au.vx)*Math.min(1,dt*.16);
-      au.vy+=(Math.cos(au.phase)*5-au.vy)*Math.min(1,dt*.16);
-     }
+     au.vx+=(Math.sin(au.phase*.7)*7-au.vx)*Math.min(1,dt*.16);
+     au.vy+=(Math.cos(au.phase)*5-au.vy)*Math.min(1,dt*.16);
      au.x+=au.vx*dt;au.y+=au.vy*dt;
      au.bodyRoll+=(clamp(au.vy*.002,-.18,.18)-au.bodyRoll)*Math.min(1,dt*2.2);
      au.y=clamp(au.y,y0+25,y1-25);
