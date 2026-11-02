@@ -2592,6 +2592,31 @@ button.booking-toggle{
 .hero .visual{min-height:420px;}
 @media(max-width:760px){.hero .visual{min-height:350px;}}
 </style>
+
+<style id="kg-final-animation-navigation-coexistence">
+/* Keep decorative animation layers behind the interactive navigation. */
+html body header.header,
+html body header.header .nav { position:relative!important; overflow:visible!important; }
+html body header.header .nav > button.toggle {
+  position:relative!important; z-index:2147483002!important;
+  pointer-events:auto!important; touch-action:manipulation!important;
+}
+html body header.header #links:not(.open) {
+  display:none!important; visibility:hidden!important; pointer-events:none!important;
+}
+html body header.header #links.open {
+  display:flex!important; visibility:visible!important; opacity:1!important;
+  pointer-events:auto!important; z-index:2147483001!important;
+}
+html body header.header #links.open,
+html body header.header #links.open * { pointer-events:auto; }
+html body header.header #links.open { isolation:isolate!important; }
+@media (max-width:760px) {
+  body.kg-menu-open header.header { position:relative!important; z-index:2147483003!important; }
+  body.kg-menu-open header.header .nav > button.toggle { z-index:2147483004!important; }
+}
+</style>
+
 </head><body><div aria-label="Appointment announcement" class="offline-appointment-marquee" role="region"><div class="offline-appointment-marquee__track"><span class="offline-appointment-marquee__text">OFFLINE APPOINTMENTS AVAILABLE RIGHT NOW. <span aria-hidden="true" class="marquee-inline-gap">      </span>CLICK THE APPOINTMENT BUTTON BELOW TO PROCEED.</span><span aria-hidden="true" class="offline-appointment-marquee__text">OFFLINE APPOINTMENTS AVAILABLE RIGHT NOW. <span aria-hidden="true" class="marquee-inline-gap">      </span>CLICK THE APPOINTMENT BUTTON BELOW TO PROCEED.</span></div></div><a class="skip-link" href="/?focus=main">Skip to content</a>
 <header class="header"><nav aria-label="Main navigation" class="nav container"><a class="brand" href="/"><img alt="Dr. Nitin Mohan KidsGastro logo" class="mark circular-brand-logo" data-embedded-logo="true" decoding="async" loading="eager" src="/assets/logo%20kg.webp" width="58" height="58" sizes="(max-width: 760px) 48px, 58px"/><span>KidsGastro by Dr. Nitin Mohan</span></a><button aria-controls="hamburger-panel" aria-expanded="false" aria-label="Open navigation" class="toggle">☰</button><div aria-hidden="true" class="hamburger-panel" hidden="" id="hamburger-panel"></div><div class="links" id="links">
 <details class="nav-dropdown"><summary>Treatments<svg aria-hidden="true" viewbox="0 0 16 16"><path d="m3 6 5 5 5-5"></path></svg></summary><div class="nav-dropdown-menu"><a href="/treatments/"><b>Paediatric Gastroenterology</b></a><a href="/treatments/"><b>Paediatric Hepatology — Liver Diseases</b></a><a href="/treatments/"><b>Paediatric Pancreatology — Pancreatic Disorders</b></a><a href="/treatments/"><b>Paediatric Biliary Tract Diseases</b></a><a href="/treatments/"><b>Paediatric Nutrition and Growth</b></a></div></details><details class="nav-dropdown"><summary>Services<svg aria-hidden="true" viewbox="0 0 16 16"><path d="m3 6 5 5 5-5"></path></svg></summary><div class="nav-dropdown-menu"><a href="/services/"><b>Paediatric Gastrointestinal Procedures</b></a><a href="/services/"><b>Hepatology Procedures &amp; Investigations</b></a><a href="/services/"><b>Pancreatic Investigations</b></a><a href="/services/"><b>Biliary Tract Investigations</b></a><a href="/services/"><b>Gastrointestinal Diagnostic Investigations</b></a><a href="/services/"><b>Nutrition &amp; Growth Assessment</b></a></div></details><a class="nav-direct-link" href="/faqs/"><svg aria-hidden="true" class="kg-nav-icon" focusable="false" viewbox="0 0 24 24"><circle cx="12" cy="12" r="9"></circle><path d="M9.6 9a2.5 2.5 0 1 1 4.2 1.8c-1.1 1-1.8 1.4-1.8 3M12 17.2h.01"></path></svg>FAQs</a><a class="nav-direct-link" href="/blog/"><svg aria-hidden="true" class="kg-nav-icon" focusable="false" viewBox="0 0 24 24"><path d="M6 3.5h9l4 4V21H6z"></path><path d="M15 3.5V8h4M9 12h7M9 16h7"></path></svg><span>Blog</span></a><details class="nav-dropdown"><summary><svg aria-hidden="true" class="kg-nav-icon" viewbox="0 0 24 24"><path d="M4 5.5h16v11H9l-5 3v-14Z"></path><path d="M8 9h8M8 12.5h5"></path></svg><span>Testimonials</span><svg aria-hidden="true" viewbox="0 0 16 16"><path d="m3 6 5 5 5-5"></path></svg></summary><div class="nav-dropdown-menu"><a href="/testimonials/"><b>Patient &amp; family testimonials</b><small>Read all patient and family experiences</small></a></div></details><details class="nav-dropdown kg-gallery-nav-dropdown"><summary>Gallery<svg aria-hidden="true" viewbox="0 0 16 16"><path d="m3 6 5 5 5-5"></path></svg></summary><div class="nav-dropdown-menu"><a href="/gallery/"><b>KidsGastro Photo Gallery</b><small>Photos and clinical activities</small></a></div></details><details class="nav-dropdown"><summary>Health Library<svg aria-hidden="true" viewbox="0 0 16 16"><path d="m3 6 5 5 5-5"></path></svg></summary><div class="nav-dropdown-menu"><a href="/latest/"><b>Latest from KidsGastro<img alt="Dr. Nitin Mohan KidsGastro logo" class="inline-kg-mark circular-brand-logo" data-embedded-logo="true" decoding="async" fetchpriority="low" loading="lazy" src="/assets/logo%20kg.webp" width="58" height="58" sizes="(max-width: 760px) 48px, 58px"/></b><small>Stories, videos and audio</small></a><a href="/publications/"><b>Research articles &amp; publications</b><small>Published work by Dr. Nitin Mohan</small></a><a href="/newsletter/"><b>Family newsletter</b><small>Request clinic updates</small></a></div></details><details class="nav-dropdown"><summary>Contact Info<svg aria-hidden="true" viewbox="0 0 16 16"><path d="m3 6 5 5 5-5"></path></svg></summary><div class="nav-dropdown-menu"><a href="tel:+919821020576"><b>Phone</b><small>+91 98210 20576</small></a><a href="/clinic/"><b>Churamani Multispeciality Hospital</b><small>Hisar, Haryana</small></a><a href="/clinic/"><b>View map</b><small>Google Maps location</small></a></div></details><details class="nav-dropdown nav-login-dropdown"><summary><svg aria-hidden="true" class="kg-nav-icon" viewbox="0 0 24 24"><circle cx="12" cy="8" r="3.5"></circle><path d="M5 20v-1.5a7 7 0 0 1 14 0V20Z"></path></svg><span>Login</span><svg aria-hidden="true" viewbox="0 0 16 16"><path d="m3 6 5 5 5-5"></path></svg></summary><div class="nav-dropdown-menu"><a class="kg-admin-menu-link" href="/admin.html"><b>Login</b></a></div></details></div><form class="site-search" id="site-search" role="search"><label class="sr-only" for="site-search-input">Search this website</label><input autocomplete="off" id="site-search-input" placeholder="Search this website" type="search"/><button aria-label="Search this website" type="submit">⌕</button><span aria-live="polite" class="search-status" id="search-status" role="status"></span></form></nav></header>
@@ -3916,37 +3941,7 @@ document.querySelectorAll('.nav-direct-link,.nav-dropdown-menu>a,.booking-menu-p
 @keyframes appointment-button-shine{0%,12%{transform:translateX(-125%)}48%,100%{transform:translateX(125%)}}
 
 </style>
-<script id="unified-mobile-hamburger-navigation-js">
-(function(){
-  function initHamburger(){
-    const nav=document.querySelector('.header .nav');
-    const links=document.getElementById('links');
-    let toggle=nav&&nav.querySelector('.toggle');
-    if(!nav||!links||!toggle||toggle.dataset.menuWired==='true')return;
-    toggle.dataset.menuWired='true';
-    const search=nav.querySelector('.site-search');
-    /* Keep site search beside the hamburger in the header, not inside the opened menu. */
-    const closeMenu=()=>{links.classList.remove('open');toggle.setAttribute('aria-expanded','false');toggle.setAttribute('aria-label','Open navigation');toggle.textContent='☰';};
-    const openMenu=()=>{links.classList.add('open');toggle.setAttribute('aria-expanded','true');toggle.setAttribute('aria-label','Close navigation');toggle.textContent='×';};
-    toggle.setAttribute('aria-controls','links');toggle.setAttribute('aria-expanded','false');toggle.setAttribute('aria-label','Open navigation');
-    toggle.addEventListener('click',function(event){event.preventDefault();event.stopPropagation();if(toggle.getAttribute('aria-expanded')==='true')closeMenu();else openMenu();});
-    // A category summary is a disclosure control, not navigation: keep the panel
-    // open while it expands/collapses so the next tap can reach its submenu links.
-    links.addEventListener('click',function(event){
-      const summary=event.target.closest('details.nav-dropdown > summary');
-      if(summary){event.stopPropagation();return;}
-      const link=event.target.closest('a[href]');
-      if(link)closeMenu();
-    });
-    links.querySelectorAll('.nav-dropdown').forEach(function(details){details.addEventListener('toggle',function(){if(details.open)links.querySelectorAll('.nav-dropdown[open]').forEach(function(other){if(other!==details)other.open=false;});});});
-    document.addEventListener('keydown',function(event){if(event.key==='Escape'&&links.classList.contains('open')){closeMenu();toggle.focus();}});
-    document.addEventListener('click',function(event){if(links.classList.contains('open')&&!nav.contains(event.target))closeMenu();});
-    // Do not close the menu on hash changes caused by in-menu controls; actual
-    // link navigation already closes it in the link handler above.
-  }
-  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',initHamburger,{once:true});else initHamburger();
-})();
-</script>
+
 <style id="hero-typewriter-animation">
 .hero .hero-typing-headline{max-width:870px;min-height:2.24em}
 .hero-typing-text{display:inline;overflow-wrap:anywhere}
@@ -7675,42 +7670,7 @@ html{scroll-behavior:auto!important}.offline-appointment-marquee__track{animatio
  .header #links.open{left:0!important;right:0!important;width:100%!important;max-width:100%!important;max-height:calc(100dvh - 120px)!important}
 }
 </style>
-<script id="kg-hamburger-capture-click-final">
-(function(){
- function init(){
-  const header=document.querySelector('.header');
-  const nav=header&&header.querySelector('.nav');
-  const toggle=nav&&nav.querySelector('.toggle');
-  const links=header&&header.querySelector('#links');
-  if(!toggle||!links||toggle.dataset.kgCaptureMenu==='1')return;
-  toggle.dataset.kgCaptureMenu='1';
-  function setOpen(open){
-   links.classList.toggle('open',open);
-   toggle.setAttribute('aria-expanded',String(open));
-   toggle.setAttribute('aria-controls','links');
-   toggle.setAttribute('aria-label',open?'Close navigation':'Open navigation');
-   toggle.textContent=open?'×':'☰';
-   links.style.setProperty('display',open?'flex':'none','important');
-   links.style.setProperty('pointer-events',open?'auto':'none','important');
-  }
-  // Capture before older target-level handlers so the click cannot toggle twice.
-  document.addEventListener('click',function(event){
-   const hit=event.target&&event.target.closest?event.target.closest('.header .toggle'):null;
-   if(hit!==toggle)return;
-   event.preventDefault();event.stopPropagation();event.stopImmediatePropagation();
-   setOpen(toggle.getAttribute('aria-expanded')!=='true');
-  },true);
-  document.addEventListener('click',function(event){
-   if(links.classList.contains('open')&&!header.contains(event.target))setOpen(false);
-  });
-  document.addEventListener('keydown',function(event){
-   if(event.key==='Escape'&&links.classList.contains('open')){setOpen(false);toggle.focus();}
-  });
-  setOpen(false);
- }
- if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});else init();
-})();
-</script>
+
 
 
 <style id="kg-hamburger-final">
@@ -7788,48 +7748,51 @@ header.header #links a:focus-visible{outline:3px solid #ffc400!important;outline
       nav=header&&header.querySelector('.nav'),
       btn=nav&&nav.querySelector('button.toggle'),
       panel=header&&header.querySelector('#links');
-  if(!header||!nav||!btn||!panel||btn.dataset.kgNavFinal==='1')return;
-  btn.dataset.kgNavFinal='1';
+  if(!header||!nav||!btn||!panel||btn.dataset.kgNavFinal==='2')return;
+  btn.dataset.kgNavFinal='2';
   var mobile=window.matchMedia('(max-width:760px)');
   btn.type='button';
   btn.setAttribute('aria-controls','links');
+  btn.setAttribute('aria-haspopup','true');
   btn.textContent='';
   panel.removeAttribute('hidden');
-  ['display','visibility','opacity','pointer-events'].forEach(function(p){panel.style.removeProperty(p);});
+  ['display','visibility','opacity','pointer-events','max-height','padding','border-width'].forEach(function(prop){panel.style.removeProperty(prop);});
 
   function isOpen(){return panel.classList.contains('open');}
   function setOpen(open,returnFocus){
-    open=!!open;
-    panel.classList.toggle('open',open);
+   open=!!open;
+   if(isOpen()===open){
     btn.setAttribute('aria-expanded',String(open));
     btn.setAttribute('aria-label',open?'Close navigation':'Open navigation');
     document.body.classList.toggle('kg-menu-open',open);
-    if(!open){panel.querySelectorAll('details[open]').forEach(function(d){d.open=false;});}
-    if(!open&&returnFocus)btn.focus();
+    return;
+   }
+   panel.classList.toggle('open',open);
+   btn.setAttribute('aria-expanded',String(open));
+   btn.setAttribute('aria-label',open?'Close navigation':'Open navigation');
+   document.body.classList.toggle('kg-menu-open',open);
+   if(!open){panel.querySelectorAll('details[open]').forEach(function(d){d.open=false;});}
+   if(!open&&returnFocus)btn.focus();
   }
 
-  btn.addEventListener('click',function(){setOpen(!isOpen());});
-  panel.addEventListener('click',function(e){
-    var a=e.target.closest&&e.target.closest('a[href]');
-    if(a&&panel.contains(a))setOpen(false);
+  btn.addEventListener('click',function(event){event.preventDefault();event.stopPropagation();setOpen(!isOpen());});
+  panel.addEventListener('click',function(event){
+   var link=event.target.closest&&event.target.closest('a[href]');
+   if(link&&panel.contains(link))setOpen(false);
   });
-  panel.addEventListener('toggle',function(e){
-    var d=e.target;
-    if(!d||!d.matches||!d.matches('details.nav-dropdown')||!d.open)return;
-    panel.querySelectorAll('details.nav-dropdown[open]').forEach(function(o){if(o!==d)o.open=false;});
-    if(mobile.matches)requestAnimationFrame(function(){d.scrollIntoView({block:'nearest',behavior:'smooth'});});
+  panel.addEventListener('toggle',function(event){
+   var details=event.target;
+   if(!details||!details.matches||!details.matches('details.nav-dropdown')||!details.open)return;
+   panel.querySelectorAll('details.nav-dropdown[open]').forEach(function(other){if(other!==details)other.open=false;});
+   if(mobile.matches)requestAnimationFrame(function(){details.scrollIntoView({block:'nearest',behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'});});
   },true);
-  document.addEventListener('pointerdown',function(e){
-    if(isOpen()&&!header.contains(e.target))setOpen(false);
+  document.addEventListener('pointerdown',function(event){
+   if(isOpen()&&!panel.contains(event.target)&&!btn.contains(event.target))setOpen(false);
   },true);
-  document.addEventListener('keydown',function(e){
-    if(e.key==='Escape'&&isOpen())setOpen(false,true);
-  });
-  header.addEventListener('focusout',function(e){
-    if(isOpen()&&e.relatedTarget&&!header.contains(e.relatedTarget))setOpen(false);
-  });
-  var onBreak=function(){setOpen(false);};
-  if(mobile.addEventListener)mobile.addEventListener('change',onBreak);else if(mobile.addListener)mobile.addListener(onBreak);
+  document.addEventListener('keydown',function(event){if(event.key==='Escape'&&isOpen())setOpen(false,true);});
+  window.addEventListener('resize',function(){if(isOpen()&&!mobile.matches)setOpen(false);},{passive:true});
+  var onBreakpointChange=function(){setOpen(false);};
+  if(mobile.addEventListener)mobile.addEventListener('change',onBreakpointChange);else if(mobile.addListener)mobile.addListener(onBreakpointChange);
   setOpen(false);
  }
  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});else init();
@@ -7988,48 +7951,98 @@ a.back-top::after,
  .header #links.open{left:0!important;right:0!important;width:100%!important;max-width:100%!important;max-height:calc(100dvh - 120px)!important}
 }
 </style>
-<script id="kg-hamburger-last-wins-controller">
-(function(){
- function boot(){
-  const header=document.querySelector('header.header');
-  const toggle=header&&header.querySelector('button.toggle');
-  const links=header&&header.querySelector('#links');
-  if(!header||!toggle||!links||toggle.dataset.lastWinsController==='yes')return;
-  toggle.dataset.lastWinsController='yes';
-  let opened=false;
-  function render(){
-   links.classList.toggle('open',opened);
-   links.style.setProperty('display',opened?'flex':'none','important');
-   links.style.setProperty('visibility',opened?'visible':'hidden','important');
-   links.style.setProperty('pointer-events',opened?'auto':'none','important');
-   toggle.setAttribute('aria-expanded',String(opened));
-   toggle.setAttribute('aria-controls','links');
-   toggle.setAttribute('aria-label',opened?'Close navigation':'Open navigation');
-   toggle.textContent=opened?'×':'☰';
+
+<style id="kg-hamburger-smooth-transition-final">
+/* One final navigation state model: keep the panel renderable so it can fade/slide both ways. */
+html body header.header #links,
+html body header.header #links:not(.open),
+html body header.header #links.open {
+  display:flex!important;
+  position:absolute!important;
+  top:calc(100% + 6px)!important;
+  left:auto!important;
+  right:0!important;
+  bottom:auto!important;
+  z-index:2147483000!important;
+  width:min(440px,calc(100vw - 32px))!important;
+  max-width:calc(100vw - 32px)!important;
+  height:auto!important;
+  max-height:0!important;
+  min-height:0!important;
+  overflow:hidden!important;
+  flex-direction:column!important;
+  align-items:stretch!important;
+  justify-content:flex-start!important;
+  gap:0!important;
+  padding:0!important;
+  margin:0!important;
+  border-width:0!important;
+  opacity:0!important;
+  visibility:hidden!important;
+  pointer-events:none!important;
+  transform:translateY(-9px) scale(.985)!important;
+  transform-origin:top right!important;
+  transition:
+    opacity .24s cubic-bezier(.2,.7,.25,1),
+    transform .24s cubic-bezier(.2,.7,.25,1),
+    max-height .28s cubic-bezier(.2,.7,.25,1),
+    padding .24s ease,
+    gap .24s ease,
+    border-width .24s ease,
+    visibility 0s linear .28s!important;
+  box-sizing:border-box!important;
+  background:#0759a8!important;
+  color:#fff!important;
+  border-color:#cbdce8!important;
+  border-style:solid!important;
+  border-radius:10px!important;
+  box-shadow:0 14px 34px rgba(10,39,61,.25)!important;
+  overscroll-behavior:contain;
+}
+html body header.header #links.open {
+  max-height:min(76vh,700px)!important;
+  overflow-x:hidden!important;
+  overflow-y:auto!important;
+  gap:7px!important;
+  padding:12px!important;
+  border-width:1px!important;
+  opacity:1!important;
+  visibility:visible!important;
+  pointer-events:auto!important;
+  transform:translateY(0) scale(1)!important;
+  transition-delay:0s,0s,0s,0s,0s,0s,0s!important;
+}
+@media(max-width:760px){
+  html body header.header #links,
+  html body header.header #links:not(.open),
+  html body header.header #links.open {
+    left:0!important;
+    right:0!important;
+    width:100%!important;
+    max-width:100%!important;
+    top:calc(100% + 6px)!important;
+    transform-origin:top center!important;
   }
-  function toggleMenu(e){
-   if(e){e.preventDefault();e.stopPropagation();if(e.stopImmediatePropagation)e.stopImmediatePropagation();}
-   opened=!opened;render();
+  html body header.header #links.open {
+    max-height:calc(100vh - 145px)!important;
+    max-height:calc(100dvh - 145px)!important;
   }
-  // Capture phase prevents older handlers from immediately undoing the toggle.
-  document.addEventListener('click',function(e){
-   const button=e.target&&e.target.closest?e.target.closest('header.header button.toggle'):null;
-   if(button!==toggle)return;
-   toggleMenu(e);
-  },true);
-  document.addEventListener('keydown',function(e){
-   if(e.key==='Escape'&&opened){opened=false;render();toggle.focus();}
-   if((e.key==='Enter'||e.key===' ')&&document.activeElement===toggle){
-    e.preventDefault();opened=!opened;render();
-   }
-  },true);
-  document.addEventListener('click',function(e){
-   if(opened&&!header.contains(e.target)){opened=false;render();}
-  });
-  render();
- }
- if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot,{once:true});
- else boot();
-})();
-</script>
+}
+/* Preserve the existing touch-friendly navigation rows and submenu presentation. */
+html body header.header #links.open>.nav-dropdown,
+html body header.header #links.open>.nav-direct-link {width:100%!important;flex:0 0 auto!important;}
+html body header.header #links.open>.nav-dropdown>summary,
+html body header.header #links.open>.nav-direct-link {min-height:48px!important;}
+html body header.header #links.open>.nav-dropdown[open]>.nav-dropdown-menu {
+  display:block!important;position:static!important;width:100%!important;max-width:100%!important;
+  max-height:none!important;overflow:visible!important;margin:5px 0 8px!important;
+}
+@media(prefers-reduced-motion:reduce){
+  html body header.header #links,
+  html body header.header #links:not(.open),
+  html body header.header #links.open {
+    transition:none!important;transform:none!important;
+  }
+}
+</style>
 
