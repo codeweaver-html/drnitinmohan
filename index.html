@@ -7826,3 +7826,87 @@ a.back-top::after,
   }
 }
 </style>
+
+<!-- LAST-WINS desktop navigation repair -->
+<style id="kg-hamburger-last-wins-repair">
+.header .nav{position:relative!important;overflow:visible!important}
+.header .toggle{
+ display:flex!important;visibility:visible!important;opacity:1!important;
+ pointer-events:auto!important;position:relative!important;z-index:2147483001!important;
+ cursor:pointer!important;align-items:center!important;justify-content:center!important;
+}
+.header #links:not(.open){display:none!important;visibility:hidden!important;pointer-events:none!important}
+.header #links.open{
+ display:flex!important;visibility:visible!important;opacity:1!important;pointer-events:auto!important;
+ position:absolute!important;top:calc(100% + 6px)!important;left:auto!important;right:0!important;
+ bottom:auto!important;z-index:2147483000!important;
+ width:min(440px,calc(100vw - 32px))!important;max-width:calc(100vw - 32px)!important;
+ max-height: min(76vh,700px)!important;overflow-y:auto!important;overflow-x:hidden!important;
+ flex-direction:column!important;align-items:stretch!important;justify-content:flex-start!important;
+ gap:7px!important;padding:12px!important;margin:0!important;box-sizing:border-box!important;
+ background:#0759a8!important;color:#fff!important;border:1px solid #cbdce8!important;
+ border-radius:10px!important;box-shadow:0 14px 34px rgba(10,39,61,.25)!important;
+}
+.header #links.open>details,.header #links.open>.nav-direct-link{display:block!important;width:100%!important;flex:0 0 auto!important}
+.header #links.open>details>summary,.header #links.open>.nav-direct-link{
+ display:flex!important;align-items:center!important;justify-content:space-between!important;
+ min-height:44px!important;padding:11px 13px!important;color:#fff!important;
+}
+.header #links.open>details[open]>.nav-dropdown-menu{
+ display:block!important;position:static!important;width:100%!important;max-width:100%!important;
+ max-height:none!important;overflow:visible!important;margin:5px 0 8px!important;
+ background:#fff!important;border-radius:7px!important;
+}
+.header #links.open>.nav-dropdown[open]>.nav-dropdown-menu a{
+ display:block!important;min-height:42px!important;padding:10px 12px!important;color:#18384d!important;
+}
+@media(max-width:760px){
+ .header .nav{overflow:visible!important}
+ .header #links.open{left:0!important;right:0!important;width:100%!important;max-width:100%!important;max-height:calc(100dvh - 120px)!important}
+}
+</style>
+<script id="kg-hamburger-last-wins-controller">
+(function(){
+ function boot(){
+  const header=document.querySelector('header.header');
+  const toggle=header&&header.querySelector('button.toggle');
+  const links=header&&header.querySelector('#links');
+  if(!header||!toggle||!links||toggle.dataset.lastWinsController==='yes')return;
+  toggle.dataset.lastWinsController='yes';
+  let opened=false;
+  function render(){
+   links.classList.toggle('open',opened);
+   links.style.setProperty('display',opened?'flex':'none','important');
+   links.style.setProperty('visibility',opened?'visible':'hidden','important');
+   links.style.setProperty('pointer-events',opened?'auto':'none','important');
+   toggle.setAttribute('aria-expanded',String(opened));
+   toggle.setAttribute('aria-controls','links');
+   toggle.setAttribute('aria-label',opened?'Close navigation':'Open navigation');
+   toggle.textContent=opened?'×':'☰';
+  }
+  function toggleMenu(e){
+   if(e){e.preventDefault();e.stopPropagation();if(e.stopImmediatePropagation)e.stopImmediatePropagation();}
+   opened=!opened;render();
+  }
+  // Capture phase prevents older handlers from immediately undoing the toggle.
+  document.addEventListener('click',function(e){
+   const button=e.target&&e.target.closest?e.target.closest('header.header button.toggle'):null;
+   if(button!==toggle)return;
+   toggleMenu(e);
+  },true);
+  document.addEventListener('keydown',function(e){
+   if(e.key==='Escape'&&opened){opened=false;render();toggle.focus();}
+   if((e.key==='Enter'||e.key===' ')&&document.activeElement===toggle){
+    e.preventDefault();opened=!opened;render();
+   }
+  },true);
+  document.addEventListener('click',function(e){
+   if(opened&&!header.contains(e.target)){opened=false;render();}
+  });
+  render();
+ }
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot,{once:true});
+ else boot();
+})();
+</script>
+
