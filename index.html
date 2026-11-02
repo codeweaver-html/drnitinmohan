@@ -2707,6 +2707,275 @@ html body header.header #links.open { isolation:isolate!important; }
 }
 </style>
 
+
+<style id="kg-opaque-primary-buttons-final">
+.booking-toggle,
+.booking-toggle:hover,
+.booking-toggle:focus,
+.booking-toggle:focus-visible{
+  background:#ffc400!important;
+  background-color:#ffc400!important;
+  opacity:1!important;
+  -webkit-backdrop-filter:none!important;
+  backdrop-filter:none!important;
+}
+a.back-top,.footer .back-top,
+a.back-top:hover,.footer .back-top:hover,
+a.back-top:focus-visible,.footer .back-top:focus-visible{
+  background:#0759a8!important;
+  background-color:#0759a8!important;
+  color:#fff!important;
+  opacity:1!important;
+  -webkit-backdrop-filter:none!important;
+  backdrop-filter:none!important;
+}
+</style>
+
+<style id="kg-force-opaque-cta-final">
+.booking-toggle,
+.booking-toggle:link,
+.booking-toggle:visited,
+.booking-toggle:hover,
+.booking-toggle:active,
+.booking-toggle:focus,
+.booking-toggle:focus-visible,
+a.back-top,
+a.back-top:link,
+a.back-top:visited,
+a.back-top:hover,
+a.back-top:active,
+a.back-top:focus,
+a.back-top:focus-visible,
+.footer .back-top,
+.footer .back-top:hover,
+.footer .back-top:focus-visible {
+  opacity: 1 !important;
+  background: #ffc400 !important;
+  background-color: #ffc400 !important;
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+  filter: none !important;
+  box-shadow: 0 5px 16px rgba(0,0,0,.22) !important;
+}
+a.back-top,
+a.back-top:link,
+a.back-top:visited,
+a.back-top:hover,
+a.back-top:active,
+a.back-top:focus,
+a.back-top:focus-visible,
+.footer .back-top,
+.footer .back-top:hover,
+.footer .back-top:focus-visible {
+  background: #0759a8 !important;
+  background-color: #0759a8 !important;
+  color: #fff !important;
+}
+.booking-toggle *,
+a.back-top *,
+.footer .back-top * {
+  opacity: 1 !important;
+}
+.booking-toggle::before,
+.booking-toggle::after,
+a.back-top::before,
+a.back-top::after,
+.footer .back-top::before,
+.footer .back-top::after {
+  opacity: 1 !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+</style>
+
+<style id="kg-cosmos-ui-clear-zones">
+.booking-toggle,.back-top,#site-search,.site-search,.toggle,#hamburger-panel{
+  position:relative;
+  z-index:1003!important;
+  isolation:isolate;
+}
+#kg-space{pointer-events:none!important;}
+</style>
+
+<style id="kg-hamburger-expanded-animation-shield">
+@media(max-width:760px){
+  .header #links.open{
+    position:absolute!important;
+    z-index:1205!important;
+    isolation:isolate!important;
+    background:#0759a8!important;
+    background-color:#0759a8!important;
+    opacity:1!important;
+    -webkit-backdrop-filter:none!important;
+    backdrop-filter:none!important;
+  }
+  .header #links.open::before,
+  .header #links.open::after{content:none!important;display:none!important;}
+  .header #links.open .nav-dropdown-menu,
+  .header #links.open .site-search{
+    position:relative!important;
+    z-index:1!important;
+    isolation:isolate!important;
+  }
+}
+</style>
+
+<!-- LAST-WINS desktop navigation repair -->
+<style id="kg-hamburger-last-wins-repair">
+.header .nav{position:relative!important;overflow:visible!important}
+.header .toggle{
+ display:flex!important;visibility:visible!important;opacity:1!important;
+ pointer-events:auto!important;position:relative!important;z-index:2147483001!important;
+ cursor:pointer!important;align-items:center!important;justify-content:center!important;
+}
+.header #links:not(.open){display:none!important;visibility:hidden!important;pointer-events:none!important}
+.header #links.open{
+ display:flex!important;visibility:visible!important;opacity:1!important;pointer-events:auto!important;
+ position:absolute!important;top:calc(100% + 6px)!important;left:auto!important;right:0!important;
+ bottom:auto!important;z-index:2147483000!important;
+ width:min(440px,calc(100vw - 32px))!important;max-width:calc(100vw - 32px)!important;
+ max-height: min(76vh,700px)!important;overflow-y:auto!important;overflow-x:hidden!important;
+ flex-direction:column!important;align-items:stretch!important;justify-content:flex-start!important;
+ gap:7px!important;padding:12px!important;margin:0!important;box-sizing:border-box!important;
+ background:#0759a8!important;color:#fff!important;border:1px solid #cbdce8!important;
+ border-radius:10px!important;box-shadow:0 14px 34px rgba(10,39,61,.25)!important;
+}
+.header #links.open>details,.header #links.open>.nav-direct-link{display:block!important;width:100%!important;flex:0 0 auto!important}
+.header #links.open>details>summary,.header #links.open>.nav-direct-link{
+ display:flex!important;align-items:center!important;justify-content:space-between!important;
+ min-height:44px!important;padding:11px 13px!important;color:#fff!important;
+}
+.header #links.open>details[open]>.nav-dropdown-menu{
+ display:block!important;position:static!important;width:100%!important;max-width:100%!important;
+ max-height:none!important;overflow:visible!important;margin:5px 0 8px!important;
+ background:#fff!important;border-radius:7px!important;
+}
+.header #links.open>.nav-dropdown[open]>.nav-dropdown-menu a{
+ display:block!important;min-height:42px!important;padding:10px 12px!important;color:#18384d!important;
+}
+@media(max-width:760px){
+ .header .nav{overflow:visible!important}
+ .header #links.open{left:0!important;right:0!important;width:100%!important;max-width:100%!important;max-height:calc(100dvh - 120px)!important}
+}
+</style>
+
+<style id="kg-hamburger-smooth-transition-final">
+/* One final navigation state model: keep the panel renderable so it can fade/slide both ways. */
+html body header.header #links,
+html body header.header #links:not(.open),
+html body header.header #links.open {
+  display:flex!important;
+  position:absolute!important;
+  top:calc(100% + 6px)!important;
+  left:auto!important;
+  right:0!important;
+  bottom:auto!important;
+  z-index:2147483000!important;
+  width:min(440px,calc(100vw - 32px))!important;
+  max-width:calc(100vw - 32px)!important;
+  height:auto!important;
+  max-height:0!important;
+  min-height:0!important;
+  overflow:hidden!important;
+  flex-direction:column!important;
+  align-items:stretch!important;
+  justify-content:flex-start!important;
+  gap:0!important;
+  padding:0!important;
+  margin:0!important;
+  border-width:0!important;
+  opacity:0!important;
+  visibility:hidden!important;
+  pointer-events:none!important;
+  transform:translateY(-9px) scale(.985)!important;
+  transform-origin:top right!important;
+  transition:
+    opacity .24s cubic-bezier(.2,.7,.25,1),
+    transform .24s cubic-bezier(.2,.7,.25,1),
+    max-height .28s cubic-bezier(.2,.7,.25,1),
+    padding .24s ease,
+    gap .24s ease,
+    border-width .24s ease,
+    visibility 0s linear .28s!important;
+  box-sizing:border-box!important;
+  background:#0759a8!important;
+  color:#fff!important;
+  border-color:#cbdce8!important;
+  border-style:solid!important;
+  border-radius:10px!important;
+  box-shadow:0 14px 34px rgba(10,39,61,.25)!important;
+  overscroll-behavior:contain;
+}
+html body header.header #links.open {
+  max-height:min(76vh,700px)!important;
+  overflow-x:hidden!important;
+  overflow-y:auto!important;
+  gap:7px!important;
+  padding:12px!important;
+  border-width:1px!important;
+  opacity:1!important;
+  visibility:visible!important;
+  pointer-events:auto!important;
+  transform:translateY(0) scale(1)!important;
+  transition-delay:0s,0s,0s,0s,0s,0s,0s!important;
+}
+@media(max-width:760px){
+  html body header.header #links,
+  html body header.header #links:not(.open),
+  html body header.header #links.open {
+    left:0!important;
+    right:0!important;
+    width:100%!important;
+    max-width:100%!important;
+    top:calc(100% + 6px)!important;
+    transform-origin:top center!important;
+  }
+  html body header.header #links.open {
+    max-height:calc(100vh - 145px)!important;
+    max-height:calc(100dvh - 145px)!important;
+  }
+}
+/* Preserve the existing touch-friendly navigation rows and submenu presentation. */
+html body header.header #links.open>.nav-dropdown,
+html body header.header #links.open>.nav-direct-link {width:100%!important;flex:0 0 auto!important;}
+html body header.header #links.open>.nav-dropdown>summary,
+html body header.header #links.open>.nav-direct-link {min-height:48px!important;}
+html body header.header #links.open>.nav-dropdown[open]>.nav-dropdown-menu {
+  display:block!important;position:static!important;width:100%!important;max-width:100%!important;
+  max-height:none!important;overflow:visible!important;margin:5px 0 8px!important;
+}
+@media(prefers-reduced-motion:reduce){
+  html body header.header #links,
+  html body header.header #links:not(.open),
+  html body header.header #links.open {
+    transition:none!important;transform:none!important;
+  }
+}
+</style>
+<style id="kg-hamburger-absolute-final-overrides">
+@media (max-width:1100px){
+ html body header.header{position:relative!important;z-index:2147483600!important;overflow:visible!important}
+ html body header.header .nav{position:relative!important;display:flex!important;flex-wrap:wrap!important;overflow:visible!important;isolation:isolate!important}
+ html body header.header .nav>button.toggle{display:inline-flex!important;visibility:visible!important;opacity:1!important;pointer-events:auto!important;position:relative!important;z-index:2147483602!important;width:48px!important;height:48px!important;min-width:48px!important;color:#fff!important;background:#0759a8!important;border:1px solid #fff!important;font-size:26px!important;line-height:1!important}
+ html body header.header #links,html body header.header #links:not(.open){display:none!important;visibility:hidden!important;opacity:0!important;pointer-events:none!important;max-height:0!important;overflow:hidden!important}
+ html body header.header #links.open{display:flex!important;visibility:visible!important;opacity:1!important;pointer-events:auto!important;position:absolute!important;top:calc(100% + 6px)!important;left:0!important;right:0!important;bottom:auto!important;width:100%!important;max-width:100%!important;height:auto!important;max-height:calc(100vh - 150px)!important;max-height:calc(100dvh - 150px)!important;overflow-x:hidden!important;overflow-y:auto!important;flex-direction:column!important;align-items:stretch!important;justify-content:flex-start!important;gap:7px!important;padding:12px!important;margin:0!important;border:1px solid #cbdce8!important;border-radius:0 0 12px 12px!important;background:#0759a8!important;color:#fff!important;box-shadow:0 16px 36px rgba(0,20,45,.32)!important;z-index:2147483601!important;transform:none!important}
+ html body header.header #links.open>a,html body header.header #links.open>details{display:block!important;width:100%!important;flex:0 0 auto!important}
+ html body header.header #links.open>a,html body header.header #links.open>details>summary{min-height:46px!important;padding:11px 13px!important;color:#fff!important}
+ html body header.header #links.open .nav-dropdown-menu{display:none!important;position:static!important;width:100%!important;max-height:none!important;overflow:visible!important;margin:5px 0 7px!important;padding:5px!important;background:#fff!important;border-radius:7px!important;box-shadow:none!important}
+ html body header.header #links.open details[open]>.nav-dropdown-menu{display:block!important}
+ html body header.header #links.open .nav-dropdown-menu a{display:block!important;min-height:42px!important;padding:10px 12px!important;color:#18384d!important}
+}
+@media(min-width:1101px){html body header.header .nav>button.toggle{display:none!important}html body header.header #links{display:flex!important;position:static!important;visibility:visible!important;opacity:1!important;max-height:none!important;overflow:visible!important}}
+</style>
+
+<style id="booking-button-fast-shine">
+/* Fast, subtle shine sweep for the main Book an appointment control. */
+.hero .actions .booking-toggle{position:relative!important;isolation:isolate!important;overflow:hidden!important}
+.hero .actions .booking-toggle::before{content:""!important;display:block!important;position:absolute!important;z-index:0!important;top:-45%!important;bottom:-45%!important;left:-65%!important;width:42%!important;pointer-events:none!important;background:linear-gradient(105deg,transparent 0%,rgba(255,255,255,.06) 28%,rgba(255,255,255,.72) 48%,rgba(255,255,255,.12) 68%,transparent 100%)!important;transform:translateX(-160%) skewX(-18deg)!important;animation:kg-booking-fast-shine 2.15s ease-in-out infinite!important}
+.hero .actions .booking-toggle>*{position:relative;z-index:1}
+@keyframes kg-booking-fast-shine{0%,18%{transform:translateX(-160%) skewX(-18deg);opacity:0}28%{opacity:1}68%{transform:translateX(390%) skewX(-18deg);opacity:.9}78%,100%{transform:translateX(390%) skewX(-18deg);opacity:0}}
+@media(prefers-reduced-motion:reduce){.hero .actions .booking-toggle::before{animation:none!important;display:none!important}}
+</style>
 </head><body><div aria-label="Appointment announcement" class="offline-appointment-marquee" role="region"><div class="offline-appointment-marquee__track"><span class="offline-appointment-marquee__text">OFFLINE APPOINTMENTS AVAILABLE RIGHT NOW. <span aria-hidden="true" class="marquee-inline-gap">      </span>CLICK THE APPOINTMENT BUTTON BELOW TO PROCEED.</span><span aria-hidden="true" class="offline-appointment-marquee__text">OFFLINE APPOINTMENTS AVAILABLE RIGHT NOW. <span aria-hidden="true" class="marquee-inline-gap">      </span>CLICK THE APPOINTMENT BUTTON BELOW TO PROCEED.</span></div></div><a class="skip-link" href="/?focus=main">Skip to content</a>
 <header class="header"><nav aria-label="Main navigation" class="nav container"><a class="brand" href="/"><img alt="Dr. Nitin Mohan KidsGastro logo" class="mark circular-brand-logo" data-embedded-logo="true" decoding="async" loading="eager" src="/assets/logo%20kg.webp" width="58" height="58" sizes="(max-width: 760px) 48px, 58px"/><span>KidsGastro by Dr. Nitin Mohan</span></a><button aria-controls="links" aria-expanded="false" aria-label="Open navigation" class="toggle">☰</button><div aria-hidden="true" class="hamburger-panel" hidden="" id="hamburger-panel" style="pointer-events:none"></div><div class="links" id="links">
 <details class="nav-dropdown"><summary>Treatments<svg aria-hidden="true" viewbox="0 0 16 16"><path d="m3 6 5 5 5-5"></path></svg></summary><div class="nav-dropdown-menu"><a href="/treatments/"><b>Paediatric Gastroenterology</b></a><a href="/treatments/"><b>Paediatric Hepatology — Liver Diseases</b></a><a href="/treatments/"><b>Paediatric Pancreatology — Pancreatic Disorders</b></a><a href="/treatments/"><b>Paediatric Biliary Tract Diseases</b></a><a href="/treatments/"><b>Paediatric Nutrition and Growth</b></a></div></details><details class="nav-dropdown"><summary>Services<svg aria-hidden="true" viewbox="0 0 16 16"><path d="m3 6 5 5 5-5"></path></svg></summary><div class="nav-dropdown-menu"><a href="/services/"><b>Paediatric Gastrointestinal Procedures</b></a><a href="/services/"><b>Hepatology Procedures &amp; Investigations</b></a><a href="/services/"><b>Pancreatic Investigations</b></a><a href="/services/"><b>Biliary Tract Investigations</b></a><a href="/services/"><b>Gastrointestinal Diagnostic Investigations</b></a><a href="/services/"><b>Nutrition &amp; Growth Assessment</b></a></div></details><a class="nav-direct-link" href="/faqs/"><svg aria-hidden="true" class="kg-nav-icon" focusable="false" viewbox="0 0 24 24"><circle cx="12" cy="12" r="9"></circle><path d="M9.6 9a2.5 2.5 0 1 1 4.2 1.8c-1.1 1-1.8 1.4-1.8 3M12 17.2h.01"></path></svg>FAQs</a><a class="nav-direct-link" href="/blog/"><svg aria-hidden="true" class="kg-nav-icon" focusable="false" viewBox="0 0 24 24"><path d="M6 3.5h9l4 4V21H6z"></path><path d="M15 3.5V8h4M9 12h7M9 16h7"></path></svg><span>Blog</span></a><details class="nav-dropdown"><summary><svg aria-hidden="true" class="kg-nav-icon" viewbox="0 0 24 24"><path d="M4 5.5h16v11H9l-5 3v-14Z"></path><path d="M8 9h8M8 12.5h5"></path></svg><span>Testimonials</span><svg aria-hidden="true" viewbox="0 0 16 16"><path d="m3 6 5 5 5-5"></path></svg></summary><div class="nav-dropdown-menu"><a href="/testimonials/"><b>Patient &amp; family testimonials</b><small>Read all patient and family experiences</small></a></div></details><details class="nav-dropdown kg-gallery-nav-dropdown"><summary>Gallery<svg aria-hidden="true" viewbox="0 0 16 16"><path d="m3 6 5 5 5-5"></path></svg></summary><div class="nav-dropdown-menu"><a href="/gallery/"><b>KidsGastro Photo Gallery</b><small>Photos and clinical activities</small></a></div></details><details class="nav-dropdown"><summary>Health Library<svg aria-hidden="true" viewbox="0 0 16 16"><path d="m3 6 5 5 5-5"></path></svg></summary><div class="nav-dropdown-menu"><a href="/latest/"><b>Latest from KidsGastro<img alt="Dr. Nitin Mohan KidsGastro logo" class="inline-kg-mark circular-brand-logo" data-embedded-logo="true" decoding="async" fetchpriority="low" loading="lazy" src="/assets/logo%20kg.webp" width="58" height="58" sizes="(max-width: 760px) 48px, 58px"/></b><small>Stories, videos and audio</small></a><a href="/publications/"><b>Research articles &amp; publications</b><small>Published work by Dr. Nitin Mohan</small></a><a href="/newsletter/"><b>Family newsletter</b><small>Request clinic updates</small></a></div></details><details class="nav-dropdown"><summary>Contact Info<svg aria-hidden="true" viewbox="0 0 16 16"><path d="m3 6 5 5 5-5"></path></svg></summary><div class="nav-dropdown-menu"><a href="tel:+919821020576"><b>Phone</b><small>+91 98210 20576</small></a><a href="/clinic/"><b>Churamani Multispeciality Hospital</b><small>Hisar, Haryana</small></a><a href="/clinic/"><b>View map</b><small>Google Maps location</small></a></div></details><details class="nav-dropdown nav-login-dropdown"><summary><svg aria-hidden="true" class="kg-nav-icon" viewbox="0 0 24 24"><circle cx="12" cy="8" r="3.5"></circle><path d="M5 20v-1.5a7 7 0 0 1 14 0V20Z"></path></svg><span>Login</span><svg aria-hidden="true" viewbox="0 0 16 16"><path d="m3 6 5 5 5-5"></path></svg></summary><div class="nav-dropdown-menu"><a class="kg-admin-menu-link" href="/admin.html"><b>Login</b></a></div></details></div><form class="site-search" id="site-search" role="search"><label class="sr-only" for="site-search-input">Search this website</label><input autocomplete="off" id="site-search-input" placeholder="Search this website" type="search"/><button aria-label="Search this website" type="submit">⌕</button><span aria-live="polite" class="search-status" id="search-status" role="status"></span></form></nav></header>
@@ -7920,251 +8189,16 @@ header.header #links a:focus-visible{outline:3px solid #ffc400!important;outline
 (()=>{const install=()=>{let requested=false;const links=document.querySelectorAll('a[href="/faqs/"],a[href="https://drnitinmohan.com/faqs/"]');const prefetch=()=>{if(requested||document.querySelector('link[data-kg-faq-prefetch]'))return;requested=true;const l=document.createElement('link');l.rel='prefetch';l.as='document';l.href='/faqs/';l.dataset.kgFaqPrefetch='';document.head.appendChild(l)};links.forEach(a=>{a.addEventListener('pointerenter',prefetch,{once:true,passive:true});a.addEventListener('focus',prefetch,{once:true});a.addEventListener('touchstart',prefetch,{once:true,passive:true})})};if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',install,{once:true});else install()})();
 </script>
 
+
+<script id="kg-hamburger-capture-controller-final">
+(function(){
+ const boot=()=>{const header=document.querySelector('header.header'),nav=header&&header.querySelector('.nav'),btn=nav&&nav.querySelector('button.toggle'),panel=header&&header.querySelector('#links');if(!btn||!panel||document.documentElement.dataset.kgHamburgerCapture==='1')return;document.documentElement.dataset.kgHamburgerCapture='1';btn.type='button';btn.setAttribute('aria-controls','links');btn.setAttribute('aria-expanded','false');btn.setAttribute('aria-label','Open navigation');btn.textContent='☰';panel.removeAttribute('hidden');
+ const open=()=>{panel.classList.add('open');btn.setAttribute('aria-expanded','true');btn.setAttribute('aria-label','Close navigation');btn.textContent='×';document.body.classList.add('kg-menu-open');};
+ const close=()=>{panel.classList.remove('open');btn.setAttribute('aria-expanded','false');btn.setAttribute('aria-label','Open navigation');btn.textContent='☰';document.body.classList.remove('kg-menu-open');panel.querySelectorAll('details[open]').forEach(d=>d.open=false);};
+ document.addEventListener('click',e=>{if(e.target.closest('button.toggle')===btn){e.preventDefault();e.stopPropagation();e.stopImmediatePropagation();panel.classList.contains('open')?close():open();return;}if(panel.classList.contains('open')&&panel.contains(e.target)&&e.target.closest('a[href]')){close();return;}if(panel.classList.contains('open')&&!panel.contains(e.target)&&!btn.contains(e.target))close();},true);
+ document.addEventListener('keydown',e=>{if(e.key==='Escape'&&panel.classList.contains('open')){close();btn.focus();}},true);
+ };if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot,{once:true});else boot();
+})();
+</script>
 </body>
 </html>
-
-<style id="kg-opaque-primary-buttons-final">
-.booking-toggle,
-.booking-toggle:hover,
-.booking-toggle:focus,
-.booking-toggle:focus-visible{
-  background:#ffc400!important;
-  background-color:#ffc400!important;
-  opacity:1!important;
-  -webkit-backdrop-filter:none!important;
-  backdrop-filter:none!important;
-}
-a.back-top,.footer .back-top,
-a.back-top:hover,.footer .back-top:hover,
-a.back-top:focus-visible,.footer .back-top:focus-visible{
-  background:#0759a8!important;
-  background-color:#0759a8!important;
-  color:#fff!important;
-  opacity:1!important;
-  -webkit-backdrop-filter:none!important;
-  backdrop-filter:none!important;
-}
-</style>
-
-<style id="kg-force-opaque-cta-final">
-.booking-toggle,
-.booking-toggle:link,
-.booking-toggle:visited,
-.booking-toggle:hover,
-.booking-toggle:active,
-.booking-toggle:focus,
-.booking-toggle:focus-visible,
-a.back-top,
-a.back-top:link,
-a.back-top:visited,
-a.back-top:hover,
-a.back-top:active,
-a.back-top:focus,
-a.back-top:focus-visible,
-.footer .back-top,
-.footer .back-top:hover,
-.footer .back-top:focus-visible {
-  opacity: 1 !important;
-  background: #ffc400 !important;
-  background-color: #ffc400 !important;
-  -webkit-backdrop-filter: none !important;
-  backdrop-filter: none !important;
-  filter: none !important;
-  box-shadow: 0 5px 16px rgba(0,0,0,.22) !important;
-}
-a.back-top,
-a.back-top:link,
-a.back-top:visited,
-a.back-top:hover,
-a.back-top:active,
-a.back-top:focus,
-a.back-top:focus-visible,
-.footer .back-top,
-.footer .back-top:hover,
-.footer .back-top:focus-visible {
-  background: #0759a8 !important;
-  background-color: #0759a8 !important;
-  color: #fff !important;
-}
-.booking-toggle *,
-a.back-top *,
-.footer .back-top * {
-  opacity: 1 !important;
-}
-.booking-toggle::before,
-.booking-toggle::after,
-a.back-top::before,
-a.back-top::after,
-.footer .back-top::before,
-.footer .back-top::after {
-  opacity: 1 !important;
-  backdrop-filter: none !important;
-  -webkit-backdrop-filter: none !important;
-}
-</style>
-
-<style id="kg-cosmos-ui-clear-zones">
-.booking-toggle,.back-top,#site-search,.site-search,.toggle,#hamburger-panel{
-  position:relative;
-  z-index:1003!important;
-  isolation:isolate;
-}
-#kg-space{pointer-events:none!important;}
-</style>
-
-<style id="kg-hamburger-expanded-animation-shield">
-@media(max-width:760px){
-  .header #links.open{
-    position:absolute!important;
-    z-index:1205!important;
-    isolation:isolate!important;
-    background:#0759a8!important;
-    background-color:#0759a8!important;
-    opacity:1!important;
-    -webkit-backdrop-filter:none!important;
-    backdrop-filter:none!important;
-  }
-  .header #links.open::before,
-  .header #links.open::after{content:none!important;display:none!important;}
-  .header #links.open .nav-dropdown-menu,
-  .header #links.open .site-search{
-    position:relative!important;
-    z-index:1!important;
-    isolation:isolate!important;
-  }
-}
-</style>
-
-<!-- LAST-WINS desktop navigation repair -->
-<style id="kg-hamburger-last-wins-repair">
-.header .nav{position:relative!important;overflow:visible!important}
-.header .toggle{
- display:flex!important;visibility:visible!important;opacity:1!important;
- pointer-events:auto!important;position:relative!important;z-index:2147483001!important;
- cursor:pointer!important;align-items:center!important;justify-content:center!important;
-}
-.header #links:not(.open){display:none!important;visibility:hidden!important;pointer-events:none!important}
-.header #links.open{
- display:flex!important;visibility:visible!important;opacity:1!important;pointer-events:auto!important;
- position:absolute!important;top:calc(100% + 6px)!important;left:auto!important;right:0!important;
- bottom:auto!important;z-index:2147483000!important;
- width:min(440px,calc(100vw - 32px))!important;max-width:calc(100vw - 32px)!important;
- max-height: min(76vh,700px)!important;overflow-y:auto!important;overflow-x:hidden!important;
- flex-direction:column!important;align-items:stretch!important;justify-content:flex-start!important;
- gap:7px!important;padding:12px!important;margin:0!important;box-sizing:border-box!important;
- background:#0759a8!important;color:#fff!important;border:1px solid #cbdce8!important;
- border-radius:10px!important;box-shadow:0 14px 34px rgba(10,39,61,.25)!important;
-}
-.header #links.open>details,.header #links.open>.nav-direct-link{display:block!important;width:100%!important;flex:0 0 auto!important}
-.header #links.open>details>summary,.header #links.open>.nav-direct-link{
- display:flex!important;align-items:center!important;justify-content:space-between!important;
- min-height:44px!important;padding:11px 13px!important;color:#fff!important;
-}
-.header #links.open>details[open]>.nav-dropdown-menu{
- display:block!important;position:static!important;width:100%!important;max-width:100%!important;
- max-height:none!important;overflow:visible!important;margin:5px 0 8px!important;
- background:#fff!important;border-radius:7px!important;
-}
-.header #links.open>.nav-dropdown[open]>.nav-dropdown-menu a{
- display:block!important;min-height:42px!important;padding:10px 12px!important;color:#18384d!important;
-}
-@media(max-width:760px){
- .header .nav{overflow:visible!important}
- .header #links.open{left:0!important;right:0!important;width:100%!important;max-width:100%!important;max-height:calc(100dvh - 120px)!important}
-}
-</style>
-
-<style id="kg-hamburger-smooth-transition-final">
-/* One final navigation state model: keep the panel renderable so it can fade/slide both ways. */
-html body header.header #links,
-html body header.header #links:not(.open),
-html body header.header #links.open {
-  display:flex!important;
-  position:absolute!important;
-  top:calc(100% + 6px)!important;
-  left:auto!important;
-  right:0!important;
-  bottom:auto!important;
-  z-index:2147483000!important;
-  width:min(440px,calc(100vw - 32px))!important;
-  max-width:calc(100vw - 32px)!important;
-  height:auto!important;
-  max-height:0!important;
-  min-height:0!important;
-  overflow:hidden!important;
-  flex-direction:column!important;
-  align-items:stretch!important;
-  justify-content:flex-start!important;
-  gap:0!important;
-  padding:0!important;
-  margin:0!important;
-  border-width:0!important;
-  opacity:0!important;
-  visibility:hidden!important;
-  pointer-events:none!important;
-  transform:translateY(-9px) scale(.985)!important;
-  transform-origin:top right!important;
-  transition:
-    opacity .24s cubic-bezier(.2,.7,.25,1),
-    transform .24s cubic-bezier(.2,.7,.25,1),
-    max-height .28s cubic-bezier(.2,.7,.25,1),
-    padding .24s ease,
-    gap .24s ease,
-    border-width .24s ease,
-    visibility 0s linear .28s!important;
-  box-sizing:border-box!important;
-  background:#0759a8!important;
-  color:#fff!important;
-  border-color:#cbdce8!important;
-  border-style:solid!important;
-  border-radius:10px!important;
-  box-shadow:0 14px 34px rgba(10,39,61,.25)!important;
-  overscroll-behavior:contain;
-}
-html body header.header #links.open {
-  max-height:min(76vh,700px)!important;
-  overflow-x:hidden!important;
-  overflow-y:auto!important;
-  gap:7px!important;
-  padding:12px!important;
-  border-width:1px!important;
-  opacity:1!important;
-  visibility:visible!important;
-  pointer-events:auto!important;
-  transform:translateY(0) scale(1)!important;
-  transition-delay:0s,0s,0s,0s,0s,0s,0s!important;
-}
-@media(max-width:760px){
-  html body header.header #links,
-  html body header.header #links:not(.open),
-  html body header.header #links.open {
-    left:0!important;
-    right:0!important;
-    width:100%!important;
-    max-width:100%!important;
-    top:calc(100% + 6px)!important;
-    transform-origin:top center!important;
-  }
-  html body header.header #links.open {
-    max-height:calc(100vh - 145px)!important;
-    max-height:calc(100dvh - 145px)!important;
-  }
-}
-/* Preserve the existing touch-friendly navigation rows and submenu presentation. */
-html body header.header #links.open>.nav-dropdown,
-html body header.header #links.open>.nav-direct-link {width:100%!important;flex:0 0 auto!important;}
-html body header.header #links.open>.nav-dropdown>summary,
-html body header.header #links.open>.nav-direct-link {min-height:48px!important;}
-html body header.header #links.open>.nav-dropdown[open]>.nav-dropdown-menu {
-  display:block!important;position:static!important;width:100%!important;max-width:100%!important;
-  max-height:none!important;overflow:visible!important;margin:5px 0 8px!important;
-}
-@media(prefers-reduced-motion:reduce){
-  html body header.header #links,
-  html body header.header #links:not(.open),
-  html body header.header #links.open {
-    transition:none!important;transform:none!important;
-  }
-}
-</style>
-
