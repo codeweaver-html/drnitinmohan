@@ -7351,5 +7351,46 @@ header.header #links a:focus-visible{outline:3px solid #ffc400!important;outline
 })();
 </script>
 
+
+
+<style id="kg-mobile-menu-overlays-search-final">
+/* On phones, open the hamburger over the search row instead of below it.
+   The header keeps its normal height; the menu is an overlay, not page content. */
+@media (max-width:760px) {
+  .header .nav {
+    position:relative!important;
+    overflow:visible!important;
+  }
+  .header .site-search {
+    position:relative!important;
+    z-index:1!important;
+  }
+  .header #links,
+  .header #links.open {
+    position:absolute!important;
+    top:56px!important;
+    left:0!important;
+    right:0!important;
+    bottom:auto!important;
+    width:100%!important;
+    max-width:100%!important;
+    margin:0!important;
+    z-index:15001!important;
+    box-sizing:border-box!important;
+  }
+  .header #links.open {
+    display:flex!important;
+    max-height:calc(100dvh - 72px)!important;
+    overflow-x:hidden!important;
+    overflow-y:auto!important;
+    overscroll-behavior:contain!important;
+  }
+}
+@media (max-width:380px) {
+  .header #links,
+  .header #links.open { top:52px!important; }
+}
+</style>
+
 </body>
 </html>
