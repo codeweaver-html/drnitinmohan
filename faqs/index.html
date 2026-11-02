@@ -4846,6 +4846,16 @@ header.header.kg-cosmos-host,
 <script id="kg-faq-route-animation">
 (()=>{const activate=()=>{const page=document.querySelector('#secondary-page-content .faq-page');if(!page)return;page.classList.remove('faq-motion-ready');const targets=[page.querySelector('.faq-page-intro'),...page.querySelectorAll('.faq-topic')].filter(Boolean);targets.forEach(el=>el.classList.remove('faq-in'));requestAnimationFrame(()=>{page.classList.add('faq-motion-ready');targets.forEach((el,i)=>{const show=()=>el.classList.add('faq-in');if('IntersectionObserver'in window){const io=new IntersectionObserver(entries=>entries.forEach(entry=>{if(entry.isIntersecting){show();io.unobserve(el)}}),{threshold:.08});io.observe(el)}else show()})})};document.addEventListener('DOMContentLoaded',activate);window.addEventListener('hashchange',()=>setTimeout(activate,30));activate()})();
 </script>
+
+<style id="kg-faq-visible-failsafe-v2">
+#secondary-page-content:has(>.faq-page[data-prerendered-faqs="true"]){display:block!important;visibility:visible!important;opacity:1!important;min-height:50vh!important}
+#secondary-page-content>.faq-page[data-prerendered-faqs="true"]{display:block!important;visibility:visible!important;opacity:1!important;position:relative!important;height:auto!important;max-height:none!important;overflow:visible!important;color:#243746!important}
+.faq-page[data-prerendered-faqs="true"] .faq-topic,.faq-page[data-prerendered-faqs="true"] .faq-page-intro{display:block!important;visibility:visible!important;opacity:1!important}
+.faq-page[data-prerendered-faqs="true"] .faq-item{display:block!important;visibility:visible!important}
+</style>
+<script id="kg-faq-content-failsafe-v2">
+(function(){function ensureFaq(){var mount=document.getElementById('secondary-page-content');if(!mount)return;var path=location.pathname.replace(/\/+$/,'');if(path!=='/faqs'&&path!=='/faq')return;var faq=mount.querySelector('.faq-page[data-prerendered-faqs="true"]');if(!faq){var tpl=document.getElementById('secondary-templates');var source=tpl&&tpl.content&&tpl.content.querySelector('[data-page="faqs"] .faq-page');if(source){mount.innerHTML='';mount.appendChild(source.cloneNode(true));faq=mount.querySelector('.faq-page');if(faq)faq.setAttribute('data-prerendered-faqs','true');}}if(faq){document.title='Frequently Asked Questions | KidsGastro';mount.style.display='block';mount.style.visibility='visible';mount.style.opacity='1';faq.style.display='block';faq.style.visibility='visible';faq.style.opacity='1';}}if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',ensureFaq);else ensureFaq();window.addEventListener('load',ensureFaq);})();
+</script>
 </body></html>
 <style id="two-phrase-rotation-and-underline-fix">
 .hero-typing-headline,.hero-typing-text,.hero-typing-prefix{ text-decoration:none!important; }
