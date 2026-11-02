@@ -151,37 +151,118 @@ select{cursor:pointer}
 .time-card .time-pickers select{min-width:0;padding:10px 8px}
 @media(max-width:480px){.time-card .time-pickers{grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}.time-card .time-pickers select{font-size:.88rem;padding:10px 5px}}
 
+
+/* Brighter, more playful control-panel styling */
+body{background:radial-gradient(circle at 8% 8%,#d9f4ff 0,transparent 28%),radial-gradient(circle at 94% 18%,#ffe4f1 0,transparent 25%),linear-gradient(135deg,#f2f7ff,#fff8ef 52%,#effcf7)}
+.wrap{width:min(980px,calc(100% - 28px))}
+header{background:linear-gradient(115deg,#0759a8 0%,#5946b8 48%,#087f91 100%);box-shadow:0 14px 32px #284b8b25}
+header:before{content:"✦  ✧  ✦";position:absolute;right:22px;bottom:18px;color:#ffffff85;font-size:1.4rem;letter-spacing:12px}
+main{box-shadow:0 20px 55px #253b6018}
+.section{padding:16px;border-radius:16px;background:linear-gradient(135deg,#ffffff,#fbfdff);border:1px solid #e4ebf7}
+.section-head{margin-bottom:15px}.num{background:linear-gradient(135deg,#dff2ff,#eee5ff);color:#5543a8;border:1px solid #d7dfff}
+h2{color:#183d70}
+.subpanel{background:linear-gradient(135deg,#f8fbff,#fff9fd);border-color:#dce6f5}
+.control,.option,.announcement-setting{box-shadow:0 4px 14px #29476b0b;transition:transform .18s ease,box-shadow .18s ease}
+.control:hover,.option:hover,.announcement-setting:hover{transform:translateY(-2px);box-shadow:0 8px 20px #29476b14}
+.group-title{color:#4b43a5}
+.appointment-settings{background:linear-gradient(135deg,#f2f8ff,#f0fffb)!important}
+.announcement-setting:nth-child(1){background:linear-gradient(145deg,#fff9e8,#fff)!important;border-color:#f3d98c}
+.announcement-setting:nth-child(2){background:linear-gradient(145deg,#fff0f7,#fff)!important;border-color:#efc5df}
+button.primary{background:linear-gradient(110deg,#0759a8,#6549bd);box-shadow:0 6px 16px #0759a833}
+button.primary:hover{filter:brightness(1.08);transform:translateY(-1px)}
+input,textarea,select{border-color:#cbd8ee}input:focus,textarea:focus,select:focus{outline:3px solid #7258d426;border-color:#7258d4}
+.time-card{background:linear-gradient(145deg,#f0f8ff,#fbf3ff);border:1px solid #d8d7f4;border-radius:15px;padding:16px}
+.time-card>label{color:#493f9a;font-size:.96rem}
+.clock-picker{display:grid;grid-template-columns:minmax(0,250px) minmax(120px,1fr);gap:16px;align-items:center;padding:14px;border-radius:13px;background:linear-gradient(135deg,#eaf5ff,#f6edff);border:1px solid #d9def8}
+.clock-face{width:min(100%,230px);aspect-ratio:1;border-radius:50%;position:relative;margin:auto;background:radial-gradient(circle,#fff 0 55%,#e8e8ff 56% 58%,#d8e9ff 59% 100%);border:7px solid #fff;box-shadow:0 7px 22px #4053a32b,inset 0 0 0 2px #cbd5f5;touch-action:manipulation}
+.clock-face:before{content:"";position:absolute;width:4px;height:34%;left:calc(50% - 2px);bottom:50%;border-radius:5px;background:linear-gradient(#7655cf,#4e48a8);transform-origin:50% 100%;transform:rotate(var(--hand-angle,0deg));transition:transform .28s cubic-bezier(.2,.8,.2,1);z-index:2}
+.clock-face:after{content:"";position:absolute;width:12px;height:12px;border-radius:50%;background:#f39a43;border:3px solid white;left:calc(50% - 6px);top:calc(50% - 6px);z-index:3}
+.clock-number{position:absolute;left:50%;top:50%;width:34px;height:34px;margin:-17px;border:0;border-radius:50%;background:transparent;color:#33466d;font-weight:800;cursor:pointer;z-index:4;display:grid;place-items:center}
+.clock-number.selected{background:#6953c8;color:#fff;box-shadow:0 3px 10px #6953c85c}
+.clock-number:hover{background:#d9d1ff;color:#46349a}
+.clock-side{display:grid;gap:9px;align-content:center}
+.clock-stage{font-size:.8rem;font-weight:800;color:#5848a9;text-transform:uppercase;letter-spacing:.07em}
+.clock-readout{font-size:1.7rem;font-weight:850;color:#173e70;font-variant-numeric:tabular-nums}
+.clock-actions{display:flex;gap:7px;flex-wrap:wrap}
+.clock-actions button{border:1px solid #c8c9ef;border-radius:8px;padding:8px 10px;background:#fff;color:#51449a;font-weight:750;cursor:pointer}
+.clock-actions button.active{background:#5d4bb7;color:#fff;border-color:#5d4bb7}
+.clock-help{font-size:.78rem;color:#61708b;margin:0}
+.use-current-time{display:inline-flex;align-items:center;gap:7px;margin:5px 0 2px;padding:9px 13px;border:1px solid #b8a9f4;border-radius:999px;background:linear-gradient(100deg,#eee9ff,#e4f7ff);color:#493f9a;font-weight:800;font-size:.82rem;cursor:pointer;box-shadow:0 3px 10px #6650a31a}
+.use-current-time:hover{transform:translateY(-1px);box-shadow:0 6px 14px #6650a32b}
+.use-current-time:focus-visible{outline:3px solid #8c7ae6;outline-offset:2px}
+.previous-config-actions{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.previous-load-state{font-size:.82rem;color:#64748b;font-weight:650}
+.previous-load-state.success{color:#16804a}
+.previous-load-state.error{color:#b42318}
+.previous-config-panel{background:linear-gradient(115deg,#f1f7ff,#f8f2ff 55%,#effbf8);border:1px solid #d9def8}
+
+@media(max-width:560px){.section{padding:12px}.clock-picker{grid-template-columns:1fr;gap:10px}.clock-face{width:min(100%,220px)}.clock-side{text-align:center}.clock-actions{justify-content:center}}
+
+
+/* Make the previous-configuration upload action visibly look and behave like a primary button. */
+.previous-config-actions .upload-config-button{
+  display:inline-flex;align-items:center;justify-content:center;gap:9px;
+  min-height:48px;padding:13px 22px;border:0;border-radius:12px;
+  background:linear-gradient(135deg,#1769d2 0%,#6941c6 100%);
+  color:#fff;font-size:.96rem;font-weight:800;letter-spacing:.01em;
+  box-shadow:0 5px 14px rgba(45,82,170,.24);
+  cursor:pointer;transition:transform .18s ease,box-shadow .18s ease,filter .18s ease;
+}
+.previous-config-actions .upload-config-button:hover{
+  transform:translateY(-2px);box-shadow:0 8px 19px rgba(45,82,170,.3);filter:brightness(1.06);
+}
+.previous-config-actions .upload-config-button:focus-visible{
+  outline:3px solid #f5bd36;outline-offset:3px;
+}
+.previous-config-actions .upload-config-button:active{transform:translateY(0)}
+
+
+/* Consistent status colors for setting selectors: enable=green, disable=red, continue=blue. */
+select.setting-state-enable{
+  color:#176b35!important;background-color:#e7f7ec!important;
+  border-color:#35a45b!important;font-weight:750;
+}
+select.setting-state-disable{
+  color:#a51f2b!important;background-color:#fff0f0!important;
+  border-color:#dc5963!important;font-weight:750;
+}
+select.setting-state-unchanged{
+  color:#1458a6!important;background-color:#edf5ff!important;
+  border-color:#5b9be6!important;font-weight:750;
+}
+
 </style>
 </head>
 <body>
 <div class="wrap">
 <header>
   <h1>Website Change Request</h1>
-  <p><a class="back" href="index.html">← Return to website</a></p>
+  <p><a class="back" href="https://drnitinmohan.com/">← Return to website</a></p>
 </header>
 <main>
 <form id="requestForm">
-    <section class="section" style="margin-top:0">
-      <div class="field">
-        <label for="previousJsonFile">Upload previous JSON</label>
-        <input id="previousJsonFile" type="file" accept=".json,application/json" aria-label="Upload previous JSON">
+    <section class="section previous-config-panel" style="margin-top:0">
+      <div class="section-head"><span class="num">↻</span><h2>Previous saved configuration</h2></div>
+      <div class="previous-config-actions">
+        <button class="primary upload-config-button" type="button" id="uploadPreviousJson"><span aria-hidden="true">↑</span> Upload previous JSON file</button>
+        <input type="file" id="previousJsonFile" accept=".json,application/json" hidden>
+        <span id="previousLoadState" class="previous-load-state" role="status" aria-live="polite"></span>
       </div>
     </section>
     <section class="section">
       <div class="section-head"><span class="num">1</span><h2>Website settings</h2></div>
-      <p class="hint">Change only the items you select. Everything else stays as it is.</p>
 
       <div class="subpanel appointment-settings">
         <h3 class="group-title">Appointment booking</h3>
         <div class="control appointment-parent-control">
           <label for="appointment">Appointment button</label>
-          <select id="appointment"><option value="unchanged" selected>Continue last setting</option><option value="enable">Enable</option><option value="disable">Disable booking (button stays visible)</option></select>
+          <select id="appointment"><option value="unchanged" selected>Continue last setting</option><option value="enable">Enable</option><option value="disable">Disable booking (show full button in black &amp; white; not clickable)</option></select>
           <div class="previous-meta" id="appointmentPrevious">Previous setting: not loaded</div>
         </div>
         <div class="booking-suboptions" id="bookingSuboptions">
           <div class="booking-suboptions-heading">
             <strong>Options inside the appointment menu</strong>
-            <span class="hint">These options are available only when appointment booking is enabled.</span>
+            
           </div>
           <div class="control-grid">
             <div class="control booking-child-control"><label for="whatsappBooking">WhatsApp booking</label><select id="whatsappBooking"><option value="unchanged" selected>Continue last setting</option><option value="enable">Enable</option><option value="disable">Disable</option></select><div class="previous-meta" id="whatsappBookingPrevious">Previous setting: not loaded</div></div>
@@ -193,7 +274,7 @@ select{cursor:pointer}
 
       <div class="subpanel">
         <h3 class="group-title">Announcement marquee</h3>
-        <div class="control" style="margin-bottom:12px"><label for="announcementAction">What would you like to do?</label><select id="announcementAction"><option value="unchanged">No change to announcement</option><option value="edit">Edit the main strip</option><option value="add">Add a second strip below it</option><option value="restore_default">Restore the website default main strip</option></select><div class="previous-meta" id="announcementActionPrevious">Previous setting: not loaded</div><p class="hint">“Restore the website default” resets the main strip to the original default text, colours and speed, and removes any additional strip.</p></div>
+        <div class="control" style="margin-bottom:12px"><label for="announcementAction">What would you like to do?</label><select id="announcementAction"><option value="unchanged">No change to announcement</option><option value="edit">Edit the main strip</option><option value="add">Add a second strip below it</option><option value="restore_default">Restore the website default main strip</option></select><div class="previous-meta" id="announcementActionPrevious">Previous setting: not loaded</div></div>
         <div class="conditional" id="announcementPanel" hidden>
           
           </div>
@@ -213,7 +294,6 @@ select{cursor:pointer}
 <div class="field">
                 <label for="announcement">Additional strip text</label>
                 <textarea id="announcement" placeholder="Type the exact announcement to display" spellcheck="true" wrap="off"></textarea>
-                <p class="hint">Exact spacing is retained in the JSON. Repeated spaces and line breaks are marked for preformatted rendering on the website.</p>
               </div>
               
               <div class="field" id="customTextColorField"><label for="customAnnouncementTextColor">Additional strip text colour</label><div class="color-control"><input id="customAnnouncementTextColor" type="color" value="#0759a8"><code id="customColorValue" hidden></code></div></div>
@@ -229,7 +309,6 @@ select{cursor:pointer}
       <div class="subpanel">
         <h3 class="group-title">Photo of the Month</h3>
         <div class="control" style="margin-bottom:12px"><label for="photoAction">What would you like to do?</label><select id="photoAction"><option value="unchanged" selected>Continue last setting</option><option value="update">Update Photo of the Month</option><option value="disable">Disable Photo of the Month</option></select><div class="previous-meta" id="photoActionPrevious">Previous setting: not loaded</div></div>
-        <p class="hint">The default keeps the currently published photo unchanged. Choose Update to upload a replacement, or Disable to stop displaying the Photo of the Month.</p>
         <div class="conditional" id="photoPanel" hidden>
           <div class="field-grid">
             <div class="field full">
@@ -241,7 +320,6 @@ select{cursor:pointer}
               <button class="secondary" type="button" id="removePhotoFile" hidden style="margin-top:8px">× Remove selected image</button>
               <label for="photoDestination">Future image folder</label>
               <input id="photoDestination" type="text" value="configuration/" readonly>
-              <p class="hint">After creating and installing change-request.json, copy this image into the configuration folder in your website clone. The website checks automatically and displays it above “Find the clinic”, together with the caption entered below.</p>
             </div>
             <div class="field full"><label for="photoCaption">Photo caption</label><textarea id="photoCaption" maxlength="400" placeholder="Write a short caption for the photo"></textarea></div>
           </div>
@@ -250,7 +328,6 @@ select{cursor:pointer}
     </section>
     <section class="section">
       <div class="section-head"><span class="num">2</span><h2>When should each change apply?</h2></div>
-      <p class="hint">Choose Permanent or Temporary separately for every change you selected. Temporary changes can share a schedule or use different schedules. You may set a start time in the past to activate a change immediately; its end time must be in the future.</p>
       <div id="changeScheduleEditor"></div>
     </section>
     <section class="section">
@@ -264,6 +341,19 @@ select{cursor:pointer}
 <script>
 (() => {
   const $ = id => document.getElementById(id);
+
+  const paintSettingSelect = select => {
+    if (!select || select.tagName !== 'SELECT') return;
+    select.classList.remove('setting-state-enable','setting-state-disable','setting-state-unchanged');
+    if (select.value === 'enable') select.classList.add('setting-state-enable');
+    else if (select.value === 'disable') select.classList.add('setting-state-disable');
+    else if (select.value === 'unchanged') select.classList.add('setting-state-unchanged');
+  };
+  document.querySelectorAll('select').forEach(select => {
+    paintSettingSelect(select);
+    select.addEventListener('change', () => paintSettingSelect(select));
+  });
+
   const form = $('requestForm');
   let selectedPhotoFile = null;
   let selectedPhotoPreviewUrl = null;
@@ -349,23 +439,92 @@ select{cursor:pointer}
     previousFileName=name;
     updatePreviousLabels();
   }
-  $('previousJsonFile').addEventListener('change', async e=>{
-    const file=e.target.files?.[0];
-    if(!file) return;
+  async function loadLatestSavedConfiguration({quiet=false}={}) {
+    const state=$('previousLoadState');
+    const button=$('loadPreviousJson');
+    if (button) button.disabled=true;
+    if (state) { state.className='previous-load-state'; state.textContent='Looking for saved settings…'; }
     try {
-      const obj=JSON.parse(await file.text());
-      loadPreviousJsonObject(obj,file.name);
-      $('status').classList.remove('status-error');
-      $('status').textContent='Previous JSON loaded.';
+      // Try page-relative paths first (works on GitHub Pages project sites),
+      // then the domain-root path. Do not rely on window.location.origin when
+      // this HTML is opened with file://.
+      const candidates=[];
+      try { candidates.push(new URL('configuration/change-request.json', document.baseURI).href); } catch(e) {}
+      try { candidates.push(new URL('./configuration/change-request.json', window.location.href).href); } catch(e) {}
+      try { if (window.location.protocol !== 'file:') candidates.push(new URL('/configuration/change-request.json', window.location.href).href); } catch(e) {}
+      const urls=[...new Set(candidates)];
+      if (!urls.length) throw new Error('This page is opened locally, so the website folder cannot be fetched. Use “Upload previous JSON” and select change-request.json from your computer.');
+      let lastError='File not found.';
+      for (const url of urls) {
+        try {
+          const response=await fetch(url,{cache:'no-store',credentials:'same-origin',headers:{'Accept':'application/json'}});
+          if (!response.ok) { lastError=`${url} returned ${response.status} ${response.statusText}`; continue; }
+          const raw=(await response.text()).replace(/^\uFEFF/,'').trim();
+          let obj;
+          try { obj=JSON.parse(raw); }
+          catch(e) { lastError=`${url} was found, but its contents are not valid JSON.`; continue; }
+          loadPreviousJsonObject(obj,url);
+          if (state) { state.className='previous-load-state success'; state.textContent=`Loaded saved configuration from ${url}`; }
+          $('status').classList.remove('status-error');
+          $('status').textContent='Previous saved configuration loaded successfully.';
+          return true;
+        } catch(e) { lastError=e.message || String(e); }
+      }
+      throw new Error("Saved settings not found. Upload change-request.json instead.");
     } catch(err) {
-      previousConfig=null;
-      previousFileName='';
-      updatePreviousLabels();
-      $('status').classList.add('status-error');
-      $('status').textContent=`Could not read the selected JSON: ${err.message}`;
-      e.target.value='';
+      if (state) { state.className='previous-load-state error'; state.textContent=err.message; }
+      if (!quiet) {
+        $('status').classList.add('status-error');
+        $('status').textContent=`Could not load the saved configuration: ${err.message}`;
+      }
+      try { updatePreviousLabels(); } catch(e) {}
+      return false;
+    } finally {
+      if (button) button.disabled=false;
     }
+  }
+  $('uploadPreviousJson').addEventListener('click',()=>{
+    const picker=$('previousJsonFile');
+    picker.value='';
+    picker.click();
   });
+  $('previousJsonFile').addEventListener('change',event=>{
+    const file=event.target.files && event.target.files[0];
+    if(!file) return;
+    const state=$('previousLoadState');
+    const reader=new FileReader();
+    reader.onerror=()=>{
+      const message='The browser could not read this file. Check file permissions and try selecting it again.';
+      if(state){state.className='previous-load-state error';state.textContent=message;}
+      $('status').classList.add('status-error');
+      $('status').textContent=message;
+    };
+    reader.onload=()=>{
+      try {
+        const raw=String(reader.result || '').replace(/^\uFEFF/,'').trim();
+        if(!raw) throw new Error('The selected file is empty.');
+        let obj;
+        try { obj=JSON.parse(raw); }
+        catch(e) { throw new Error('The selected file is not valid JSON. Choose the generated change-request.json file, not the HTML page.'); }
+        if(!obj || typeof obj!=='object' || Array.isArray(obj)) throw new Error('The JSON must contain a configuration object at its top level.');
+        previousConfig=obj;
+        previousFileName=file.name;
+        try { updatePreviousLabels(); } catch(labelError) {}
+        if(state){state.className='previous-load-state success';state.textContent=`Successfully loaded ${file.name} (${Math.round(file.size/1024)} KB).`;}
+        $('status').classList.remove('status-error');
+        $('status').textContent=`Previous configuration loaded from ${file.name}. New changes will use it as the baseline.`;
+      } catch(err) {
+        if(state){state.className='previous-load-state error';state.textContent=err.message;}
+        $('status').classList.add('status-error');
+        $('status').textContent=`Could not load ${file.name}: ${err.message}`;
+      }
+    };
+    reader.readAsText(file);
+    event.target.value='';
+  });
+  // Try the hosted configuration automatically. If this page is opened locally
+  // or the server does not expose the JSON path, the upload control still works.
+
   $('photoFile').addEventListener('change', () => {
     selectedPhotoFile = $('photoFile').files && $('photoFile').files[0] ? $('photoFile').files[0] : null;
     $('photoFileInfo').textContent = selectedPhotoFile
@@ -424,7 +583,7 @@ select{cursor:pointer}
       const st=scheduleState.settings[f.key];
       if(!st.groupId||!scheduleState.groups.some(g=>g.id===st.groupId))st.groupId=scheduleState.groups.length?scheduleState.groups[0].id:makeGroup();
     });
-    if(!changed.length){editor.innerHTML='<p class="hint">Select at least one website change above to choose when it should apply.</p>';return;}
+    if(!changed.length){editor.innerHTML='';return;}
     changed.forEach(f=>{
       const st=scheduleState.settings[f.key],card=document.createElement('div');
       card.className='subpanel change-schedule-card';
@@ -462,16 +621,63 @@ select{cursor:pointer}
         const ampm=hour24===null?'AM':(hour24>=12?'PM':'AM');
         const dateLabel=document.createElement('span');dateLabel.className='hint';dateLabel.textContent='1. Select a date from the calendar';
         const dateInput=document.createElement('input');dateInput.type='date';dateInput.value=dateValue;dateInput.dataset.scheduleGroup=group.id;dateInput.dataset.edge=edge;dateInput.dataset.part='date';dateInput.setAttribute('aria-label',label.textContent+' date');
+        const currentButton=edge==='start'?document.createElement('button'):null;
+        if(currentButton){
+          currentButton.type='button';currentButton.className='use-current-time';currentButton.textContent='◷ Use current date & time';
+          currentButton.setAttribute('aria-label','Automatically fill the current date and time as the temporary start');
+          currentButton.addEventListener('click',()=>{
+            const now=new Date();
+            const yyyy=now.getFullYear(),mm=String(now.getMonth()+1).padStart(2,'0'),dd=String(now.getDate()).padStart(2,'0');
+            const h24=now.getHours(),h12=String(h24%12||12).padStart(2,'0');
+            dateInput.value=`${yyyy}-${mm}-${dd}`;
+            hourSelect.value=h12;minuteSelect.value=String(now.getMinutes()).padStart(2,'0');ampmSelect.value=h24>=12?'PM':'AM';
+            [dateInput,hourSelect,minuteSelect,ampmSelect].forEach(el=>el.dispatchEvent(new Event('change',{bubbles:true})));
+            clockStage='hour';drawDial(Array.from({length:12},(_,n)=>String(n+1).padStart(2,'0')));
+          });
+        }
         const timeLabel=document.createElement('span');timeLabel.className='hint';timeLabel.textContent='2. Select the time using the clock controls';
         const timeRow=document.createElement('div');timeRow.className='time-pickers';
         const makeSelect=(part,caption,values,selected)=>{const box=document.createElement('div');const cap=document.createElement('label');cap.textContent=caption;const sel=document.createElement('select');sel.dataset.scheduleGroup=group.id;sel.dataset.edge=edge;sel.dataset.part=part;sel.setAttribute('aria-label',label.textContent+' '+caption.toLowerCase());const blank=document.createElement('option');blank.value='';blank.textContent=part==='hour'?'Hour':part==='minute'?'Minute':'AM/PM';sel.appendChild(blank);values.forEach(v=>{const opt=document.createElement('option');opt.value=v;opt.textContent=v;sel.appendChild(opt);});sel.value=selected;box.append(cap,sel);return box;};
         const hours=Array.from({length:12},(_,i)=>String(i+1).padStart(2,'0'));
-        const minutes=Array.from({length:12},(_,i)=>String(i*5).padStart(2,'0'));
+        const minutes=Array.from({length:60},(_,i)=>String(i).padStart(2,'0'));
         const hourSelect=makeSelect('hour','Hour',hours,hour12);
         const minuteSelect=makeSelect('minute','Minute',minutes,minuteValue);
         const ampmSelect=makeSelect('ampm','AM / PM',['AM','PM'],match?ampm:'AM');
         timeRow.append(hourSelect,minuteSelect,ampmSelect);
-        wrap.append(label,dateLabel,dateInput,timeLabel,timeRow);grid.appendChild(wrap);
+        timeRow.style.display='none';
+        const picker=document.createElement('div');picker.className='clock-picker';
+        const face=document.createElement('div');face.className='clock-face';face.setAttribute('role','group');face.setAttribute('aria-label','Animated clock time picker');
+        const side=document.createElement('div');side.className='clock-side';
+        const stage=document.createElement('div');stage.className='clock-stage';
+        const readout=document.createElement('div');readout.className='clock-readout';
+        const actions=document.createElement('div');actions.className='clock-actions';
+        const hourMode=document.createElement('button');hourMode.type='button';hourMode.textContent='Hour';hourMode.className='active';
+        const minuteMode=document.createElement('button');minuteMode.type='button';minuteMode.textContent='Minutes';
+        const ampmMode=document.createElement('button');ampmMode.type='button';ampmMode.textContent=match?ampm:'AM';
+        const help=document.createElement('p');help.className='clock-help';
+        actions.append(hourMode,minuteMode,ampmMode);
+        side.append(stage,readout,actions,help);picker.append(face,side);
+        let clockStage='hour';
+        const updateClock=()=>{
+          const h=hourSelect.value||'12',m=minuteSelect.value||'00',ap=ampmSelect.value||'AM';
+          readout.textContent=`${h}:${m} ${ap}`;
+          stage.textContent=clockStage==='hour'?'Choose an hour':clockStage==='minute'?'Choose minutes':'Choose AM or PM';
+          help.textContent=clockStage==='hour'?'Tap a number on the dial, then choose minutes.':'Tap a number on the dial to set the time.';
+          hourMode.classList.toggle('active',clockStage==='hour');minuteMode.classList.toggle('active',clockStage==='minute');ampmMode.textContent=ap;
+          const angle=clockStage==='hour'?(Number(h)%12)*30:Number(m)*6;
+          face.style.setProperty('--hand-angle',`${angle}deg`);
+          face.querySelectorAll('.clock-number').forEach(b=>b.classList.toggle('selected',b.dataset.value===(clockStage==='hour'?h:m)));
+        };
+        const drawDial=(values)=>{
+          face.replaceChildren();
+          values.forEach((v,i)=>{const b=document.createElement('button');b.type='button';b.className='clock-number';b.textContent=v;b.dataset.value=v;b.setAttribute('aria-label',clockStage==='hour'?`Hour ${v}`:`Minute ${v}`);const a=(i*30-90)*Math.PI/180;const radius=clockStage==='hour'?39:39;b.style.left=`${50+radius*Math.cos(a)}%`;b.style.top=`${50+radius*Math.sin(a)}%`;b.style.margin='-17px';b.addEventListener('click',()=>{if(clockStage==='hour'){hourSelect.value=v;hourSelect.dispatchEvent(new Event('change',{bubbles:true}));clockStage='minute';drawDial(Array.from({length:12},(_,n)=>String(n*5).padStart(2,'0')));}else{minuteSelect.value=v;minuteSelect.dispatchEvent(new Event('change',{bubbles:true}));}updateClock();});face.appendChild(b);});updateClock();
+        };
+        hourMode.addEventListener('click',()=>{clockStage='hour';drawDial(Array.from({length:12},(_,n)=>String(n+1).padStart(2,'0')));});
+        minuteMode.addEventListener('click',()=>{clockStage='minute';drawDial(Array.from({length:12},(_,n)=>String(n*5).padStart(2,'0')));});
+        ampmMode.addEventListener('click',()=>{ampmSelect.value=ampmSelect.value==='AM'?'PM':'AM';ampmSelect.dispatchEvent(new Event('change',{bubbles:true}));updateClock();});
+        [hourSelect,minuteSelect,ampmSelect].forEach(sel=>sel.addEventListener('change',updateClock));
+        drawDial(Array.from({length:12},(_,n)=>String(n+1).padStart(2,'0')));
+        wrap.append(label,dateLabel,dateInput);if(currentButton)wrap.appendChild(currentButton);wrap.append(timeLabel,picker);grid.appendChild(wrap);
       });
       panel.appendChild(grid);editor.appendChild(panel);
     });
@@ -844,9 +1050,88 @@ select{cursor:pointer}
       note:'Settings marked continue were carried forward from the loaded previous configuration where available.'
     };
 
+    // Publish the announcement configuration as a site-wide contract.
+    // The same JSON is intended for the homepage and every KidsGastro sub-site;
+    // consumers should not limit this setting to the root index page.
+    const effectiveAnnouncementMode = changes.announcementMode || previousConfig?.changes?.announcementMode || 'unchanged';
+    const effectiveMainText = details.mainStripText ?? details.defaultAnnouncementText ?? DEFAULT_ANNOUNCEMENT;
+    const effectiveAdditionalText = details.additionalStripText ?? '';
+    const effectiveAnnouncementEnabled = effectiveAnnouncementMode !== 'disable' &&
+      (effectiveAnnouncementMode !== 'unchanged' || !!(effectiveMainText || effectiveAdditionalText));
+    const effectiveAdditionalEnabled = effectiveAnnouncementEnabled &&
+      effectiveAnnouncementMode !== 'restore_default' &&
+      effectiveAnnouncementMode !== 'edit' &&
+      effectiveAdditionalText.length > 0;
+    const announcementSiteWide = {
+      enabled: effectiveAnnouncementEnabled,
+      scope: 'all-sites',
+      targets: { mainSite: true, subSites: true, match: 'all-kidsgastro-pages' },
+      renderOn: 'every-page',
+      mainStrip: {
+        enabled: effectiveAnnouncementEnabled,
+        text: effectiveMainText,
+        textColor: details.mainStripTextColor ?? details.announcementTextColors?.defaultStrip ?? '#0759a8',
+        backgroundColor: details.mainStripBackgroundColor ?? details.announcementBackgroundColors?.mainStrip ?? '#ffc400',
+        speedSeconds: details.announcementMarqueeSpeedsSeconds?.standardStrip ?? 18
+      },
+      additionalStrip: {
+        enabled: effectiveAdditionalEnabled,
+        text: effectiveAdditionalText,
+        textColor: details.announcementTextColors?.customStrip ?? '#0759a8',
+        backgroundColor: details.announcementBackgroundColors?.secondStrip ?? '#f3a6c8',
+        speedSeconds: details.announcementMarqueeSpeedsSeconds?.customStrip ?? 18
+      }
+    };
+    // Appointment-button presentation is explicit and site-wide. Disabling booking
+    // must NOT hide the button: keep its full layout visible, render it monochrome,
+    // and prevent navigation/click actions on every page.
+    const appointmentButtonEnabled = yes(changes.enableAppointmentButton)
+      ? true
+      : yes(changes.disableAppointmentButton)
+        ? false
+        : readPreviousState(previousConfig, 'appointmentButton').enabled !== false;
+    const appointmentButtonPresentation = {
+      enabled: appointmentButtonEnabled,
+      scope: 'all-sites',
+      targets: { mainSite: true, subSites: true, match: 'all-kidsgastro-pages' },
+      visible: true,
+      render: 'full',
+      clickable: appointmentButtonEnabled,
+      interaction: appointmentButtonEnabled ? 'active' : 'disabled',
+      disabled: !appointmentButtonEnabled,
+      style: appointmentButtonEnabled
+        ? { mode: 'site-default' }
+        : {
+            mode: 'monochrome',
+            background: '#ffffff',
+            color: '#111111',
+            border: '1px solid #111111',
+            filter: 'grayscale(1)',
+            opacity: 1
+          },
+      accessibility: {
+        ariaDisabled: !appointmentButtonEnabled,
+        keepVisible: true,
+        announceDisabledState: !appointmentButtonEnabled
+      }
+    };
+    details.appointmentButtonPresentation = appointmentButtonPresentation;
+
+    // Keep normalized site-wide settings both at the top level and in details so
+    // every sub-site can consume the same configuration.
+    details.announcementSiteWide = announcementSiteWide;
+
     const data = {
-      schemaVersion: 2,
-      configContract: 'kidsgastro-manual-settings-v2',
+      schemaVersion: 3,
+      configContract: 'kidsgastro-manual-settings-v3',
+      siteScope: {
+        applyTo: 'all-sites',
+        includeMainSite: true,
+        includeSubSites: true,
+        renderAnnouncementOnEveryPage: true
+      },
+      announcementSiteWide,
+      appointmentButtonPresentation,
       formTitle: 'KidsGastro Website Change Request', doctor: 'Dr. Nitin Mohan',
       createdAt: new Date().toISOString(), timezone: 'Asia/Kolkata',
       targetFile: 'configuration/change-request.json',
