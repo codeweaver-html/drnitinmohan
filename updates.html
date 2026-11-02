@@ -273,8 +273,8 @@ select.setting-state-unchanged{
       </div>
 
       <div class="subpanel">
-        <h3 class="group-title">Announcement marquee</h3>
-        <div class="control" style="margin-bottom:12px"><label for="announcementAction">What would you like to do?</label><select id="announcementAction"><option value="unchanged">No change to announcement</option><option value="edit">Edit the main strip</option><option value="add">Add a second strip below it</option><option value="restore_default">Restore the website default main strip</option></select><div class="previous-meta" id="announcementActionPrevious">Previous setting: not loaded</div></div>
+        <h3 class="group-title">Announcement marquee — both strips, every KidsGastro page</h3>
+        <p class="hint">Any main-strip or additional-strip change is exported for the main website and every sub-website. Both strips share the same temporary or permanent schedule, so they switch together and stay visually consistent across all pages.</p>\n         <div class="control" style="margin-bottom:12px"><label for="announcementAction">What would you like to do?</label><select id="announcementAction"><option value="unchanged">No change to announcement</option><option value="edit">Edit the main strip</option><option value="add">Add a second strip below it</option><option value="restore_default">Restore the website default main strip</option></select><div class="previous-meta" id="announcementActionPrevious">Previous setting: not loaded</div></div>
         <div class="conditional" id="announcementPanel" hidden>
           
           </div>
@@ -1041,8 +1041,40 @@ select.setting-state-unchanged{
     const allDurations = Object.values(mergedScheduleSettings).map(x=>x.duration);
     const mergedDuration = allDurations.length && allDurations.every(x=>x==='temporary')?'temporary':
       allDurations.length && allDurations.every(x=>x==='permanent')?'permanent':allDurations.length?'mixed':'permanent';
-    const mergedPeriods = finalGroups.map(g=>({startDateTime:g.startDateTime,endDateTime:g.endDateTime,settings:(g.settings||[]).filter(k=>mergedScheduleSettings[k]?.duration==='temporary')}));
-    const changeSchedulesMerged = {settings:mergedScheduleSettings,groups:finalGroups,activateTemporary:true};
+    // Treat the two announcement strips as one coordinated site-wide feature.
+    // Keep the legacy announcementMarquee key for existing consumers, and also
+    // emit explicit per-strip schedule aliases so every page can apply the same
+    // temporary/permanent timing to BOTH strips.
+    const announcementSchedule = mergedScheduleSettings.announcementMarquee ||
+      {duration:'permanent',scheduleGroupId:null};
+    mergedScheduleSettings.announcementMarquee = {...announcementSchedule};
+    mergedScheduleSettings.mainAnnouncementStrip = {...announcementSchedule};
+    mergedScheduleSettings.additionalAnnouncementStrip = {...announcementSchedule};
+    finalGroups.forEach(group=>{
+      const settings = new Set(group.settings || []);
+      if (settings.has('announcementMarquee')) {
+        settings.add('mainAnnouncementStrip');
+        settings.add('additionalAnnouncementStrip');
+      }
+      group.settings = [...settings];
+    });
+    const mergedPeriods = finalGroups.map(g=>({
+      startDateTime:g.startDateTime,
+      endDateTime:g.endDateTime,
+      settings:(g.settings||[]).filter(k=>mergedScheduleSettings[k]?.duration==='temporary')
+    }));
+    const changeSchedulesMerged = {
+      settings:mergedScheduleSettings,
+      groups:finalGroups,
+      activateTemporary:true,
+      announcementStrips:{
+        coordinated:true,
+        scope:'all-sites',
+        targets:{mainSite:true,subSites:true,match:'all-kidsgastro-pages'},
+        shareSchedule:true,
+        settings:['announcementMarquee','mainAnnouncementStrip','additionalAnnouncementStrip']
+      }
+    };
     const mergedSummary = {
       baselineFile:previousFileName || null,
       generatedAt:new Date().toISOString(),
@@ -1053,33 +1085,58 @@ select.setting-state-unchanged{
     // Publish the announcement configuration as a site-wide contract.
     // The same JSON is intended for the homepage and every KidsGastro sub-site;
     // consumers should not limit this setting to the root index page.
-    const effectiveAnnouncementMode = changes.announcementMode || previousConfig?.changes?.announcementMode || 'unchanged';
-    const effectiveMainText = details.mainStripText ?? details.defaultAnnouncementText ?? DEFAULT_ANNOUNCEMENT;
-    const effectiveAdditionalText = details.additionalStripText ?? '';
+    const effectiveAnnouncementMode = changes.announcementMode || previousConfig?.changes?.announcementMode ||
+      previousConfig?.announcementSiteWide?.action || 'unchanged';
+    const previousAnnouncement = previousConfig?.announcementSiteWide || {};
+    const previousMainStrip = previousAnnouncement.mainStrip || {};
+    const previousAdditionalStrip = previousAnnouncement.additionalStrip || {};
+    const effectiveMainText = effectiveAnnouncementMode === 'restore_default'
+      ? DEFAULT_ANNOUNCEMENT
+      : (details.mainStripText ?? details.defaultAnnouncementText ?? previousMainStrip.text ?? DEFAULT_ANNOUNCEMENT);
+    const effectiveAdditionalText = details.additionalStripText ?? previousAdditionalStrip.text ?? '';
     const effectiveAnnouncementEnabled = effectiveAnnouncementMode !== 'disable' &&
       (effectiveAnnouncementMode !== 'unchanged' || !!(effectiveMainText || effectiveAdditionalText));
     const effectiveAdditionalEnabled = effectiveAnnouncementEnabled &&
       effectiveAnnouncementMode !== 'restore_default' &&
       effectiveAnnouncementMode !== 'edit' &&
       effectiveAdditionalText.length > 0;
+    const stripSchedule = {
+      duration: announcementSchedule.duration || 'permanent',
+      scheduleGroupId: announcementSchedule.scheduleGroupId || null,
+      startDateTime: announcementSchedule.duration === 'temporary'
+        ? (finalGroups.find(g=>g.id===announcementSchedule.scheduleGroupId)?.startDateTime || null) : null,
+      endDateTime: announcementSchedule.duration === 'temporary'
+        ? (finalGroups.find(g=>g.id===announcementSchedule.scheduleGroupId)?.endDateTime || null) : null
+    };
     const announcementSiteWide = {
       enabled: effectiveAnnouncementEnabled,
       scope: 'all-sites',
+      applyTo: 'main-and-all-sub-sites',
       targets: { mainSite: true, subSites: true, match: 'all-kidsgastro-pages' },
       renderOn: 'every-page',
+      uniformAcrossSites: true,
+      coordinatedStrips: true,
+      action: effectiveAnnouncementMode,
+      schedule: {...stripSchedule},
       mainStrip: {
         enabled: effectiveAnnouncementEnabled,
         text: effectiveMainText,
-        textColor: details.mainStripTextColor ?? details.announcementTextColors?.defaultStrip ?? '#0759a8',
-        backgroundColor: details.mainStripBackgroundColor ?? details.announcementBackgroundColors?.mainStrip ?? '#ffc400',
-        speedSeconds: details.announcementMarqueeSpeedsSeconds?.standardStrip ?? 18
+        textColor: details.mainStripTextColor ?? details.announcementTextColors?.defaultStrip ?? previousMainStrip.textColor ?? '#0759a8',
+        backgroundColor: details.mainStripBackgroundColor ?? details.announcementBackgroundColors?.mainStrip ?? previousMainStrip.backgroundColor ?? '#ffc400',
+        speedSeconds: details.announcementMarqueeSpeedsSeconds?.standardStrip ?? previousMainStrip.speedSeconds ?? 18,
+        scope: 'all-sites',
+        targets: {mainSite:true,subSites:true},
+        schedule: {...stripSchedule}
       },
       additionalStrip: {
         enabled: effectiveAdditionalEnabled,
         text: effectiveAdditionalText,
-        textColor: details.announcementTextColors?.customStrip ?? '#0759a8',
-        backgroundColor: details.announcementBackgroundColors?.secondStrip ?? '#f3a6c8',
-        speedSeconds: details.announcementMarqueeSpeedsSeconds?.customStrip ?? 18
+        textColor: details.announcementTextColors?.customStrip ?? previousAdditionalStrip.textColor ?? '#0759a8',
+        backgroundColor: details.announcementBackgroundColors?.secondStrip ?? previousAdditionalStrip.backgroundColor ?? '#f3a6c8',
+        speedSeconds: details.announcementMarqueeSpeedsSeconds?.customStrip ?? previousAdditionalStrip.speedSeconds ?? 18,
+        scope: 'all-sites',
+        targets: {mainSite:true,subSites:true},
+        schedule: {...stripSchedule}
       }
     };
     // Appointment-button presentation is explicit and site-wide. Disabling booking
@@ -1124,6 +1181,7 @@ select.setting-state-unchanged{
     const data = {
       schemaVersion: 3,
       configContract: 'kidsgastro-manual-settings-v3',
+      announcementContract: 'all-sites-two-strip-uniform-v1',
       siteScope: {
         applyTo: 'all-sites',
         includeMainSite: true,

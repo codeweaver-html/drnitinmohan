@@ -1,9 +1,61 @@
 {
-  "schemaVersion": 2,
-  "configContract": "kidsgastro-manual-settings-v2",
+  "schemaVersion": 3,
+  "configContract": "kidsgastro-manual-settings-v3",
+  "siteScope": {
+    "applyTo": "all-sites",
+    "includeMainSite": true,
+    "includeSubSites": true,
+    "renderAnnouncementOnEveryPage": true
+  },
+  "announcementSiteWide": {
+    "enabled": true,
+    "scope": "all-sites",
+    "targets": {
+      "mainSite": true,
+      "subSites": true,
+      "match": "all-kidsgastro-pages"
+    },
+    "renderOn": "every-page",
+    "mainStrip": {
+      "enabled": true,
+      "text": "OFFLINE APPOINTMENTS AVAILABLE RIGHT NOW.               CLICK THE APPOINTMENT BUTTON BELOW TO PROCEED.",
+      "textColor": "#0759a8",
+      "backgroundColor": "#ffc400",
+      "speedSeconds": 83
+    },
+    "additionalStrip": {
+      "enabled": false,
+      "text": "APPOINTMENT BOOKING HAS NOW BEEN OPENED!",
+      "textColor": "#0759a8",
+      "backgroundColor": "#f3a6c8",
+      "speedSeconds": 83
+    }
+  },
+  "appointmentButtonPresentation": {
+    "enabled": true,
+    "scope": "all-sites",
+    "targets": {
+      "mainSite": true,
+      "subSites": true,
+      "match": "all-kidsgastro-pages"
+    },
+    "visible": true,
+    "render": "full",
+    "clickable": true,
+    "interaction": "active",
+    "disabled": false,
+    "style": {
+      "mode": "site-default"
+    },
+    "accessibility": {
+      "ariaDisabled": false,
+      "keepVisible": true,
+      "announceDisabledState": false
+    }
+  },
   "formTitle": "KidsGastro Website Change Request",
   "doctor": "Dr. Nitin Mohan",
-  "createdAt": "2026-11-02T07:55:42.998Z",
+  "createdAt": "2026-11-02T12:02:39.002Z",
   "timezone": "Asia/Kolkata",
   "targetFile": "configuration/change-request.json",
   "notice": "This is a request only. It does not modify or publish the website.",
@@ -17,16 +69,16 @@
     "showWhatsAppButton": "yes",
     "hideWhatsAppButton": "no",
     "changeAnnouncement": "yes",
-    "announcementMode": "add",
+    "announcementMode": "restore_default",
     "mainStripBackgroundColor": "#ffc400",
     "photoOfMonthAction": "update",
     "updatePhotoOfMonth": "yes",
     "disablePhotoOfMonth": "no",
     "settingActions": {
-      "appointmentButton": "enable",
-      "whatsappBookingOption": "enable",
-      "rezepRxBookingOption": "enable",
-      "announcementMarquee": "add",
+      "appointmentButton": "continue",
+      "whatsappBookingOption": "continue",
+      "rezepRxBookingOption": "continue",
+      "announcementMarquee": "restore_default",
       "photoOfTheMonth": "continue"
     }
   },
@@ -49,38 +101,29 @@
         "scheduleGroupId": null
       },
       "announcementMarquee": {
-        "duration": "temporary",
-        "scheduleGroupId": "new-schedule-1"
+        "duration": "permanent",
+        "scheduleGroupId": null
       }
     },
-    "groups": [
-      {
-        "id": "new-schedule-1",
-        "startDateTime": "2026-11-02T13:25",
-        "endDateTime": "2026-11-03T10:00",
-        "settings": [
-          "announcementMarquee"
-        ]
-      }
-    ],
+    "groups": [],
     "activateTemporary": true
   },
   "details": {
-    "announcementText": "APPOINTMENT BOOKING HAS NOW BEEN OPENED!",
+    "announcementText": "",
     "defaultAnnouncementText": "OFFLINE APPOINTMENTS AVAILABLE RIGHT NOW.               CLICK THE APPOINTMENT BUTTON BELOW TO PROCEED.",
     "mainStripTextColor": "#0759a8",
     "mainStripBackgroundColor": "#ffc400",
     "announcementTextColors": {
       "defaultStrip": "#0759a8",
-      "customStrip": "#d22d2d"
+      "customStrip": "#0759a8"
     },
     "announcementBackgroundColors": {
       "mainStrip": "#ffc400",
-      "secondStrip": "#ffffff"
+      "secondStrip": "#f3a6c8"
     },
     "announcementMarqueeSpeedsSeconds": {
       "standardStrip": 83,
-      "customStrip": 7
+      "customStrip": 83
     },
     "photoOfMonthAction": "update",
     "photoOfMonth": "configuration/photo-of-the-month/abcd.jpg",
@@ -96,30 +139,68 @@
       "preserveLeadingTrailingSpaces": true,
       "preserveLineBreaks": true,
       "sourceValueIsUntrimmed": true
+    },
+    "appointmentButtonPresentation": {
+      "enabled": true,
+      "scope": "all-sites",
+      "targets": {
+        "mainSite": true,
+        "subSites": true,
+        "match": "all-kidsgastro-pages"
+      },
+      "visible": true,
+      "render": "full",
+      "clickable": true,
+      "interaction": "active",
+      "disabled": false,
+      "style": {
+        "mode": "site-default"
+      },
+      "accessibility": {
+        "ariaDisabled": false,
+        "keepVisible": true,
+        "announceDisabledState": false
+      }
+    },
+    "announcementSiteWide": {
+      "enabled": true,
+      "scope": "all-sites",
+      "targets": {
+        "mainSite": true,
+        "subSites": true,
+        "match": "all-kidsgastro-pages"
+      },
+      "renderOn": "every-page",
+      "mainStrip": {
+        "enabled": true,
+        "text": "OFFLINE APPOINTMENTS AVAILABLE RIGHT NOW.               CLICK THE APPOINTMENT BUTTON BELOW TO PROCEED.",
+        "textColor": "#0759a8",
+        "backgroundColor": "#ffc400",
+        "speedSeconds": 83
+      },
+      "additionalStrip": {
+        "enabled": false,
+        "text": "APPOINTMENT BOOKING HAS NOW BEEN OPENED!",
+        "textColor": "#0759a8",
+        "backgroundColor": "#f3a6c8",
+        "speedSeconds": 83
+      }
     }
   },
-  "duration": "mixed",
+  "duration": "permanent",
   "schedule": {
-    "type": "mixed",
-    "periods": [
-      {
-        "startDateTime": "2026-11-02T13:25",
-        "endDateTime": "2026-11-03T10:00",
-        "settings": [
-          "announcementMarquee"
-        ]
-      }
-    ],
+    "type": "permanent",
+    "periods": [],
     "activateTemporary": true
   },
   "mergeMetadata": {
     "baselineFile": "change-request.json",
-    "generatedAt": "2026-11-02T07:55:42.997Z",
+    "generatedAt": "2026-11-02T12:02:39.002Z",
     "actions": {
-      "appointmentButton": "enable",
-      "whatsappBookingOption": "enable",
-      "rezepRxBookingOption": "enable",
-      "announcementMarquee": "add",
+      "appointmentButton": "continue",
+      "whatsappBookingOption": "continue",
+      "rezepRxBookingOption": "continue",
+      "announcementMarquee": "restore_default",
       "photoOfTheMonth": "continue"
     },
     "note": "Settings marked continue were carried forward from the loaded previous configuration where available."
