@@ -113,11 +113,17 @@ footer a{color:#fff;text-decoration:underline;text-underline-offset:4px;font-wei
 <link rel="stylesheet" href="/assets/css/kg-announcement-sync.css" />
 <script src="/assets/js/kg-announcement-sync.js" defer></script>
 
-/* Shared KG logo: true circle with transparent corners on desktop Chrome and mobile. */
-img.circular-brand-logo, img.kg-logo, .kg-logo-header, .kg-logo-secondary, .kg-logo-newsletter, .kg-logo-footer, .header .brand img, .footer-brand img {
-  border-radius:50% !important; clip-path:circle(50% at 50% 50%) !important;
-  overflow:hidden !important; object-fit:contain !important; background:transparent !important;
+<style id="kg-faq-circular-logo-fix">
+/* Shared KG logo: circular crop, with the CSS kept inside a stylesheet. */
+img.circular-brand-logo, img.kg-logo, .kg-logo-header, .kg-logo-secondary,
+.kg-logo-newsletter, .kg-logo-footer, .header .brand img, .footer-brand img {
+  border-radius: 50% !important;
+  clip-path: circle(50% at 50% 50%) !important;
+  overflow: hidden !important;
+  object-fit: contain !important;
+  background: transparent !important;
 }
+</style>
 
 <link rel="icon" href="/assets/favicon/kg-favicon.ico" sizes="any">
 <link rel="icon" type="image/png" sizes="192x192" href="/assets/favicon/kg-favicon-192.png">
