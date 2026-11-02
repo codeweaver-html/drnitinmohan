@@ -1,0 +1,32 @@
+/* Shared KidsGastro announcement bars for standalone associated sub-sites. */
+.kg-shared-announcement-strip{
+  position:relative!important;z-index:10000!important;display:flex!important;
+  width:100%!important;min-height:36px!important;height:auto!important;
+  overflow:hidden!important;align-items:center!important;padding:5px 0!important;
+  border:0!important;border-radius:0!important;box-shadow:none!important;
+  font:800 12px/1.4 Arial,"Segoe UI",sans-serif!important;
+  letter-spacing:.045em!important;white-space:nowrap!important;
+}
+.kg-shared-announcement-track{
+  display:flex!important;align-items:center!important;flex:0 0 auto!important;
+  width:max-content!important;min-width:0!important;gap:0!important;
+  animation:kg-shared-announcement-scroll 28s linear infinite!important;
+  will-change:transform!important;backface-visibility:hidden!important;
+}
+.kg-shared-announcement-text{
+  display:block!important;flex:0 0 auto!important;width:max-content!important;
+  max-width:none!important;margin:0!important;padding:3px clamp(24px,3vw,42px)!important;
+  color:inherit;white-space:nowrap!important;box-sizing:border-box!important;
+}
+@keyframes kg-shared-announcement-scroll{
+  from{transform:translate3d(0,0,0)}
+  to{transform:translate3d(-50%,0,0)}
+}
+@media(max-width:480px){
+  .kg-shared-announcement-strip{min-height:36px!important;font-size:11px!important}
+  .kg-shared-announcement-track{animation-duration:23s!important}
+  .kg-shared-announcement-text{padding-inline:24px!important}
+}
+@media(prefers-reduced-motion:reduce){
+  .kg-shared-announcement-track{animation:none!important;transform:none!important;overflow:auto!important}
+}
