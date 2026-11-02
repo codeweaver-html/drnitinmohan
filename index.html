@@ -7472,5 +7472,104 @@ header.header #links a:focus-visible{outline:3px solid #ffc400!important;outline
 @media(max-width:760px){.kg-local-search-section{padding:54px 0}.kg-local-search-grid{grid-template-columns:1fr;gap:11px;margin:22px 0 32px}.kg-local-search-grid article{padding:18px}}
 </style>
 
+
+<style id="kg-mobile-menu-over-search-final">
+/* Mobile: open the navigation immediately below the logo/toggle row.
+   The menu overlays the search row rather than being placed beneath it. */
+@media (max-width: 760px) {
+  .header .nav {
+    position: relative !important;
+    overflow: visible !important;
+  }
+  .header .site-search {
+    position: relative !important;
+    z-index: 2 !important;
+  }
+  html body header.header #links.open {
+    position: fixed !important;
+    top: var(--kg-mobile-menu-top, 76px) !important;
+    left: 8px !important;
+    right: 8px !important;
+    bottom: auto !important;
+    width: auto !important;
+    max-width: none !important;
+    max-height: calc(100vh - var(--kg-mobile-menu-top, 76px) - 10px) !important;
+    max-height: calc(100dvh - var(--kg-mobile-menu-top, 76px) - 10px - env(safe-area-inset-bottom, 0px)) !important;
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+    overscroll-behavior: contain !important;
+    -webkit-overflow-scrolling: touch !important;
+    box-sizing: border-box !important;
+    z-index: 2147483000 !important;
+    background: #0759a8 !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    pointer-events: auto !important;
+  }
+  html body header.header #links:not(.open) {
+    pointer-events: none !important;
+  }
+  .header .site-search,
+  .header .search-status {
+    z-index: 2 !important;
+  }
+}
+</style>
+
+
+<script id="kg-mobile-menu-over-search-position">
+(function () {
+  function init() {
+    var header = document.querySelector('header.header');
+    var nav = header && header.querySelector('.nav');
+    var brand = header && header.querySelector('.brand');
+    var toggle = header && header.querySelector('.toggle');
+    var menu = header && header.querySelector('#links');
+    if (!header || !nav || !brand || !toggle || !menu || menu.dataset.overSearchPositionWired === 'true') return;
+    menu.dataset.overSearchPositionWired = 'true';
+
+    function syncMenuPosition() {
+      if (!window.matchMedia('(max-width: 760px)').matches || !menu.classList.contains('open')) return;
+      var brandRect = brand.getBoundingClientRect();
+      var toggleRect = toggle.getBoundingClientRect();
+      /* The first grid row ends at the lower edge of the brand/toggle.
+         Starting here places the expanded menu over the search row. */
+      var firstRowBottom = Math.max(brandRect.bottom, toggleRect.bottom);
+      var top = Math.max(8, Math.round(firstRowBottom + 6));
+      menu.style.setProperty('--kg-mobile-menu-top', top + 'px');
+    }
+
+    menu.addEventListener('transitionrun', syncMenuPosition);
+    var observer = new MutationObserver(function () {
+      if (menu.classList.contains('open')) requestAnimationFrame(syncMenuPosition);
+      else document.body.classList.remove('kg-mobile-menu-open');
+    });
+    observer.observe(menu, { attributes: true, attributeFilter: ['class'] });
+
+    window.addEventListener('resize', syncMenuPosition, { passive: true });
+    window.addEventListener('orientationchange', function () {
+      requestAnimationFrame(syncMenuPosition);
+    }, { passive: true });
+    window.addEventListener('scroll', syncMenuPosition, { passive: true });
+    if (window.visualViewport) {
+      window.visualViewport.addEventListener('resize', syncMenuPosition, { passive: true });
+    }
+    if (window.ResizeObserver) {
+      var resizeObserver = new ResizeObserver(syncMenuPosition);
+      resizeObserver.observe(brand);
+      resizeObserver.observe(toggle);
+      resizeObserver.observe(nav);
+    }
+    requestAnimationFrame(syncMenuPosition);
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init, { once: true });
+  } else {
+    init();
+  }
+})();
+</script>
+
 </body>
 </html>
