@@ -5614,26 +5614,86 @@ input,select,textarea{font-size:16px;max-width:100%}
   c.beginPath();c.arc(0,-16,2,0,TAU);c.stroke();c.restore();
  }
  function drawShuttle(c,x,y,a,size,dir=1,enginePhase=0){
-  c.save();c.translate(x,y);c.rotate(a);c.scale((dir<0?-1:1)*size/100,size/100);
-  // Columbia-inspired orbiter: pointed nose faces +X; the vertical stabilizer
-  // stays above the fuselage even when the shuttle travels from right to left.
-  c.globalAlpha=.98;c.fillStyle='#fff';c.strokeStyle='rgba(255,255,255,.96)';
-  c.lineWidth=1.15;c.lineJoin='round';c.lineCap='round';
-  // Main fuselage and nose.
-  c.beginPath();c.moveTo(51,0);c.quadraticCurveTo(43,-5,29,-6);
-  c.lineTo(-30,-6);c.lineTo(-42,-3);c.lineTo(-45,3);
-  c.lineTo(-29,7);c.lineTo(28,6);c.quadraticCurveTo(43,5,51,0);c.closePath();c.fill();
-  // Delta wing, swept aft and down in side-on silhouette.
-  c.beginPath();c.moveTo(12,1);c.lineTo(-27,21);c.lineTo(-49,18);
-  c.lineTo(-34,5);c.lineTo(-47,1);c.lineTo(-23,-2);c.closePath();c.fill();
-  // Tail fin clearly rises above the back of the orbiter.
-  c.beginPath();c.moveTo(-34,-5);c.lineTo(-49,-34);c.lineTo(-36,-35);
-  c.lineTo(-15,-6);c.closePath();c.fill();
-  // Three engine bells at the rear and subtle cockpit glazing.
-  c.beginPath();c.moveTo(-42,-2);c.lineTo(-49,-5);c.lineTo(-48,0);c.closePath();c.fill();
-  c.globalAlpha=.8;c.fillStyle='#b9d9ed';c.beginPath();
-  c.moveTo(35,-4);c.lineTo(45,-1);c.lineTo(39,1);c.closePath();c.fill();
-  c.globalAlpha=.45+.4*(.5+.5*Math.sin(enginePhase*9));c.beginPath();c.moveTo(-48,-1);c.lineTo(-57-Math.sin(enginePhase*7)*3,0);c.lineTo(-48,1);c.stroke();
+  c.save();
+  c.translate(x,y);
+  c.rotate(a);
+  c.scale((dir<0?-1:1)*size/100,size/100);
+  c.globalAlpha=.99;
+  c.fillStyle='#fff';
+  c.strokeStyle='rgba(255,255,255,.98)';
+  c.lineWidth=1.35;
+  c.lineJoin='round';
+  c.lineCap='round';
+
+  // Orbiter viewed from above: long pointed nose, broad swept delta wings,
+  // and a distinct vertical stabilizer at the rear.
+  c.beginPath();
+  c.moveTo(55,0);
+  c.quadraticCurveTo(48,-5,34,-7);
+  c.lineTo(-31,-7);
+  c.lineTo(-43,-4);
+  c.lineTo(-48,0);
+  c.lineTo(-43,4);
+  c.lineTo(-31,7);
+  c.lineTo(34,7);
+  c.quadraticCurveTo(48,5,55,0);
+  c.closePath();
+  c.fill();
+
+  // Broad delta wings with a sharply swept leading edge.
+  c.beginPath();
+  c.moveTo(15,-5);
+  c.lineTo(-28,-32);
+  c.lineTo(-49,-29);
+  c.lineTo(-35,-4);
+  c.lineTo(-35,4);
+  c.lineTo(-49,29);
+  c.lineTo(-28,32);
+  c.lineTo(15,5);
+  c.closePath();
+  c.fill();
+
+  // Tail fin and rear body fairing.
+  c.beginPath();
+  c.moveTo(-30,-5);
+  c.lineTo(-45,-20);
+  c.lineTo(-32,-19);
+  c.lineTo(-12,-6);
+  c.closePath();
+  c.fill();
+
+  // Three separate main engine nozzles at the tail.
+  c.fillStyle='#e8f3fa';
+  [-4,0,4].forEach(y0=>{
+    c.beginPath();
+    c.ellipse(-45,y0,4.2,2.0,0,0,TAU);
+    c.fill();
+  });
+
+  // Blue cockpit glazing and a fine nose highlight.
+  c.fillStyle='#9ed5f4';
+  c.beginPath();
+  c.moveTo(38,-3.8);
+  c.lineTo(48,-1.2);
+  c.lineTo(43,1.2);
+  c.lineTo(36,.8);
+  c.closePath();
+  c.fill();
+  c.strokeStyle='rgba(255,255,255,.75)';
+  c.lineWidth=.8;
+  c.beginPath();
+  c.moveTo(48,-1.2);
+  c.lineTo(54,0);
+  c.stroke();
+
+  // Restrained pulsing exhaust, visible only behind the engines.
+  c.globalAlpha=.42+.38*(.5+.5*Math.sin(enginePhase*9));
+  c.strokeStyle='#d8efff';
+  c.lineWidth=1.7;
+  c.beginPath();
+  c.moveTo(-49,0);
+  c.lineTo(-58-Math.sin(enginePhase*7)*3,0);
+  c.stroke();
   c.restore();
  }
  function drawSkyCrane(c,x,y,a,size,phase=0,thrust=0){
@@ -5881,7 +5941,7 @@ input,select,textarea{font-size:16px;max-width:100%}
     const lane=panel.safePoints[Math.floor(Math.random()*panel.safePoints.length)]||{y:r.height*.48};
     panel.astronaut={x:dir>0?x0-35:x1+35,y:y0+lane.y,
      vx:dir*rand(9,15),vy:rand(-4,4),phase:rand(0,TAU),evadeUntil:0,
-     evadeX:0,evadeY:0,lastThreatReact:0,bodyRoll:0,lasso:null,nextLasso:now+rand(3500,8500)};
+     evadeX:0,evadeY:0,lastThreatReact:0,bodyRoll:0,lasso:null,nextLasso:now+rand(2200,5200)};
     panel.nextAstronaut=now+rand(19000,28000);
    }
    if(panel.astronaut){
@@ -5942,14 +6002,27 @@ input,select,textarea{font-size:16px;max-width:100%}
      // plume, sheds the two boosters, then drops the external tank early in entry.
      if(st.age<1.05){st.vy-=27*dt;st.vx*=Math.pow(.985,dt*60);}
      else if(st.age<1.95){st.vy-=14*dt;st.vx+=Math.sin(st.phase)*3.5*dt;}
-     else {st.vy-=6*dt;st.vx+=12*dt;st.heading+=(Math.min(1,dt*1.1))*(st.heading<-.08?1:0);}
+     else {
+      // The orbiter lights its own engines after tank separation and smoothly
+      // pitches from vertical ascent into a sustained 45-degree climb.
+      const pitch=clamp((st.age-1.95)/2.35,0,1);
+      const targetHeading=-Math.PI/4;
+      const angleDelta=Math.atan2(Math.sin(targetHeading-st.heading),Math.cos(targetHeading-st.heading));
+      st.heading+=angleDelta*Math.min(1,dt*.82);
+      const thrust=42;
+      st.vx+=Math.cos(st.heading)*thrust*dt;
+      st.vy+=Math.sin(st.heading)*thrust*dt;
+      st.vx*=Math.pow(.999,dt*60);
+      st.vy*=Math.pow(.999,dt*60);
+     }
      st.x+=st.vx*dt;st.y+=st.vy*dt;
      if(st.stage===0&&st.age>=1.05){st.stage=1;[-1,1].forEach(side=>panel.shuttleParts.push({id:side<0?'shuttleBoosterL':'shuttleBoosterR',kind:'booster',x:st.x+side*13,y:st.y+8,vx:st.vx+side*rand(18,25),vy:st.vy*.42,spin:side*rand(1.8,2.9),angle:side*.12,age:0}));}
      if(st.stage===1&&st.age>=1.95){st.stage=2;panel.shuttleParts.push({id:'shuttleTank',kind:'tank',x:st.x-3,y:st.y+18,vx:st.vx-rand(6,11),vy:st.vy*.38,spin:rand(-1.4,1.4),angle:0,age:0});}
     }
     const shuttleSize=clamp(scale*.34,small?25:42,small?34:58)*.46;
     const launchAngle=st.age<2.35?-Math.PI/2:st.heading;
-    if(st.age<2.65)drawLaunchPlume(ctx,st.x,st.y+shuttleSize*.45,0,shuttleSize*.42,st.age,st.age<1.05?1:.72);
+    if(st.age<1.95)drawLaunchPlume(ctx,st.x,st.y+shuttleSize*.45,0,shuttleSize*.42,st.age,1);
+    else drawLaunchPlume(ctx,st.x,st.y,launchAngle,shuttleSize*.34,st.age,1);
     drawShuttle(ctx,st.x,st.y,launchAngle,shuttleSize,1,st.age);
     movingThings.push({id:'shuttle',x:st.x,y:st.y,r:13,vx:st.vx,vy:st.vy,obj:st});
     if(st.y<y0-70||st.x<x0-100||st.x>x1+100)panel.shuttle=null;
@@ -5997,7 +6070,10 @@ input,select,textarea{font-size:16px;max-width:100%}
      if(rover){
       rover.roll+=dt*(rover.landed?.55:1.1);
       if(rover.released&&!rover.landed){rover.vy+=34*dt;rover.x+=rover.vx*dt;rover.y+=rover.vy*dt;rover.vx*=Math.pow(.998,dt*60);}
-      if(rover.released&&!rover.landed&&rover.y>=y0+(y1-y0)*.78){rover.y=y0+(y1-y0)*.78;rover.vy=0;rover.vx*=.35;rover.landed=true;}
+      // Let the rover fall to the actual panel floor; its wheels touch the
+      // bottom edge before it is marked as landed.
+      const roverFloorY=y1-clamp(scale*.25,small?19:26,small?24:33)*.29;
+      if(rover.released&&!rover.landed&&rover.y>=roverFloorY){rover.y=roverFloorY;rover.vy=0;rover.vx*=.35;rover.landed=true;}
       if(rover.landed){rover.x+=rover.vx*dt;rover.vx*=Math.pow(.94,dt*60);}
      }
     }
@@ -6018,12 +6094,23 @@ input,select,textarea{font-size:16px;max-width:100%}
   if(panel.astronaut){
    const au=panel.astronaut;
    if(animate&&!au.lasso&&now>=(au.nextLasso||0)){
-    const candidates=movingThings.filter(m=>m.id!=='astronaut'&&m.id!=='iss'&&m.obj&&Math.hypot(m.x-au.x,m.y-au.y)<Math.min(r.width*.41,215)&&Math.hypot(m.vx||0,m.vy||0)>18);
+    // Prefer a close, fast-moving target with a predictable intercept.
+    // The wider acquisition envelope and lower speed threshold create many
+    // more viable opportunities without choosing objects the astronaut cannot reach.
+    const reach=Math.min(r.width*.56,320);
+    const candidates=movingThings
+     .filter(m=>m.id!=='astronaut'&&m.id!=='iss'&&m.obj)
+     .map(m=>({m,d:Math.hypot(m.x-au.x,m.y-au.y),speed:Math.hypot(m.vx||0,m.vy||0)}))
+     .filter(v=>v.d<reach&&v.speed>8)
+     .sort((a,b)=>(a.d+a.speed*.16)-(b.d+b.speed*.16));
     if(candidates.length){
-     const target=candidates[Math.floor(Math.random()*candidates.length)];
-     au.lasso={targetId:target.id,targetObj:target.obj,started:now,phase:'cast',fromX:au.x,fromY:au.y,tipX:au.x,tipY:au.y};
+     const target=candidates[0].m;
+     au.lasso={targetId:target.id,targetObj:target.obj,started:now,phase:'cast',
+      fromX:au.x,fromY:au.y,tipX:au.x,tipY:au.y,
+      leadX:target.x+(target.vx||0)*.42,leadY:target.y+(target.vy||0)*.42};
     }
-    au.nextLasso=now+rand(6500,14500);
+    // Retry often enough to catch passing objects, but avoid continuous lasso spam.
+    au.nextLasso=now+rand(3200,7200);
    }
    const rope=au.lasso;
    if(rope){
@@ -6038,9 +6125,19 @@ input,select,textarea{font-size:16px;max-width:100%}
      const handX=au.x+Math.cos(handA)*handLX-Math.sin(handA)*handLY;
      const handY=au.y+Math.sin(handA)*handLX+Math.cos(handA)*handLY;
      if(animate&&rope.phase==='cast'){
-      const progress=clamp((now-rope.started)/760,0,1);
-      rope.tipX=handX+(target.x-handX)*progress;rope.tipY=handY+(target.y-handY)*progress;
-      if(progress>=1||Math.hypot(target.x-rope.tipX,target.y-rope.tipY)<target.r+5){rope.phase='tied';rope.tiedAt=now;rope.releaseAt=now+rand(9000,13000);}
+      const progress=clamp((now-rope.started)/620,0,1);
+      // Aim slightly ahead of moving targets so the loop meets their path,
+      // rather than trailing behind them during the cast.
+      const aimX=target.x+(target.vx||0)*.22;
+      const aimY=target.y+(target.vy||0)*.22;
+      const endX=rope.leadX+(aimX-rope.leadX)*progress;
+      const endY=rope.leadY+(aimY-rope.leadY)*progress;
+      rope.tipX=handX+(endX-handX)*progress;
+      rope.tipY=handY+(endY-handY)*progress;
+      if(Math.hypot(target.x-rope.tipX,target.y-rope.tipY)<target.r+16||progress>=1){
+       // A generous capture radius makes the astronaut complete most casts.
+       rope.phase='tied';rope.tiedAt=now;rope.releaseAt=now+rand(10500,15000);
+      }
      }
      if(rope.phase==='tied'){
       const dx=target.x-au.x,dy=target.y-au.y,d=Math.max(1,Math.hypot(dx,dy));
