@@ -1406,7 +1406,7 @@ img[loading="lazy"]{background:linear-gradient(110deg,#f3f7fb 8%,#e7eff8 18%,#f3
 @media(max-width:600px){#kg-tunnel-transition .kg-brand-card{min-width:156px;padding:20px 24px 17px;border-radius:18px}#kg-tunnel-transition .kg-brand-mark{width:112px;height:74px}#kg-tunnel-transition .kg-brand-progress{width:148px;height:7px}}
 
 </style>
-<link href="/assets/images/kg-logo-circle-512.png" id="embedded-logo-favicon" rel="icon" type="image/webp"><style id="appointment-phone-and-slot-updates">
+<link rel="icon" type="image/png" sizes="512x512" href="/assets/images/kg-logo-circle-512.png?v=3" id="embedded-logo-favicon"><style id="appointment-phone-and-slot-updates">
 /* Appointment form: phone number and half-hour slot selector */
 .booking-names input[type="tel"],.time-slot-select{display:block;width:100%;min-height:50px;margin:7px 0 16px;padding:11px 13px;border:1px solid #b8cddd;border-radius:5px;background:#fff;color:#17365d;font:inherit;box-sizing:border-box}
 .booking-names input[type="tel"]:focus,.time-slot-select:focus{outline:3px solid #1687bd35;border-color:#0759a8}
@@ -2996,9 +2996,15 @@ html body header.header #links.open .nav-dropdown-menu a{display:block!important
 <link rel="stylesheet" href="/assets/css/kg-announcement-sync.css" />
 <script src="/assets/js/kg-announcement-sync.js" defer></script>
 
-<link rel="icon" href="/assets/favicon/kg-favicon.ico" sizes="any">
-<link rel="icon" type="image/png" sizes="192x192" href="/assets/favicon/kg-favicon-192.png">
-<link rel="apple-touch-icon" href="/assets/favicon/apple-touch-icon.png">
+/* Shared KG logo: true circle with transparent corners on desktop Chrome and mobile. */
+img.circular-brand-logo, img.kg-logo, .kg-logo-header, .kg-logo-secondary, .kg-logo-newsletter, .kg-logo-footer, .header .brand img, .footer-brand img {
+  border-radius:50% !important; clip-path:circle(50% at 50% 50%) !important;
+  overflow:hidden !important; object-fit:contain !important; background:transparent !important;
+}
+
+<link rel="icon" href="/assets/favicon/kg-favicon.ico?v=3" sizes="any">
+<link rel="icon" type="image/png" sizes="192x192" href="/assets/favicon/kg-favicon-192.png?v=3">
+<link rel="apple-touch-icon" sizes="180x180" href="/assets/favicon/apple-touch-icon.png?v=3">
 <meta name="theme-color" content="#ffffff">
 </head><body><div aria-label="Appointment announcement" class="offline-appointment-marquee" role="region"><div class="offline-appointment-marquee__track"><span class="offline-appointment-marquee__text">OFFLINE APPOINTMENTS AVAILABLE RIGHT NOW. <span aria-hidden="true" class="marquee-inline-gap">      </span>CLICK THE APPOINTMENT BUTTON BELOW TO PROCEED.</span><span aria-hidden="true" class="offline-appointment-marquee__text">OFFLINE APPOINTMENTS AVAILABLE RIGHT NOW. <span aria-hidden="true" class="marquee-inline-gap">      </span>CLICK THE APPOINTMENT BUTTON BELOW TO PROCEED.</span></div></div><a class="skip-link" href="/?focus=main">Skip to content</a>
 <header class="header"><nav aria-label="Main navigation" class="nav container"><a class="brand" href="/"><img alt="Dr. Nitin Mohan KidsGastro logo" class="mark circular-brand-logo" data-embedded-logo="true" decoding="async" loading="eager" src="/assets/images/kg-logo-circle-512.png" width="58" height="58" sizes="(max-width: 760px) 48px, 58px"/><span>KidsGastro by Dr. Nitin Mohan</span></a><button aria-controls="links" aria-expanded="false" aria-label="Open navigation" class="toggle">☰</button><div aria-hidden="true" class="hamburger-panel" hidden="" id="hamburger-panel" style="pointer-events:none"></div><div class="links" id="links">
@@ -3164,7 +3170,7 @@ document.addEventListener('DOMContentLoaded',()=>{
  });
 });
 </script>
-<script id="embedded-kidsgastro-logo">(function(){const LOGO_DATA="/assets/logo%20kg%20lite.webp";function applyLogo(root){function setLogo(img){img.setAttribute('src',LOGO_DATA);img.removeAttribute('srcset');img.setAttribute('sizes','(max-width: 760px) 48px, 58px');}if(root&&root.matches&&root.matches('[data-embedded-logo]'))setLogo(root);if(root&&root.querySelectorAll)root.querySelectorAll('[data-embedded-logo]').forEach(setLogo);}document.documentElement.style.setProperty('--embedded-logo-bg','url("'+LOGO_DATA+'")');const icon=document.getElementById('embedded-logo-favicon');if(icon)icon.href=LOGO_DATA;function init(){applyLogo(document);const observer=new MutationObserver(function(records){records.forEach(function(record){record.addedNodes.forEach(function(node){if(node.nodeType===1)applyLogo(node);});});});observer.observe(document.documentElement,{childList:true,subtree:true});}if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});else init();})();</script>
+<script id="embedded-kidsgastro-logo">(function(){const LOGO_DATA="/assets/images/kg-logo-circle-512.png";function applyLogo(root){function setLogo(img){img.setAttribute('src',LOGO_DATA);img.removeAttribute('srcset');img.setAttribute('sizes','(max-width: 760px) 48px, 58px');}if(root&&root.matches&&root.matches('[data-embedded-logo]'))setLogo(root);if(root&&root.querySelectorAll)root.querySelectorAll('[data-embedded-logo]').forEach(setLogo);}document.documentElement.style.setProperty('--embedded-logo-bg','url("'+LOGO_DATA+'")');const icon=document.getElementById('embedded-logo-favicon');if(icon)icon.href=LOGO_DATA;function init(){applyLogo(document);const observer=new MutationObserver(function(records){records.forEach(function(record){record.addedNodes.forEach(function(node){if(node.nodeType===1)applyLogo(node);});});});observer.observe(document.documentElement,{childList:true,subtree:true});}if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});else init();})();</script>
 <script id="remove-opd-section">
 (function(){
   function removeOpd(){document.querySelectorAll('.opd-hours,.opd-hours-under-booking').forEach(function(node){node.remove();});}
