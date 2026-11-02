@@ -7633,6 +7633,85 @@ html{scroll-behavior:auto!important}.offline-appointment-marquee__track{animatio
 }
 </style>
 
+
+<style id="kg-desktop-hamburger-reliable-final">
+/* Reliable desktop + mobile hamburger: the actual #links panel is the dropdown. */
+.header .nav{position:relative!important;overflow:visible!important}
+.header .toggle{
+  display:flex!important;visibility:visible!important;opacity:1!important;
+  pointer-events:auto!important;cursor:pointer!important;position:relative!important;
+  z-index:15002!important;align-items:center!important;justify-content:center!important;
+}
+.header #links{display:none!important;pointer-events:none!important}
+.header #links.open{
+  display:flex!important;pointer-events:auto!important;visibility:visible!important;
+  opacity:1!important;position:absolute!important;top:calc(100% + 5px)!important;
+  left:auto!important;right:0!important;bottom:auto!important;
+  z-index:15001!important;width:min(440px,calc(100vw - 32px))!important;
+  max-width:calc(100vw - 32px)!important;max-height: min(76vh,700px)!important;
+  overflow-x:hidden!important;overflow-y:auto!important;flex-direction:column!important;
+  align-items:stretch!important;justify-content:flex-start!important;
+  gap:6px!important;padding:12px!important;margin:0!important;
+  box-sizing:border-box!important;background:#0759a8!important;color:#fff!important;
+  border:1px solid #cbdce8!important;border-radius:10px!important;
+  box-shadow:0 14px 34px rgba(10,39,61,.22)!important;
+}
+.header #links.open>.nav-dropdown,.header #links.open>.nav-direct-link{width:100%!important;flex:0 0 auto!important}
+.header #links.open>.nav-dropdown>summary,.header #links.open>.nav-direct-link{
+  display:flex!important;align-items:center!important;justify-content:space-between!important;
+  width:100%!important;min-height:44px!important;padding:11px 13px!important;
+  color:#fff!important;background:transparent!important;border-radius:6px!important;
+}
+.header #links.open>.nav-dropdown[open]>.nav-dropdown-menu{
+  display:block!important;position:static!important;width:100%!important;max-width:100%!important;
+  max-height:none!important;overflow:visible!important;margin:5px 0 8px!important;
+  background:#fff!important;border-radius:7px!important;
+}
+.header #links.open>.nav-dropdown[open]>.nav-dropdown-menu a{
+  display:block!important;min-height:42px!important;padding:10px 12px!important;color:#18384d!important;
+}
+@media(max-width:760px){
+ .header .nav{overflow:visible!important}
+ .header #links.open{left:0!important;right:0!important;width:100%!important;max-width:100%!important;max-height:calc(100dvh - 120px)!important}
+}
+</style>
+<script id="kg-hamburger-capture-click-final">
+(function(){
+ function init(){
+  const header=document.querySelector('.header');
+  const nav=header&&header.querySelector('.nav');
+  const toggle=nav&&nav.querySelector('.toggle');
+  const links=header&&header.querySelector('#links');
+  if(!toggle||!links||toggle.dataset.kgCaptureMenu==='1')return;
+  toggle.dataset.kgCaptureMenu='1';
+  function setOpen(open){
+   links.classList.toggle('open',open);
+   toggle.setAttribute('aria-expanded',String(open));
+   toggle.setAttribute('aria-controls','links');
+   toggle.setAttribute('aria-label',open?'Close navigation':'Open navigation');
+   toggle.textContent=open?'×':'☰';
+   links.style.setProperty('display',open?'flex':'none','important');
+   links.style.setProperty('pointer-events',open?'auto':'none','important');
+  }
+  // Capture before older target-level handlers so the click cannot toggle twice.
+  document.addEventListener('click',function(event){
+   const hit=event.target&&event.target.closest?event.target.closest('.header .toggle'):null;
+   if(hit!==toggle)return;
+   event.preventDefault();event.stopPropagation();event.stopImmediatePropagation();
+   setOpen(toggle.getAttribute('aria-expanded')!=='true');
+  },true);
+  document.addEventListener('click',function(event){
+   if(links.classList.contains('open')&&!header.contains(event.target))setOpen(false);
+  });
+  document.addEventListener('keydown',function(event){
+   if(event.key==='Escape'&&links.classList.contains('open')){setOpen(false);toggle.focus();}
+  });
+  setOpen(false);
+ }
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});else init();
+})();
+</script>
+
 </body>
 </html>
 
