@@ -6237,60 +6237,7 @@ document.querySelectorAll('.nav-direct-link,.nav-dropdown-menu>a,.booking-menu-p
 <image clip-path="url(#kg-brand-symbol-circle)" height="108" href="" id="kg-brand-symbol-image" preserveaspectratio="xMidYMid meet" width="108" x="2" y="2"/>
 </svg><div class="kg-brand-progress"></div></div></div>
 
-<script id="unified-mobile-hamburger-navigation-js">
-(function(){
-  function initHamburger(){
-    const header=document.querySelector('header.header');
-    const nav=header&&header.querySelector('.nav');
-    const links=header&&header.querySelector('#links');
-    const toggle=nav&&nav.querySelector('button.toggle');
-    if(!header||!nav||!links||!toggle||toggle.dataset.singleMenuController==='true')return;
-    toggle.dataset.singleMenuController='true';
 
-    let opened=false;
-    function render(){
-      links.classList.toggle('open',opened);
-      links.hidden=!opened;
-      links.style.setProperty('display',opened?'flex':'none','important');
-      links.style.setProperty('visibility',opened?'visible':'hidden','important');
-      links.style.setProperty('opacity',opened?'1':'0','important');
-      links.style.setProperty('pointer-events',opened?'auto':'none','important');
-      toggle.setAttribute('aria-controls','links');
-      toggle.setAttribute('aria-expanded',String(opened));
-      toggle.setAttribute('aria-label',opened?'Close navigation':'Open navigation');
-      toggle.textContent=opened?'×':'☰';
-      document.body.classList.toggle('kg-mobile-menu-open',opened&&matchMedia('(max-width:760px)').matches);
-    }
-    toggle.addEventListener('click',function(e){
-      e.preventDefault();e.stopPropagation();opened=!opened;render();
-    });
-    links.addEventListener('click',function(e){
-      const summary=e.target.closest('details.nav-dropdown > summary');
-      if(summary){e.stopPropagation();return;}
-      if(e.target.closest('a[href]')){opened=false;render();}
-    });
-    links.querySelectorAll('details.nav-dropdown').forEach(function(details){
-      details.addEventListener('toggle',function(){
-        if(details.open)links.querySelectorAll('details.nav-dropdown[open]').forEach(function(other){
-          if(other!==details)other.open=false;
-        });
-      });
-    });
-    document.addEventListener('click',function(e){
-      if(opened&&!header.contains(e.target)){opened=false;render();}
-    });
-    document.addEventListener('keydown',function(e){
-      if(e.key==='Escape'&&opened){opened=false;render();toggle.focus();}
-    });
-    window.addEventListener('resize',function(){
-      document.body.classList.toggle('kg-mobile-menu-open',opened&&matchMedia('(max-width:760px)').matches);
-    },{passive:true});
-    opened=false;render();
-  }
-  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',initHamburger,{once:true});
-  else initHamburger();
-})();
-</script>
 
 <script id="hero-typewriter-animation-js">
 (function(){
@@ -8306,5 +8253,87 @@ if ("serviceWorker" in navigator && location.protocol === "https:") {
 })();
 </script>
 <!-- LAST-WINS desktop navigation repair -->
+
+<script id="kg-desktop-mobile-navigation-controller-final">
+(function(){
+ function setup(){
+  const header=document.querySelector('header.header');
+  const nav=header&&header.querySelector('.nav');
+  const button=nav&&nav.querySelector('button.toggle');
+  const panel=header&&header.querySelector('#links');
+  if(!header||!nav||!button||!panel)return;
+  let open=false;
+  function apply(){
+   panel.classList.toggle('open',open);
+   if(open) panel.removeAttribute('hidden'); else panel.setAttribute('hidden','');
+   const important=(name,value)=>panel.style.setProperty(name,value,'important');
+   important('display',open?'flex':'none');
+   important('visibility',open?'visible':'hidden');
+   important('opacity',open?'1':'0');
+   important('pointer-events',open?'auto':'none');
+   button.setAttribute('aria-expanded',open?'true':'false');
+   button.setAttribute('aria-controls','links');
+   button.setAttribute('aria-label',open?'Close navigation':'Open navigation');
+   button.textContent=open?'×':'☰';
+   document.body.classList.toggle('kg-mobile-menu-open',open&&window.innerWidth<=760);
+  }
+  // Use the button's own click property to avoid competing delegated handlers.
+  button.onclick=function(event){
+   event.preventDefault();
+   event.stopPropagation();
+   open=!open;
+   apply();
+   return false;
+  };
+  panel.addEventListener('click',function(event){
+   if(event.target.closest('details.nav-dropdown > summary')){
+    event.stopPropagation();
+    return;
+   }
+   if(event.target.closest('a[href]')){open=false;apply();}
+  });
+  document.addEventListener('click',function(event){
+   if(open&&!header.contains(event.target)){open=false;apply();}
+  });
+  document.addEventListener('keydown',function(event){
+   if(event.key==='Escape'&&open){open=false;apply();button.focus();}
+  });
+  window.addEventListener('resize',apply,{passive:true});
+  open=false;
+  apply();
+ }
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',setup,{once:true});
+ else setup();
+})();
+</script>
+
+
+<style id="kg-pc-hamburger-force-visible-final">
+@media(min-width:761px){
+ header.header,header.header .nav{overflow:visible!important}
+ header.header .nav{position:relative!important}
+ header.header button.toggle{
+  display:flex!important;visibility:visible!important;opacity:1!important;
+  pointer-events:auto!important;position:relative!important;z-index:2147483001!important;
+  width:48px!important;height:48px!important;min-width:48px!important;
+  align-items:center!important;justify-content:center!important;cursor:pointer!important;
+ }
+ header.header #links.open{
+  display:flex!important;visibility:visible!important;opacity:1!important;pointer-events:auto!important;
+  position:absolute!important;top:calc(100% + 6px)!important;left:auto!important;right:0!important;
+  z-index:2147483000!important;width:min(440px,calc(100vw - 32px))!important;
+  max-width:calc(100vw - 32px)!important;max-height:min(76vh,700px)!important;
+  overflow:auto!important;flex-direction:column!important;align-items:stretch!important;
+  padding:12px!important;background:#0759a8!important;color:#fff!important;
+  border:1px solid #cbdce8!important;border-radius:10px!important;
+  box-shadow:0 14px 34px rgba(10,39,61,.25)!important;
+ }
+}
+@media(max-width:760px){
+ header.header,header.header .nav{overflow:visible!important}
+ header.header #links.open{display:flex!important;visibility:visible!important;opacity:1!important;pointer-events:auto!important}
+}
+</style>
+
 </body>
 </html>
