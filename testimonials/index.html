@@ -2222,7 +2222,7 @@ html.kg-tab-hidden .kg-cosmos-background,html.kg-tab-hidden .kg-cosmos-backgroun
 </style>
 <style id="kg-cosmos-unified-css">
 /* ONE shared cosmic layer. Only the five .kg-space-panel regions are ever painted. */
-#kg-space{position:fixed;inset:0;width:100%;height:100%;z-index:1001!important;pointer-events:none!important;opacity:.92!important;}
+#kg-space{position:fixed;inset:0;width:100%;height:100%;z-index:1001!important;pointer-events:none!important;opacity:.92!important;mix-blend-mode:screen!important;}
 .kg-space-panel{position:relative!important;isolation:auto!important;z-index:auto!important;}
 .kg-space-panel>*{position:relative;z-index:2;}
 @media(max-width:600px){#kg-space{opacity:.88!important}}
@@ -2407,6 +2407,205 @@ body{background:#f6f8fa;color:var(--kg-ink)}
 @media(max-width:900px){.kg-testimonials-all-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:620px){.kg-testimonials-all-grid{grid-template-columns:1fr}.kg-testimonial-card{flex-basis:84vw;min-height:190px;padding:22px!important}.kg-testimonials-all h3{margin-inline:18px}.kg-testimonials-all-grid{margin-inline:18px}}
 @media(prefers-reduced-motion:reduce){.kg-testimonial-card,.kg-testimonial-track{transition:none!important;animation:none!important}}
+</style>
+
+<style id="kg-subtle-background-motion">
+/* Soft, brand-led motion: decorative only, never competing with clinical content. */
+@keyframes kg-soft-pulse{0%,100%{opacity:.18;transform:scale(.96)}50%{opacity:.34;transform:scale(1.04)}}
+@keyframes kg-glow-slide{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
+@keyframes kg-mark-float{0%,100%{transform:translateY(0) rotate(-2deg)}50%{transform:translateY(-7px) rotate(2deg)}}
+/* Profile block: layered rings behind the existing KG watermark. */
+.social-section,.latest-section,.hospital-map-section,.newsletter-section,.appointment-panel,.opd-hours,.photo-reel-section{position:relative;isolation:isolate;overflow:hidden}
+.latest-section::after,.hospital-map-section::after,.appointment-panel::after,.opd-hours::after,.photo-reel-section::after{content:"";position:absolute;z-index:0;pointer-events:none;width:9px;height:9px;border-radius:50%;right:11%;top:26%;background:#ffc400;box-shadow:0 0 0 8px rgba(255,196,0,.10),0 0 28px rgba(7,89,168,.12);animation:kg-soft-pulse 5s ease-in-out infinite}
+.social-section>.container,.latest-section>.container,.hospital-map-section>.container,.newsletter-section>.container,.appointment-panel>.container,.opd-hours>.container,.photo-reel-section>.container{position:relative;z-index:1}
+.social-intro::after{animation:kg-mark-float 8s ease-in-out infinite,kg-soft-pulse 7s ease-in-out infinite;transform-origin:75% 75%}
+.social-intro{background-image:radial-gradient(circle at 16% 18%,rgba(255,255,255,.12) 0 2px,transparent 3px),linear-gradient(125deg,#0759a8,#0b65b4,#0759a8);background-size:34px 34px,220% 220%;animation:kg-glow-slide 18s ease-in-out infinite}
+.profile-links .social-placeholder{position:relative;overflow:hidden}
+.profile-links .social-placeholder::after{content:"";position:absolute;left:-65%;top:0;width:42%;height:100%;pointer-events:none;background:linear-gradient(100deg,transparent,rgba(7,89,168,.055),transparent);transform:skewX(-18deg);transition:left .6s ease}
+.profile-links .social-placeholder:hover::after,.profile-links .social-placeholder:focus-visible::after{left:125%}
+.profile-links .social-mark{transition:transform .25s ease,box-shadow .25s ease}
+.profile-links .social-placeholder:hover .social-mark,.profile-links .social-placeholder:focus-visible .social-mark{transform:translateY(-2px) rotate(-3deg);box-shadow:0 5px 13px rgba(7,49,91,.14)}
+.latest-section::before{right:auto;left:-125px;top:18%;width:300px;height:300px}
+.hospital-map-section::after{top:auto;bottom:22%;right:7%;background:#168cbb}
+.newsletter-section::before{border-color:rgba(255,255,255,.18);box-shadow:0 0 0 24px rgba(255,255,255,.035),0 0 0 54px rgba(255,255,255,.025)}
+.newsletter-section::after{background:#ffc400;top:25%;right:47%}
+.photo-reel-section::after{right:46%;top:12%;background:#168cbb}
+@media(max-width:700px){.latest-section::before,.hospital-map-section::before,.newsletter-section::before,.appointment-panel::before,.opd-hours::before,.photo-reel-section::before{right:-150px;top:-130px}.latest-section::after,.hospital-map-section::after,.appointment-panel::after,.opd-hours::after,.photo-reel-section::after{right:8%;top:12%}.newsletter-section::after{right:18%;top:12%}}
+
+</style>
+<style id="kg-blue-background-orbit-animation">
+/* Subtle geometric watermark animation, limited to existing blue surfaces. */
+.header,
+.hero-grid > div:first-child,
+.footer,
+.links {
+  position: relative;
+  isolation: isolate;
+}
+.header::after,
+.hero-grid > div:first-child::after,
+.footer::after,
+.links::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+  border-radius: inherit;
+  opacity: .17;
+  background-image:
+    radial-gradient(circle at 72% 48%, transparent 0 58px, rgba(255,255,255,.48) 59px 60px, transparent 61px),
+    radial-gradient(circle at 72% 48%, transparent 0 112px, rgba(255,255,255,.34) 113px 114px, transparent 115px),
+    radial-gradient(circle at 72% 48%, transparent 0 166px, rgba(255,255,255,.25) 167px 168px, transparent 169px),
+    radial-gradient(circle, rgba(255,255,255,.62) 1px, transparent 1.5px);
+  background-size: 100% 100%, 100% 100%, 100% 100%, 28px 28px;
+  background-position: center, center, center, 0 0;
+  animation: kg-blue-watermark-drift 26s ease-in-out infinite alternate;
+}
+.header > *,
+.hero-grid > div:first-child > *,
+.footer > *,
+.links > * {
+  position: relative;
+  z-index: 1;
+}
+@keyframes kg-blue-watermark-drift {
+  from { background-position: center, center, center, 0 0; }
+  to { background-position: center, center, center, 28px 14px; }
+}
+
+</style>
+<style id="kg-first-paint-settings-and-mobile-touch-cursor">
+/* Do not flash stale booking/announcement defaults before the live JSON is applied. */
+html:not([data-kg-settings-ready="true"]) #booking-menu-toggle,
+html:not([data-kg-settings-ready="true"]) .offline-appointment-marquee,
+html:not([data-kg-settings-ready="true"]) .whatsapp-float{
+  visibility:hidden!important;
+}
+/* Sleek mobile touch cursor: blue core, smooth trailing ring and tap ripple. */
+.kg-mobile-touch-cursor,.kg-mobile-touch-cursor-ring,.kg-mobile-touch-cursor-ripple{
+  position:fixed!important;left:0!important;top:0!important;z-index:2147483000!important;
+  pointer-events:none!important;border-radius:50%!important;opacity:0!important;
+  transform:translate3d(-120px,-120px,0) translate(-50%,-50%)!important;
+  will-change:transform,opacity,width,height!important;
+}
+.kg-mobile-touch-cursor{width:8px!important;height:8px!important;background:#0759a8!important;
+  box-shadow:0 0 0 2px rgba(255,255,255,.98),0 0 13px rgba(7,89,168,.62)!important;
+  transition:opacity .16s ease,transform .045s linear!important}
+.kg-mobile-touch-cursor-ring{width:34px!important;height:34px!important;border:1.8px solid #0759a8!important;
+  box-shadow:0 0 0 2px rgba(255,255,255,.9),0 0 14px rgba(7,89,168,.16)!important;
+  transition:opacity .2s ease,width .2s ease,height .2s ease,border-color .2s ease!important}
+.kg-mobile-touch-cursor-ripple{width:18px!important;height:18px!important;border:2px solid rgba(7,89,168,.75)!important;
+  box-shadow:0 0 0 2px rgba(255,255,255,.7)!important}
+.kg-mobile-touch-cursor.is-visible,.kg-mobile-touch-cursor-ring.is-visible{opacity:1!important}
+.kg-mobile-touch-cursor-ring.is-pressed{width:46px!important;height:46px!important;border-color:#0b65bd!important;background:rgba(7,89,168,.07)!important}
+.kg-mobile-touch-cursor-ripple.is-rippling{animation:kg-mobile-cursor-ripple .58s cubic-bezier(.15,.7,.25,1) forwards!important}
+@keyframes kg-mobile-cursor-ripple{0%{opacity:.82;box-shadow:0 0 0 1px rgba(7,89,168,.5),0 0 0 2px rgba(255,255,255,.7)}100%{opacity:0;box-shadow:0 0 0 18px rgba(7,89,168,0),0 0 0 20px rgba(255,255,255,0)}}
+@media(hover:hover) and (pointer:fine){.kg-mobile-touch-cursor,.kg-mobile-touch-cursor-ring,.kg-mobile-touch-cursor-ripple{display:none!important}}
+
+</style>
+<style id="kg-native-pc-cursor-final">
+/* Use the real operating-system cursor on computers: arrow for normal content, hand for controls, I-beam for text. */
+@media (hover: hover) and (pointer: fine) {
+  html, body, body * { cursor: auto !important; }
+  a, area, button, summary, label, select, [role="button"], [role="link"], input[type="button"], input[type="submit"], input[type="reset"], .btn, .reel-control, .kg-admin-action { cursor: pointer !important; }
+  input:not([type="button"]):not([type="submit"]):not([type="reset"]):not([type="checkbox"]):not([type="radio"]), textarea, [contenteditable="true"] { cursor: text !important; }
+  :disabled, [aria-disabled="true"] { cursor: not-allowed !important; }
+}
+/* Remove all decorative circular cursor overlays; they must never replace the native cursor. */
+#kg-main-cursor-flow, #kg-main-cursor-ring, .kg-mobile-touch-cursor, .kg-mobile-touch-cursor-ring, .kg-mobile-touch-cursor-ripple { display: none !important; opacity: 0 !important; visibility: hidden !important; }
+</style>
+<style id="kg-cursor-orbit-replacement-final">
+/* Preserve established blue panel colours; the shared fixed canvas now supplies all space visuals. */
+.footer,.footer-contact-band{background-color:#0759a8!important}
+.social-section,.social-intro,.newsletter-panel{position:relative;isolation:isolate}
+</style>
+<style id="kg-fast-section-entrance">
+/* Short, low-cost section reveal: opacity + a small translate only (no filters or large effects). */
+.kg-section-enter{opacity:0;transform:translate3d(0,14px,0);transition:opacity .42s ease-out,transform .42s cubic-bezier(.2,.7,.25,1);will-change:opacity,transform}
+.kg-section-enter.kg-section-entered{opacity:1;transform:translate3d(0,0,0);will-change:auto}
+
+</style>
+<style id="kg-hamburger-final">
+/* Toggle button: 48px tap target + CSS icon that morphs to X */
+html body header.header .nav > button.toggle{
+  display:inline-flex!important;align-items:center;justify-content:center;
+  align-self:center;justify-self:end;position:relative!important;
+  width:48px!important;height:48px!important;min-width:48px!important;min-height:48px!important;padding:0!important;
+  font-size:0!important;line-height:0!important;cursor:pointer;z-index:5;
+  visibility:visible!important;opacity:1!important;pointer-events:auto!important;
+  touch-action:manipulation;-webkit-tap-highlight-color:transparent;
+}
+header.header button.toggle::before,header.header button.toggle::after{
+  content:"";position:absolute;left:50%;top:50%;width:22px;height:2px;margin:-1px 0 0 -11px;
+  background:currentColor;border-radius:2px;
+  transition:transform .25s ease,box-shadow .25s ease,opacity .2s ease;
+}
+header.header button.toggle::before{box-shadow:0 -7px 0 currentColor,0 7px 0 currentColor}
+header.header button.toggle::after{opacity:0}
+header.header button.toggle[aria-expanded="true"]::before{box-shadow:0 0 0 transparent,0 0 0 transparent;transform:rotate(45deg)}
+header.header button.toggle[aria-expanded="true"]::after{opacity:1;transform:rotate(-45deg)}
+
+/* Panel: closed / open */
+html body header.header,html body header.header .nav{overflow:visible!important}
+html body header.header #links:not(.open){display:none!important}
+html body header.header #links.open{
+  display:flex!important;flex-direction:column;align-items:stretch;gap:6px;
+  visibility:visible!important;opacity:1!important;pointer-events:auto!important;
+  overscroll-behavior:contain;animation:kg-nav-in .2s cubic-bezier(.2,.7,.25,1) both;
+}
+@media(min-width:761px){
+  html body header.header .nav{position:relative!important}
+  html body header.header #links.open{
+    position:absolute!important;top:calc(100% + 8px)!important;left:auto!important;right:0!important;
+    width:min(440px,calc(100vw - 32px))!important;max-width:calc(100vw - 32px)!important;
+    max-height:min(76vh,700px)!important;overflow-x:hidden!important;overflow-y:auto!important;
+    padding:12px!important;background:#0759a8!important;color:#fff!important;
+    border:1px solid #cbdce8!important;border-radius:12px!important;
+    box-shadow:0 18px 40px rgba(6,30,56,.32)!important;z-index:2147483000!important;transform-origin:top right;
+  }
+}
+
+/* Rows: dropdown overlap fix + alignment */
+html body header.header #links > details.nav-dropdown,
+html body header.header #links > a.nav-direct-link{height:auto!important;min-height:48px!important;flex:0 0 auto!important}
+html body header.header #links.open > a.nav-direct-link{
+  display:flex!important;align-items:center;justify-content:flex-start!important;gap:12px;text-align:left!important;
+}
+html body header.header #links details[open] > .nav-dropdown-menu{animation:kg-nav-sub .18s ease-out both}
+html body header.header #links .nav-dropdown-menu{margin:6px 0 4px!important}
+
+/* Keyboard focus */
+header.header button.toggle:focus-visible,
+header.header #links summary:focus-visible,
+header.header #links a:focus-visible{outline:3px solid #ffc400!important;outline-offset:2px}
+
+/* Mobile: dim the page behind the open menu */
+@media(max-width:760px){
+  body.kg-menu-open::after{content:"";position:fixed;inset:0;z-index:10040;background:rgba(5,28,52,.5);animation:kg-nav-fade .2s ease-out both}
+  body.kg-menu-open header.header{z-index:10045!important}
+}
+@keyframes kg-nav-in{from{opacity:0;transform:translateY(-8px) scale(.98)}to{opacity:1;transform:none}}
+@keyframes kg-nav-sub{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
+@keyframes kg-nav-fade{from{opacity:0}to{opacity:1}}
+@media(prefers-reduced-motion:reduce){
+  header.header #links.open,header.header #links details[open] > .nav-dropdown-menu,body.kg-menu-open::after{animation:none!important}
+  header.header button.toggle::before,header.header button.toggle::after{transition:none!important}
+}
+</style>
+
+<style id="kg-testimonials-remove-legacy-black-cosmic-layer">
+/* Remove the legacy DOM cosmic layer that produces oversized opaque black discs.
+   Keep #kg-space active: it is the transparent canvas with the white spacecraft,
+   stars and orbit animations. */
+.kg-cosmos-background,
+.kg-orbit-overlay,
+.kg-cosmos-system {
+  display: none !important;
+  visibility: hidden !important;
+  animation: none !important;
+}
 </style>
 
 </head><body><div aria-label="Appointment announcement" class="offline-appointment-marquee" role="region"><div class="offline-appointment-marquee__track"><span class="offline-appointment-marquee__text">OFFLINE APPOINTMENTS AVAILABLE RIGHT NOW. <span aria-hidden="true" class="marquee-inline-gap">      </span>CLICK THE APPOINTMENT BUTTON BELOW TO PROCEED.</span><span aria-hidden="true" class="offline-appointment-marquee__text">OFFLINE APPOINTMENTS AVAILABLE RIGHT NOW. <span aria-hidden="true" class="marquee-inline-gap">      </span>CLICK THE APPOINTMENT BUTTON BELOW TO PROCEED.</span></div></div><a class="skip-link" href="#main">Skip to content</a>
@@ -3507,7 +3706,7 @@ document.querySelectorAll('.nav-direct-link,.nav-dropdown-menu>a,.booking-menu-p
 .abstract-watermark-host>.container,.abstract-watermark-host>.footer-contact-band>.container,.abstract-watermark-host>.footer-bottom,.abstract-watermark-host>.newsletter-wrap,.abstract-watermark-host>.social-wrap,.abstract-watermark-host>.section-heading,.abstract-watermark-host>.hospital-location-grid{position:relative;z-index:1}
 @keyframes abstract-watermark-drift{from{translate:0 -1.5%;rotate:-4deg;scale:.98}to{translate:-2% 1.5%;rotate:4deg;scale:1.03}}
 @media(max-width:700px){.abstract-watermark{width:clamp(160px,48vw,250px);right:-55px;opacity:.48}}
-@media(prefers-reduced-motion:reduce){.abstract-watermark{animation:none!important}}
+
 </style>
 <script id="abstract-white-watermark-script">
 (()=>{
@@ -4350,11 +4549,11 @@ input,select,textarea{font-size:16px;max-width:100%}
   .header:has(#links.open) .kg-cosmos-background *{animation-play-state:paused!important;}
 }
 @keyframes kg-mobile-menu-enter{from{opacity:0;transform:translateY(-5px)}to{opacity:1;transform:translateY(0)}}
-@media(prefers-reduced-motion:reduce){.header #links.open{animation:none!important}}
+
 /* The earlier CSS had a later 5-second override; this final rule restores a genuinely slow loop. */
 .offline-appointment-marquee__track{animation-duration:38s!important;}
 @media(max-width:480px){.offline-appointment-marquee__track{animation-duration:32s!important;}}
-@media(prefers-reduced-motion:reduce){.offline-appointment-marquee__track{animation:none!important;}}
+
 </style>
 <script id="mobile-browser-performance-guard">
 (function(){
@@ -5715,6 +5914,47 @@ header.header.kg-cosmos-host,
   document.documentElement.addEventListener('pointerleave',()=>{ring.classList.remove('is-visible','is-hover','is-down');dot.classList.remove('is-visible');shown=false;if(cursorRaf){cancelAnimationFrame(cursorRaf);cursorRaf=0;}});
  }
  window.KGCosmosSpace={panels,canvas,networkMode:saverMode?'saver':'full',refresh:()=>{scan();resize();wake();}};
+})();
+</script>
+<script id="kg-fast-section-entrance-js">
+(function(){
+  function init(){
+    var reduced=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var selectors=[
+      '#connect','#kg-photo-of-month-section','#watch-our-content',
+      '#hospital-location','#featured-testimonials','.latest-section',
+      '.appointment-panel','.newsletter-section','.social-section',
+      '.photo-reel-section','.faq-section','.contact'
+    ];
+    var sections=Array.from(new Set(selectors.flatMap(function(sel){
+      return Array.from(document.querySelectorAll(sel));
+    }))).filter(function(el){
+      return el && !el.hidden && !el.closest('[hidden]');
+    });
+    if(reduced || !('IntersectionObserver' in window)){
+      sections.forEach(function(el){el.classList.add('kg-section-entered');});
+      return;
+    }
+    sections.forEach(function(el){el.classList.add('kg-section-enter');});
+    var observer=new IntersectionObserver(function(entries){
+      entries.forEach(function(entry){
+        if(entry.isIntersecting){
+          entry.target.classList.add('kg-section-entered');
+          observer.unobserve(entry.target);
+        }
+      });
+    },{rootMargin:'0px 0px -8% 0px',threshold:0.06});
+    sections.forEach(function(el){
+      /* Never hide content that is already in the initial viewport. */
+      if(el.getBoundingClientRect().top < (window.innerHeight||800)*0.92){
+        el.classList.add('kg-section-entered');
+      }else{
+        observer.observe(el);
+      }
+    });
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});
+  else init();
 })();
 </script>
 </body></html>
