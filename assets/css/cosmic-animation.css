@@ -2,7 +2,7 @@
    Loaded by the main site and subpages from /assets/css/cosmic-animation.css.
    Keep page-specific content and layout styles in each page's own stylesheet. */
 /* ONE shared cosmic layer. Only the five .kg-space-panel regions are ever painted. */
-#kg-space{position:fixed;inset:0;width:100%;height:100%;z-index:1001!important;pointer-events:none!important;opacity:.92!important;}
+#kg-space{position:fixed;inset:0;width:100%;height:100%;z-index:1!important;pointer-events:none!important;opacity:.92!important;}
 .kg-space-panel{position:relative!important;isolation:auto!important;z-index:auto!important;}
 .kg-space-panel>*{position:relative;z-index:2;}
 @media(max-width:600px){#kg-space{opacity:.88!important}}
@@ -22,3 +22,11 @@
 /* All five cosmic panels share the same isolated stacking context. */
 .kg-space-panel{position:relative!important;isolation:auto!important;z-index:auto!important;overflow:hidden!important}
 .kg-space-panel>*{position:relative;z-index:2}
+
+
+/* Shared header integration contract: compatible with the main site and sub-sites. */
+header,.header,.site-header,#site-header,.main-header{position:relative;}
+header.kg-space-panel > *, .header.kg-space-panel > *,
+.site-header.kg-space-panel > *, #site-header.kg-space-panel > *,
+.main-header.kg-space-panel > *{position:relative;z-index:2;}
+#kg-space{pointer-events:none!important;}

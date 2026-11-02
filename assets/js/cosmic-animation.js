@@ -5,6 +5,9 @@
    The engine creates its own fixed canvas if one is not already present. */
 (()=>{'use strict';
  if(window.KGCosmosSpace)return;
+ // Start only after the DOM body exists; safe for async/defer and head inclusion.
+ const boot=()=>{
+ if(window.KGCosmosSpace)return;
  // Choose a delivery mode once for this page load. A slow/offline connection
  // starts in saver mode; a later network recovery takes full effect on reload.
  // Safari-compatible proxy network estimate: use same-origin navigation/resource
@@ -42,8 +45,14 @@
  const CONFIG={maxDpr:1.5,mobileDpr:1.25,opacity:.76,mobileOpacity:.66,reducedOpacity:.72,objectAlpha:.95,issAngularSpeed:.22,voyagerInterval:[10000,17000],starshipInterval:[9000,14500],shuttleInterval:[11000,17000],satelliteInterval:[6500,10500],asteroidInterval:[1800,3600],hubbleInterval:[14000,22000],orionInterval:[10500,16500],halleyInterval:[18000,28000],voyagerInitialDelay:[500,1800],starshipInitialDelay:[400,1300],planetCount:3};
  const canvas=document.getElementById('kg-space')||document.createElement('canvas');canvas.id='kg-space';canvas.setAttribute('aria-hidden','true');if(!canvas.isConnected)document.body.appendChild(canvas);
  const ctx=canvas.getContext('2d',{alpha:true});canvas.style.opacity=String(reduce?CONFIG.reducedOpacity:(coarse?CONFIG.mobileOpacity:CONFIG.opacity));
- const selectors=['[data-kg-cosmos-panel]','.kg-space-panel','.header','.hero-grid > div:first-child','.newsletter-section','.social-intro','.footer-contact-band','.footer-bottom'];
- const panels=[];let W=0,H=0,D=1,raf=0,last=0,scrollQueued=false,frameInterval=0,slowFrames=0,fastFrames=0,lastPerfCheck=0;
+ const selectors=[
+  '[data-kg-cosmos-panel]','.kg-space-panel',
+  '.header','.site-header','#site-header','.main-header','header',
+  '.hero-grid > div:first-child','.newsletter-section','.social-intro',
+  '.footer-contact-band','.footer-bottom'
+ ];
+ const panels=[];let panelResizeObserver=null;
+ let W=0,H=0,D=1,raf=0,last=0,scrollQueued=false,frameInterval=0,slowFrames=0,fastFrames=0,lastPerfCheck=0;
  function makePanel(el,panelIndex){
   // Give each panel its own launch phase. Identical vehicles are deliberately
   // staggered so the five scenes never begin their launch cycles together.
@@ -73,7 +82,9 @@
  function scan(){
   selectors.forEach(sel=>document.querySelectorAll(sel).forEach(el=>{
    if(el.closest('#hospital-location')||el.dataset.kgSpacePanel==='1')return;
-   el.dataset.kgSpacePanel='1';el.classList.add('kg-space-panel');panels.push(makePanel(el,panels.length));
+   el.dataset.kgSpacePanel='1';el.classList.add('kg-space-panel');
+   const panel=makePanel(el,panels.length);panels.push(panel);
+   if(panelResizeObserver)panelResizeObserver.observe(el);
   }));
  }
  function measure(){
@@ -81,11 +92,16 @@
    // Keep the primary paediatric gastro care message completely clear of space objects.
    '.hero .hero-typing-headline','.hero .hero-typing-headline *',
    '.booking-toggle','.back-top','#site-search','.site-search',
-   '.toggle','#hamburger-panel','.hamburger-panel',
-   '.header #links','.header #links.open',
-   // Protect every KidsGastro logo/brand mark wherever it appears.
+   '.toggle','.hamburger-toggle','.menu-toggle','.navbar-toggler',
+   '#hamburger-panel','.hamburger-panel','#mobile-menu','.mobile-menu',
+   '.header #links','.header #links.open','.site-header #links',
+   '.site-header .nav-links','.main-header .nav-links',
+   // Protect common navigation controls and every KidsGastro brand mark.
+   'header nav a','header nav button','header nav [role="button"]',
+   '.site-header nav a','.site-header nav button',
    '.kg-logo','.circular-brand-logo','.kg-logo-header','.kg-logo-secondary',
-   '.kg-logo-newsletter','.header .brand','.footer-brand','.footer .brand',
+   '.kg-logo-newsletter','.header .brand','.site-header .brand',
+   '.navbar-brand','.logo-link','.site-logo','.footer-brand','.footer .brand',
    // Keep the newsletter email-entry field and Request updates action clear.
    '#newsletter-email',
    '.newsletter-controls input[type="email"]',
@@ -94,13 +110,17 @@
   ].join(',');
   const protectedNodes=[...document.querySelectorAll(protectedSelectors)];
   const menuNodes=[...document.querySelectorAll([
-   '.header .toggle',
-   // Only the visible expanded menu surface is shielded. Never shield
-   // the parent .nav/header: blue panels underneath must keep animating.
-   '.header #links.open',
-   '.header .links.open',
-   '.header .hamburger-panel:not([hidden])',
-   '.header [role="menu"]:not([hidden])'
+   'header .toggle','header .hamburger-toggle','header .menu-toggle',
+   'header .navbar-toggler','header #links.open','header .links.open',
+   'header .nav-links.open','header .hamburger-panel:not([hidden])',
+   'header .mobile-menu:not([hidden])','header [role="menu"]:not([hidden])',
+   'header details[open]','header .dropdown-menu.show',
+   '.site-header .toggle','.site-header .menu-toggle',
+   '.site-header .nav-links.open','.site-header .hamburger-panel:not([hidden])',
+   '.site-header [role="menu"]:not([hidden])',
+   '#mobile-menu:not([hidden])','.mobile-menu.is-open',
+   '[aria-expanded="true"] + .submenu',
+   '[aria-expanded="true"] + .dropdown-menu'
   ].join(','))];
   // Build one union rectangle around the complete hamburger control and every
   // expanded-menu child. A single union avoids XOR gaps where exclusion boxes overlap.
@@ -127,7 +147,7 @@
    // Protect appointment and search controls independently; menu elements are
    // excluded here because their merged shield above already covers them.
    protectedNodes.forEach(node=>{
-    if(!node||!node.isConnected||node.matches('.toggle,#hamburger-panel,.hamburger-panel,.header #links,.header #links.open')||node.closest('.header #links.open'))return;
+    if(!node||!node.isConnected||node.matches('.toggle,.hamburger-toggle,.menu-toggle,.navbar-toggler,#hamburger-panel,#mobile-menu,.hamburger-panel,.mobile-menu,header #links,header #links.open')||node.closest('header #links.open,header .nav-links.open,header .mobile-menu.is-open'))return;
     const b=node.getBoundingClientRect();
     if(b.width<1||b.height<1||b.bottom<0||b.top>H||b.right<0||b.left>W)return;
     const pad=26,left=clamp(b.left-pad,0,W),top=clamp(b.top-pad,0,H);
@@ -903,14 +923,21 @@
  function loop(now){raf=0;if(document.hidden)return;const target=frameInterval||(saverMode?1000/16:(coarse?1000/24:1000/45));if(now-last<target-1){raf=requestAnimationFrame(loop);return;}const started=performance.now();render(now,!reduce);const cost=performance.now()-started;if(now-lastPerfCheck>1800){lastPerfCheck=now;if(cost>19){slowFrames++;fastFrames=0;}else if(cost<11){fastFrames++;slowFrames=0;}if(slowFrames>=2){frameInterval=saverMode?1000/12:(coarse?1000/20:1000/30);slowFrames=0;}else if(fastFrames>=4){frameInterval=saverMode?1000/16:(coarse?1000/24:1000/45);fastFrames=0;}}if(!reduce&&visible())raf=requestAnimationFrame(loop);}
  function wake(){if(reduce){drawStatic();return;}if(!raf&&!document.hidden&&visible()){last=performance.now();raf=requestAnimationFrame(loop);}}
  scan();resize();
- const ro=new ResizeObserver(()=>{resize();wake();});panels.forEach(p=>ro.observe(p.el));
- // Watch the real navigation containers too: mobile menu and dropdown panels
- // expand through CSS transitions, so their protection mask must follow every
- // intermediate size rather than only the final open/closed state.
- const navNodes=document.querySelectorAll('.header .toggle,.header .links,.header #links,.header .hamburger-panel,.header details,.header .nav-dropdown-menu,.header .dropdown-menu,.header .submenu');
- navNodes.forEach(node=>ro.observe(node));
- const navMutationObserver=new MutationObserver(()=>{measure();wake();});
- navMutationObserver.observe(document.querySelector('.header')||document.body,{subtree:true,childList:true,attributes:true,attributeFilter:['class','open','hidden','aria-expanded','style']});
+ panelResizeObserver=new ResizeObserver(()=>{resize();wake();});
+ panels.forEach(p=>panelResizeObserver.observe(p.el));
+ // Observe all common navigation variants, not just one site's .header class.
+ const navNodes=document.querySelectorAll(
+  'header .toggle,header .hamburger-toggle,header .menu-toggle,header .navbar-toggler,'+
+  'header .links,header #links,header .nav-links,header .hamburger-panel,header .mobile-menu,'+
+  'header details,header .nav-dropdown-menu,header .dropdown-menu,header .submenu,'+
+  '.site-header .toggle,.site-header .menu-toggle,.site-header .nav-links,.site-header .hamburger-panel,'+
+  '#mobile-menu,.mobile-menu'
+ );
+ navNodes.forEach(node=>panelResizeObserver.observe(node));
+ const navMutationObserver=new MutationObserver(()=>{scan();measure();wake();});
+ // Body-level observation also catches subsite menus and dynamically inserted panels.
+ navMutationObserver.observe(document.body,{subtree:true,childList:true,attributes:true,
+  attributeFilter:['class','open','hidden','aria-expanded','style','data-kg-cosmos-panel']});
  window.addEventListener('resize',()=>{resize();measure();wake();},{passive:true});window.addEventListener('scroll',()=>{if(!scrollQueued){scrollQueued=true;requestAnimationFrame(()=>{scrollQueued=false;measure();wake();});}},{passive:true});
  document.addEventListener('visibilitychange',()=>{if(document.hidden){if(raf)cancelAnimationFrame(raf);raf=0;}else wake();});
  if(!reduce)wake();
@@ -924,4 +951,7 @@
   document.documentElement.addEventListener('pointerleave',()=>{ring.classList.remove('is-visible','is-hover','is-down');dot.classList.remove('is-visible');shown=false;if(cursorRaf){cancelAnimationFrame(cursorRaf);cursorRaf=0;}});
  }
  window.KGCosmosSpace={panels,canvas,networkMode:saverMode?'saver':'full',refresh:()=>{scan();resize();wake();}};
+ };
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot,{once:true});
+ else boot();
 })();
