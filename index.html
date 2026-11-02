@@ -7874,6 +7874,11 @@ header.header #links a:focus-visible{outline:3px solid #ffc400!important;outline
 })();
 </script>
 
+
+<script id="kg-faq-link-prefetch">
+(()=>{const install=()=>{let requested=false;const links=document.querySelectorAll('a[href="/faqs/"],a[href="https://drnitinmohan.com/faqs/"]');const prefetch=()=>{if(requested||document.querySelector('link[data-kg-faq-prefetch]'))return;requested=true;const l=document.createElement('link');l.rel='prefetch';l.as='document';l.href='/faqs/';l.dataset.kgFaqPrefetch='';document.head.appendChild(l)};links.forEach(a=>{a.addEventListener('pointerenter',prefetch,{once:true,passive:true});a.addEventListener('focus',prefetch,{once:true});a.addEventListener('touchstart',prefetch,{once:true,passive:true})})};if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',install,{once:true});else install()})();
+</script>
+
 </body>
 </html>
 
