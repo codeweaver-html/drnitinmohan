@@ -272,9 +272,25 @@ select.setting-state-unchanged{
         </div>
       </div>
 
+      <div class="subpanel phone-visibility-settings">
+        <h3 class="group-title">Phone number visibility · entire website</h3>
+        <p class="hint">Independent of appointment booking. This setting controls phone-number displays across the main website and every KidsGastro subsite.</p>
+        <div class="control">
+          <label for="phoneVisibility">Phone number display</label>
+          <select id="phoneVisibility">
+            <option value="unchanged" selected>Continue last setting</option>
+            <option value="enable">Show phone number everywhere</option>
+            <option value="disable">Hide phone number everywhere</option>
+          </select>
+          <small style="color:#4e716a">Applies to shared headers, footers, contact sections and all phone-number displays on the main website and subsites.</small>
+          <div class="previous-meta" id="phoneVisibilityPrevious">Previous setting: not loaded</div>
+        </div>
+      </div>
+
       <div class="subpanel">
         <h3 class="group-title">Announcement marquee — both strips, every KidsGastro page</h3>
-        <p class="hint">Any main-strip or additional-strip change is exported for the main website and every sub-website. Both strips share the same temporary or permanent schedule, so they switch together and stay visually consistent across all pages.</p>\n         <div class="control" style="margin-bottom:12px"><label for="announcementAction">What would you like to do?</label><select id="announcementAction"><option value="unchanged">No change to announcement</option><option value="edit">Edit the main strip</option><option value="add">Add a second strip below it</option><option value="restore_default">Restore the website default main strip</option></select><div class="previous-meta" id="announcementActionPrevious">Previous setting: not loaded</div></div>
+        <p class="hint">Any main-strip or additional-strip change is exported for the main website and every sub-website. Both strips share the same temporary or permanent schedule, so they switch together and stay visually consistent across all pages.</p>
+         <div class="control" style="margin-bottom:12px"><label for="announcementAction">What would you like to do?</label><select id="announcementAction"><option value="unchanged">No change to announcement</option><option value="edit">Edit the main strip</option><option value="add">Add a second strip below it</option><option value="restore_default">Restore the website default main strip</option></select><div class="previous-meta" id="announcementActionPrevious">Previous setting: not loaded</div></div>
         <div class="conditional" id="announcementPanel" hidden>
           
           </div>
@@ -367,6 +383,7 @@ select.setting-state-unchanged{
     const c = config?.changes || {};
     const d = config?.details || {};
     const direct = config?.activeConfiguration || config?.configuration || config?.settings || {};
+    const rootPhoneVisibility = config?.phoneNumberVisibility || {};
     const schedules = config?.changeSchedules || {};
     const scheduleSettings = schedules.settings || {};
     const scheduleKey = ({appointmentButton:'appointmentButton',whatsappBookingOption:'whatsappBookingOption',rezepRxBookingOption:'rezepRxBookingOption',announcementMarquee:'announcementMarquee',photoOfTheMonth:'photoOfTheMonth'})[key] || key;
@@ -381,6 +398,18 @@ select.setting-state-unchanged{
     } else if (key === 'rezepRxBookingOption') {
       if (yes(firstDefined(c.enableRezeptRxBookingOption, direct.rezepRxBookingOption?.enabled, direct.rezepRxBookingOption))) enabled = true;
       else if (yes(firstDefined(c.disableRezeptRxBookingOption, direct.rezepRxBookingOption?.disabled))) enabled = false;
+    } else if (key === 'phoneNumberVisibility') {
+      const visibility = firstDefined(
+        c.hidePhoneNumber, c.showPhoneNumber,
+        direct.phoneNumberVisibility?.visible,
+        direct.phoneNumberVisibility?.hidden,
+        direct.phoneNumberVisibility?.enabled,
+        rootPhoneVisibility.visible, rootPhoneVisibility.hidden,
+        direct.hidePhoneNumber
+      );
+      if (yes(firstDefined(c.hidePhoneNumber, direct.phoneNumberVisibility?.hidden, rootPhoneVisibility.hidden, direct.hidePhoneNumber))) enabled = false;
+      else if (yes(firstDefined(c.showPhoneNumber, direct.phoneNumberVisibility?.visible, direct.phoneNumberVisibility?.enabled, rootPhoneVisibility.visible))) enabled = true;
+      else if (no(visibility)) enabled = false;
     } else if (key === 'photoOfTheMonth') {
       const action = firstDefined(c.photoOfMonthAction, d.photoOfMonthAction, direct.photoOfTheMonth?.action);
       if (action === 'disable' || yes(firstDefined(c.disablePhotoOfMonth, direct.photoOfTheMonth?.disabled)) || direct.photoOfMonthDisabled === true) enabled = false;
@@ -417,7 +446,7 @@ select.setting-state-unchanged{
   function updatePreviousLabels() {
     const ids = {
       appointment:'appointmentButton', whatsappBooking:'whatsappBookingOption',
-      rezeptrx:'rezepRxBookingOption', photoAction:'photoOfTheMonth', announcementAction:'announcementMarquee'
+      rezeptrx:'rezepRxBookingOption', phoneVisibility:'phoneNumberVisibility', photoAction:'photoOfTheMonth', announcementAction:'announcementMarquee'
     };
     Object.entries(ids).forEach(([id,key])=>{
       const el=$(id+'Previous'); if(!el) return;
@@ -743,7 +772,7 @@ select.setting-state-unchanged{
     updateAnnouncementPreview();
     updatePreviousLabels();
   };
-  ['appointment','whatsappBooking','rezeptrx','announcementAction','photoAction'].forEach(id => $(id).addEventListener('change', refresh));
+  ['appointment','whatsappBooking','rezeptrx','phoneVisibility','announcementAction','photoAction'].forEach(id => $(id).addEventListener('change', refresh));
   const DEFAULT_ANNOUNCEMENT = 'OFFLINE APPOINTMENTS AVAILABLE RIGHT NOW.               CLICK THE APPOINTMENT BUTTON BELOW TO PROCEED.';
   const updateAnnouncementPreview = () => {
     const value = $('announcement').value;
@@ -849,7 +878,7 @@ select.setting-state-unchanged{
 
   $('download').addEventListener('click', () => {
 
-    if (!changedFields().length && !previousConfig) {
+    if (!changedFields().length && $('phoneVisibility').value === 'unchanged' && !previousConfig) {
       $('status').textContent = 'Load a previous JSON to carry it forward, or select at least one new website change.';
       $('status').classList.add('status-error');
       return;
@@ -884,6 +913,8 @@ select.setting-state-unchanged{
       disableRezeptRxBookingOption: $('rezeptrx').value === 'disable' ? 'yes' : 'no',
       showWhatsAppButton: $('whatsappBooking').value === 'enable' ? 'yes' : 'no',
       hideWhatsAppButton: $('whatsappBooking').value === 'disable' ? 'yes' : 'no',
+      showPhoneNumber: $('phoneVisibility').value === 'enable' ? 'yes' : 'no',
+      hidePhoneNumber: $('phoneVisibility').value === 'disable' ? 'yes' : 'no',
       changeAnnouncement: ['edit','add','restore_default'].includes($('announcementAction').value) ? 'yes' : 'no',
       announcementMode: $('announcementAction').value,
       mainStripBackgroundColor: $('mainAnnouncementBackgroundColor').value,
@@ -909,18 +940,24 @@ select.setting-state-unchanged{
       synthesize('appointmentButton','enableAppointmentButton','disableAppointmentButton');
       synthesize('whatsappBookingOption','enableWhatsAppBookingOption','disableWhatsAppBookingOption',['showWhatsAppButton']);
       synthesize('rezepRxBookingOption','enableRezeptRxBookingOption','disableRezeptRxBookingOption');
+      if (!yes(oldChanges.showPhoneNumber) && !yes(oldChanges.hidePhoneNumber)) {
+        const phoneState=readPreviousState(previousConfig,'phoneNumberVisibility');
+        if(phoneState.enabled===true){changes.showPhoneNumber='yes';changes.hidePhoneNumber='no';}
+        else if(phoneState.enabled===false){changes.showPhoneNumber='no';changes.hidePhoneNumber='yes';}
+      }
       if (!yes(oldChanges.updatePhotoOfMonth) && !yes(oldChanges.disablePhotoOfMonth) && !oldChanges.photoOfMonthAction) {
         const photoState=readPreviousState(previousConfig,'photoOfTheMonth');
         if(photoState.enabled===false){changes.photoOfMonthAction='disable';changes.disablePhotoOfMonth='yes';changes.updatePhotoOfMonth='no';}
         else if(photoState.enabled===true){changes.photoOfMonthAction='unchanged';changes.disablePhotoOfMonth='no';changes.updatePhotoOfMonth='no';}
       }
     }
-    const explicitChangeIds = ['appointment','whatsappBooking','rezeptrx','announcementAction','photoAction']
+    const explicitChangeIds = ['appointment','whatsappBooking','rezeptrx','phoneVisibility','announcementAction','photoAction']
       .filter(id => $(id).value !== 'unchanged');
     const mergeKeys = {
       appointment:['enableAppointmentButton','disableAppointmentButton'],
       whatsappBooking:['enableWhatsAppBookingOption','disableWhatsAppBookingOption','showWhatsAppButton','hideWhatsAppButton'],
       rezeptrx:['enableRezeptRxBookingOption','disableRezeptRxBookingOption'],
+      phoneVisibility:['showPhoneNumber','hidePhoneNumber'],
       announcementAction:['changeAnnouncement','announcementMode','mainStripBackgroundColor'],
       photoAction:['photoOfMonthAction','updatePhotoOfMonth','disablePhotoOfMonth']
     };
@@ -930,6 +967,7 @@ select.setting-state-unchanged{
       appointmentButton:$('appointment').value==='unchanged'?'continue':$('appointment').value,
       whatsappBookingOption:$('whatsappBooking').value==='unchanged'?'continue':$('whatsappBooking').value,
       rezepRxBookingOption:$('rezeptrx').value==='unchanged'?'continue':$('rezeptrx').value,
+      phoneNumberVisibility:$('phoneVisibility').value==='unchanged'?'continue':$('phoneVisibility').value,
       announcementMarquee:$('announcementAction').value==='unchanged'?'continue':$('announcementAction').value,
       photoOfTheMonth:$('photoAction').value==='unchanged'?'continue':$('photoAction').value
     };
@@ -1108,6 +1146,20 @@ select.setting-state-unchanged{
       endDateTime: announcementSchedule.duration === 'temporary'
         ? (finalGroups.find(g=>g.id===announcementSchedule.scheduleGroupId)?.endDateTime || null) : null
     };
+    // One shared layout contract prevents the main site and any sub-site
+    // from rendering announcement bars at different widths or with different
+    // sizing rules. Both strips use the same full-available-width geometry.
+    const announcementStripLayout = {
+      width: '100%',
+      maxWidth: '100%',
+      minWidth: '0',
+      boxSizing: 'border-box',
+      display: 'block',
+      container: 'full-available-viewport-width',
+      horizontalOverflow: 'hidden',
+      uniformAcrossSites: true,
+      sharedByStrips: true
+    };
     const announcementSiteWide = {
       enabled: effectiveAnnouncementEnabled,
       scope: 'all-sites',
@@ -1116,9 +1168,15 @@ select.setting-state-unchanged{
       renderOn: 'every-page',
       uniformAcrossSites: true,
       coordinatedStrips: true,
+      layout: {...announcementStripLayout},
+      width: '100%',
+      maxWidth: '100%',
       action: effectiveAnnouncementMode,
       schedule: {...stripSchedule},
       mainStrip: {
+        layout: {...announcementStripLayout},
+        width: '100%',
+        maxWidth: '100%',
         enabled: effectiveAnnouncementEnabled,
         text: effectiveMainText,
         textColor: details.mainStripTextColor ?? details.announcementTextColors?.defaultStrip ?? previousMainStrip.textColor ?? '#0759a8',
@@ -1129,6 +1187,9 @@ select.setting-state-unchanged{
         schedule: {...stripSchedule}
       },
       additionalStrip: {
+        layout: {...announcementStripLayout},
+        width: '100%',
+        maxWidth: '100%',
         enabled: effectiveAdditionalEnabled,
         text: effectiveAdditionalText,
         textColor: details.announcementTextColors?.customStrip ?? previousAdditionalStrip.textColor ?? '#0759a8',
@@ -1174,22 +1235,43 @@ select.setting-state-unchanged{
     };
     details.appointmentButtonPresentation = appointmentButtonPresentation;
 
+    // Phone-number visibility is a site-wide presentation setting, independent of
+    // appointment booking. Continue preserves the loaded state; legacy JSON remains readable.
+    const priorPhoneState = readPreviousState(previousConfig, 'phoneNumberVisibility').enabled;
+    const phoneNumberVisible = $('phoneVisibility').value === 'enable' ? true
+      : $('phoneVisibility').value === 'disable' ? false
+      : (priorPhoneState === null ? !(yes(changes.hidePhoneNumber)) : priorPhoneState);
+    const phoneNumberVisibility = {
+      visible: phoneNumberVisible,
+      hidden: !phoneNumberVisible,
+      action: $('phoneVisibility').value === 'unchanged' ? 'continue' : $('phoneVisibility').value,
+      scope: 'all-sites',
+      targets: { mainSite: true, subSites: true, match: 'all-kidsgastro-pages' },
+      applyTo: ['shared-header', 'shared-footer', 'contact-sections', 'all-phone-number-displays'],
+      preserveLayout: true
+    };
+    details.phoneNumberVisibility = phoneNumberVisibility;
+
     // Keep normalized site-wide settings both at the top level and in details so
     // every sub-site can consume the same configuration.
     details.announcementSiteWide = announcementSiteWide;
+    details.announcementStripLayout = {...announcementStripLayout};
 
     const data = {
       schemaVersion: 3,
       configContract: 'kidsgastro-manual-settings-v3',
-      announcementContract: 'all-sites-two-strip-uniform-v1',
+      announcementContract: 'all-sites-two-strip-uniform-v2',
+      announcementStripLayout,
       siteScope: {
         applyTo: 'all-sites',
         includeMainSite: true,
         includeSubSites: true,
+        phoneNumberVisibility: 'all-sites',
         renderAnnouncementOnEveryPage: true
       },
       announcementSiteWide,
       appointmentButtonPresentation,
+      phoneNumberVisibility,
       formTitle: 'KidsGastro Website Change Request', doctor: 'Dr. Nitin Mohan',
       createdAt: new Date().toISOString(), timezone: 'Asia/Kolkata',
       targetFile: 'configuration/change-request.json',
