@@ -3753,18 +3753,15 @@ timeSource='typed';const match=getManualTime();if(match&&!periodExplicit){const 
  hand.addEventListener('pointermove',event=>{if(dragPart&&hand.hasPointerCapture(event.pointerId))setFromPointer(event)});
  hand.addEventListener('pointerup',event=>{if(!dragPart)return;hand.releasePointerCapture(event.pointerId);hand.classList.remove('is-grabbing');if(dragPart==='hour')part='minute';else timeChosen=isSelectableTime(selectedDate,hour,minute,period);dragPart=null;updateClock()});
  hand.addEventListener('pointercancel',()=>{if(dragPart==='hour')part='minute';else timeChosen=isSelectableTime(selectedDate,hour,minute,period);dragPart=null;hand.classList.remove('is-grabbing');updateClock()});
- const bookingMenu=document.querySelector('.booking-menu');
+ const bookingMenuPanel=document.getElementById('booking-menu-panel');
   const bookingMenuToggle=document.getElementById('booking-menu-toggle');
-  const bookingMenuPanel=document.getElementById('booking-menu-panel');
   const closeBookingMenu=()=>{if(bookingMenuPanel){bookingMenuPanel.hidden=true;bookingMenuToggle?.setAttribute('aria-expanded','false')}};
+  /* The dedicated viewport-level controller owns menu open/close. This handler
+     only owns the WhatsApp handoff, avoiding two listeners toggling the same menu. */
   document.addEventListener('click',event=>{
-    const toggle=event.target.closest('#booking-menu-toggle');
-    if(toggle){event.preventDefault();const opening=bookingMenuPanel.hidden;bookingMenuPanel.hidden=!opening;toggle.setAttribute('aria-expanded',String(opening));return;}
-    const whatsappChoice=event.target.closest('#whatsapp-booking-option,.whatsapp-float');
-    if(whatsappChoice){event.preventDefault();closeBookingMenu();openDialog();return;}
-    if(bookingMenu&&!bookingMenu.contains(event.target))closeBookingMenu();
+    const whatsappChoice=event.target&&event.target.closest?event.target.closest('#whatsapp-booking-option,.whatsapp-float'):null;
+    if(whatsappChoice){event.preventDefault();closeBookingMenu();openDialog();}
   });
-  document.addEventListener('keydown',event=>{if(event.key==='Escape')closeBookingMenu()});
  dialog.addEventListener('close',()=>{document.body.classList.remove('kg-booking-dialog-open');if(!bookingVerificationInProgress){bookingHandoffStarted=false;if(bookingSubmitButton){bookingSubmitButton.disabled=false;bookingSubmitButton.removeAttribute('aria-busy');bookingSubmitButton.textContent='Continue to WhatsApp'}}});
  dialog.querySelector('.booking-dialog-close').addEventListener('click',()=>dialog.close());
  dialog.querySelector('.booking-cancel').addEventListener('click',()=>dialog.close());
@@ -5254,7 +5251,11 @@ input,select,textarea{font-size:16px;max-width:100%}
       else {['position','width','max-width','left','right','top','z-index','display','visibility','pointer-events'].forEach(function(k){panel.style.removeProperty(k);});}
     }
     toggle.addEventListener('click',function(e){e.preventDefault();e.stopPropagation();setOpen(panel.hidden);});
-    document.addEventListener('click',function(e){if(!panel.contains(e.target)&&!toggle.contains(e.target))setOpen(false);});
+    document.addEventListener('click',function(e){
+      var choice=e.target&&e.target.closest?e.target.closest('#booking-menu-panel .booking-option'):null;
+      if(choice){setOpen(false);return;}
+      if(!panel.contains(e.target)&&!toggle.contains(e.target))setOpen(false);
+    },true);
     document.addEventListener('keydown',function(e){if(e.key==='Escape'&&!panel.hidden){setOpen(false);toggle.focus();}});
     window.addEventListener('resize',placePanel,{passive:true});
     window.addEventListener('scroll',placePanel,{passive:true,capture:true});
@@ -6245,42 +6246,7 @@ input,select,textarea{font-size:16px;max-width:100%}
   .header #links.open .kg-menu-scrollbar { top: 8px !important; bottom: 8px !important; }
 }
 </style>
-<script id="kg-mobile-hamburger-viewport-fit-js">
-(function () {
-  function initViewportFit() {
-    var header = document.querySelector('.header');
-    var nav = document.querySelector('.header .nav');
-    var panel = document.querySelector('.header #links');
-    var toggle = document.querySelector('.header .toggle');
-    if (!header || !nav || !panel || !toggle || panel.dataset.viewportFitWired === 'true') return;
-    panel.dataset.viewportFitWired = 'true';
 
-    function sync() {
-      var open = panel.classList.contains('open') && window.matchMedia('(max-width: 760px)').matches;
-      document.body.classList.toggle('kg-mobile-menu-open', open);
-      if (!open) return;
-      var headerRect = header.getBoundingClientRect();
-      var navRect = nav.getBoundingClientRect();
-      var top = Math.max(8, Math.min(headerRect.bottom + 4, window.innerHeight - 120));
-      var left = Math.max(8, navRect.left);
-      var width = Math.min(navRect.width, window.innerWidth - left - 8);
-      panel.style.setProperty('--kg-mobile-menu-top', top + 'px');
-      panel.style.setProperty('--kg-mobile-menu-left', left + 'px');
-      panel.style.setProperty('--kg-mobile-menu-width', width + 'px');
-    }
-
-    var observer = new MutationObserver(sync);
-    observer.observe(panel, { attributes: true, attributeFilter: ['class', 'style'] });
-    toggle.addEventListener('click', function () { requestAnimationFrame(sync); });
-    window.addEventListener('resize', sync, { passive: true });
-    window.addEventListener('orientationchange', function () { setTimeout(sync, 80); }, { passive: true });
-    if (window.visualViewport) window.visualViewport.addEventListener('resize', sync, { passive: true });
-    sync();
-  }
-  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initViewportFit, { once: true });
-  else initViewportFit();
-})();
-</script>
 
 <style id="mobile-menu-and-social-layout-repair">
 /* Mobile formatting repair: consistent one-column hamburger rows and social profile cards. */
@@ -7645,33 +7611,7 @@ header.header #links a:focus-visible{outline:3px solid #ffc400!important;outline
   header.header button.toggle::before,header.header button.toggle::after{transition:none!important}
 }
 </style>
-<script id="kg-hamburger-final-js">
-(function(){
- 'use strict';
- function init(){
-  var header=document.querySelector('header.header');
-  var btn=header&&header.querySelector('button.toggle');
-  var panel=header&&header.querySelector('#links');
-  if(!header||!btn||!panel||btn.dataset.kgNavController==='v3')return;
-  btn.dataset.kgNavController='v3'; btn.type='button'; btn.setAttribute('aria-controls','links');
-  btn.setAttribute('aria-haspopup','true'); panel.removeAttribute('hidden');
-  function open(){return panel.classList.contains('open');}
-  function setOpen(value){
-   panel.classList.toggle('open',!!value);
-   btn.setAttribute('aria-expanded',String(!!value));
-   btn.setAttribute('aria-label',value?'Close navigation':'Open navigation');
-   btn.textContent=value?'×':'☰'; document.body.classList.toggle('kg-menu-open',!!value);
-  }
-  btn.addEventListener('click',function(e){e.preventDefault();e.stopImmediatePropagation();setOpen(!open());});
-  panel.addEventListener('click',function(e){var a=e.target.closest('a[href]');if(a)setOpen(false);});
-  document.addEventListener('click',function(e){if(open()&&!header.contains(e.target))setOpen(false);});
-  document.addEventListener('keydown',function(e){if(e.key==='Escape'&&open()){setOpen(false);btn.focus();}});
-  panel.addEventListener('toggle',function(e){var d=e.target;if(d&&d.matches&&d.matches('details.nav-dropdown')&&d.open){panel.querySelectorAll('details.nav-dropdown[open]').forEach(function(x){if(x!==d)x.open=false;});}});
-  setOpen(false);
- }
- if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});else init();
-})();
-</script>
+
 
 <script id="kg-testimonials-link-prefetch">
 (() => {
@@ -7705,16 +7645,7 @@ header.header #links a:focus-visible{outline:3px solid #ffc400!important;outline
 </script>
 
 
-<script id="kg-hamburger-capture-controller-final">
-(function(){
- const boot=()=>{const header=document.querySelector('header.header'),nav=header&&header.querySelector('.nav'),btn=nav&&nav.querySelector('button.toggle'),panel=header&&header.querySelector('#links');if(!btn||!panel||document.documentElement.dataset.kgHamburgerCapture==='1')return;document.documentElement.dataset.kgHamburgerCapture='1';btn.type='button';btn.setAttribute('aria-controls','links');btn.setAttribute('aria-expanded','false');btn.setAttribute('aria-label','Open navigation');btn.textContent='☰';panel.removeAttribute('hidden');
- const open=()=>{panel.classList.add('open');btn.setAttribute('aria-expanded','true');btn.setAttribute('aria-label','Close navigation');btn.textContent='×';document.body.classList.add('kg-menu-open');};
- const close=()=>{panel.classList.remove('open');btn.setAttribute('aria-expanded','false');btn.setAttribute('aria-label','Open navigation');btn.textContent='☰';document.body.classList.remove('kg-menu-open');panel.querySelectorAll('details[open]').forEach(d=>d.open=false);};
- document.addEventListener('click',e=>{if(e.target.closest('button.toggle')===btn){e.preventDefault();e.stopPropagation();e.stopImmediatePropagation();panel.classList.contains('open')?close():open();return;}if(panel.classList.contains('open')&&panel.contains(e.target)&&e.target.closest('a[href]')){close();return;}if(panel.classList.contains('open')&&!panel.contains(e.target)&&!btn.contains(e.target))close();},true);
- document.addEventListener('keydown',e=>{if(e.key==='Escape'&&panel.classList.contains('open')){close();btn.focus();}},true);
- };if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot,{once:true});else boot();
-})();
-</script>
+
 
 
 <style id="absolute-remove-social-and-newsletter-kg-logos">
@@ -8220,125 +8151,154 @@ header.header.kg-space-panel>*{
 
 
 
-<!-- Consolidated repair: hero sizing, booking-choice dismissal, mobile labels,
-     reCAPTCHA stacking, and one predictable hamburger layout. -->
-<style id="kg-2026-11-cross-device-repair">
-/* Desktop: the blue hero copy panel and the doctor portrait share one row and height. */
+
+<!-- Consolidated functional repairs: hero geometry, booking menu, reCAPTCHA and navigation. -->
+<style id="kg-cross-device-functional-repair-v2">
+/* Keep the blue appointment panel and doctor image exactly the same grid size. */
 @media (min-width:761px){
-  .hero .hero-grid{
+  html body .hero .hero-grid{
     display:grid!important;
     grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important;
     grid-template-areas:"copy portrait"!important;
+    grid-auto-rows:minmax(420px,auto)!important;
     align-items:stretch!important;
-    column-gap:28px!important;
-    row-gap:0!important;
+    gap:28px!important;
   }
-  .hero .hero-grid>.reveal{
-    grid-area:copy!important;
-    display:flex!important;
-    flex-direction:column!important;
-    justify-content:center!important;
-    align-self:stretch!important;
-    min-width:0!important;
-    min-height:420px!important;
-    height:100%!important;
+  html body .hero .hero-grid>.reveal{
+    grid-area:copy!important;display:flex!important;flex-direction:column!important;
+    justify-content:center!important;align-self:stretch!important;
+    width:100%!important;min-width:0!important;min-height:420px!important;height:100%!important;
+    box-sizing:border-box!important;
   }
-  .hero .hero-grid>.visual{
-    grid-area:portrait!important;
-    position:relative!important;
-    display:block!important;
-    align-self:stretch!important;
-    width:100%!important;
-    max-width:none!important;
-    min-width:0!important;
-    min-height:420px!important;
-    height:100%!important;
-    margin:0!important;
-    aspect-ratio:auto!important;
+  html body .hero .hero-grid>.visual{
+    grid-area:portrait!important;position:relative!important;display:block!important;
+    align-self:stretch!important;width:100%!important;max-width:none!important;min-width:0!important;
+    min-height:420px!important;height:100%!important;margin:0!important;aspect-ratio:auto!important;
   }
-  .hero .hero-grid>.visual>.portrait{
+  html body .hero .hero-grid>.visual>.portrait{
     position:absolute!important;inset:0!important;width:100%!important;height:100%!important;
     min-height:0!important;aspect-ratio:auto!important;overflow:hidden!important;
   }
-  .hero .hero-grid>.visual>.portrait>img{
-    display:block!important;width:100%!important;height:100%!important;
-    min-height:0!important;aspect-ratio:auto!important;object-fit:contain!important;
+  html body .hero .hero-grid>.visual>.portrait>img{
+    display:block!important;width:100%!important;height:100%!important;min-height:0!important;
+    aspect-ratio:auto!important;object-fit:contain!important;
   }
 }
-@media (max-width:760px){
-  .hero .hero-grid{grid-template-columns:minmax(0,1fr)!important;grid-template-areas:"copy" "portrait"!important;align-items:start!important;row-gap:0!important}
-  .hero .hero-grid>.reveal{grid-area:copy!important;min-height:0!important;height:auto!important}
-  .hero .hero-grid>.visual{grid-area:portrait!important;width:min(100%,430px)!important;max-width:430px!important;min-height:0!important;height:auto!important;margin:18px auto 0!important;aspect-ratio:auto!important}
-  .hero .hero-grid>.visual>.portrait{position:relative!important;inset:auto!important;width:100%!important;height:auto!important;aspect-ratio:1/1.08!important}
-  .hero .hero-grid>.visual>.portrait>img{width:100%!important;height:100%!important;object-fit:contain!important}
+@media(max-width:760px){
+  html body .hero .hero-grid{display:grid!important;grid-template-columns:minmax(0,1fr)!important;grid-template-areas:"copy" "portrait"!important;grid-auto-rows:auto!important;align-items:start!important;row-gap:0!important}
+  html body .hero .hero-grid>.reveal{grid-area:copy!important;width:100%!important;min-height:0!important;height:auto!important}
+  html body .hero .hero-grid>.visual{grid-area:portrait!important;width:min(100%,430px)!important;max-width:430px!important;min-height:0!important;height:auto!important;margin:18px auto 0!important;aspect-ratio:auto!important}
+  html body .hero .hero-grid>.visual>.portrait{position:relative!important;inset:auto!important;width:100%!important;height:auto!important;aspect-ratio:1/1.08!important}
+  html body .hero .hero-grid>.visual>.portrait>img{width:100%!important;height:100%!important;object-fit:contain!important}
 }
 
-/* Booking choice rows: force icon/logo and label to stay side-by-side on narrow screens. */
-#booking-menu-panel>.booking-option{
-  display:flex!important;flex-direction:row!important;flex-wrap:nowrap!important;
-  align-items:center!important;justify-content:flex-start!important;
-  gap:12px!important;width:100%!important;min-width:0!important;
-  text-align:left!important;writing-mode:horizontal-tb!important;
+/* Provider choices remain horizontal, including on narrow phones. */
+html body #booking-menu-panel>.booking-option{
+  display:flex!important;flex-direction:row!important;flex-wrap:nowrap!important;align-items:center!important;
+  justify-content:flex-start!important;gap:10px!important;width:100%!important;min-width:0!important;
+  text-align:left!important;writing-mode:horizontal-tb!important;white-space:normal!important;
 }
-#booking-menu-panel>.booking-option>.booking-choice-logo{
-  display:flex!important;flex-direction:row!important;flex-wrap:nowrap!important;
-  align-items:center!important;justify-content:flex-start!important;
-  gap:10px!important;width:auto!important;min-width:0!important;min-height:0!important;
-  flex:1 1 auto!important;padding:0!important;border:0!important;background:transparent!important;
-  overflow:visible!important;writing-mode:horizontal-tb!important;
+html body #booking-menu-panel>.booking-option>.booking-choice-logo{
+  display:flex!important;flex-direction:row!important;flex-wrap:nowrap!important;align-items:center!important;
+  justify-content:flex-start!important;gap:10px!important;width:auto!important;min-width:0!important;
+  min-height:0!important;flex:1 1 auto!important;padding:0!important;border:0!important;
+  background:transparent!important;overflow:visible!important;writing-mode:horizontal-tb!important;
 }
-#booking-menu-panel>.booking-option .booking-choice-whatsapp-mark{
-  display:flex!important;flex:0 0 42px!important;width:42px!important;height:42px!important;
-  align-items:center!important;justify-content:center!important;
+html body #booking-menu-panel>.booking-option .booking-choice-whatsapp-mark{
+  display:flex!important;flex:0 0 40px!important;width:40px!important;height:40px!important;
+  min-height:40px!important;align-items:center!important;justify-content:center!important;
 }
-#booking-menu-panel>.booking-option .booking-choice-logo>img{
-  display:block!important;flex:0 0 72px!important;width:72px!important;max-width:72px!important;
-  height:42px!important;max-height:42px!important;object-fit:contain!important;
+html body #booking-menu-panel>.booking-option .booking-choice-logo>img{
+  display:block!important;flex:0 0 66px!important;width:66px!important;max-width:66px!important;
+  height:40px!important;max-height:40px!important;object-fit:contain!important;
 }
-#booking-menu-panel>.booking-option .booking-choice-logo>span:last-child,
-#booking-menu-panel>.booking-option strong{
-  display:block!important;flex:1 1 auto!important;min-width:0!important;
-  white-space:normal!important;word-break:normal!important;overflow-wrap:normal!important;
-  writing-mode:horizontal-tb!important;text-orientation:mixed!important;
-  letter-spacing:normal!important;line-height:1.35!important;text-align:left!important;
+html body #booking-menu-panel>.booking-option .booking-choice-logo>span,
+html body #booking-menu-panel>.booking-option strong{
+  display:block!important;flex:1 1 auto!important;min-width:0!important;white-space:normal!important;
+  word-break:normal!important;overflow-wrap:normal!important;writing-mode:horizontal-tb!important;
+  text-orientation:mixed!important;letter-spacing:normal!important;line-height:1.35!important;text-align:left!important;
 }
 @media(max-width:480px){
-  #booking-menu-panel>.booking-option{gap:9px!important;padding:11px 8px!important;min-height:60px!important}
-  #booking-menu-panel>.booking-option .booking-choice-whatsapp-mark{flex-basis:38px!important;width:38px!important;height:38px!important}
-  #booking-menu-panel>.booking-option .booking-choice-logo>img{flex-basis:66px!important;width:66px!important;max-width:66px!important;height:38px!important}
-  #booking-menu-panel>.booking-option strong{font-size:.94rem!important}
+  html body #booking-menu-panel>.booking-option{gap:8px!important;padding:10px 8px!important;min-height:58px!important}
+  html body #booking-menu-panel>.booking-option .booking-choice-whatsapp-mark{flex-basis:36px!important;width:36px!important;height:36px!important;min-height:36px!important}
+  html body #booking-menu-panel>.booking-option .booking-choice-logo>img{flex-basis:60px!important;width:60px!important;max-width:60px!important;height:36px!important}
+  html body #booking-menu-panel>.booking-option strong{font-size:.94rem!important}
 }
 
-/* Hamburger is the sole navigation disclosure at every viewport width. */
+/* Google reCAPTCHA badge and challenge must be sharp, clickable and above the form. */
+html body.kg-booking-dialog-open::before{
+  content:""!important;position:fixed!important;inset:0!important;z-index:2147482998!important;
+  background:rgba(7,24,44,.58)!important;filter:none!important;
+  -webkit-backdrop-filter:none!important;backdrop-filter:none!important;pointer-events:auto!important;
+}
+html body #whatsapp-booking-dialog.booking-dialog[open]{
+  position:fixed!important;inset:0!important;margin:auto!important;z-index:2147483001!important;
+  max-height:calc(100dvh - 16px)!important;overflow-y:auto!important;filter:none!important;
+  -webkit-filter:none!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;
+}
+html body #whatsapp-booking-dialog.booking-dialog[open] .booking-dialog-inner{
+  max-height:calc(100dvh - 16px)!important;overflow-y:auto!important;
+  -webkit-overflow-scrolling:touch!important;
+}
+html body.kg-booking-dialog-open .grecaptcha-badge{
+  position:fixed!important;right:10px!important;left:auto!important;bottom:10px!important;
+  width:256px!important;height:60px!important;max-width:calc(100vw - 20px)!important;
+  z-index:2147483646!important;display:block!important;visibility:visible!important;opacity:1!important;
+  pointer-events:auto!important;filter:none!important;-webkit-filter:none!important;
+  backdrop-filter:none!important;-webkit-backdrop-filter:none!important;transform:none!important;
+}
+html body.kg-booking-dialog-open .grecaptcha-badge iframe,
+html body.kg-booking-dialog-open iframe[src*="recaptcha"],
+html body.kg-booking-dialog-open iframe[src*="google.com/recaptcha"]{
+  visibility:visible!important;opacity:1!important;pointer-events:auto!important;
+  filter:none!important;-webkit-filter:none!important;transform:none!important;
+}
+/* Invisible widget host stays tiny; Google's visible badge/challenge are separate elements. */
+html body #appointment-recaptcha-v2{
+  position:fixed!important;left:0!important;bottom:0!important;width:1px!important;height:1px!important;
+  min-width:1px!important;overflow:visible!important;z-index:2147483002!important;
+  pointer-events:auto!important;opacity:1!important;visibility:visible!important;filter:none!important;transform:none!important;
+}
+html body.kg-booking-dialog-open>div[style*="z-index: 2000000000"],
+html body.kg-booking-dialog-open>div[style*="z-index:2000000000"],
+html body>div[style*="z-index: 2000000000"],
+html body>div[style*="z-index:2000000000"]{
+  z-index:2147483647!important;visibility:visible!important;opacity:1!important;pointer-events:auto!important;
+  filter:none!important;-webkit-filter:none!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;
+  transform:none!important;
+}
+@media(max-width:640px){html body.kg-booking-dialog-open .grecaptcha-badge{right:8px!important;bottom:8px!important}}
+
+/* One navigation disclosure controller is used at every viewport width. */
 html body header.header{position:relative!important;z-index:2147483000!important;overflow:visible!important}
 html body header.header .nav{
   position:relative!important;display:grid!important;overflow:visible!important;isolation:isolate!important;
   grid-template-columns:minmax(0,1fr) minmax(220px,min(38vw,460px)) 48px!important;
   grid-template-areas:"brand search toggle"!important;align-items:center!important;
-  column-gap:clamp(14px,3vw,42px)!important;row-gap:10px!important;
+  column-gap:clamp(10px,2vw,28px)!important;row-gap:10px!important;
   height:auto!important;min-height:86px!important;padding:12px 0!important;
 }
 html body header.header .nav>.brand{grid-area:brand!important;min-width:0!important;justify-self:start!important}
 html body header.header .nav>.site-search{grid-area:search!important;position:relative!important;inset:auto!important;width:100%!important;max-width:460px!important;min-width:0!important;margin:0 auto!important}
 html body header.header .nav>button.toggle{
   grid-area:toggle!important;display:inline-flex!important;visibility:visible!important;opacity:1!important;
-  pointer-events:auto!important;position:relative!important;justify-self:end!important;align-self:center!important;
-  z-index:2147483602!important;width:48px!important;height:48px!important;min-width:48px!important;
-  margin:0!important;cursor:pointer!important;color:#fff!important;background:#0759a8!important;
-  border:1px solid #fff!important;border-radius:8px!important;font-size:26px!important;line-height:1!important;
+  align-items:center!important;justify-content:center!important;pointer-events:auto!important;
+  position:relative!important;justify-self:end!important;align-self:center!important;z-index:2147483602!important;
+  width:48px!important;height:48px!important;min-width:48px!important;margin:0!important;cursor:pointer!important;
+  color:#fff!important;background:#0759a8!important;border:1px solid #fff!important;border-radius:8px!important;
+  font-size:26px!important;line-height:1!important;
 }
-html body header.header #links,
-html body header.header #links:not(.open){
+html body header.header #links{
   display:none!important;visibility:hidden!important;opacity:0!important;pointer-events:none!important;
   position:absolute!important;top:calc(100% + 6px)!important;left:auto!important;right:0!important;bottom:auto!important;
-  width:min(460px,calc(100vw - 32px))!important;max-width:calc(100vw - 32px)!important;
+  z-index:2147483601!important;width:min(460px,calc(100vw - 32px))!important;max-width:calc(100vw - 32px)!important;
   height:auto!important;min-height:0!important;max-height:0!important;overflow:hidden!important;
   padding:0!important;margin:0!important;border:0!important;transform:translateY(-6px)!important;
 }
 html body header.header #links.open{
   display:flex!important;flex-direction:column!important;align-items:stretch!important;justify-content:flex-start!important;
-  visibility:visible!important;opacity:1!important;pointer-events:auto!important;
-  position:absolute!important;top:calc(100% + 6px)!important;left:auto!important;right:0!important;bottom:auto!important;
+  visibility:visible!important;opacity:1!important;pointer-events:auto!important;position:absolute!important;
+  top:calc(100% + 6px)!important;left:auto!important;right:0!important;bottom:auto!important;
   z-index:2147483601!important;width:min(460px,calc(100vw - 32px))!important;max-width:calc(100vw - 32px)!important;
   max-height:min(78vh,760px)!important;overflow-x:hidden!important;overflow-y:auto!important;
   gap:7px!important;padding:12px!important;margin:0!important;box-sizing:border-box!important;
@@ -8366,133 +8326,79 @@ html body header.header #links.open .nav-dropdown-menu a{display:block!important
   }
   html body header.header .nav>.brand{grid-area:brand!important;width:100%!important;max-width:100%!important}
   html body header.header .nav>.site-search{grid-area:search!important;width:100%!important;max-width:none!important}
-  html body header.header .nav>button.toggle{grid-area:toggle!important;width:48px!important;height:48px!important}
   html body header.header #links.open{
     position:fixed!important;top:var(--kg-mobile-menu-top,150px)!important;left:var(--kg-mobile-menu-left,12px)!important;
     right:auto!important;width:var(--kg-mobile-menu-width,calc(100vw - 24px))!important;
     max-width:calc(100vw - 24px)!important;max-height:calc(100dvh - var(--kg-mobile-menu-top,150px) - 16px)!important;
   }
 }
-@media(min-width:761px){
-  html body header.header .nav{grid-template-columns:minmax(230px,1fr) minmax(260px,min(38vw,460px)) 48px!important}
-}
-
-/* Do not blur or cover Google's challenge. Keep the form, badge and challenge
-   in separate predictable layers; Google owns the challenge iframe itself. */
-body.kg-booking-dialog-open::before{
-  z-index:2147482998!important;background:rgba(7,24,44,.58)!important;
-  -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
-}
-#whatsapp-booking-dialog.booking-dialog[open]{
-  z-index:2147483001!important;filter:none!important;-webkit-filter:none!important;
-  opacity:1!important;transform:none!important;
-}
-#whatsapp-booking-dialog.booking-dialog[open] *{filter:none!important;-webkit-filter:none!important}
-#appointment-recaptcha-v2{
-  position:fixed!important;left:8px!important;bottom:8px!important;width:256px!important;height:60px!important;
-  min-width:256px!important;overflow:visible!important;z-index:2147483002!important;pointer-events:auto!important;
-  filter:none!important;opacity:1!important;transform:none!important;
-}
-body.kg-booking-dialog-open .grecaptcha-badge{
-  position:fixed!important;right:12px!important;left:auto!important;bottom:12px!important;
-  width:256px!important;height:60px!important;z-index:2147483003!important;
-  visibility:visible!important;display:block!important;opacity:1!important;pointer-events:auto!important;
-  filter:none!important;-webkit-filter:none!important;transform:none!important;
-}
-body.kg-booking-dialog-open iframe[src*="recaptcha"],
-body.kg-booking-dialog-open iframe[src*="google.com/recaptcha"],
-body.kg-booking-dialog-open body>div[style*="z-index: 2000000000"],
-body.kg-booking-dialog-open body>div[style*="z-index:2000000000"],
-body>div[style*="z-index: 2000000000"],
-body>div[style*="z-index:2000000000"]{
-  z-index:2147483647!important;visibility:visible!important;opacity:1!important;
-  filter:none!important;-webkit-filter:none!important;backdrop-filter:none!important;
-  -webkit-backdrop-filter:none!important;pointer-events:auto!important;transform:none!important;
-}
-@media(max-width:640px){
- body.kg-booking-dialog-open .grecaptcha-badge{right:8px!important;bottom:8px!important;transform:none!important}
-}
+@media(prefers-reduced-motion:reduce){html body header.header #links{transition:none!important;transform:none!important}}
 </style>
-<script id="kg-2026-11-booking-menu-close-repair">
+<script id="kg-single-booking-and-navigation-controller-v2">
 (function(){
   'use strict';
-  function closeBookingChoiceMenu(){
-    var panel=document.getElementById('booking-menu-panel');
-    var toggle=document.getElementById('booking-menu-toggle');
-    if(panel)panel.hidden=true;
-    if(toggle)toggle.setAttribute('aria-expanded','false');
-  }
-  /* Capture phase closes for BOTH external providers before their new tab opens.
-     The existing WhatsApp handler still runs in bubble phase and opens its form. */
-  document.addEventListener('click',function(event){
-    var choice=event.target&&event.target.closest?event.target.closest('#booking-menu-panel .booking-option'):null;
-    if(choice)closeBookingChoiceMenu();
-  },true);
-  document.addEventListener('keydown',function(event){
-    if(event.key==='Escape')closeBookingChoiceMenu();
+  function ready(fn){if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',fn,{once:true});else fn();}
+  ready(function(){
+    /* Hamburger: one controller only; preserve native details submenus. */
+    var header=document.querySelector('header.header');
+    var nav=header&&header.querySelector('.nav');
+    var navButton=nav&&nav.querySelector('button.toggle');
+    var navPanel=header&&header.querySelector('#links');
+    if(header&&nav&&navButton&&navPanel&&!navButton.dataset.kgSingleController){
+      navButton.dataset.kgSingleController='v2';
+      navButton.type='button';navButton.setAttribute('aria-controls','links');navPanel.removeAttribute('hidden');
+      function navOpen(){return navPanel.classList.contains('open');}
+      function syncMobilePosition(){
+        if(!navOpen()||!window.matchMedia('(max-width:760px)').matches)return;
+        var hr=header.getBoundingClientRect(),nr=nav.getBoundingClientRect();
+        var top=Math.max(8,Math.min(hr.bottom+4,window.innerHeight-120));
+        var left=Math.max(8,nr.left),width=Math.max(0,Math.min(nr.width,window.innerWidth-left-8));
+        navPanel.style.setProperty('--kg-mobile-menu-top',top+'px');
+        navPanel.style.setProperty('--kg-mobile-menu-left',left+'px');
+        navPanel.style.setProperty('--kg-mobile-menu-width',width+'px');
+      }
+      function setNavOpen(value){
+        navPanel.classList.toggle('open',!!value);
+        navButton.setAttribute('aria-expanded',String(!!value));
+        navButton.setAttribute('aria-label',value?'Close navigation':'Open navigation');
+        navButton.textContent=value?'×':'☰';
+        document.body.classList.toggle('kg-menu-open',!!value);
+        document.body.classList.toggle('kg-mobile-menu-open',!!value&&window.matchMedia('(max-width:760px)').matches);
+        if(value){syncMobilePosition();requestAnimationFrame(syncMobilePosition);}
+        else{navPanel.querySelectorAll('details[open]').forEach(function(item){item.open=false;});}
+      }
+      navButton.addEventListener('click',function(event){event.preventDefault();event.stopPropagation();setNavOpen(!navOpen());});
+      document.addEventListener('click',function(event){
+        if(!navOpen())return;
+        if(navPanel.contains(event.target)&&event.target.closest('a[href]')){setNavOpen(false);return;}
+        if(!navPanel.contains(event.target)&&!navButton.contains(event.target))setNavOpen(false);
+      });
+      document.addEventListener('keydown',function(event){if(event.key==='Escape'&&navOpen()){setNavOpen(false);navButton.focus();}});
+      window.addEventListener('resize',syncMobilePosition,{passive:true});
+      window.addEventListener('orientationchange',function(){requestAnimationFrame(syncMobilePosition);},{passive:true});
+      if(window.visualViewport)window.visualViewport.addEventListener('resize',syncMobilePosition,{passive:true});
+      setNavOpen(false);
+    }
+
+    /* Booking menu: the viewport-level controller owns visibility; close on either provider. */
+    var bookingToggle=document.getElementById('booking-menu-toggle');
+    var bookingPanel=document.getElementById('booking-menu-panel');
+    if(bookingToggle&&bookingPanel&&!bookingToggle.dataset.kgChoiceCloseV2){
+      bookingToggle.dataset.kgChoiceCloseV2='v2';
+      function closeBooking(){
+        bookingPanel.hidden=true;bookingToggle.setAttribute('aria-expanded','false');
+        ['position','width','max-width','left','right','top','z-index','display','visibility','pointer-events'].forEach(function(prop){bookingPanel.style.removeProperty(prop);});
+      }
+      document.addEventListener('click',function(event){
+        var choice=event.target&&event.target.closest?event.target.closest('#booking-menu-panel .booking-option'):null;
+        if(choice){closeBooking();return;}
+        if(!bookingPanel.hidden&&!bookingPanel.contains(event.target)&&!bookingToggle.contains(event.target))closeBooking();
+      },true);
+      document.addEventListener('keydown',function(event){if(event.key==='Escape'&&!bookingPanel.hidden){closeBooking();bookingToggle.focus();}},true);
+    }
   });
 })();
 </script>
-
-\n<style id="kg-primary-appointment-solid-shine-and-smaller-dot">
-/* Final primary CTA finish: fully opaque yellow fill with a recurring shine sweep. */
-.hero .actions .booking-toggle,
-.hero .actions .booking-toggle:hover,
-.hero .actions .booking-toggle:focus,
-.hero .actions .booking-toggle:focus-visible,
-.hero .actions .booking-toggle:active {
-  position: relative !important;
-  isolation: isolate !important;
-  overflow: hidden !important;
-  opacity: 1 !important;
-  background: #ffc400 !important;
-  background-color: #ffc400 !important;
-  background-image: none !important;
-  color: #123c77 !important;
-  border: 2px solid #ffc400 !important;
-  -webkit-backdrop-filter: none !important;
-  backdrop-filter: none !important;
-  filter: none !important;
-}
-.hero .actions .booking-toggle::before { content: none !important; display: none !important; }
-.hero .actions .booking-toggle::after {
-  content: "" !important;
-  display: block !important;
-  position: absolute !important;
-  z-index: 0 !important;
-  inset: -35% auto -35% -65% !important;
-  width: 38% !important;
-  height: 170% !important;
-  border: 0 !important;
-  border-radius: 0 !important;
-  clip-path: none !important;
-  pointer-events: none !important;
-  opacity: 1 !important;
-  background: linear-gradient(105deg, transparent 0%, rgba(255,255,255,.10) 25%, rgba(255,255,255,.82) 50%, rgba(255,255,255,.16) 72%, transparent 100%) !important;
-  transform: translateX(-160%) skewX(-19deg) !important;
-  animation: kg-primary-appointment-shine 2.35s ease-in-out infinite !important;
-}
-.hero .actions .booking-toggle > * { position: relative !important; z-index: 1 !important; }
-.hero .actions .booking-toggle .appointment-mail-dot { z-index: 2 !important; }
-@keyframes kg-primary-appointment-shine {
-  0%, 16% { transform: translateX(-160%) skewX(-19deg); opacity: 0; }
-  25% { opacity: 1; }
-  72% { transform: translateX(430%) skewX(-19deg); opacity: .95; }
-  82%, 100% { transform: translateX(430%) skewX(-19deg); opacity: 0; }
-}
-/* Slightly smaller red notification dot; keep its position and pulse. */
-.booking-toggle .appointment-mail-dot {
-  width: 6px !important;
-  height: 6px !important;
-  border-width: 1px !important;
-  box-sizing: border-box !important;
-  right: 0 !important;
-  top: -1px !important;
-}
-@media (prefers-reduced-motion: reduce) {
-  .hero .actions .booking-toggle::after { animation: none !important; display: none !important; }
-}
-</style>
 
 </body>
 </html>
