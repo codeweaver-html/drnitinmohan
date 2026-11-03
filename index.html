@@ -8168,5 +8168,59 @@ header.header.kg-space-panel>*{
 }
 </style>
 
+
+<style id="kg-final-solid-booking-button-and-dot-shine">
+/* Solid, fully opaque appointment control. */
+.hero .actions .booking-toggle,
+#booking-menu-toggle.booking-toggle {
+  background-color:#ffc400 !important;
+  background-image:none !important;
+  color:#17395c !important;
+  border:2px solid #ffc400 !important;
+  opacity:1 !important;
+  box-shadow:0 5px 14px rgba(35,58,82,.16) !important;
+  -webkit-backdrop-filter:none !important;
+  backdrop-filter:none !important;
+}
+/* Smaller red notification dot with a frequent, gentle highlight sweep. */
+.appointment-mail-dot {
+  width:6px !important;
+  height:6px !important;
+  min-width:6px !important;
+  min-height:6px !important;
+  border:1.5px solid #ffc400 !important;
+  box-sizing:content-box !important;
+  background:#f01818 !important;
+  border-radius:50% !important;
+  overflow:visible !important;
+  animation:kg-dot-shine 1.35s ease-in-out infinite !important;
+  transform-origin:center !important;
+  will-change:transform,filter !important;
+}
+.appointment-mail-dot::after {
+  content:"";
+  position:absolute;
+  inset:-1px;
+  border-radius:50%;
+  pointer-events:none;
+  background:linear-gradient(125deg,transparent 20%,rgba(255,255,255,.95) 48%,transparent 75%);
+  background-size:220% 220%;
+  animation:kg-dot-glint 1.35s ease-in-out infinite;
+}
+@keyframes kg-dot-shine {
+  0%,100% { transform:scale(1); filter:brightness(1); }
+  42% { transform:scale(1.08); filter:brightness(1.18) drop-shadow(0 0 2px rgba(255,70,70,.55)); }
+  58% { transform:scale(1); filter:brightness(1); }
+}
+@keyframes kg-dot-glint {
+  0%,20% { background-position:100% 100%; opacity:0; }
+  42% { opacity:1; }
+  68%,100% { background-position:0 0; opacity:0; }
+}
+@media(prefers-reduced-motion:reduce) {
+  .appointment-mail-dot,.appointment-mail-dot::after { animation:none !important; }
+}
+</style>
+
 </body>
 </html>
