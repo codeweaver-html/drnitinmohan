@@ -3064,6 +3064,62 @@ body.kg-booking-dialog-open iframe[src*="recaptcha"]{z-index:2147483000!importan
 @media(max-width:640px){#whatsapp-booking-dialog.booking-dialog[open]{width:calc(100vw - 16px)!important;max-width:calc(100vw - 16px)!important;max-height:calc(100dvh - 16px)!important}#whatsapp-booking-dialog .booking-dialog-inner{max-height:calc(100dvh - 16px)!important;padding-bottom:calc(18px + env(safe-area-inset-bottom))!important}}
 </style>
 
+
+<style id="kg-recaptcha-visible-desktop-mobile">
+/* Keep Google's required reCAPTCHA branding visible and reachable.
+   The badge is Google's own injected element; do not hide or obscure it. */
+.grecaptcha-badge{
+  position:fixed!important;
+  right:12px!important;
+  left:auto!important;
+  bottom:12px!important;
+  width:256px!important;
+  min-width:256px!important;
+  height:60px!important;
+  z-index:2147483646!important;
+  visibility:visible!important;
+  opacity:1!important;
+  display:block!important;
+  pointer-events:auto!important;
+  transform:none!important;
+}
+.grecaptcha-badge iframe{
+  visibility:visible!important;
+  opacity:1!important;
+  pointer-events:auto!important;
+}
+#appointment-recaptcha-v2{
+  position:fixed!important;
+  left:0!important;
+  bottom:0!important;
+  width:1px!important;
+  height:1px!important;
+  overflow:visible!important;
+  z-index:2147483645!important;
+  pointer-events:none!important;
+}
+/* A modal dialog is in the browser top layer. Keep the badge above the
+   booking surface where supported, and give mobile users breathing room. */
+body.kg-booking-dialog-open .grecaptcha-badge{
+  right:10px!important;
+  bottom:10px!important;
+}
+@media(max-width:640px){
+  .grecaptcha-badge{
+    right:8px!important;
+    bottom:8px!important;
+    width:256px!important;
+    max-width:calc(100vw - 16px)!important;
+    transform:scale(.88)!important;
+    transform-origin:bottom right!important;
+  }
+  body.kg-booking-dialog-open .grecaptcha-badge{
+    right:8px!important;
+    bottom:8px!important;
+  }
+}
+</style>
+
 </head><body><div aria-label="Appointment announcement" class="offline-appointment-marquee" role="region"><div class="offline-appointment-marquee__track"><span class="offline-appointment-marquee__text">OFFLINE APPOINTMENTS AVAILABLE RIGHT NOW. <span aria-hidden="true" class="marquee-inline-gap">      </span>CLICK THE APPOINTMENT BUTTON BELOW TO PROCEED.</span><span aria-hidden="true" class="offline-appointment-marquee__text">OFFLINE APPOINTMENTS AVAILABLE RIGHT NOW. <span aria-hidden="true" class="marquee-inline-gap">      </span>CLICK THE APPOINTMENT BUTTON BELOW TO PROCEED.</span></div></div><a class="skip-link" href="/?focus=main">Skip to content</a>
 <header class="header"><nav aria-label="Main navigation" class="nav container"><a class="brand" href="/"><img alt="Dr. Nitin Mohan KidsGastro logo" class="mark circular-brand-logo" data-embedded-logo="true" decoding="async" loading="eager" src="/assets/images/kg-logo-circle-512.png" width="58" height="58" sizes="(max-width: 760px) 48px, 58px"/><span>KidsGastro by Dr. Nitin Mohan</span></a><button aria-controls="links" aria-expanded="false" aria-label="Open navigation" class="toggle">☰</button><div aria-hidden="true" class="hamburger-panel" hidden="" id="hamburger-panel" style="pointer-events:none"></div><div class="links" id="links">
 <details class="nav-dropdown"><summary>Treatments<svg aria-hidden="true" viewbox="0 0 16 16"><path d="m3 6 5 5 5-5"></path></svg></summary><div class="nav-dropdown-menu"><a href="/treatments/"><b>Paediatric Gastroenterology</b></a><a href="/treatments/"><b>Paediatric Hepatology — Liver Diseases</b></a><a href="/treatments/"><b>Paediatric Pancreatology — Pancreatic Disorders</b></a><a href="/treatments/"><b>Paediatric Biliary Tract Diseases</b></a><a href="/treatments/"><b>Paediatric Nutrition and Growth</b></a></div></details><details class="nav-dropdown"><summary>Services<svg aria-hidden="true" viewbox="0 0 16 16"><path d="m3 6 5 5 5-5"></path></svg></summary><div class="nav-dropdown-menu"><a href="/services/"><b>Paediatric Gastrointestinal Procedures</b></a><a href="/services/"><b>Hepatology Procedures &amp; Investigations</b></a><a href="/services/"><b>Pancreatic Investigations</b></a><a href="/services/"><b>Biliary Tract Investigations</b></a><a href="/services/"><b>Gastrointestinal Diagnostic Investigations</b></a><a href="/services/"><b>Nutrition &amp; Growth Assessment</b></a></div></details><a class="nav-direct-link" href="/faqs/"><svg aria-hidden="true" class="kg-nav-icon" focusable="false" viewbox="0 0 24 24"><circle cx="12" cy="12" r="9"></circle><path d="M9.6 9a2.5 2.5 0 1 1 4.2 1.8c-1.1 1-1.8 1.4-1.8 3M12 17.2h.01"></path></svg>FAQs</a><a class="nav-direct-link" href="/blog/"><svg aria-hidden="true" class="kg-nav-icon" focusable="false" viewBox="0 0 24 24"><path d="M6 3.5h9l4 4V21H6z"></path><path d="M15 3.5V8h4M9 12h7M9 16h7"></path></svg><span>Blog</span></a><details class="nav-dropdown"><summary><svg aria-hidden="true" class="kg-nav-icon" viewbox="0 0 24 24"><path d="M4 5.5h16v11H9l-5 3v-14Z"></path><path d="M8 9h8M8 12.5h5"></path></svg><span>Testimonials</span><svg aria-hidden="true" viewbox="0 0 16 16"><path d="m3 6 5 5 5-5"></path></svg></summary><div class="nav-dropdown-menu"><a href="/testimonials/"><b>Patient &amp; family testimonials</b><small>Read all patient and family experiences</small></a></div></details><details class="nav-dropdown kg-gallery-nav-dropdown"><summary>Gallery<svg aria-hidden="true" viewbox="0 0 16 16"><path d="m3 6 5 5 5-5"></path></svg></summary><div class="nav-dropdown-menu"><a href="/gallery/"><b>KidsGastro Photo Gallery</b><small>Photos and clinical activities</small></a></div></details><details class="nav-dropdown"><summary>Health Library<svg aria-hidden="true" viewbox="0 0 16 16"><path d="m3 6 5 5 5-5"></path></svg></summary><div class="nav-dropdown-menu"><a href="/latest/"><b>Latest from KidsGastro<img alt="Dr. Nitin Mohan KidsGastro logo" class="inline-kg-mark circular-brand-logo" data-embedded-logo="true" decoding="async" fetchpriority="low" loading="lazy" src="/assets/images/kg-logo-circle-512.png" width="58" height="58" sizes="(max-width: 760px) 48px, 58px"/></b><small>Stories, videos and audio</small></a><a href="/publications/"><b>Research articles &amp; publications</b><small>Published work by Dr. Nitin Mohan</small></a><a href="/newsletter/"><b>Family newsletter</b><small>Request clinic updates</small></a></div></details><details class="nav-dropdown"><summary>Contact Info<svg aria-hidden="true" viewbox="0 0 16 16"><path d="m3 6 5 5 5-5"></path></svg></summary><div class="nav-dropdown-menu"><a href="tel:+919821020576"><b>Phone</b><small>+91 98210 20576</small></a><a href="/clinic/"><b>Churamani Multispeciality Hospital</b><small>Hisar, Haryana</small></a><a href="/clinic/"><b>View map</b><small>Google Maps location</small></a></div></details><details class="nav-dropdown nav-login-dropdown"><summary><svg aria-hidden="true" class="kg-nav-icon" viewbox="0 0 24 24"><circle cx="12" cy="8" r="3.5"></circle><path d="M5 20v-1.5a7 7 0 0 1 14 0V20Z"></path></svg><span>Login</span><svg aria-hidden="true" viewbox="0 0 16 16"><path d="m3 6 5 5 5-5"></path></svg></summary><div class="nav-dropdown-menu"><a class="kg-admin-menu-link" href="/admin.html"><b>Login</b></a></div></details></div><form class="site-search" id="site-search" role="search"><label class="sr-only" for="site-search-input">Search this website</label><input autocomplete="off" id="site-search-input" placeholder="Search this website" type="search"/><button aria-label="Search this website" type="submit">⌕</button><span aria-live="polite" class="search-status" id="search-status" role="status"></span></form></nav></header>
@@ -3401,8 +3457,7 @@ document.querySelector('#newsletter-form').addEventListener('submit',e=>{e.preve
 </dialog>
 <dialog class="appointment-confirmation-dialog" id="appointment-confirmation-dialog" aria-labelledby="appointment-confirmation-title">
   <div class="appointment-confirmation-inner">
-    <div class="appointment-confirmation-check" aria-hidden="true">✓</div>
-    <p class="appointment-confirmation-kicker">KidsGastro · Appointment</p>
+    <div class="appointment-confirmation-brand"><img class="appointment-confirmation-logo" src="/assets/images/kg-logo-circle-512.png" alt="KidsGastro logo" width="76" height="76" decoding="async"/></div>
     <h2 id="appointment-confirmation-title">CONGRATULATIONS! YOUR APPOINTMENT HAS BEEN BOOKED!</h2>
     <p class="appointment-confirmation-message">Your appointment details are below.</p>
     <div class="appointment-confirmation-details">
@@ -3418,8 +3473,8 @@ document.querySelector('#newsletter-form').addEventListener('submit',e=>{e.preve
 .appointment-confirmation-dialog{width:min(92vw,480px);max-width:480px;padding:0;border:1px solid #d5e3ee;border-radius:18px;background:#fff;color:#18384d;box-shadow:0 22px 70px rgba(8,43,75,.28)}
 .appointment-confirmation-dialog::backdrop{background:rgba(5,29,52,.68);backdrop-filter:blur(3px)}
 .appointment-confirmation-inner{padding:30px 30px 26px;text-align:center;font-family:Arial,'Segoe UI',sans-serif}
-.appointment-confirmation-check{display:grid;place-items:center;width:66px;height:66px;margin:0 auto 14px;border-radius:50%;background:#e7f2fa;color:#0759a8;font-size:40px;font-weight:800;border:2px solid #c9deee}
 .appointment-confirmation-kicker{margin:0 0 8px;color:#0759a8;font-size:.76rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase}
+.appointment-confirmation-brand{display:flex;justify-content:center;align-items:center;margin:0 auto 14px}.appointment-confirmation-logo{display:block;width:76px;height:76px;max-width:22vw;object-fit:contain;border:0;border-radius:0;background:transparent;box-shadow:none}
 .appointment-confirmation-inner h2{margin:0 0 8px;color:#0759a8;font:800 clamp(1.2rem,4.2vw,1.75rem)/1.2 Arial,'Segoe UI',sans-serif;letter-spacing:-.025em;overflow-wrap:anywhere}
 .appointment-confirmation-message{margin:0 0 22px;color:#263f52;font-size:1.04rem;font-weight:650}
 .appointment-confirmation-details{display:grid;gap:0;text-align:left;border:1px solid #dce7ef;background:#f5f9fc;border-radius:12px;padding:4px 16px}
@@ -3440,17 +3495,20 @@ document.querySelector('#newsletter-form').addEventListener('submit',e=>{e.preve
 (()=>{
  const dialog=document.getElementById('appointment-confirmation-dialog');
  if(!dialog)return;
- const close=()=>{if(dialog.open)dialog.close()};
+ let showing=false;
+ const close=()=>{if(dialog.open)dialog.close();showing=false};
+ dialog.addEventListener('close',()=>{showing=false});
  document.getElementById('appointment-confirmation-ok')?.addEventListener('click',close);
  document.getElementById('appointment-confirmation-another')?.addEventListener('click',()=>{
    try{sessionStorage.removeItem('kg_pending_appointment_confirmation')}catch(_){}
+   showing=false;
    close();
    window.dispatchEvent(new CustomEvent('kg:book-another-appointment'));
  });
  dialog.addEventListener('click',event=>{if(event.target===dialog)close()});
- let showing=false;
  function showIfReturningFromWhatsApp(){
-   if(showing||dialog.open)return;
+   const bookingDialog=document.getElementById('whatsapp-booking-dialog');
+   if(showing||dialog.open||bookingDialog?.open)return;
    let saved;
    try{saved=sessionStorage.getItem('kg_pending_appointment_confirmation')}catch(_){return}
    if(!saved)return;
@@ -7860,6 +7918,66 @@ header.header #links a:focus-visible{outline:3px solid #ffc400!important;outline
   } else {
     init();
   }
+})();
+</script>
+
+
+<style id="kg-casual-copy-deterrent">
+/* Casual-copy deterrent only; this cannot prevent determined users from
+   retrieving rendered text, page source, scripts, or network responses. */
+html body,
+html body *{
+  -webkit-user-select:none!important;
+  user-select:none!important;
+  -webkit-touch-callout:none;
+}
+html body input,
+html body textarea,
+html body select,
+html body option,
+html body [contenteditable="true"],
+html body [contenteditable=""],
+html body [role="textbox"],
+html body .grecaptcha-badge,
+html body .grecaptcha-badge *,
+html body iframe{
+  -webkit-user-select:auto!important;
+  user-select:auto!important;
+  -webkit-touch-callout:default;
+}
+</style>
+<script id="kg-casual-copy-deterrent-script">
+(function(){
+  'use strict';
+  /* This only discourages casual copying. Client-side controls cannot secure
+     website text/source against browser tools, screenshots, or network access. */
+  function isEditable(target){
+    return !!(target && target.closest &&
+      target.closest('input,textarea,select,option,[contenteditable="true"],[contenteditable=""],[role="textbox"],.grecaptcha-badge,iframe'));
+  }
+  document.addEventListener('contextmenu',function(event){
+    if(!isEditable(event.target)) event.preventDefault();
+  },true);
+  document.addEventListener('copy',function(event){
+    if(!isEditable(event.target)) event.preventDefault();
+  },true);
+  document.addEventListener('cut',function(event){
+    if(!isEditable(event.target)) event.preventDefault();
+  },true);
+  document.addEventListener('keydown',function(event){
+    if(isEditable(event.target)) return;
+    var key=(event.key||'').toLowerCase();
+    var modifier=event.ctrlKey||event.metaKey;
+    if(!modifier) return;
+    var blocked=event.key==='F12' ||
+      key==='c'||key==='u'||key==='s'||
+      (event.shiftKey&&(key==='i'||key==='j'||key==='c'||key==='k'));
+    if(blocked){
+      event.preventDefault();
+      event.stopPropagation();
+      if(event.stopImmediatePropagation) event.stopImmediatePropagation();
+    }
+  },true);
 })();
 </script>
 
