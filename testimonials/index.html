@@ -8294,7 +8294,7 @@ applyZoom();
     secondaryTilt:rand(-1.4,1.4),secondaryScale:rand(1.12,1.55)
    };
   });
-  const sparks=Array.from({length:46},()=>({x:rand(.025,.975),y:rand(.04,.96),phase:rand(0,TAU),speed:rand(.22,.72),size:rand(.45,1.15),streak:Math.random()<.16?1:0}));
+  const sparks=Array.from({length:210},()=>({x:rand(.012,.988),y:rand(.015,.985),phase:rand(0,TAU),speed:rand(.12,.42),size:rand(.32,.88),streak:Math.random()<.07?1:0}));
   return {el,panelIndex,launchStagger,repeatStagger,lastActiveAt:performance.now(),bodies,collisionPairs:Object.create(null),collisionEffects:[],iss:rand(0,TAU),voyager:null,ship:null,shuttle:null,shuttleParts:[],skyCrane:null,marsRover:null,nextSkyCrane:performance.now()+rand(6500,10500)+launchStagger,astronaut:null,nextAstronaut:performance.now()+rand(1800,4200),satellite:null,nextSatellite:performance.now()+rand(3500,6500),asteroid:null,nextAsteroid:performance.now()+rand(900,1800),hubble:null,nextHubble:performance.now()+rand(5000,9000),orion:null,nextOrion:performance.now()+rand(4000,7500),halley:null,nextHalley:performance.now()+rand(7000,12000),nextShuttle:performance.now()+rand(2200,4800)+launchStagger,nextVoyager:performance.now()+rand(...CONFIG.voyagerInitialDelay),nextShip:performance.now()+rand(...CONFIG.starshipInitialDelay)+launchStagger,r:null,blocked:[],safePoints:[],sparks};
  }
  function scan(){
@@ -8695,7 +8695,7 @@ applyZoom();
   // Hard boundary: every cosmic effect is clipped to the inside of its own
   // blue panel. A tiny inset prevents antialiased edge pixels from spilling
   // onto the surrounding white page; blocked controls remain cut out.
-  const clipInset=1.5,clipLeft=x0+clipInset,clipTop=y0+clipInset;
+  const clipInset=0,clipLeft=x0+clipInset,clipTop=y0+clipInset;
   const clipRight=x1-clipInset,clipBottom=y1-clipInset;
   if(clipRight<=clipLeft||clipBottom<=clipTop)return;
   ctx.save();
@@ -8704,10 +8704,19 @@ applyZoom();
   // If those rectangles are included in one even-odd path, their outside
   // portions can accidentally create visible regions beyond the blue box.
   ctx.beginPath();ctx.rect(clipLeft,clipTop,clipRight-clipLeft,clipBottom-clipTop);ctx.clip();
-  // Draw the quiet starfield across the complete panel BEFORE masking moving
-  // objects. Previously the even-odd control mask removed every pixel in its
-  // rectangles, including the background stars, leaving obvious blank "holes"
-  // around the logo, headline, search and navigation controls.
+  // Continuous low-contrast nebula wash: this remains visible beneath the
+  // protected-control masks, so those areas never look like rectangular holes.
+  const nebula=ctx.createRadialGradient(
+   x0+r.width*.52,y0+r.height*.48,Math.max(8,Math.min(r.width,r.height)*.08),
+   x0+r.width*.52,y0+r.height*.48,Math.max(r.width,r.height)*.78
+  );
+  nebula.addColorStop(0,'rgba(190,225,255,.045)');
+  nebula.addColorStop(.55,'rgba(115,185,235,.022)');
+  nebula.addColorStop(1,'rgba(115,185,235,0)');
+  ctx.globalAlpha=1;ctx.fillStyle=nebula;
+  ctx.fillRect(clipLeft,clipTop,clipRight-clipLeft,clipBottom-clipTop);
+  // Draw the denser, quiet starfield across the complete panel BEFORE masking
+  // moving objects. Protected rectangles retain this continuous background.
   panel.sparks.forEach(s=>{
    const sx=s.x*r.width,sy=s.y*r.height;
    if(animate){
@@ -8718,8 +8727,8 @@ applyZoom();
     if(s.y<.02)s.y=.98;if(s.y>.98)s.y=.02;
    }
    const pulse=.5+.5*Math.sin(s.phase);
-   ctx.globalAlpha=.10+.12*pulse;
-   ctx.fillStyle='#fff';ctx.beginPath();ctx.arc(r.left+sx,r.top+sy,s.size*.82,0,TAU);ctx.fill();
+   ctx.globalAlpha=.13+.16*pulse;
+   ctx.fillStyle='#fff';ctx.beginPath();ctx.arc(r.left+sx,r.top+sy,s.size*.9,0,TAU);ctx.fill();
    if(s.streak&&pulse>.88){
     ctx.globalAlpha=.14;ctx.strokeStyle='#fff';ctx.lineWidth=.65;
     ctx.beginPath();ctx.moveTo(r.left+sx,r.top+sy);
