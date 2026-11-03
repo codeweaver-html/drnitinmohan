@@ -3599,127 +3599,139 @@ timeSource='typed';const match=getManualTime();if(match&&!periodExplicit){const 
  dialog.addEventListener('click',event=>{if(event.target===dialog)dialog.close()});
  window.addEventListener('resize',()=>{if(dialog.open)updateClock()});
 
- // Google reCAPTCHA v2 Invisible: use Google's documented explicit-render callback.
+ // Google reCAPTCHA v2 Invisible — load once and reuse one widget.
  const RECAPTCHA_SITE_KEY='6LfFKg4uAAAAAOxm7Evqvms6EGZHfO5AoulNITCc';
  let recaptchaLoadPromise=null;
  let recaptchaWidgetId=null;
- let recaptchaContainer=null;
  let recaptchaAttempt=null;
 
  function loadRecaptchaV2Invisible(){
-   if(recaptchaWidgetId!==null) return Promise.resolve();
+   if(recaptchaWidgetId!==null) return Promise.resolve(recaptchaWidgetId);
    if(recaptchaLoadPromise) return recaptchaLoadPromise;
 
    recaptchaLoadPromise=new Promise((resolve,reject)=>{
      let settled=false;
+     let renderStarted=false;
      const timeoutId=setTimeout(()=>{
-       finish(new Error('Google reCAPTCHA did not finish initializing. Check the site key type, allowed domain, and browser content blockers.'));
-     },25000);
+       finish(new Error('Google CAPTCHA loading timed out. Check your connection, browser content blocker, and registered domain.'));
+     },20000);
 
-     const cleanup=()=>{
-       clearTimeout(timeoutId);
-       try{delete window.__kgRecaptchaV2Onload;}catch(e){window.__kgRecaptchaV2Onload=undefined;}
-     };
-     const finish=(error)=>{
+     function finish(error){
        if(settled)return;
        settled=true;
-       cleanup();
-       if(error){recaptchaLoadPromise=null;reject(error);}
-       else resolve();
-     };
+       clearTimeout(timeoutId);
+       if(error){
+         recaptchaLoadPromise=null;
+         reject(error);
+       }else{
+         resolve(recaptchaWidgetId);
+       }
+     }
 
-     const renderWidget=()=>{
+     function renderWidget(){
+       if(renderStarted||settled)return;
+       renderStarted=true;
+
        if(!window.grecaptcha||typeof window.grecaptcha.ready!=='function'){
-         finish(new Error('Google reCAPTCHA script loaded, but its API did not initialize. Please check your connection and try again.'));
+         finish(new Error('Google CAPTCHA API is unavailable. Please refresh and try again.'));
          return;
        }
+
        window.grecaptcha.ready(()=>{
-         // Check render only after Google's ready callback; the API may initialize asynchronously.
          if(!window.grecaptcha||typeof window.grecaptcha.render!=='function'){
-           finish(new Error('Google reCAPTCHA loaded, but the v2 Invisible render API is missing. Confirm this is a standard reCAPTCHA v2 Invisible key, not a v3 or Enterprise key.'));
+           finish(new Error('The Invisible CAPTCHA render API is unavailable. Confirm that this is a standard reCAPTCHA v2 Invisible key.'));
            return;
          }
+
          try{
-           if(!recaptchaContainer){
-             recaptchaContainer=document.createElement('div');
-             recaptchaContainer.id='appointment-recaptcha-v2-invisible';
-             recaptchaContainer.style.position='absolute';
-             recaptchaContainer.style.width='1px';
-             recaptchaContainer.style.height='1px';
-             recaptchaContainer.style.overflow='hidden';
-             recaptchaContainer.setAttribute('aria-hidden','true');
-             form.appendChild(recaptchaContainer);
+           let container=document.getElementById('appointment-recaptcha-v2');
+           if(!container){
+             container=document.createElement('div');
+             container.id='appointment-recaptcha-v2';
+             container.style.position='absolute';
+             container.style.width='1px';
+             container.style.height='1px';
+             container.style.overflow='hidden';
+             container.setAttribute('aria-hidden','true');
+             form.appendChild(container);
            }
-           recaptchaWidgetId=window.grecaptcha.render(recaptchaContainer,{
+
+           recaptchaWidgetId=window.grecaptcha.render(container,{
              sitekey:RECAPTCHA_SITE_KEY,
              size:'invisible',
-             callback:(token)=>{if(recaptchaAttempt)recaptchaAttempt.resolve(token);},
-             'error-callback':()=>{if(recaptchaAttempt)recaptchaAttempt.reject(new Error('Google reCAPTCHA reported a network or configuration error. Please try again.'));},
-             'expired-callback':()=>{if(recaptchaAttempt)recaptchaAttempt.reject(new Error('The CAPTCHA expired before verification completed. Please try again.'));}
+             callback:(token)=>{
+               if(recaptchaAttempt)recaptchaAttempt.resolve(token);
+             },
+             'error-callback':()=>{
+               if(recaptchaAttempt)recaptchaAttempt.reject(new Error('Google CAPTCHA encountered a network or configuration error. Please try again.'));
+             },
+             'expired-callback':()=>{
+               if(recaptchaAttempt)recaptchaAttempt.reject(new Error('CAPTCHA expired. Please try again.'));
+             }
            });
+
            finish();
          }catch(renderError){
-           finish(new Error('Google reCAPTCHA could not render the Invisible widget. Check that this key is registered for the current website hostname.'));
+           finish(new Error('Unable to initialize the Invisible CAPTCHA widget. Check the key type and allowed website hostname.'));
          }
        });
-     };
+     }
 
-     // If another component already loaded the v2 API, reuse it.
+     // Reuse an API that another script has already initialized.
      if(window.grecaptcha&&typeof window.grecaptcha.render==='function'){
        renderWidget();
        return;
      }
 
-     // If our loader is already in the document, wait for its documented callback.
-     const existing=document.querySelector('script[data-kg-recaptcha-loader="true"]');
-     if(existing){
-       window.__kgRecaptchaV2Onload=renderWidget;
-       existing.addEventListener('error',()=>finish(new Error('Google reCAPTCHA could not be downloaded. Check your connection or browser content blocker.')),{once:true});
-       if(window.grecaptcha&&typeof window.grecaptcha.ready==='function') renderWidget();
-       return;
-     }
+     // The explicit API callback must be globally accessible to Google's script.
+     window.__kgRecaptchaV2Ready=renderWidget;
 
-     // The onload callback is more reliable than relying on the script element's load event.
-     window.__kgRecaptchaV2Onload=renderWidget;
      const script=document.createElement('script');
-     script.src='https://www.google.com/recaptcha/api.js?onload=__kgRecaptchaV2Onload&render=explicit';
+     script.src='https://www.google.com/recaptcha/api.js?onload=__kgRecaptchaV2Ready&render=explicit';
      script.async=true;
      script.defer=true;
      script.dataset.kgRecaptchaLoader='true';
-     script.onerror=()=>finish(new Error('Google reCAPTCHA could not be downloaded. Check your connection or browser content blocker.'));
+     script.onerror=()=>{
+       finish(new Error('Google CAPTCHA could not be downloaded. Check your connection or browser content blocker.'));
+     };
      document.head.appendChild(script);
    });
+
    return recaptchaLoadPromise;
  }
 
  function executeRecaptchaV2Invisible(){
    return new Promise((resolve,reject)=>{
      if(recaptchaWidgetId===null||!window.grecaptcha||typeof window.grecaptcha.execute!=='function'){
-       reject(new Error('Google reCAPTCHA is not ready. Please try again.'));
+       reject(new Error('CAPTCHA widget is not initialized. Please try again.'));
        return;
      }
+
      let settled=false;
-     const finish=(error,token)=>{
+     const timeoutId=setTimeout(()=>{
+       finish(new Error('CAPTCHA verification timed out. Please try again.'));
+     },120000);
+
+     function finish(error,token){
        if(settled)return;
        settled=true;
        clearTimeout(timeoutId);
        recaptchaAttempt=null;
        if(error)reject(error);
        else if(typeof token==='string'&&token.trim())resolve(token);
-       else reject(new Error('Google reCAPTCHA did not return a verification token. Please try again.'));
-     };
-     const timeoutId=setTimeout(()=>{
-       finish(new Error('Google reCAPTCHA verification timed out. Please try again.'));
-     },120000);
+       else reject(new Error('Google CAPTCHA did not return a verification token. Please try again.'));
+     }
+
      recaptchaAttempt={
        resolve:(token)=>finish(null,token),
        reject:(error)=>finish(error)
      };
+
      try{
        window.grecaptcha.reset(recaptchaWidgetId);
        window.grecaptcha.execute(recaptchaWidgetId);
      }catch(executeError){
-       finish(new Error('Google reCAPTCHA could not start verification. Please try again.'));
+       finish(new Error('Unable to start CAPTCHA verification. Please try again.'));
      }
    });
  }
