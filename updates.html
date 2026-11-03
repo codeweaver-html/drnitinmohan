@@ -231,11 +231,66 @@ select.setting-state-unchanged{
   border-color:#5b9be6!important;font-weight:750;
 }
 
+
+/* Section 2: reliable, accessible expand/collapse schedule editor. */
+.schedule-section-toggle{
+  width:100%;padding:0;border:0;background:transparent;color:inherit;
+  text-align:left;cursor:pointer;font:inherit;
+}
+.schedule-section-toggle .schedule-section-title{
+  flex:1;font-size:1.12rem;font-weight:750;color:#183d70;
+}
+.schedule-chevron{
+  display:grid;place-items:center;width:32px;height:32px;flex:0 0 32px;
+  border-radius:9px;background:#eaf3ff;color:#0759a8;font-size:1.25rem;
+  transition:transform .2s ease,background .2s ease;
+}
+.schedule-section-toggle[aria-expanded="false"] .schedule-chevron{transform:rotate(-90deg)}
+.schedule-section-toggle:focus-visible{outline:3px solid #7258d4;outline-offset:5px;border-radius:8px}
+.schedule-editor[hidden]{display:none!important}
+.schedule-empty-state{
+  padding:15px 16px;border:1px dashed #b9c9d8;border-radius:11px;
+  background:#f7faff;color:#526879;font-size:.9rem;
+}
+
 </style>
+
+<meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate, max-age=0">
+<meta http-equiv="Pragma" content="no-cache">
+<meta name="referrer" content="same-origin">
+<style>
+html:not(.kg-admin-ok) body{visibility:hidden!important}
+#kg-admin-lock{border:1px solid #b8cde0;background:#fff;color:#0759a8;border-radius:7px;padding:8px 12px;font-weight:700;cursor:pointer;margin:0 0 12px auto;display:block}
+</style>
+<script>
+(function(){
+"use strict";
+const KEY="kg_admin_authenticated_until",LOGIN="/admin.html";
+function lock(){
+ sessionStorage.removeItem(KEY);
+ const back=location.pathname+location.search+location.hash;
+ location.replace(LOGIN+"?return="+encodeURIComponent(back));
+}
+function check(){
+ const until=Number(sessionStorage.getItem(KEY)||0);
+ if(!until||Date.now()>=until){lock();return false;}
+ document.documentElement.classList.add("kg-admin-ok");
+ return true;
+}
+if(!check())return;
+document.addEventListener("visibilitychange",()=>{if(!document.hidden)check();});
+window.addEventListener("focus",check);
+window.addEventListener("pageshow",check);
+const remaining=Number(sessionStorage.getItem(KEY)||0)-Date.now();
+window.setTimeout(lock,Math.max(0,remaining));
+})();
+</script>
+
 </head>
 <body>
 <div class="wrap">
 <header>
+  <button id="kg-admin-lock" type="button" onclick="sessionStorage.removeItem('kg_admin_authenticated_until');location.replace('/admin.html?return='+encodeURIComponent(location.pathname+location.search+location.hash))">Lock / Log out</button>
   <h1>Website Change Request</h1>
   <p><a class="back" href="https://drnitinmohan.com/">← Return to website</a></p>
 </header>
@@ -342,9 +397,13 @@ select.setting-state-unchanged{
         </div>
       </div>
     </section>
-    <section class="section">
-      <div class="section-head"><span class="num">2</span><h2>When should each change apply?</h2></div>
-      <div id="changeScheduleEditor"></div>
+    <section class="section schedule-section" id="scheduleSection">
+      <button class="section-head schedule-section-toggle" id="scheduleSectionToggle" type="button"
+        aria-expanded="true" aria-controls="changeScheduleEditor">
+        <span class="num">2</span><span class="schedule-section-title">When should each change apply?</span>
+        <span class="schedule-chevron" aria-hidden="true">⌄</span>
+      </button>
+      <div id="changeScheduleEditor" class="schedule-editor"></div>
     </section>
     <section class="section">
       <div class="section-head"><span class="num">3</span><h2>Create request</h2></div>
@@ -589,7 +648,8 @@ select.setting-state-unchanged{
     {id:'appointment',key:'appointmentButton',label:'Appointment button'},
     {id:'whatsappBooking',key:'whatsappBookingOption',label:'WhatsApp booking option'},
     {id:'rezeptrx',key:'rezepRxBookingOption',label:'RezeptRx booking option'},
-    {id:'announcementAction',key:'announcementMarquee',label:'Announcement marquee'},
+    {id:'phoneVisibility',key:'phoneNumberVisibility',label:'Phone number visibility'},
+    {id:'announcementAction',key:'announcementMarquee',label:'Announcement strips (main website and all subsites)'},
     {id:'photoAction',key:'photoOfTheMonth',label:'Photo of the Month'}
   ];
   const scheduleState = {settings:{},groups:[]};
@@ -612,7 +672,10 @@ select.setting-state-unchanged{
       const st=scheduleState.settings[f.key];
       if(!st.groupId||!scheduleState.groups.some(g=>g.id===st.groupId))st.groupId=scheduleState.groups.length?scheduleState.groups[0].id:makeGroup();
     });
-    if(!changed.length){editor.innerHTML='';return;}
+    if(!changed.length){
+      editor.innerHTML='<div class="schedule-empty-state">Select or change a setting in Section 1 above. Its timing controls will appear here. You can choose Permanent or Temporary for each change.</div>';
+      return;
+    }
     changed.forEach(f=>{
       const st=scheduleState.settings[f.key],card=document.createElement('div');
       card.className='subpanel change-schedule-card';
@@ -711,6 +774,16 @@ select.setting-state-unchanged{
       panel.appendChild(grid);editor.appendChild(panel);
     });
   }
+  const scheduleSectionToggle = $('scheduleSectionToggle');
+  const scheduleEditor = $('changeScheduleEditor');
+  const setScheduleExpanded = expanded => {
+    scheduleSectionToggle.setAttribute('aria-expanded', String(expanded));
+    scheduleEditor.hidden = !expanded;
+  };
+  scheduleSectionToggle.addEventListener('click', () => {
+    setScheduleExpanded(scheduleSectionToggle.getAttribute('aria-expanded') !== 'true');
+  });
+
   $('changeScheduleEditor').addEventListener('change',e=>{
     const dk=e.target.dataset.durationFor,gk=e.target.dataset.groupFor;
     if(dk){const st=scheduleState.settings[dk];st.duration=e.target.value;if(st.duration==='temporary'&&!st.groupId)st.groupId=scheduleState.groups.length?scheduleState.groups[0].id:makeGroup();if(st.duration==='permanent')st.groupId=null;renderChangeScheduleEditor();}
@@ -769,6 +842,7 @@ select.setting-state-unchanged{
     $('bookingSuboptions').classList.toggle('is-disabled-by-parent', appointmentOff);
     toggle('photoPanel', $('photoAction').value === 'update');
     renderChangeScheduleEditor();
+    if (changedFields().length) setScheduleExpanded(true);
     updateAnnouncementPreview();
     updatePreviousLabels();
   };

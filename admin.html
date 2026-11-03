@@ -62,9 +62,20 @@ form.addEventListener("submit",async function(event){
    const material=await crypto.subtle.importKey("raw",new TextEncoder().encode(credential),"PBKDF2",false,["deriveKey"]);
    const key=await crypto.subtle.deriveKey({name:"PBKDF2",salt:fromB64(payload.salt),iterations:payload.iterations,hash:"SHA-256"},material,{name:"AES-GCM",length:256},false,["decrypt"]);
    const plain=await crypto.subtle.decrypt({name:"AES-GCM",iv:fromB64(payload.iv)},key,fromB64(payload.ciphertext));
-   content.innerHTML=new TextDecoder().decode(plain);
-   gate.hidden=true;content.hidden=false;
+   /* Successful credential verification: create a tab-scoped 8-hour session. */
+   sessionStorage.setItem("kg_admin_authenticated_until", String(Date.now() + 8 * 60 * 60 * 1000));
    idInput.value="";input.value="";
+   const params = new URLSearchParams(location.search);
+   let returnTo = "/updates.html";
+   try {
+     const requested = params.get("return") || "/updates.html";
+     const parsed = new URL(requested, location.origin);
+     if (parsed.origin === location.origin &&
+         parsed.pathname.replace(/\\/+$/, "").toLowerCase() === "/updates.html") {
+       returnTo = parsed.pathname + parsed.search + parsed.hash;
+     }
+   } catch (_) {}
+   location.replace(returnTo);
  }catch(e){
    error.textContent="Incorrect Login ID or password. Please try again.";
    input.value="";input.focus();
