@@ -701,10 +701,17 @@ body,body *:not(svg):not(path){font-family:var(--sans)!important}
 .booking-dialog-actions .booking-submit{background:#ffd24f;border-color:#ffd24f;color:#18384d}
 .opd-hours{padding:24px 0;background:#edf1f1;border-bottom:1px solid #d9e0e2}.opd-hours-inner{display:grid;grid-template-columns:1.1fr 1fr 1fr 1fr;gap:18px;align-items:center}.opd-hours h2{margin:4px 0;font-size:1.5rem}.opd-hours p{margin:0;color:#1f3340;font-size:.92rem}.opd-hours .opd-closure{color:#596b75;font-size:.82rem}.opd-field-guidance{margin:0 0 10px;color:#5d7080;font-size:.8rem;line-height:1.45}.booking-dialog-error{min-height:1.2em;margin:8px 0 0;color:#a12727;font-size:.88rem}
 .booking-dialog-error.is-pending{color:#526b7b}
-.booking-dialog-error.is-success{display:flex;align-items:center;gap:9px;color:#147a45;font-weight:750;padding:10px 12px;background:#eaf7ef;border:1px solid #b9e4c8;border-radius:6px;animation:kg-verify-success-in .28s ease-out}
-.booking-dialog-error.is-success::before{content:"✓";display:inline-grid;place-items:center;flex:0 0 25px;width:25px;height:25px;border-radius:50%;background:#168c50;color:#fff;font-size:17px;line-height:1;animation:kg-verify-tick .35s cubic-bezier(.2,.8,.2,1) both}
-@keyframes kg-verify-success-in{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
-@keyframes kg-verify-tick{from{transform:scale(.55) rotate(-18deg)}to{transform:scale(1) rotate(0)}}
+.booking-dialog-error.is-pending{display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid #cbdce7;border-radius:6px;background:#f2f7fa;color:#34586e}
+.booking-dialog-error.is-pending::before{content:"";width:17px;height:17px;flex:0 0 17px;border:2px solid #b8cedb;border-top-color:#0759a8;border-radius:50%;animation:kg-verify-spin .75s linear infinite}
+.booking-dialog-error.is-success{display:flex;align-items:center;gap:10px;color:#147a45;font-weight:750;padding:11px 13px;background:#eaf7ef;border:1px solid #b9e4c8;border-radius:7px;animation:kg-verify-success-in .28s ease-out;line-height:1.45}
+.booking-dialog-error.is-success::before{content:"✓";display:inline-grid;place-items:center;flex:0 0 29px;width:29px;height:29px;border-radius:50%;background:#168c50;color:#fff;font-size:19px;line-height:1;box-shadow:0 0 0 4px #168c5018;animation:kg-verify-tick .48s cubic-bezier(.2,.8,.2,1) both}
+.booking-dialog-error.is-error{padding:9px 11px;border-left:3px solid #b42318;background:#fff5f4;color:#a12727;border-radius:3px}
+.booking-dialog-actions .booking-submit:disabled{opacity:.72;cursor:wait;transform:none;box-shadow:none}
+@keyframes kg-verify-spin{to{transform:rotate(360deg)}}
+@keyframes kg-verify-success-in{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+@keyframes kg-verify-tick{0%{transform:scale(.35) rotate(-25deg);opacity:0}65%{transform:scale(1.14) rotate(5deg);opacity:1}100%{transform:scale(1) rotate(0)}}
+@media(max-width:620px){.booking-dialog-error.is-success,.booking-dialog-error.is-pending{font-size:.9rem;align-items:flex-start}.booking-dialog-error.is-success::before{margin-top:1px}}
+@media(prefers-reduced-motion:reduce){.booking-dialog[open],.booking-dialog-error.is-pending::before,.booking-dialog-error.is-success,.booking-dialog-error.is-success::before{animation:none!important;transition:none!important}.booking-dialog-actions .booking-submit{transition:none!important}}
 .booking-date-error{min-height:1.2em;margin:7px 0 0;color:#a12727;font-size:.88rem}
 @media(max-width:760px){.opd-hours-inner{grid-template-columns:1fr 1fr;gap:12px}.opd-hours-inner>div{grid-column:1/-1}}@media(max-width:620px){.booking-dialog-inner{padding:20px 18px}.booking-picker-grid{grid-template-columns:1fr;gap:21px}.clock-panel{align-items:flex-start}.clock-display{align-self:center}.clock-face{align-self:center;width:230px;height:230px}.booking-dialog-head h2{font-size:1.35rem}.booking-dialog-actions{display:grid;grid-template-columns:1fr 1fr}.booking-dialog-actions button{padding:0 10px}}
 
@@ -3743,10 +3750,13 @@ timeSource='typed';const match=getManualTime();if(match&&!periodExplicit){const 
  }
 
  let bookingVerificationInProgress=false;
+ let bookingHandoffStarted=false;
  const bookingSubmitButton=form.querySelector('.booking-submit');
  form.addEventListener('submit',async event=>{
    event.preventDefault();
-   if(bookingVerificationInProgress)return;
+   if(bookingVerificationInProgress||bookingHandoffStarted)return;
+   clearTimeout(errorTimer);
+   error.classList.remove('is-pending','is-success','is-error');
    error.textContent='';
    if(!childNameInput.value.trim()){error.textContent='Please enter the child’s name.';childNameInput.focus();return}
    if(!childAgeInput.value.trim()||!Number.isFinite(Number(childAgeInput.value))||Number(childAgeInput.value)<0){error.textContent='Please enter the child’s age in years.';childAgeInput.focus();return}
@@ -3794,10 +3804,11 @@ Please confirm availability.`;
      }catch(popupDisplayError){}
    }
    bookingVerificationInProgress=true;
-   if(bookingSubmitButton){bookingSubmitButton.disabled=true;bookingSubmitButton.textContent='Verifying…'}
-   error.classList.remove('is-success');
+   if(bookingSubmitButton){bookingSubmitButton.disabled=true;bookingSubmitButton.setAttribute('aria-busy','true');bookingSubmitButton.textContent='Verifying…'}
+   error.classList.remove('is-success','is-error');
    error.classList.add('is-pending');
-   error.textContent='Please wait while we securely verify your request…';
+   error.setAttribute('aria-live','polite');
+   error.textContent='Verifying securely. Please keep this window open…';
    try{
      await loadRecaptchaV2Invisible();
      const token=await executeRecaptchaV2Invisible();
@@ -3814,27 +3825,32 @@ Please confirm availability.`;
      try{verification=await verificationResponse.json();}
      catch(parseError){throw new Error('The verification service returned an invalid response. Please try again later.');}
      if(!verification||verification.success!==true)throw new Error('We could not verify this request. Please try again.');
-     error.classList.remove('is-pending');
+     bookingHandoffStarted=true;
+     if(bookingSubmitButton){bookingSubmitButton.disabled=true;bookingSubmitButton.textContent='Opening WhatsApp…'}
+     error.classList.remove('is-pending','is-error');
      error.classList.add('is-success');
-     error.textContent='Verification successful! Opening WhatsApp…';
+     error.textContent='Verified successfully. Opening WhatsApp…';
      if(popup&&!popup.closed){
        try{
          popup.document.open();
-         popup.document.write('<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Verification successful</title><body style="margin:0;min-height:100vh;display:grid;place-items:center;background:#f3f7fa;color:#18384d;font:16px Arial,sans-serif"><main style="max-width:360px;margin:24px;padding:30px;text-align:center;background:#fff;border:1px solid #c9e7d3;border-radius:12px;box-shadow:0 12px 32px #17384d18"><div style="width:58px;height:58px;margin:0 auto 16px;display:grid;place-items:center;border-radius:50%;background:#e5f6eb;color:#168c50;font-size:38px;font-weight:700;animation:pop .35s ease-out">✓</div><h2 style="font-size:20px;margin:0 0 8px;color:#147a45">Verification successful</h2><p style="color:#5d7080;line-height:1.5;margin:0">Opening your appointment message in WhatsApp…</p></main><style>@keyframes pop{from{transform:scale(.6);opacity:.3}to{transform:scale(1);opacity:1}}</style></body></html>');
+         popup.document.write('<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Verification successful</title><body style="margin:0;min-height:100vh;display:grid;place-items:center;background:#f3f7fa;color:#18384d;font:16px Arial,sans-serif"><main style="max-width:360px;margin:24px;padding:30px;text-align:center;background:#fff;border:1px solid #c9e7d3;border-radius:12px;box-shadow:0 12px 32px #17384d18"><div aria-label="Verified" role="img" style="width:60px;height:60px;margin:0 auto 16px;display:grid;place-items:center;border-radius:50%;background:#e5f6eb;color:#168c50;font-size:39px;font-weight:700;animation:pop .48s cubic-bezier(.2,.8,.2,1) both">✓</div><h2 style="font-size:20px;margin:0 0 8px;color:#147a45">Verification successful</h2><p style="color:#5d7080;line-height:1.5;margin:0">Opening your appointment message in WhatsApp…</p></main><style>@keyframes pop{0%{transform:scale(.35) rotate(-20deg);opacity:0}65%{transform:scale(1.12) rotate(5deg);opacity:1}100%{transform:scale(1) rotate(0);opacity:1}}@media(prefers-reduced-motion:reduce){*{animation:none!important}}</style></body></html>');
          popup.document.close();
        }catch(popupDisplayError){}
-       window.setTimeout(()=>{if(!popup.closed)popup.location.replace(waUrl);},850);
+       // Let the verified state be visible before handing off to WhatsApp.
+       window.setTimeout(()=>{if(!popup.closed)popup.location.replace(waUrl);else window.location.assign(waUrl);},1000);
+       window.setTimeout(()=>{if(dialog.open)dialog.close();},250);
      }else{
-       window.setTimeout(()=>{window.location.href=waUrl;},650);
+       // Mobile and popup-blocked browsers stay on this page long enough to see the tick.
+       window.setTimeout(()=>{window.location.assign(waUrl);},1000);
      }
-     dialog.close();
    }catch(captchaError){
      if(popup&&!popup.closed)popup.close();
      error.classList.remove('is-pending','is-success');
+     error.classList.add('is-error');
      error.textContent=(captchaError&&captchaError.message)||'Verification failed. Please try again.';
    }finally{
      bookingVerificationInProgress=false;
-     if(bookingSubmitButton){bookingSubmitButton.disabled=false;bookingSubmitButton.textContent='Continue to WhatsApp'}
+     if(bookingSubmitButton&&!bookingHandoffStarted){bookingSubmitButton.disabled=false;bookingSubmitButton.removeAttribute('aria-busy');bookingSubmitButton.textContent='Continue to WhatsApp'}
    }
  });
  drawCalendar();drawClock();
