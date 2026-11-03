@@ -3476,11 +3476,9 @@ document.querySelector('#newsletter-form').addEventListener('submit',e=>{e.preve
   <div class="appointment-confirmation-inner">
     <div class="appointment-confirmation-brand"><img class="appointment-confirmation-logo" src="/assets/images/kg-logo-circle-512.png" alt="KidsGastro logo" width="76" height="76" decoding="async"/></div>
     <h2 id="appointment-confirmation-title">CONGRATULATIONS! YOUR APPOINTMENT HAS BEEN BOOKED!</h2>
-    <p class="appointment-confirmation-message">Your appointment details are below.</p>
+    <p class="appointment-confirmation-message">Your appointment is confirmed.</p>
     <div class="appointment-confirmation-details">
-      <div><span>Child’s name</span><strong id="confirmation-child-name"></strong></div>
       <div><span>Appointment date</span><strong id="confirmation-appointment-date"></strong></div>
-      <div><span>Appointment time</span><strong id="confirmation-appointment-time"></strong></div>
     </div>
     <p class="appointment-confirmation-arrival">Please reach on time.</p>
     <div class="appointment-confirmation-actions"><button class="appointment-confirmation-done" id="appointment-confirmation-ok" type="button">OK</button><button class="appointment-confirmation-another" id="appointment-confirmation-another" type="button">Book another appointment</button></div>
@@ -3532,9 +3530,7 @@ document.querySelector('#newsletter-form').addEventListener('submit',e=>{e.preve
    let details;
    try{details=JSON.parse(saved)}catch(_){try{sessionStorage.removeItem('kg_pending_appointment_confirmation')}catch(__){}return}
    if(!details||!details.childName||!details.date||!details.time||!details.savedAt||Date.now()-details.savedAt>86400000){try{sessionStorage.removeItem('kg_pending_appointment_confirmation')}catch(_){}return}
-   document.getElementById('confirmation-child-name').textContent=details.childName;
    document.getElementById('confirmation-appointment-date').textContent=details.date;
-   document.getElementById('confirmation-appointment-time').textContent=details.time;
    try{sessionStorage.removeItem('kg_pending_appointment_confirmation')}catch(_){}
    showing=true;
    if(typeof dialog.showModal==='function')dialog.showModal();else dialog.setAttribute('open','');
