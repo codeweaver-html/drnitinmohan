@@ -5828,11 +5828,7 @@ body.kg-booking-dialog-open::before{
 }
 /* Google injects the interactive image challenge as a separate body-level
    layer. Keep that challenge above the non-modal booking surface. */
-body > div[style*="z-index: 2000000000"],
-body > div[style*="z-index:2000000000"]{
-  z-index:2147483647!important;
-  pointer-events:auto!important;
-}
+
 
 
 /* ===== Preserved legacy CSS section 199: kg-recaptcha-badge-only-during-whatsapp-booking ===== */
@@ -5862,11 +5858,7 @@ body:not(.kg-booking-dialog-open) .grecaptcha-badge *{
   pointer-events:none!important;
 }
 /* A body-level Google image challenge remains usable above the active form. */
-body.kg-booking-dialog-open > div[style*="z-index: 2000000000"],
-body.kg-booking-dialog-open > div[style*="z-index:2000000000"]{
-  z-index:2147483647!important;
-  pointer-events:auto!important;
-}
+
 
 
 /* ===== Preserved legacy CSS section 200: kg-restore-main-header-cosmic-animation ===== */
@@ -6081,9 +6073,7 @@ html body.kg-booking-dialog-open .grecaptcha-badge{
   pointer-events:auto!important;filter:none!important;-webkit-filter:none!important;
   backdrop-filter:none!important;-webkit-backdrop-filter:none!important;transform:none!important;
 }
-html body.kg-booking-dialog-open .grecaptcha-badge iframe,
-html body.kg-booking-dialog-open iframe[src*="recaptcha"],
-html body.kg-booking-dialog-open iframe[src*="google.com/recaptcha"]{
+html body.kg-booking-dialog-open .grecaptcha-badge iframe{
   visibility:visible!important;opacity:1!important;pointer-events:auto!important;
   filter:none!important;-webkit-filter:none!important;transform:none!important;
 }
@@ -6093,14 +6083,7 @@ html body #appointment-recaptcha-v2{
   min-width:1px!important;overflow:visible!important;z-index:2147483002!important;
   pointer-events:auto!important;opacity:1!important;visibility:visible!important;filter:none!important;transform:none!important;
 }
-html body.kg-booking-dialog-open>div[style*="z-index: 2000000000"],
-html body.kg-booking-dialog-open>div[style*="z-index:2000000000"],
-html body>div[style*="z-index: 2000000000"],
-html body>div[style*="z-index:2000000000"]{
-  z-index:2147483647!important;visibility:visible!important;opacity:1!important;pointer-events:auto!important;
-  filter:none!important;-webkit-filter:none!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;
-  transform:none!important;
-}
+
 @media(max-width:640px){html body.kg-booking-dialog-open .grecaptcha-badge{right:8px!important;bottom:8px!important}}
 
 /* One navigation disclosure controller is used at every viewport width. */
@@ -6183,22 +6166,13 @@ html body header.header #links.open .nav-dropdown-menu a{display:block!important
     filter:none!important;
     -webkit-filter:none!important;
   }
-  html body > div[style*="z-index: 2000000000"],
-  html body > div[style*="z-index:2000000000"],
-  html body > div[style*="z-index: 2000000001"],
-  html body > div[style*="z-index:2000000001"] {
-    position:fixed!important; z-index:2147483647!important;
-    visibility:visible!important; display:block!important; opacity:1!important;
-    pointer-events:auto!important; transform:none!important; filter:none!important;
-    -webkit-filter:none!important; backdrop-filter:none!important;
-    -webkit-backdrop-filter:none!important;
-  }
-  html body iframe[src*="recaptcha/api2/bframe"],
-  html body iframe[src*="recaptcha/enterprise/bframe"],
-  html body iframe[src*="google.com/recaptcha"] {
-    visibility:visible!important; opacity:1!important; pointer-events:auto!important;
-    z-index:2147483647!important; filter:none!important;
-    -webkit-filter:none!important; transform:none!important;
+  /* Keep the booking form interactive; Google's own challenge layer controls its visibility. */
+  body.kg-booking-dialog-open #whatsapp-booking-dialog.booking-dialog[open],
+  body.kg-booking-dialog-open #whatsapp-booking-form,
+  body.kg-booking-dialog-open #whatsapp-booking-form input,
+  body.kg-booking-dialog-open #whatsapp-booking-form select,
+  body.kg-booking-dialog-open #whatsapp-booking-form button {
+    pointer-events:auto!important;
   }
   body.kg-booking-dialog-open .grecaptcha-badge {
     top:8px!important; right:8px!important; bottom:auto!important;
@@ -6793,6 +6767,88 @@ html body #booking-menu-toggle.booking-toggle > * {
     animation: none !important;
     display: none !important;
   }
+}
+
+
+/* Universal main-site image viewer: KidsGastro blue-and-white palette. */
+html body .gallery-lightbox{
+  z-index:2147483600!important;
+  padding:clamp(12px,3vw,32px)!important;
+  background:rgba(5,27,49,.78)!important;
+  -webkit-backdrop-filter:blur(7px)!important;
+  backdrop-filter:blur(7px)!important;
+  color:#173b5d!important;
+}
+html body .gallery-lightbox-inner{
+  width:min(1320px,100%)!important;
+  height:min(94dvh,1000px)!important;
+  padding:clamp(12px,2vw,22px)!important;
+  border:1px solid #cfe1ef!important;
+  border-radius:20px!important;
+  background:linear-gradient(145deg,#fff 0%,#f2f8fd 100%)!important;
+  box-shadow:0 24px 80px rgba(0,20,42,.35)!important;
+  grid-template-rows:minmax(0,1fr) auto!important;
+  gap:10px!important;
+}
+html body .gallery-lightbox-image-wrap{
+  position:relative!important;
+  min-height:0!important;
+  border:1px solid #d7e7f3!important;
+  border-radius:14px!important;
+  background:linear-gradient(145deg,#f7fbff,#eaf4fb)!important;
+  overflow:hidden!important;
+  touch-action:none!important;
+  cursor:grab!important;
+}
+html body .gallery-lightbox-image-wrap.is-zoomed{cursor:grab!important}
+html body .gallery-lightbox-image{
+  max-width:100%!important;max-height:100%!important;
+  width:auto!important;height:auto!important;
+  object-fit:contain!important;
+  transform-origin:center center!important;
+  user-select:none!important;-webkit-user-drag:none!important;
+  will-change:transform!important;
+}
+html body .gallery-lightbox-caption{
+  color:#124d7c!important;font-weight:750!important;
+}
+html body .gallery-lightbox-count{color:#55758f!important}
+html body .gallery-lightbox-control{
+  border:1px solid #b9d5e8!important;
+  background:#0759a8!important;color:#fff!important;
+  box-shadow:0 5px 18px rgba(7,55,95,.18)!important;
+}
+html body .gallery-lightbox-control:hover,
+html body .gallery-lightbox-control:focus-visible{
+  background:#087bb8!important;outline:3px solid #c5e5f8!important;
+}
+html body .gallery-zoom-toolbar{
+  top:12px!important;left:50%!important;
+  padding:6px!important;gap:6px!important;
+  background:rgba(255,255,255,.97)!important;
+  border:1px solid #c8dfef!important;
+  box-shadow:0 5px 20px rgba(15,67,105,.16)!important;
+}
+html body .gallery-zoom-btn{
+  min-width:40px!important;height:38px!important;
+  background:#eaf4fb!important;color:#0759a8!important;
+  border:1px solid #c5ddec!important;
+}
+html body .gallery-zoom-btn:hover,
+html body .gallery-zoom-btn:focus-visible{
+  background:#0759a8!important;color:#fff!important;
+}
+html body .gallery-zoom-reset{min-width:62px!important}
+html body img.kg-main-image-viewer-trigger{cursor:zoom-in!important}
+@media(max-width:640px){
+  html body .gallery-lightbox{padding:8px!important}
+  html body .gallery-lightbox-inner{
+    width:100%!important;height:94dvh!important;
+    padding:8px!important;border-radius:14px!important;
+  }
+  html body .gallery-lightbox-image-wrap{border-radius:10px!important}
+  html body .gallery-zoom-toolbar{top:8px!important}
+  html body .gallery-lightbox-control{width:40px!important;height:40px!important}
 }
 
 }
@@ -7999,7 +8055,167 @@ document.querySelectorAll('.nav-direct-link,.nav-dropdown-menu>a,.booking-menu-p
 
 
 
-<div aria-hidden="true" aria-label="Photo viewer" aria-modal="true" class="gallery-lightbox" id="gallery-lightbox" role="dialog"><button aria-label="Close photo viewer" class="gallery-lightbox-control gallery-lightbox-close" type="button">×</button><button aria-label="Previous photo" class="gallery-lightbox-control gallery-lightbox-prev" type="button">‹</button><button aria-label="Next photo" class="gallery-lightbox-control gallery-lightbox-next" type="button">›</button><div class="gallery-lightbox-inner"><div class="gallery-lightbox-image-wrap"><div aria-label="Photo zoom controls" class="gallery-zoom-toolbar" role="group"><button aria-label="Zoom out" class="gallery-zoom-btn" data-zoom="out" title="Zoom out" type="button">−</button><button aria-label="Reset zoom" class="gallery-zoom-btn gallery-zoom-reset" data-zoom="reset" title="Reset zoom" type="button">Reset</button><button aria-label="Zoom in" class="gallery-zoom-btn" data-zoom="in" title="Zoom in" type="button">+</button></div><img alt="" class="gallery-lightbox-image" decoding="async" fetchpriority="low" loading="lazy"/></div><div><div class="gallery-lightbox-caption"></div><div class="gallery-lightbox-count"></div></div></div></div><script id="gallery-lightbox-script">(()=>{const modal=document.getElementById('gallery-lightbox');const content=document.getElementById('secondary-page-content');if(!modal||!content)return;const view=modal.querySelector('.gallery-lightbox-image');const caption=modal.querySelector('.gallery-lightbox-caption');const count=modal.querySelector('.gallery-lightbox-count');const zoomButtons=[...modal.querySelectorAll('[data-zoom]')];let index=0,previousFocus=null,zoom=1;function triggers(){return [...content.querySelectorAll('img.gallery-lightbox-trigger')]}function applyZoom(){view.style.setProperty('--gallery-zoom',String(zoom));view.style.transform='scale('+zoom+')';zoomButtons.forEach(b=>{const action=b.dataset.zoom;b.disabled=(action==='in'&&zoom>=3)||(action==='out'&&zoom<=1);});}function setZoom(action){if(action==='in')zoom=Math.min(3,Math.round((zoom+.25)*100)/100);else if(action==='out')zoom=Math.max(1,Math.round((zoom-.25)*100)/100);else zoom=1;applyZoom()}function show(i){const items=triggers();if(!items.length)return;index=(i+items.length)%items.length;const t=items[index];view.src=t.currentSrc||t.src;view.alt=t.alt||t.dataset.galleryCaption||'KidsGastro gallery photo';caption.textContent=t.dataset.galleryCaption||'KidsGastro Gallery';count.textContent=(index+1)+' / '+items.length;zoom=1;applyZoom();}function openFrom(t){const items=triggers();const i=items.indexOf(t);if(i<0)return;previousFocus=t;show(i);modal.classList.add('is-open');modal.setAttribute('aria-hidden','false');document.body.classList.add('gallery-lightbox-active');modal.querySelector('.gallery-lightbox-close').focus();}function close(){modal.classList.remove('is-open');modal.setAttribute('aria-hidden','true');view.removeAttribute('src');document.body.classList.remove('gallery-lightbox-active');if(previousFocus&&previousFocus.focus)previousFocus.focus();}content.addEventListener('click',e=>{const t=e.target.closest('img.gallery-lightbox-trigger');if(t)openFrom(t)});content.addEventListener('keydown',e=>{const t=e.target.closest('img.gallery-lightbox-trigger');if(t&&(e.key==='Enter'||e.key===' ')){e.preventDefault();openFrom(t)}});modal.querySelector('.gallery-lightbox-prev').addEventListener('click',()=>show(index-1));modal.querySelector('.gallery-lightbox-next').addEventListener('click',()=>show(index+1));modal.querySelector('.gallery-lightbox-close').addEventListener('click',close);zoomButtons.forEach(b=>b.addEventListener('click',()=>setZoom(b.dataset.zoom)));modal.addEventListener('click',e=>{if(e.target===modal)close()});document.addEventListener('keydown',e=>{if(!modal.classList.contains('is-open'))return;if(e.key==='Escape')close();else if(e.key==='ArrowLeft')show(index-1);else if(e.key==='ArrowRight')show(index+1);else if(e.key==='+'||e.key==='=')setZoom('in');else if(e.key==='-'||e.key==='_')setZoom('out');else if(e.key==='0')setZoom('reset')});applyZoom();})();</script>
+<div aria-hidden="true" aria-label="Photo viewer" aria-modal="true" class="gallery-lightbox" id="gallery-lightbox" role="dialog"><button aria-label="Close photo viewer" class="gallery-lightbox-control gallery-lightbox-close" type="button">×</button><button aria-label="Previous photo" class="gallery-lightbox-control gallery-lightbox-prev" type="button">‹</button><button aria-label="Next photo" class="gallery-lightbox-control gallery-lightbox-next" type="button">›</button><div class="gallery-lightbox-inner"><div class="gallery-lightbox-image-wrap"><div aria-label="Photo zoom controls" class="gallery-zoom-toolbar" role="group"><button aria-label="Zoom out" class="gallery-zoom-btn" data-zoom="out" title="Zoom out" type="button">−</button><button aria-label="Reset zoom" class="gallery-zoom-btn gallery-zoom-reset" data-zoom="reset" title="Reset zoom" type="button">Reset</button><button aria-label="Zoom in" class="gallery-zoom-btn" data-zoom="in" title="Zoom in" type="button">+</button></div><img alt="" class="gallery-lightbox-image" decoding="async" fetchpriority="low" loading="lazy"/></div><div><div class="gallery-lightbox-caption"></div><div class="gallery-lightbox-count"></div></div></div></div><script id="gallery-lightbox-script">
+(()=>{
+ 'use strict';
+ const modal=document.getElementById('gallery-lightbox');
+ if(!modal||modal.dataset.kgUniversalViewer==='1')return;
+ modal.dataset.kgUniversalViewer='1';
+ const view=modal.querySelector('.gallery-lightbox-image');
+ const wrap=modal.querySelector('.gallery-lightbox-image-wrap');
+ const caption=modal.querySelector('.gallery-lightbox-caption');
+ const count=modal.querySelector('.gallery-lightbox-count');
+ const zoomButtons=[...modal.querySelectorAll('[data-zoom]')];
+ const closeButton=modal.querySelector('.gallery-lightbox-close');
+ const prevButton=modal.querySelector('.gallery-lightbox-prev');
+ const nextButton=modal.querySelector('.gallery-lightbox-next');
+ let items=[],index=0,previousFocus=null,zoom=1,panX=0,panY=0;
+ let pointers=new Map(),drag=null,pinchStart=null;
+ const MIN_ZOOM=1,MAX_ZOOM=5,ZOOM_STEP=.25;
+ const clamp=(v,min,max)=>Math.max(min,Math.min(max,v));
+ const distance=(a,b)=>Math.hypot(a.x-b.x,a.y-b.y);
+ function eligible(img){
+   if(!(img instanceof HTMLImageElement)||!img.isConnected||!img.getClientRects().length)return false;
+   if(img===view||img.closest('#gallery-lightbox,a,button,[role="button"],form,.brand,.footer-brand,.appointment-confirmation-logo,.kg-image-viewer-skip'))return false;
+   if(img.classList.contains('circular-brand-logo')||img.classList.contains('inline-kg-mark')||img.classList.contains('appointment-confirmation-logo'))return false;
+   const src=(img.currentSrc||img.getAttribute('src')||img.getAttribute('data-src')||'').toLowerCase();
+   if(!src||src.includes('kg-logo')||src.includes('rezept-rx-logo'))return false;
+   if(img.getAttribute('aria-hidden')==='true')return false;
+   return !!(img.currentSrc||img.getAttribute('src')||img.getAttribute('data-src'));
+ }
+ function collect(){
+   items=[...document.querySelectorAll('img')].filter(eligible);
+   items.forEach(img=>{
+     if(img.dataset.kgViewerReady==='1')return;
+     img.dataset.kgViewerReady='1';
+     img.classList.add('kg-main-image-viewer-trigger');
+     img.setAttribute('tabindex','0');
+     img.setAttribute('role','button');
+     img.setAttribute('aria-label',(img.alt||'Open image')+' — open image viewer');
+   });
+   return items;
+ }
+ function resetTransform(){
+   zoom=1;panX=0;panY=0;pointers.clear();drag=null;pinchStart=null;
+   applyTransform();
+ }
+ function applyTransform(){
+   view.style.transform=`translate3d(${panX}px,${panY}px,0) scale(${zoom})`;
+   view.style.cursor=zoom>1?'grab':'zoom-in';
+   zoomButtons.forEach(b=>{
+     const a=b.dataset.zoom;
+     b.disabled=(a==='in'&&zoom>=MAX_ZOOM)||(a==='out'&&zoom<=MIN_ZOOM);
+   });
+   wrap.classList.toggle('is-zoomed',zoom>1);
+ }
+ function setZoom(next,anchorX=0,anchorY=0){
+   const old=zoom;zoom=clamp(Math.round(next*100)/100,MIN_ZOOM,MAX_ZOOM);
+   if(zoom!==old){
+     const ratio=zoom/old;
+     panX=anchorX-(anchorX-panX)*ratio;
+     panY=anchorY-(anchorY-panY)*ratio;
+   }
+   if(zoom===1){panX=0;panY=0;}
+   applyTransform();
+ }
+ function stepZoom(action){
+   if(action==='reset'){resetTransform();return;}
+   setZoom(zoom+(action==='in'?ZOOM_STEP:-ZOOM_STEP));
+ }
+ function show(i){
+   collect();if(!items.length)return;
+   index=(i+items.length)%items.length;
+   const t=items[index],src=t.currentSrc||t.src||t.dataset.src;
+   view.src=src;view.alt=t.alt||t.dataset.galleryCaption||'KidsGastro photo';
+   caption.textContent=t.dataset.galleryCaption||t.alt||'KidsGastro';
+   count.textContent=(index+1)+' / '+items.length;
+   resetTransform();
+   prevButton.hidden=items.length<2;nextButton.hidden=items.length<2;
+ }
+ function openFrom(img){
+   collect();const i=items.indexOf(img);if(i<0)return;
+   previousFocus=img;show(i);
+   modal.classList.add('is-open');modal.setAttribute('aria-hidden','false');
+   document.body.classList.add('gallery-lightbox-active');
+   closeButton.focus();
+ }
+ function close(){
+   modal.classList.remove('is-open');modal.setAttribute('aria-hidden','true');
+   view.removeAttribute('src');resetTransform();
+   document.body.classList.remove('gallery-lightbox-active');
+   pointers.clear();if(previousFocus&&previousFocus.isConnected)previousFocus.focus();
+ }
+ document.addEventListener('click',e=>{
+   const img=e.target&&e.target.closest?e.target.closest('img'):null;
+   if(img&&eligible(img)){e.preventDefault();openFrom(img);}
+ });
+ document.addEventListener('keydown',e=>{
+   const img=e.target&&e.target.closest?e.target.closest('img.kg-main-image-viewer-trigger'):null;
+   if(img&&(e.key==='Enter'||e.key===' ')){e.preventDefault();openFrom(img);return;}
+   if(!modal.classList.contains('is-open'))return;
+   if(e.key==='Escape'){e.preventDefault();close();}
+   else if(e.key==='ArrowLeft'&&items.length>1){e.preventDefault();show(index-1);}
+   else if(e.key==='ArrowRight'&&items.length>1){e.preventDefault();show(index+1);}
+   else if(e.key==='+'||e.key==='='){e.preventDefault();stepZoom('in');}
+   else if(e.key==='-'||e.key==='_'){e.preventDefault();stepZoom('out');}
+   else if(e.key==='0'){e.preventDefault();stepZoom('reset');}
+ });
+ prevButton.addEventListener('click',()=>show(index-1));
+ nextButton.addEventListener('click',()=>show(index+1));
+ closeButton.addEventListener('click',close);
+ zoomButtons.forEach(b=>b.addEventListener('click',()=>stepZoom(b.dataset.zoom)));
+ modal.addEventListener('click',e=>{if(e.target===modal)close();});
+ wrap.addEventListener('wheel',e=>{
+   if(!modal.classList.contains('is-open'))return;
+   e.preventDefault();
+   const r=wrap.getBoundingClientRect();
+   setZoom(zoom+(e.deltaY<0?ZOOM_STEP:-ZOOM_STEP),e.clientX-r.left-r.width/2,e.clientY-r.top-r.height/2);
+ },{passive:false});
+ wrap.addEventListener('pointerdown',e=>{
+   if(e.target&&e.target.closest&&e.target.closest('button'))return;
+   if(e.pointerType==='mouse'&&e.button!==0)return;
+   wrap.setPointerCapture(e.pointerId);
+   pointers.set(e.pointerId,{x:e.clientX,y:e.clientY});
+   if(pointers.size===1&&zoom>1)drag={id:e.pointerId,x:e.clientX,y:e.clientY,panX,panY};
+   if(pointers.size===2){
+     const pts=[...pointers.values()];pinchStart={distance:distance(pts[0],pts[1]),zoom,panX,panY};
+     drag=null;
+   }
+   e.preventDefault();
+ });
+ wrap.addEventListener('pointermove',e=>{
+   if(!pointers.has(e.pointerId))return;
+   pointers.set(e.pointerId,{x:e.clientX,y:e.clientY});
+   if(pointers.size>=2&&pinchStart){
+     const pts=[...pointers.values()].slice(0,2);
+     const d=distance(pts[0],pts[1]);
+     const midX=(pts[0].x+pts[1].x)/2,midY=(pts[0].y+pts[1].y)/2;
+     const r=wrap.getBoundingClientRect();
+     const localX=midX-r.left-r.width/2,localY=midY-r.top-r.height/2;
+     const next=clamp(pinchStart.zoom*(d/Math.max(1,pinchStart.distance)),MIN_ZOOM,MAX_ZOOM);
+     setZoom(next,localX,localY);
+   }else if(drag&&drag.id===e.pointerId&&zoom>1){
+     panX=drag.panX+(e.clientX-drag.x);panY=drag.panY+(e.clientY-drag.y);applyTransform();
+   }
+ });
+ function endPointer(e){
+   pointers.delete(e.pointerId);
+   if(pointers.size<2)pinchStart=null;
+   if(drag&&drag.id===e.pointerId)drag=null;
+   if(pointers.size===1&&zoom>1){
+     const [id,pt]=[...pointers.entries()][0];
+     drag={id,x:pt.x,y:pt.y,panX,panY};
+   }
+ }
+ wrap.addEventListener('pointerup',endPointer);
+ wrap.addEventListener('pointercancel',endPointer);
+ wrap.addEventListener('lostpointercapture',endPointer);
+ const observer=new MutationObserver(()=>collect());
+ observer.observe(document.documentElement,{subtree:true,childList:true,attributes:true,attributeFilter:['src','data-src']});
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',collect,{once:true});else collect();
+ applyTransform();
+})();
+</script>
 <script id="kg-asset-deduplication">
 (function(){
   function hydrate(){
@@ -9268,46 +9484,6 @@ if ("serviceWorker" in navigator && location.protocol === "https:") {
 
 <!-- Desktop-only reCAPTCHA challenge visibility repair. -->
 
-<script id="kg-desktop-recaptcha-dynamic-layer-repair">
-(function(){
-  'use strict';
-  function promote(node){
-    if(!node || node.nodeType!==1)return;
-    var style=(node.getAttribute('style')||'').replace(/\s/g,'').toLowerCase();
-    var frame=node.matches&&node.matches('iframe[src*="recaptcha"],iframe[src*="google.com/recaptcha"]');
-    var layer=/z-index:2000000000|z-index:2000000001/.test(style);
-    if(frame){
-      ['visibility','opacity','pointer-events','z-index','transform'].forEach(function(k){
-        node.style.setProperty(k,k==='z-index'?'2147483647':(k==='opacity'?'1':(k==='transform'?'none':(k==='visibility'?'visible':'auto'))),'important');
-      });
-    } else if(layer){
-      node.style.setProperty('position','fixed','important');
-      node.style.setProperty('z-index','2147483647','important');
-      node.style.setProperty('visibility','visible','important');
-      node.style.setProperty('opacity','1','important');
-      node.style.setProperty('pointer-events','auto','important');
-      node.style.setProperty('transform','none','important');
-      node.style.setProperty('filter','none','important');
-      node.style.setProperty('backdrop-filter','none','important');
-    }
-  }
-  function init(){
-    if(!window.matchMedia('(min-width:761px)').matches)return;
-    Array.prototype.forEach.call(document.body.children,promote);
-    var observer=new MutationObserver(function(records){
-      records.forEach(function(record){
-        Array.prototype.forEach.call(record.addedNodes,function(node){
-          promote(node);
-          if(node.querySelectorAll)node.querySelectorAll('iframe[src*="recaptcha"],iframe[src*="google.com/recaptcha"]').forEach(promote);
-        });
-      });
-    });
-    observer.observe(document.body,{childList:true,subtree:true});
-  }
-  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});
-  else init();
-})();
-</script>
 
 <!-- Final consolidated UI repairs: booking choice, navigation, calendar, captcha and logo. -->
 
