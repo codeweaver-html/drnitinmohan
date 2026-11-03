@@ -8704,8 +8704,31 @@ applyZoom();
   // If those rectangles are included in one even-odd path, their outside
   // portions can accidentally create visible regions beyond the blue box.
   ctx.beginPath();ctx.rect(clipLeft,clipTop,clipRight-clipLeft,clipBottom-clipTop);ctx.clip();
-  // Then cut protected controls out, intersecting every exclusion with this
-  // panel. The first clip remains active even if exclusions overlap.
+  // Draw the quiet starfield across the complete panel BEFORE masking moving
+  // objects. Previously the even-odd control mask removed every pixel in its
+  // rectangles, including the background stars, leaving obvious blank "holes"
+  // around the logo, headline, search and navigation controls.
+  panel.sparks.forEach(s=>{
+   const sx=s.x*r.width,sy=s.y*r.height;
+   if(animate){
+    s.phase+=s.speed*dt;
+    s.x+=Math.cos(s.phase*.37)*.000035;
+    s.y+=Math.sin(s.phase*.29)*.000025;
+    if(s.x<.015)s.x=.985;if(s.x>.985)s.x=.015;
+    if(s.y<.02)s.y=.98;if(s.y>.98)s.y=.02;
+   }
+   const pulse=.5+.5*Math.sin(s.phase);
+   ctx.globalAlpha=.10+.12*pulse;
+   ctx.fillStyle='#fff';ctx.beginPath();ctx.arc(r.left+sx,r.top+sy,s.size*.82,0,TAU);ctx.fill();
+   if(s.streak&&pulse>.88){
+    ctx.globalAlpha=.14;ctx.strokeStyle='#fff';ctx.lineWidth=.65;
+    ctx.beginPath();ctx.moveTo(r.left+sx,r.top+sy);
+    ctx.lineTo(r.left+sx-s.size*4,r.top+sy+s.size*1.2);ctx.stroke();
+   }
+  });
+  // Then cut protected controls out of the moving-object layer only. The
+  // underlying starfield remains continuous, while ISS/ships/orbits stay away
+  // from protected text, logos, search and hamburger controls.
   ctx.beginPath();ctx.rect(clipLeft,clipTop,clipRight-clipLeft,clipBottom-clipTop);
   panel.blocked.forEach(b=>{
    const left=Math.max(clipLeft,b.left),top=Math.max(clipTop,b.top);
@@ -8717,8 +8740,6 @@ applyZoom();
   // Collect only moving animated bodies; proximity checks happen after their
   // positions are updated so incidental visual intersections can be detected.
   const movingThings=[];
-  // Fine moving particles fill the full blue panel, including behind text and buttons.
-  panel.sparks.forEach(s=>{const sx=s.x*r.width,sy=s.y*r.height;if(animate){s.phase+=s.speed*dt;s.x+=Math.cos(s.phase*.37)*.000035;s.y+=Math.sin(s.phase*.29)*.000025;if(s.x<.015)s.x=.985;if(s.x>.985)s.x=.015;if(s.y<.02)s.y=.98;if(s.y>.98)s.y=.02;}const pulse=.5+.5*Math.sin(s.phase);ctx.globalAlpha=.24+.48*pulse;ctx.fillStyle='#fff';ctx.beginPath();ctx.arc(r.left+sx,r.top+sy,s.size,0,TAU);ctx.fill();if(s.streak&&pulse>.78){ctx.globalAlpha=.36;ctx.strokeStyle='#fff';ctx.lineWidth=.8;ctx.beginPath();ctx.moveTo(r.left+sx,r.top+sy);ctx.lineTo(r.left+sx-s.size*5,r.top+sy+s.size*1.6);ctx.stroke();}});
   panel.bodies.forEach((b,i)=>{
    if(animate){b.phase+=b.speed*b.direction*dt;b.rotation+=b.spin*b.direction*dt;b.moonPhase+=b.moonSpeed*dt;}
    const bx=x0+r.width*b.anchorX,by=y0+r.height*b.anchorY;
