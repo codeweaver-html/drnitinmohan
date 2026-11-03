@@ -6855,19 +6855,108 @@ html body img.kg-main-image-viewer-trigger{cursor:zoom-in!important}
 </style>
 
 <style id="kg-desktop-whatsapp-booking-clickability-fix">
-/* Desktop-only: keep the open booking dialog above the high-layer site header.
-   The mobile booking layout is intentionally left untouched. */
-@media (min-width: 761px) {
-  html body.kg-booking-dialog-open header.header {
-    z-index: 100 !important;
+/* The legacy full-screen backdrop was above the dialog and was eating every
+   desktop click. Put the backdrop below the dialog, while keeping the dialog
+   above the header. This override is in the highest-priority important layer. */
+@layer kg-overrides {
+  @media (min-width: 761px) {
+    html body.kg-booking-dialog-open::before {
+      z-index: 2147482998 !important;
+      pointer-events: none !important;
+      -webkit-backdrop-filter: none !important;
+      backdrop-filter: none !important;
+    }
+    html body.kg-booking-dialog-open header.header {
+      z-index: 2147483000 !important;
+    }
+    html body.kg-booking-dialog-open #whatsapp-booking-dialog.booking-dialog[open] {
+      z-index: 2147483001 !important;
+      pointer-events: auto !important;
+    }
+    html body.kg-booking-dialog-open #whatsapp-booking-form,
+    html body.kg-booking-dialog-open #whatsapp-booking-form input,
+    html body.kg-booking-dialog-open #whatsapp-booking-form select,
+    html body.kg-booking-dialog-open #whatsapp-booking-form button {
+      pointer-events: auto !important;
+    }
   }
-  html body.kg-booking-dialog-open #whatsapp-booking-dialog.booking-dialog[open] {
-    pointer-events: auto !important;
-  }
-  html body.kg-booking-dialog-open #whatsapp-booking-dialog .booking-dialog-inner,
-  html body.kg-booking-dialog-open #whatsapp-booking-dialog .booking-dialog-inner * {
-    pointer-events: auto !important;
-  }
+}
+</style>
+<style id="kg-main-image-viewer-and-header-animation-final-repair">
+/* Main-site viewer: only the currently visible main-content images are eligible. */
+html body #gallery-lightbox.gallery-lightbox{z-index:2147483600!important;display:none!important;}
+html body #gallery-lightbox.gallery-lightbox.is-open{display:flex!important;}
+html body #gallery-lightbox .gallery-lightbox-image{max-width:100%!important;max-height:100%!important;object-fit:contain!important;}
+html body main#main img.kg-main-image-viewer-trigger{cursor:zoom-in!important;}
+/* Restore the existing cosmic layer: an old desktop-wide reduced-animation rule
+   accidentally shortened every animation on the page to 0.01ms. */
+html body header.header.kg-cosmos-host .kg-cosmos-background,
+html body header.header.kg-cosmos-host .kg-cosmos-background *,
+html body header.header.kg-cosmos-host .kg-orbit-overlay,
+html body header.header.kg-cosmos-host .kg-orbit-overlay *,
+html body header.header.kg-cosmos-host canvas.kg-sky{
+  animation-duration:12s!important;
+  animation-iteration-count:infinite!important;
+  animation-play-state:running!important;
+}
+/* Self-contained visual fallback, so the blue header still has visible cosmic
+   motion even if the shared external animation bundle fails to initialise. */
+html body header.header.kg-cosmos-host{
+  position:relative!important;
+  isolation:isolate!important;
+  background-color:#0759a8!important;
+}
+html body header.header.kg-cosmos-host::before{
+  content:""!important;display:block!important;position:absolute!important;inset:0!important;
+  z-index:0!important;pointer-events:none!important;opacity:.78!important;
+  background-image:
+    radial-gradient(circle at 8% 28%,rgba(255,255,255,.9) 0 1px,transparent 1.8px),
+    radial-gradient(circle at 19% 74%,rgba(174,224,255,.95) 0 1.2px,transparent 2px),
+    radial-gradient(circle at 34% 18%,rgba(255,255,255,.85) 0 1px,transparent 1.8px),
+    radial-gradient(circle at 48% 82%,rgba(174,224,255,.8) 0 1px,transparent 1.8px),
+    radial-gradient(circle at 62% 30%,rgba(255,255,255,.9) 0 1.2px,transparent 2px),
+    radial-gradient(circle at 77% 72%,rgba(174,224,255,.9) 0 1px,transparent 1.8px),
+    radial-gradient(circle at 91% 22%,rgba(255,255,255,.85) 0 1px,transparent 1.8px),
+    radial-gradient(ellipse at 78% 48%,transparent 0 105px,rgba(171,222,255,.16) 106px 107px,transparent 108px 100%);
+  background-size:100% 100%;
+  animation:kg-header-cosmos-twinkle 18s ease-in-out infinite alternate!important;
+}
+html body header.header.kg-cosmos-host::after{
+  content:""!important;display:block!important;position:absolute!important;
+  width:360px!important;height:104px!important;right:2%!important;top:50%!important;
+  z-index:0!important;pointer-events:none!important;opacity:.42!important;
+  border:1px solid rgba(189,226,255,.2)!important;border-radius:50%!important;
+  box-shadow:0 0 0 26px rgba(189,226,255,.045),0 0 0 58px rgba(189,226,255,.035),inset 0 0 38px rgba(189,226,255,.08)!important;
+  transform:translateY(-50%) rotate(-12deg)!important;
+  animation:kg-header-cosmos-orbit 32s linear infinite!important;
+}
+html body header.header.kg-cosmos-host>.nav,
+html body header.header.kg-cosmos-host>nav,
+html body header.header.kg-cosmos-host .nav{
+  position:relative!important;z-index:2!important;
+}
+@keyframes kg-header-cosmos-twinkle{
+  0%{background-position:0 0;filter:brightness(.82)}
+  50%{background-position:5px -3px;filter:brightness(1.18)}
+  100%{background-position:-4px 4px;filter:brightness(.95)}
+}
+@keyframes kg-header-cosmos-orbit{
+  from{transform:translateY(-50%) rotate(-12deg)}
+  to{transform:translateY(-50%) rotate(348deg)}
+}
+@media(max-width:760px){
+  html body header.header.kg-cosmos-host::after{width:240px!important;height:86px!important;right:-70px!important;opacity:.24!important;}
+}
+</style>
+
+<style id="kg-restore-native-browser-cursor">
+/* Restore the browser/OS cursor everywhere; no custom circular cursor or drag cursor. */
+html, html *, html *::before, html *::after, body, body *, body *::before, body *::after { cursor: auto !important; }
+#kg-main-cursor-flow, #kg-main-cursor-ring,
+.kg-main-cursor, .kg-main-cursor, .kg-main-cursor-flow, .kg-main-cursor-ring,
+.kg-mobile-touch-cursor, .kg-mobile-touch-cursor-ring, .kg-mobile-touch-cursor-ripple,
+[class*="cursor-orbit"], [id*="cursor-orbit"] {
+  display: none !important; visibility: hidden !important; opacity: 0 !important; pointer-events: none !important;
 }
 </style>
 </head><body><div aria-label="Appointment announcement" class="offline-appointment-marquee" role="region"><div class="offline-appointment-marquee__track"><span class="offline-appointment-marquee__text">OFFLINE APPOINTMENTS AVAILABLE RIGHT NOW. <span aria-hidden="true" class="marquee-inline-gap">      </span>CLICK THE APPOINTMENT BUTTON BELOW TO PROCEED.</span><span aria-hidden="true" class="offline-appointment-marquee__text">OFFLINE APPOINTMENTS AVAILABLE RIGHT NOW. <span aria-hidden="true" class="marquee-inline-gap">      </span>CLICK THE APPOINTMENT BUTTON BELOW TO PROCEED.</span></div></div><a class="skip-link" href="/?focus=main">Skip to content</a>
@@ -8086,22 +8175,38 @@ document.querySelectorAll('.nav-direct-link,.nav-dropdown-menu>a,.booking-menu-p
  const closeButton=modal.querySelector('.gallery-lightbox-close');
  const prevButton=modal.querySelector('.gallery-lightbox-prev');
  const nextButton=modal.querySelector('.gallery-lightbox-next');
+ if(!view||!wrap||!caption||!count||!closeButton||!prevButton||!nextButton)return;
  let items=[],index=0,previousFocus=null,zoom=1,panX=0,panY=0;
  let pointers=new Map(),drag=null,pinchStart=null;
  const MIN_ZOOM=1,MAX_ZOOM=5,ZOOM_STEP=.25;
  const clamp=(v,min,max)=>Math.max(min,Math.min(max,v));
  const distance=(a,b)=>Math.hypot(a.x-b.x,a.y-b.y);
+ function isActuallyVisible(img){
+   if(!img||!img.isConnected||!img.getClientRects().length)return false;
+   for(let node=img;node&&node!==document.documentElement;node=node.parentElement){
+     if(node.hidden||node.hasAttribute('inert')||node.getAttribute('aria-hidden')==='true')return false;
+     const cs=getComputedStyle(node);
+     if(cs.display==='none'||cs.visibility==='hidden'||Number(cs.opacity)===0||cs.contentVisibility==='hidden')return false;
+   }
+   const r=img.getBoundingClientRect();
+   return r.width>3&&r.height>3;
+ }
  function eligible(img){
-   if(!(img instanceof HTMLImageElement)||!img.isConnected||!img.getClientRects().length)return false;
-   if(img===view||img.closest('#gallery-lightbox,button,[role="button"],form,.brand,.footer-brand,.appointment-confirmation-logo,.kg-image-viewer-skip'))return false;
+   if(!(img instanceof HTMLImageElement))return false;
+   // Only use photographs belonging to the current main-page content. This
+   // prevents hidden route templates or off-page gallery data from entering
+   // the main site's image sequence.
+   const main=img.closest('main#main');
+   if(!main||img===view)return false;
+   if(img.closest('#gallery-lightbox,button,[role="button"],form,.brand,.footer-brand,.appointment-confirmation-logo,.kg-image-viewer-skip,[hidden],[inert],[aria-hidden="true"]'))return false;
+   if(img.closest('.route-page')&&!img.closest('.route-gallery'))return false;
    if(img.classList.contains('circular-brand-logo')||img.classList.contains('inline-kg-mark')||img.classList.contains('appointment-confirmation-logo'))return false;
    const src=(img.currentSrc||img.getAttribute('src')||img.getAttribute('data-src')||'').toLowerCase();
    if(!src||src.includes('kg-logo')||src.includes('rezept-rx-logo'))return false;
-   if(img.getAttribute('aria-hidden')==='true')return false;
-   return !!(img.currentSrc||img.getAttribute('src')||img.getAttribute('data-src'));
+   return isActuallyVisible(img);
  }
  function collect(){
-   items=[...document.querySelectorAll('img')].filter(eligible);
+   items=[...document.querySelectorAll('main#main img')].filter(eligible);
    items.forEach(img=>{
      if(img.dataset.kgViewerReady==='1')return;
      img.dataset.kgViewerReady='1';
@@ -8112,65 +8217,43 @@ document.querySelectorAll('.nav-direct-link,.nav-dropdown-menu>a,.booking-menu-p
    });
    return items;
  }
- function resetTransform(){
-   zoom=1;panX=0;panY=0;pointers.clear();drag=null;pinchStart=null;
-   applyTransform();
- }
+ function resetTransform(){zoom=1;panX=0;panY=0;pointers.clear();drag=null;pinchStart=null;applyTransform();}
  function applyTransform(){
    view.style.transform=`translate3d(${panX}px,${panY}px,0) scale(${zoom})`;
    view.style.cursor=zoom>1?'grab':'zoom-in';
-   zoomButtons.forEach(b=>{
-     const a=b.dataset.zoom;
-     b.disabled=(a==='in'&&zoom>=MAX_ZOOM)||(a==='out'&&zoom<=MIN_ZOOM);
-   });
+   zoomButtons.forEach(b=>{const a=b.dataset.zoom;b.disabled=(a==='in'&&zoom>=MAX_ZOOM)||(a==='out'&&zoom<=MIN_ZOOM);});
    wrap.classList.toggle('is-zoomed',zoom>1);
  }
  function setZoom(next,anchorX=0,anchorY=0){
    const old=zoom;zoom=clamp(Math.round(next*100)/100,MIN_ZOOM,MAX_ZOOM);
-   if(zoom!==old){
-     const ratio=zoom/old;
-     panX=anchorX-(anchorX-panX)*ratio;
-     panY=anchorY-(anchorY-panY)*ratio;
-   }
-   if(zoom===1){panX=0;panY=0;}
-   applyTransform();
+   if(zoom!==old){const ratio=zoom/old;panX=anchorX-(anchorX-panX)*ratio;panY=anchorY-(anchorY-panY)*ratio;}
+   if(zoom===1){panX=0;panY=0;}applyTransform();
  }
- function stepZoom(action){
-   if(action==='reset'){resetTransform();return;}
-   setZoom(zoom+(action==='in'?ZOOM_STEP:-ZOOM_STEP));
- }
+ function stepZoom(action){if(action==='reset'){resetTransform();return;}setZoom(zoom+(action==='in'?ZOOM_STEP:-ZOOM_STEP));}
  function show(i){
    collect();if(!items.length)return;
    index=(i+items.length)%items.length;
-   const t=items[index],src=t.currentSrc||t.src||t.dataset.src;
+   const t=items[index],src=t.currentSrc||t.getAttribute('src')||t.dataset.src;
+   if(!src)return;
    view.src=src;view.alt=t.alt||t.dataset.galleryCaption||'KidsGastro photo';
    caption.textContent=t.dataset.galleryCaption||t.alt||'KidsGastro';
    count.textContent=(index+1)+' / '+items.length;
-   resetTransform();
-   prevButton.hidden=items.length<2;nextButton.hidden=items.length<2;
+   resetTransform();prevButton.hidden=items.length<2;nextButton.hidden=items.length<2;
  }
- function openFrom(img){
-   collect();const i=items.indexOf(img);if(i<0)return;
-   previousFocus=img;show(i);
-   modal.classList.add('is-open');modal.setAttribute('aria-hidden','false');
-   document.body.classList.add('gallery-lightbox-active');
-   closeButton.focus();
+ function openFrom(img){collect();const i=items.indexOf(img);if(i<0)return;previousFocus=img;show(i);modal.classList.add('is-open');modal.setAttribute('aria-hidden','false');document.body.classList.add('gallery-lightbox-active');closeButton.focus();}
+ function close(){modal.classList.remove('is-open');modal.setAttribute('aria-hidden','true');view.removeAttribute('src');resetTransform();document.body.classList.remove('gallery-lightbox-active');pointers.clear();if(previousFocus&&previousFocus.isConnected)previousFocus.focus();}
+ function imageFromTarget(target){
+   if(!target||!target.closest)return null;
+   const direct=target.closest('img');if(direct&&eligible(direct))return direct;
+   const media=target.closest('.main-image-story-media,.photo-story-media,.latest-image,.hospital-photo,.clinic-photo-card,.portrait,.photo-reel-section figure');
+   const nested=media&&media.querySelector('img');return nested&&eligible(nested)?nested:null;
  }
- function close(){
-   modal.classList.remove('is-open');modal.setAttribute('aria-hidden','true');
-   view.removeAttribute('src');resetTransform();
-   document.body.classList.remove('gallery-lightbox-active');
-   pointers.clear();if(previousFocus&&previousFocus.isConnected)previousFocus.focus();
- }
- document.addEventListener('click',e=>{
-   const img=e.target&&e.target.closest?e.target.closest('img'):null;
-   if(img&&eligible(img)){
-     // Image clicks take priority over an enclosing image link, so every
-     // ordinary content photo opens in the same site-wide viewer.
-     e.preventDefault();
-     e.stopPropagation();
-     openFrom(img);
-   }
+ // Listen at window capture so older document-level click handlers cannot
+ // swallow photo clicks before the viewer receives them.
+ window.addEventListener('click',e=>{
+   const img=imageFromTarget(e.target);
+   if(!img)return;
+   e.preventDefault();e.stopPropagation();openFrom(img);
  },true);
  document.addEventListener('keydown',e=>{
    const img=e.target&&e.target.closest?e.target.closest('img.kg-main-image-viewer-trigger'):null;
@@ -8183,58 +8266,28 @@ document.querySelectorAll('.nav-direct-link,.nav-dropdown-menu>a,.booking-menu-p
    else if(e.key==='-'||e.key==='_'){e.preventDefault();stepZoom('out');}
    else if(e.key==='0'){e.preventDefault();stepZoom('reset');}
  });
- prevButton.addEventListener('click',()=>show(index-1));
- nextButton.addEventListener('click',()=>show(index+1));
- closeButton.addEventListener('click',close);
+ prevButton.addEventListener('click',()=>show(index-1));nextButton.addEventListener('click',()=>show(index+1));closeButton.addEventListener('click',close);
  zoomButtons.forEach(b=>b.addEventListener('click',()=>stepZoom(b.dataset.zoom)));
  modal.addEventListener('click',e=>{if(e.target===modal)close();});
- wrap.addEventListener('wheel',e=>{
-   if(!modal.classList.contains('is-open'))return;
-   e.preventDefault();
-   const r=wrap.getBoundingClientRect();
-   setZoom(zoom+(e.deltaY<0?ZOOM_STEP:-ZOOM_STEP),e.clientX-r.left-r.width/2,e.clientY-r.top-r.height/2);
- },{passive:false});
+ wrap.addEventListener('wheel',e=>{if(!modal.classList.contains('is-open'))return;e.preventDefault();const r=wrap.getBoundingClientRect();setZoom(zoom+(e.deltaY<0?ZOOM_STEP:-ZOOM_STEP),e.clientX-r.left-r.width/2,e.clientY-r.top-r.height/2);},{passive:false});
  wrap.addEventListener('pointerdown',e=>{
    if(e.target&&e.target.closest&&e.target.closest('button'))return;
    if(e.pointerType==='mouse'&&e.button!==0)return;
-   wrap.setPointerCapture(e.pointerId);
+   try{wrap.setPointerCapture(e.pointerId);}catch(_){}
    pointers.set(e.pointerId,{x:e.clientX,y:e.clientY});
    if(pointers.size===1&&zoom>1)drag={id:e.pointerId,x:e.clientX,y:e.clientY,panX,panY};
-   if(pointers.size===2){
-     const pts=[...pointers.values()];pinchStart={distance:distance(pts[0],pts[1]),zoom,panX,panY};
-     drag=null;
-   }
+   if(pointers.size===2){const pts=[...pointers.values()];pinchStart={distance:distance(pts[0],pts[1]),zoom};drag=null;}
    e.preventDefault();
  });
  wrap.addEventListener('pointermove',e=>{
-   if(!pointers.has(e.pointerId))return;
-   pointers.set(e.pointerId,{x:e.clientX,y:e.clientY});
-   if(pointers.size>=2&&pinchStart){
-     const pts=[...pointers.values()].slice(0,2);
-     const d=distance(pts[0],pts[1]);
-     const midX=(pts[0].x+pts[1].x)/2,midY=(pts[0].y+pts[1].y)/2;
-     const r=wrap.getBoundingClientRect();
-     const localX=midX-r.left-r.width/2,localY=midY-r.top-r.height/2;
-     const next=clamp(pinchStart.zoom*(d/Math.max(1,pinchStart.distance)),MIN_ZOOM,MAX_ZOOM);
-     setZoom(next,localX,localY);
-   }else if(drag&&drag.id===e.pointerId&&zoom>1){
-     panX=drag.panX+(e.clientX-drag.x);panY=drag.panY+(e.clientY-drag.y);applyTransform();
-   }
+   if(!pointers.has(e.pointerId))return;pointers.set(e.pointerId,{x:e.clientX,y:e.clientY});
+   if(pointers.size>=2&&pinchStart){const pts=[...pointers.values()].slice(0,2);const d=distance(pts[0],pts[1]);const midX=(pts[0].x+pts[1].x)/2,midY=(pts[0].y+pts[1].y)/2;const r=wrap.getBoundingClientRect();const next=clamp(pinchStart.zoom*(d/Math.max(1,pinchStart.distance)),MIN_ZOOM,MAX_ZOOM);setZoom(next,midX-r.left-r.width/2,midY-r.top-r.height/2);}
+   else if(drag&&drag.id===e.pointerId&&zoom>1){panX=drag.panX+(e.clientX-drag.x);panY=drag.panY+(e.clientY-drag.y);applyTransform();}
  });
- function endPointer(e){
-   pointers.delete(e.pointerId);
-   if(pointers.size<2)pinchStart=null;
-   if(drag&&drag.id===e.pointerId)drag=null;
-   if(pointers.size===1&&zoom>1){
-     const [id,pt]=[...pointers.entries()][0];
-     drag={id,x:pt.x,y:pt.y,panX,panY};
-   }
- }
- wrap.addEventListener('pointerup',endPointer);
- wrap.addEventListener('pointercancel',endPointer);
- wrap.addEventListener('lostpointercapture',endPointer);
+ function endPointer(e){pointers.delete(e.pointerId);if(pointers.size<2)pinchStart=null;if(drag&&drag.id===e.pointerId)drag=null;if(pointers.size===1&&zoom>1){const [id,pt]=[...pointers.entries()][0];drag={id,x:pt.x,y:pt.y,panX,panY};}}
+ wrap.addEventListener('pointerup',endPointer);wrap.addEventListener('pointercancel',endPointer);wrap.addEventListener('lostpointercapture',endPointer);
  const observer=new MutationObserver(()=>collect());
- observer.observe(document.documentElement,{subtree:true,childList:true,attributes:true,attributeFilter:['src','data-src']});
+ observer.observe(document.documentElement,{subtree:true,childList:true,attributes:true,attributeFilter:['src','data-src','hidden','class','style']});
  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',collect,{once:true});else collect();
  applyTransform();
 })();
