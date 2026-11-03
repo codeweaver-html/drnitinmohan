@@ -8218,5 +8218,281 @@ header.header.kg-space-panel>*{
 }
 </style>
 
+
+
+<!-- Consolidated repair: hero sizing, booking-choice dismissal, mobile labels,
+     reCAPTCHA stacking, and one predictable hamburger layout. -->
+<style id="kg-2026-11-cross-device-repair">
+/* Desktop: the blue hero copy panel and the doctor portrait share one row and height. */
+@media (min-width:761px){
+  .hero .hero-grid{
+    display:grid!important;
+    grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important;
+    grid-template-areas:"copy portrait"!important;
+    align-items:stretch!important;
+    column-gap:28px!important;
+    row-gap:0!important;
+  }
+  .hero .hero-grid>.reveal{
+    grid-area:copy!important;
+    display:flex!important;
+    flex-direction:column!important;
+    justify-content:center!important;
+    align-self:stretch!important;
+    min-width:0!important;
+    min-height:420px!important;
+    height:100%!important;
+  }
+  .hero .hero-grid>.visual{
+    grid-area:portrait!important;
+    position:relative!important;
+    display:block!important;
+    align-self:stretch!important;
+    width:100%!important;
+    max-width:none!important;
+    min-width:0!important;
+    min-height:420px!important;
+    height:100%!important;
+    margin:0!important;
+    aspect-ratio:auto!important;
+  }
+  .hero .hero-grid>.visual>.portrait{
+    position:absolute!important;inset:0!important;width:100%!important;height:100%!important;
+    min-height:0!important;aspect-ratio:auto!important;overflow:hidden!important;
+  }
+  .hero .hero-grid>.visual>.portrait>img{
+    display:block!important;width:100%!important;height:100%!important;
+    min-height:0!important;aspect-ratio:auto!important;object-fit:contain!important;
+  }
+}
+@media (max-width:760px){
+  .hero .hero-grid{grid-template-columns:minmax(0,1fr)!important;grid-template-areas:"copy" "portrait"!important;align-items:start!important;row-gap:0!important}
+  .hero .hero-grid>.reveal{grid-area:copy!important;min-height:0!important;height:auto!important}
+  .hero .hero-grid>.visual{grid-area:portrait!important;width:min(100%,430px)!important;max-width:430px!important;min-height:0!important;height:auto!important;margin:18px auto 0!important;aspect-ratio:auto!important}
+  .hero .hero-grid>.visual>.portrait{position:relative!important;inset:auto!important;width:100%!important;height:auto!important;aspect-ratio:1/1.08!important}
+  .hero .hero-grid>.visual>.portrait>img{width:100%!important;height:100%!important;object-fit:contain!important}
+}
+
+/* Booking choice rows: force icon/logo and label to stay side-by-side on narrow screens. */
+#booking-menu-panel>.booking-option{
+  display:flex!important;flex-direction:row!important;flex-wrap:nowrap!important;
+  align-items:center!important;justify-content:flex-start!important;
+  gap:12px!important;width:100%!important;min-width:0!important;
+  text-align:left!important;writing-mode:horizontal-tb!important;
+}
+#booking-menu-panel>.booking-option>.booking-choice-logo{
+  display:flex!important;flex-direction:row!important;flex-wrap:nowrap!important;
+  align-items:center!important;justify-content:flex-start!important;
+  gap:10px!important;width:auto!important;min-width:0!important;min-height:0!important;
+  flex:1 1 auto!important;padding:0!important;border:0!important;background:transparent!important;
+  overflow:visible!important;writing-mode:horizontal-tb!important;
+}
+#booking-menu-panel>.booking-option .booking-choice-whatsapp-mark{
+  display:flex!important;flex:0 0 42px!important;width:42px!important;height:42px!important;
+  align-items:center!important;justify-content:center!important;
+}
+#booking-menu-panel>.booking-option .booking-choice-logo>img{
+  display:block!important;flex:0 0 72px!important;width:72px!important;max-width:72px!important;
+  height:42px!important;max-height:42px!important;object-fit:contain!important;
+}
+#booking-menu-panel>.booking-option .booking-choice-logo>span:last-child,
+#booking-menu-panel>.booking-option strong{
+  display:block!important;flex:1 1 auto!important;min-width:0!important;
+  white-space:normal!important;word-break:normal!important;overflow-wrap:normal!important;
+  writing-mode:horizontal-tb!important;text-orientation:mixed!important;
+  letter-spacing:normal!important;line-height:1.35!important;text-align:left!important;
+}
+@media(max-width:480px){
+  #booking-menu-panel>.booking-option{gap:9px!important;padding:11px 8px!important;min-height:60px!important}
+  #booking-menu-panel>.booking-option .booking-choice-whatsapp-mark{flex-basis:38px!important;width:38px!important;height:38px!important}
+  #booking-menu-panel>.booking-option .booking-choice-logo>img{flex-basis:66px!important;width:66px!important;max-width:66px!important;height:38px!important}
+  #booking-menu-panel>.booking-option strong{font-size:.94rem!important}
+}
+
+/* Hamburger is the sole navigation disclosure at every viewport width. */
+html body header.header{position:relative!important;z-index:2147483000!important;overflow:visible!important}
+html body header.header .nav{
+  position:relative!important;display:grid!important;overflow:visible!important;isolation:isolate!important;
+  grid-template-columns:minmax(0,1fr) minmax(220px,min(38vw,460px)) 48px!important;
+  grid-template-areas:"brand search toggle"!important;align-items:center!important;
+  column-gap:clamp(14px,3vw,42px)!important;row-gap:10px!important;
+  height:auto!important;min-height:86px!important;padding:12px 0!important;
+}
+html body header.header .nav>.brand{grid-area:brand!important;min-width:0!important;justify-self:start!important}
+html body header.header .nav>.site-search{grid-area:search!important;position:relative!important;inset:auto!important;width:100%!important;max-width:460px!important;min-width:0!important;margin:0 auto!important}
+html body header.header .nav>button.toggle{
+  grid-area:toggle!important;display:inline-flex!important;visibility:visible!important;opacity:1!important;
+  pointer-events:auto!important;position:relative!important;justify-self:end!important;align-self:center!important;
+  z-index:2147483602!important;width:48px!important;height:48px!important;min-width:48px!important;
+  margin:0!important;cursor:pointer!important;color:#fff!important;background:#0759a8!important;
+  border:1px solid #fff!important;border-radius:8px!important;font-size:26px!important;line-height:1!important;
+}
+html body header.header #links,
+html body header.header #links:not(.open){
+  display:none!important;visibility:hidden!important;opacity:0!important;pointer-events:none!important;
+  position:absolute!important;top:calc(100% + 6px)!important;left:auto!important;right:0!important;bottom:auto!important;
+  width:min(460px,calc(100vw - 32px))!important;max-width:calc(100vw - 32px)!important;
+  height:auto!important;min-height:0!important;max-height:0!important;overflow:hidden!important;
+  padding:0!important;margin:0!important;border:0!important;transform:translateY(-6px)!important;
+}
+html body header.header #links.open{
+  display:flex!important;flex-direction:column!important;align-items:stretch!important;justify-content:flex-start!important;
+  visibility:visible!important;opacity:1!important;pointer-events:auto!important;
+  position:absolute!important;top:calc(100% + 6px)!important;left:auto!important;right:0!important;bottom:auto!important;
+  z-index:2147483601!important;width:min(460px,calc(100vw - 32px))!important;max-width:calc(100vw - 32px)!important;
+  max-height:min(78vh,760px)!important;overflow-x:hidden!important;overflow-y:auto!important;
+  gap:7px!important;padding:12px!important;margin:0!important;box-sizing:border-box!important;
+  background:#0759a8!important;color:#fff!important;border:1px solid #cbdce8!important;border-radius:10px!important;
+  box-shadow:0 14px 34px rgba(10,39,61,.25)!important;transform:none!important;
+}
+html body header.header #links.open>.nav-dropdown,
+html body header.header #links.open>.nav-direct-link{display:block!important;width:100%!important;flex:0 0 auto!important}
+html body header.header #links.open>.nav-dropdown>summary,
+html body header.header #links.open>.nav-direct-link{
+  display:flex!important;align-items:center!important;justify-content:space-between!important;
+  width:100%!important;min-height:46px!important;padding:11px 13px!important;color:#fff!important;
+}
+html body header.header #links.open>.nav-dropdown[open]>.nav-dropdown-menu{
+  display:block!important;position:static!important;width:100%!important;max-width:100%!important;
+  max-height:none!important;overflow:visible!important;margin:5px 0 8px!important;
+  background:#fff!important;border-radius:7px!important;box-shadow:none!important;
+}
+html body header.header #links.open .nav-dropdown-menu a{display:block!important;min-height:42px!important;padding:10px 12px!important;color:#18384d!important}
+@media(max-width:760px){
+  html body header.header .nav{
+    grid-template-columns:minmax(0,1fr) 48px!important;grid-template-areas:"brand toggle" "search search"!important;
+    grid-template-rows:auto auto!important;column-gap:10px!important;row-gap:9px!important;
+    min-height:0!important;padding:10px 0!important;
+  }
+  html body header.header .nav>.brand{grid-area:brand!important;width:100%!important;max-width:100%!important}
+  html body header.header .nav>.site-search{grid-area:search!important;width:100%!important;max-width:none!important}
+  html body header.header .nav>button.toggle{grid-area:toggle!important;width:48px!important;height:48px!important}
+  html body header.header #links.open{
+    position:fixed!important;top:var(--kg-mobile-menu-top,150px)!important;left:var(--kg-mobile-menu-left,12px)!important;
+    right:auto!important;width:var(--kg-mobile-menu-width,calc(100vw - 24px))!important;
+    max-width:calc(100vw - 24px)!important;max-height:calc(100dvh - var(--kg-mobile-menu-top,150px) - 16px)!important;
+  }
+}
+@media(min-width:761px){
+  html body header.header .nav{grid-template-columns:minmax(230px,1fr) minmax(260px,min(38vw,460px)) 48px!important}
+}
+
+/* Do not blur or cover Google's challenge. Keep the form, badge and challenge
+   in separate predictable layers; Google owns the challenge iframe itself. */
+body.kg-booking-dialog-open::before{
+  z-index:2147482998!important;background:rgba(7,24,44,.58)!important;
+  -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+}
+#whatsapp-booking-dialog.booking-dialog[open]{
+  z-index:2147483001!important;filter:none!important;-webkit-filter:none!important;
+  opacity:1!important;transform:none!important;
+}
+#whatsapp-booking-dialog.booking-dialog[open] *{filter:none!important;-webkit-filter:none!important}
+#appointment-recaptcha-v2{
+  position:fixed!important;left:8px!important;bottom:8px!important;width:256px!important;height:60px!important;
+  min-width:256px!important;overflow:visible!important;z-index:2147483002!important;pointer-events:auto!important;
+  filter:none!important;opacity:1!important;transform:none!important;
+}
+body.kg-booking-dialog-open .grecaptcha-badge{
+  position:fixed!important;right:12px!important;left:auto!important;bottom:12px!important;
+  width:256px!important;height:60px!important;z-index:2147483003!important;
+  visibility:visible!important;display:block!important;opacity:1!important;pointer-events:auto!important;
+  filter:none!important;-webkit-filter:none!important;transform:none!important;
+}
+body.kg-booking-dialog-open iframe[src*="recaptcha"],
+body.kg-booking-dialog-open iframe[src*="google.com/recaptcha"],
+body.kg-booking-dialog-open body>div[style*="z-index: 2000000000"],
+body.kg-booking-dialog-open body>div[style*="z-index:2000000000"],
+body>div[style*="z-index: 2000000000"],
+body>div[style*="z-index:2000000000"]{
+  z-index:2147483647!important;visibility:visible!important;opacity:1!important;
+  filter:none!important;-webkit-filter:none!important;backdrop-filter:none!important;
+  -webkit-backdrop-filter:none!important;pointer-events:auto!important;transform:none!important;
+}
+@media(max-width:640px){
+ body.kg-booking-dialog-open .grecaptcha-badge{right:8px!important;bottom:8px!important;transform:none!important}
+}
+</style>
+<script id="kg-2026-11-booking-menu-close-repair">
+(function(){
+  'use strict';
+  function closeBookingChoiceMenu(){
+    var panel=document.getElementById('booking-menu-panel');
+    var toggle=document.getElementById('booking-menu-toggle');
+    if(panel)panel.hidden=true;
+    if(toggle)toggle.setAttribute('aria-expanded','false');
+  }
+  /* Capture phase closes for BOTH external providers before their new tab opens.
+     The existing WhatsApp handler still runs in bubble phase and opens its form. */
+  document.addEventListener('click',function(event){
+    var choice=event.target&&event.target.closest?event.target.closest('#booking-menu-panel .booking-option'):null;
+    if(choice)closeBookingChoiceMenu();
+  },true);
+  document.addEventListener('keydown',function(event){
+    if(event.key==='Escape')closeBookingChoiceMenu();
+  });
+})();
+</script>
+
+\n<style id="kg-primary-appointment-solid-shine-and-smaller-dot">
+/* Final primary CTA finish: fully opaque yellow fill with a recurring shine sweep. */
+.hero .actions .booking-toggle,
+.hero .actions .booking-toggle:hover,
+.hero .actions .booking-toggle:focus,
+.hero .actions .booking-toggle:focus-visible,
+.hero .actions .booking-toggle:active {
+  position: relative !important;
+  isolation: isolate !important;
+  overflow: hidden !important;
+  opacity: 1 !important;
+  background: #ffc400 !important;
+  background-color: #ffc400 !important;
+  background-image: none !important;
+  color: #123c77 !important;
+  border: 2px solid #ffc400 !important;
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+  filter: none !important;
+}
+.hero .actions .booking-toggle::before { content: none !important; display: none !important; }
+.hero .actions .booking-toggle::after {
+  content: "" !important;
+  display: block !important;
+  position: absolute !important;
+  z-index: 0 !important;
+  inset: -35% auto -35% -65% !important;
+  width: 38% !important;
+  height: 170% !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  clip-path: none !important;
+  pointer-events: none !important;
+  opacity: 1 !important;
+  background: linear-gradient(105deg, transparent 0%, rgba(255,255,255,.10) 25%, rgba(255,255,255,.82) 50%, rgba(255,255,255,.16) 72%, transparent 100%) !important;
+  transform: translateX(-160%) skewX(-19deg) !important;
+  animation: kg-primary-appointment-shine 2.35s ease-in-out infinite !important;
+}
+.hero .actions .booking-toggle > * { position: relative !important; z-index: 1 !important; }
+.hero .actions .booking-toggle .appointment-mail-dot { z-index: 2 !important; }
+@keyframes kg-primary-appointment-shine {
+  0%, 16% { transform: translateX(-160%) skewX(-19deg); opacity: 0; }
+  25% { opacity: 1; }
+  72% { transform: translateX(430%) skewX(-19deg); opacity: .95; }
+  82%, 100% { transform: translateX(430%) skewX(-19deg); opacity: 0; }
+}
+/* Slightly smaller red notification dot; keep its position and pulse. */
+.booking-toggle .appointment-mail-dot {
+  width: 6px !important;
+  height: 6px !important;
+  border-width: 1px !important;
+  box-sizing: border-box !important;
+  right: 0 !important;
+  top: -1px !important;
+}
+@media (prefers-reduced-motion: reduce) {
+  .hero .actions .booking-toggle::after { animation: none !important; display: none !important; }
+}
+</style>
+
 </body>
 </html>
