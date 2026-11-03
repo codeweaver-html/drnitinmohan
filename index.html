@@ -3780,11 +3780,12 @@ Preferred time: ${timeText}
 Please confirm availability.`;
    const waUrl=`https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
 
-   // Open the destination synchronously to avoid popup blockers, but do not
-   // send the visitor to WhatsApp until the server has verified the CAPTCHA.
-   // Reserve a tab during the click gesture so the browser does not block
-   // WhatsApp later. Show a helpful waiting screen instead of a raw about:blank.
-   const popup=window.open('about:blank','_blank');
+   // Desktop browsers need a synchronously reserved tab to avoid popup blockers.
+   // On phones, use the current tab instead: opening a temporary about:blank tab
+   // leaves an extra tab/history step when WhatsApp launches the mobile app.
+   const isMobileBooking=/Android|iPhone|iPad|iPod|IEMobile|Opera Mini/i.test(navigator.userAgent)
+     || (navigator.maxTouchPoints>1 && window.matchMedia('(max-width: 900px)').matches);
+   const popup=isMobileBooking?null:window.open('about:blank','_blank');
    if(popup&&!popup.closed){
      try{
        popup.document.open();
