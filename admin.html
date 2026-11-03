@@ -63,7 +63,7 @@ form.addEventListener("submit",async function(event){
    const key=await crypto.subtle.deriveKey({name:"PBKDF2",salt:fromB64(payload.salt),iterations:payload.iterations,hash:"SHA-256"},material,{name:"AES-GCM",length:256},false,["decrypt"]);
    const plain=await crypto.subtle.decrypt({name:"AES-GCM",iv:fromB64(payload.iv)},key,fromB64(payload.ciphertext));
    /* Successful credential verification: create a tab-scoped 8-hour session. */
-   sessionStorage.setItem("kg_admin_authenticated_until", String(Date.now() + 8 * 60 * 60 * 1000));
+   sessionStorage.setItem("kg_admin_authenticated_until", String(Date.now() + 15 * 60 * 1000));
    idInput.value="";input.value="";
    const params = new URLSearchParams(location.search);
    let returnTo = "/updates.html";
@@ -71,7 +71,7 @@ form.addEventListener("submit",async function(event){
      const requested = params.get("return") || "/updates.html";
      const parsed = new URL(requested, location.origin);
      if (parsed.origin === location.origin &&
-         parsed.pathname.replace(/\\/+$/, "").toLowerCase() === "/updates.html") {
+         parsed.pathname.replace(/\/+$/, "").toLowerCase() === "/updates.html") {
        returnTo = parsed.pathname + parsed.search + parsed.hash;
      }
    } catch (_) {}
@@ -83,5 +83,15 @@ form.addEventListener("submit",async function(event){
 });
 })();
 </script>
+
+<script>
+(function () {
+  "use strict";
+  document.addEventListener("contextmenu", function (event) {
+    event.preventDefault();
+  }, true);
+})();
+</script>
+
 </body>
 </html>
