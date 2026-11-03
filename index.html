@@ -8400,5 +8400,443 @@ html body header.header #links.open .nav-dropdown-menu a{display:block!important
 })();
 </script>
 
+
+<!-- Desktop-only reCAPTCHA challenge visibility repair. -->
+<style id="kg-desktop-recaptcha-interaction-repair">
+@media (min-width:761px) {
+  body.kg-booking-dialog-open::before {
+    pointer-events:none!important;
+    -webkit-backdrop-filter:none!important;
+    backdrop-filter:none!important;
+  }
+  body.kg-booking-dialog-open #whatsapp-booking-dialog.booking-dialog[open] {
+    z-index:1999999999!important;
+    isolation:auto!important;
+    transform:none!important;
+    filter:none!important;
+    -webkit-filter:none!important;
+  }
+  html body > div[style*="z-index: 2000000000"],
+  html body > div[style*="z-index:2000000000"],
+  html body > div[style*="z-index: 2000000001"],
+  html body > div[style*="z-index:2000000001"] {
+    position:fixed!important; z-index:2147483647!important;
+    visibility:visible!important; display:block!important; opacity:1!important;
+    pointer-events:auto!important; transform:none!important; filter:none!important;
+    -webkit-filter:none!important; backdrop-filter:none!important;
+    -webkit-backdrop-filter:none!important;
+  }
+  html body iframe[src*="recaptcha/api2/bframe"],
+  html body iframe[src*="recaptcha/enterprise/bframe"],
+  html body iframe[src*="google.com/recaptcha"] {
+    visibility:visible!important; opacity:1!important; pointer-events:auto!important;
+    z-index:2147483647!important; filter:none!important;
+    -webkit-filter:none!important; transform:none!important;
+  }
+  body.kg-booking-dialog-open .grecaptcha-badge {
+    top:8px!important; right:8px!important; bottom:auto!important;
+    transform:scale(.52)!important; transform-origin:top right!important;
+    z-index:2147483000!important;
+  }
+}
+</style>
+<script id="kg-desktop-recaptcha-dynamic-layer-repair">
+(function(){
+  'use strict';
+  function promote(node){
+    if(!node || node.nodeType!==1)return;
+    var style=(node.getAttribute('style')||'').replace(/\s/g,'').toLowerCase();
+    var frame=node.matches&&node.matches('iframe[src*="recaptcha"],iframe[src*="google.com/recaptcha"]');
+    var layer=/z-index:2000000000|z-index:2000000001/.test(style);
+    if(frame){
+      ['visibility','opacity','pointer-events','z-index','transform'].forEach(function(k){
+        node.style.setProperty(k,k==='z-index'?'2147483647':(k==='opacity'?'1':(k==='transform'?'none':(k==='visibility'?'visible':'auto'))),'important');
+      });
+    } else if(layer){
+      node.style.setProperty('position','fixed','important');
+      node.style.setProperty('z-index','2147483647','important');
+      node.style.setProperty('visibility','visible','important');
+      node.style.setProperty('opacity','1','important');
+      node.style.setProperty('pointer-events','auto','important');
+      node.style.setProperty('transform','none','important');
+      node.style.setProperty('filter','none','important');
+      node.style.setProperty('backdrop-filter','none','important');
+    }
+  }
+  function init(){
+    if(!window.matchMedia('(min-width:761px)').matches)return;
+    Array.prototype.forEach.call(document.body.children,promote);
+    var observer=new MutationObserver(function(records){
+      records.forEach(function(record){
+        Array.prototype.forEach.call(record.addedNodes,function(node){
+          promote(node);
+          if(node.querySelectorAll)node.querySelectorAll('iframe[src*="recaptcha"],iframe[src*="google.com/recaptcha"]').forEach(promote);
+        });
+      });
+    });
+    observer.observe(document.body,{childList:true,subtree:true});
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});
+  else init();
+})();
+</script>
+
 </body>
 </html>
+
+
+<!-- Focused follow-up repairs: booking choice alignment, deterministic navigation,
+     collapsible selected-date calendar, compact reCAPTCHA badge, and full CTA shine. -->
+<style id="kg-followup-2026-11-03-final">
+/* WhatsApp / RezeptRx choice rows: keep the icon centered and the label horizontal. */
+html body #booking-menu-panel .booking-option,
+html body #booking-menu-panel .booking-choice-logo {
+  display:flex!important;
+  flex-direction:row!important;
+  flex-wrap:nowrap!important;
+  align-items:center!important;
+  justify-content:flex-start!important;
+  writing-mode:horizontal-tb!important;
+  text-orientation:mixed!important;
+  text-align:left!important;
+  min-width:0!important;
+}
+html body #booking-menu-panel .booking-option {
+  width:100%!important;
+  gap:12px!important;
+  box-sizing:border-box!important;
+}
+html body #booking-menu-panel .booking-choice-logo {
+  flex:1 1 auto!important;
+  gap:12px!important;
+}
+html body #booking-menu-panel .booking-choice-whatsapp-mark {
+  display:flex!important;
+  flex:0 0 40px!important;
+  width:40px!important;
+  height:40px!important;
+  min-width:40px!important;
+  min-height:40px!important;
+  align-items:center!important;
+  justify-content:center!important;
+  align-self:center!important;
+  padding:0!important;
+  line-height:0!important;
+  box-sizing:border-box!important;
+}
+html body #booking-menu-panel .booking-choice-whatsapp-mark svg {
+  display:block!important;
+  width:24px!important;
+  height:24px!important;
+  margin:auto!important;
+  flex:0 0 24px!important;
+}
+html body #booking-menu-panel .booking-choice-logo > span:last-child,
+html body #booking-menu-panel .booking-choice-logo > span:last-child strong {
+  display:block!important;
+  width:auto!important;
+  min-width:0!important;
+  white-space:normal!important;
+  writing-mode:horizontal-tb!important;
+  text-orientation:mixed!important;
+  word-break:normal!important;
+  overflow-wrap:normal!important;
+  line-height:1.3!important;
+}
+@media(max-width:760px) {
+  html body #booking-menu-panel .booking-option {
+    min-height:62px!important;
+    padding:10px 12px!important;
+  }
+  html body #booking-menu-panel .booking-choice-logo {
+    flex-direction:row!important;
+    align-items:center!important;
+  }
+}
+
+/* Make the full appointment CTA, not just its icon, receive the shine sweep. */
+html body .hero .actions .booking-toggle {
+  position:relative!important;
+  isolation:isolate!important;
+  overflow:hidden!important;
+  background:#ffc400!important;
+  background-color:#ffc400!important;
+  opacity:1!important;
+}
+html body .hero .actions .booking-toggle > * {
+  position:relative!important;
+  z-index:1!important;
+}
+html body .hero .actions .booking-toggle::after {
+  content:""!important;
+  display:block!important;
+  position:absolute!important;
+  z-index:2!important;
+  pointer-events:none!important;
+  top:-45%!important;
+  bottom:-45%!important;
+  left:-75%!important;
+  width:48%!important;
+  transform:skewX(-22deg)!important;
+  background:linear-gradient(105deg,transparent 0%,rgba(255,255,255,.08) 28%,rgba(255,255,255,.88) 50%,rgba(255,255,255,.12) 70%,transparent 100%)!important;
+  animation:kg-full-cta-shine 2.15s ease-in-out infinite!important;
+}
+@keyframes kg-full-cta-shine {
+  0%,12% { left:-75%;opacity:0; }
+  22% { opacity:1; }
+  68% { left:135%;opacity:.9; }
+  78%,100% { left:135%;opacity:0; }
+}
+@media(prefers-reduced-motion:reduce) {
+  html body .hero .actions .booking-toggle::after { animation:none!important;display:none!important; }
+}
+
+/* Calendar collapses to a compact selected-date control after a date is chosen. */
+#kg-calendar-collapse-toggle {
+  display:flex;
+  width:100%;
+  min-height:44px;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  margin:0 0 8px;
+  padding:10px 12px;
+  border:1px solid #b8cddd;
+  border-radius:8px;
+  background:#f3f8fc;
+  color:#0759a8;
+  font:700 14px/1.35 Arial,'Segoe UI',sans-serif;
+  text-align:left;
+  cursor:pointer;
+}
+#kg-calendar-collapse-toggle[hidden] { display:none!important; }
+#kg-calendar-collapse-toggle .kg-calendar-chevron { transition:transform .18s ease; }
+#kg-calendar-collapse-toggle[aria-expanded="true"] .kg-calendar-chevron { transform:rotate(180deg); }
+.calendar-picker.kg-calendar-collapsed { display:none!important; }
+
+/* Keep Google's reCAPTCHA badge visible but move it away from the time-slot area
+   while the booking dialog is open. It remains interactive and is not hidden. */
+body.kg-booking-dialog-open .grecaptcha-badge {
+  position:fixed!important;
+  top:8px!important;
+  right:8px!important;
+  bottom:auto!important;
+  left:auto!important;
+  width:256px!important;
+  min-width:256px!important;
+  height:60px!important;
+  transform:scale(.52)!important;
+  transform-origin:top right!important;
+  z-index:2147483647!important;
+  visibility:visible!important;
+  opacity:1!important;
+  display:block!important;
+  pointer-events:auto!important;
+  filter:none!important;
+  -webkit-filter:none!important;
+}
+body.kg-booking-dialog-open .grecaptcha-badge iframe {
+  visibility:visible!important;
+  opacity:1!important;
+  pointer-events:auto!important;
+}
+</style>
+
+<script id="kg-followup-calendar-collapse-and-hamburger">
+(function(){
+  'use strict';
+
+  function initCalendarCollapse(){
+    var picker=document.querySelector('#whatsapp-booking-dialog .calendar-picker');
+    var grid=document.getElementById('calendar-grid');
+    var dateInput=document.getElementById('preferred-date');
+    if(!picker||!grid||!dateInput||picker.dataset.collapseReady==='1')return;
+    picker.dataset.collapseReady='1';
+
+    var toggle=document.createElement('button');
+    toggle.type='button';
+    toggle.id='kg-calendar-collapse-toggle';
+    toggle.setAttribute('aria-controls','kg-calendar-picker-content');
+    toggle.setAttribute('aria-expanded','true');
+    toggle.innerHTML='<span class="kg-calendar-current-label">Choose appointment date</span><span class="kg-calendar-chevron" aria-hidden="true">▾</span>';
+    picker.id='kg-calendar-picker-content';
+    picker.parentNode.insertBefore(toggle,picker);
+
+    function updateLabel(){
+      var label=toggle.querySelector('.kg-calendar-current-label');
+      var summary=document.getElementById('date-summary');
+      var value=dateInput.value;
+      var text='Choose appointment date';
+      if(value){
+        var parts=value.split('-');
+        if(parts.length===3) text='Selected date: '+parts[2]+'/'+parts[1]+'/'+parts[0];
+        else if(summary&&summary.textContent.trim()) text='Selected date: '+summary.textContent.trim();
+      }
+      label.textContent=text;
+    }
+    function collapse(){
+      if(!dateInput.value)return;
+      picker.classList.add('kg-calendar-collapsed');
+      toggle.hidden=false;
+      toggle.setAttribute('aria-expanded','false');
+      updateLabel();
+    }
+    function expand(){
+      picker.classList.remove('kg-calendar-collapsed');
+      toggle.setAttribute('aria-expanded','true');
+    }
+    toggle.addEventListener('click',function(){
+      if(picker.classList.contains('kg-calendar-collapsed'))expand();
+      else collapse();
+    });
+    grid.addEventListener('click',function(event){
+      if(!event.target.closest('.calendar-day'))return;
+      window.setTimeout(function(){
+        if(dateInput.value){toggle.hidden=false;collapse();}
+      },0);
+    });
+    dateInput.addEventListener('change',function(){if(dateInput.value){toggle.hidden=false;collapse();}});
+    // Keep the calendar open for initial selection; collapse only when a valid date exists.
+    if(dateInput.value){toggle.hidden=false;collapse();}
+    else toggle.hidden=true;
+  }
+
+  function initDeterministicHamburger(){
+    var header=document.querySelector('header.header');
+    var nav=header&&header.querySelector('.nav');
+    var toggle=header&&header.querySelector('button.toggle[aria-controls="links"]');
+    var panel=header&&header.querySelector('#links');
+    if(!header||!nav||!toggle||!panel||toggle.dataset.kgDeterministicNav==='1')return;
+    toggle.dataset.kgDeterministicNav='1';
+
+    function isMobile(){return window.matchMedia('(max-width:1100px)').matches;}
+    function openMenu(){
+      panel.classList.add('open');
+      panel.hidden=false;
+      panel.removeAttribute('aria-hidden');
+      panel.style.setProperty('display','flex','important');
+      panel.style.setProperty('visibility','visible','important');
+      panel.style.setProperty('opacity','1','important');
+      panel.style.setProperty('pointer-events','auto','important');
+      toggle.setAttribute('aria-expanded','true');
+      toggle.setAttribute('aria-label','Close navigation');
+      document.body.classList.add('kg-nav-menu-open');
+    }
+    function closeMenu(){
+      panel.classList.remove('open');
+      panel.style.removeProperty('display');
+      panel.style.removeProperty('visibility');
+      panel.style.removeProperty('opacity');
+      panel.style.removeProperty('pointer-events');
+      toggle.setAttribute('aria-expanded','false');
+      toggle.setAttribute('aria-label','Open navigation');
+      document.body.classList.remove('kg-nav-menu-open');
+    }
+    function syncLayout(){
+      if(!isMobile()){
+        panel.classList.remove('open');
+        panel.style.removeProperty('display');
+        panel.style.removeProperty('visibility');
+        panel.style.removeProperty('opacity');
+        panel.style.removeProperty('pointer-events');
+        toggle.setAttribute('aria-expanded','false');
+        document.body.classList.remove('kg-nav-menu-open');
+      }
+    }
+
+    // Capture phase prevents legacy click handlers from immediately undoing the toggle.
+    document.addEventListener('click',function(event){
+      var clickedToggle=event.target.closest&&event.target.closest('header.header button.toggle[aria-controls="links"]');
+      if(clickedToggle===toggle){
+        event.preventDefault();
+        event.stopPropagation();
+        if(event.stopImmediatePropagation)event.stopImmediatePropagation();
+        if(panel.classList.contains('open'))closeMenu();else openMenu();
+        return;
+      }
+      if(panel.classList.contains('open') && !panel.contains(event.target) && !toggle.contains(event.target)){
+        closeMenu();
+      }
+    },true);
+    document.addEventListener('keydown',function(event){
+      if(event.key==='Escape'&&panel.classList.contains('open')){closeMenu();toggle.focus();}
+    });
+    panel.addEventListener('click',function(event){
+      if(event.target.closest('a'))closeMenu();
+    });
+    window.addEventListener('resize',syncLayout,{passive:true});
+    syncLayout();
+  }
+
+  function init(){
+    initCalendarCollapse();
+    initDeterministicHamburger();
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});
+  else init();
+})();
+</script>
+
+<style id="kg-followup-hamburger-visibility-final">
+/* The one visible #links panel expands below the header at every screen width. */
+html body header.header { position:relative!important; z-index:15000!important; }
+html body header.header .nav { position:relative!important; overflow:visible!important; }
+html body header.header .nav > button.toggle {
+  display:flex!important;
+  visibility:visible!important;
+  opacity:1!important;
+  pointer-events:auto!important;
+  position:relative!important;
+  z-index:2147483005!important;
+  flex:0 0 48px!important;
+  width:48px!important;
+  height:48px!important;
+  min-width:48px!important;
+  min-height:48px!important;
+  align-items:center!important;
+  justify-content:center!important;
+  color:#fff!important;
+  background:#064b8d!important;
+}
+html body header.header #links { pointer-events:none!important; }
+html body header.header #links.open {
+  display:flex!important;
+  visibility:visible!important;
+  opacity:1!important;
+  pointer-events:auto!important;
+  position:absolute!important;
+  top:calc(100% + 5px)!important;
+  left:auto!important;
+  right:0!important;
+  bottom:auto!important;
+  width:min(440px,calc(100vw - 24px))!important;
+  max-width:calc(100vw - 24px)!important;
+  max-height:calc(100dvh - 100px)!important;
+  overflow-x:hidden!important;
+  overflow-y:auto!important;
+  flex-direction:column!important;
+  align-items:stretch!important;
+  gap:5px!important;
+  padding:12px!important;
+  background:#fff!important;
+  color:#18384d!important;
+  border:1px solid #cbdce8!important;
+  border-radius:10px!important;
+  box-shadow:0 14px 36px rgba(0,25,55,.28)!important;
+  z-index:2147483004!important;
+}
+html body header.header #links.open a,
+html body header.header #links.open summary { color:#18384d!important; }
+@media(max-width:760px){
+  html body header.header .nav { display:flex!important; align-items:center!important; justify-content:space-between!important; }
+  html body header.header #links.open {
+    position:fixed!important;
+    top:var(--kg-mobile-menu-top,76px)!important;
+    left:8px!important;
+    right:8px!important;
+    width:auto!important;
+    max-width:none!important;
+    max-height:calc(100dvh - var(--kg-mobile-menu-top,76px) - 12px)!important;
+  }
+}
+</style>
