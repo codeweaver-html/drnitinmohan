@@ -3095,8 +3095,8 @@ body.kg-booking-dialog-open iframe[src*="recaptcha"]{z-index:2147483000!importan
   width:1px!important;
   height:1px!important;
   overflow:visible!important;
-  z-index:2147483645!important;
-  pointer-events:none!important;
+  z-index:1!important;
+  pointer-events:auto!important;
 }
 /* A modal dialog is in the browser top layer. Keep the badge above the
    booking surface where supported, and give mobile users breathing room. */
@@ -3120,8 +3120,65 @@ body.kg-booking-dialog-open .grecaptcha-badge{
 }
 </style>
 
+
+<style id="kg-match-hero-portrait-to-booking-box">
+/* Keep the portrait frame exactly the same size as the blue booking-information box. */
+@media (min-width: 761px) {
+  .hero .hero-grid {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    align-items: stretch;
+    gap: 30px;
+  }
+  .hero .hero-grid > .reveal {
+    width: auto;
+    min-height: 420px;
+    height: 100%;
+  }
+  .hero .hero-grid > .visual {
+    position: relative;
+    width: 100%;
+    min-height: 420px;
+    height: 100%;
+    margin: 0;
+  }
+  .hero .hero-grid > .visual > .portrait {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+  .hero .hero-grid > .visual > .portrait > img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+}
+@media (max-width: 760px) {
+  .hero .hero-grid {
+    grid-template-columns: minmax(0, 1fr);
+    align-items: stretch;
+  }
+  .hero .hero-grid > .reveal {
+    width: 100%;
+    min-height: 360px;
+  }
+  .hero .hero-grid > .visual {
+    width: 100%;
+    min-height: 360px;
+    height: 360px;
+    margin: 0 auto;
+  }
+  .hero .hero-grid > .visual > .portrait {
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+}
+</style>
+
 </head><body><div aria-label="Appointment announcement" class="offline-appointment-marquee" role="region"><div class="offline-appointment-marquee__track"><span class="offline-appointment-marquee__text">OFFLINE APPOINTMENTS AVAILABLE RIGHT NOW. <span aria-hidden="true" class="marquee-inline-gap">      </span>CLICK THE APPOINTMENT BUTTON BELOW TO PROCEED.</span><span aria-hidden="true" class="offline-appointment-marquee__text">OFFLINE APPOINTMENTS AVAILABLE RIGHT NOW. <span aria-hidden="true" class="marquee-inline-gap">      </span>CLICK THE APPOINTMENT BUTTON BELOW TO PROCEED.</span></div></div><a class="skip-link" href="/?focus=main">Skip to content</a>
-<header class="header"><nav aria-label="Main navigation" class="nav container"><a class="brand" href="/"><img alt="Dr. Nitin Mohan KidsGastro logo" class="mark circular-brand-logo" data-embedded-logo="true" decoding="async" loading="eager" src="/assets/images/kg-logo-circle-512.png" width="58" height="58" sizes="(max-width: 760px) 48px, 58px"/><span>KidsGastro by Dr. Nitin Mohan</span></a><button aria-controls="links" aria-expanded="false" aria-label="Open navigation" class="toggle">☰</button><div aria-hidden="true" class="hamburger-panel" hidden="" id="hamburger-panel" style="pointer-events:none"></div><div class="links" id="links">
+<header class="header kg-cosmos-host kg-orbit-surface"><nav aria-label="Main navigation" class="nav container"><a class="brand" href="/"><img alt="Dr. Nitin Mohan KidsGastro logo" class="mark circular-brand-logo" data-embedded-logo="true" decoding="async" loading="eager" src="/assets/images/kg-logo-circle-512.png" width="58" height="58" sizes="(max-width: 760px) 48px, 58px"/><span>KidsGastro by Dr. Nitin Mohan</span></a><button aria-controls="links" aria-expanded="false" aria-label="Open navigation" class="toggle">☰</button><div aria-hidden="true" class="hamburger-panel" hidden="" id="hamburger-panel" style="pointer-events:none"></div><div class="links" id="links">
 <details class="nav-dropdown"><summary>Treatments<svg aria-hidden="true" viewbox="0 0 16 16"><path d="m3 6 5 5 5-5"></path></svg></summary><div class="nav-dropdown-menu"><a href="/treatments/"><b>Paediatric Gastroenterology</b></a><a href="/treatments/"><b>Paediatric Hepatology — Liver Diseases</b></a><a href="/treatments/"><b>Paediatric Pancreatology — Pancreatic Disorders</b></a><a href="/treatments/"><b>Paediatric Biliary Tract Diseases</b></a><a href="/treatments/"><b>Paediatric Nutrition and Growth</b></a></div></details><details class="nav-dropdown"><summary>Services<svg aria-hidden="true" viewbox="0 0 16 16"><path d="m3 6 5 5 5-5"></path></svg></summary><div class="nav-dropdown-menu"><a href="/services/"><b>Paediatric Gastrointestinal Procedures</b></a><a href="/services/"><b>Hepatology Procedures &amp; Investigations</b></a><a href="/services/"><b>Pancreatic Investigations</b></a><a href="/services/"><b>Biliary Tract Investigations</b></a><a href="/services/"><b>Gastrointestinal Diagnostic Investigations</b></a><a href="/services/"><b>Nutrition &amp; Growth Assessment</b></a></div></details><a class="nav-direct-link" href="/faqs/"><svg aria-hidden="true" class="kg-nav-icon" focusable="false" viewbox="0 0 24 24"><circle cx="12" cy="12" r="9"></circle><path d="M9.6 9a2.5 2.5 0 1 1 4.2 1.8c-1.1 1-1.8 1.4-1.8 3M12 17.2h.01"></path></svg>FAQs</a><a class="nav-direct-link" href="/blog/"><svg aria-hidden="true" class="kg-nav-icon" focusable="false" viewBox="0 0 24 24"><path d="M6 3.5h9l4 4V21H6z"></path><path d="M15 3.5V8h4M9 12h7M9 16h7"></path></svg><span>Blog</span></a><details class="nav-dropdown"><summary><svg aria-hidden="true" class="kg-nav-icon" viewbox="0 0 24 24"><path d="M4 5.5h16v11H9l-5 3v-14Z"></path><path d="M8 9h8M8 12.5h5"></path></svg><span>Testimonials</span><svg aria-hidden="true" viewbox="0 0 16 16"><path d="m3 6 5 5 5-5"></path></svg></summary><div class="nav-dropdown-menu"><a href="/testimonials/"><b>Patient &amp; family testimonials</b><small>Read all patient and family experiences</small></a></div></details><details class="nav-dropdown kg-gallery-nav-dropdown"><summary>Gallery<svg aria-hidden="true" viewbox="0 0 16 16"><path d="m3 6 5 5 5-5"></path></svg></summary><div class="nav-dropdown-menu"><a href="/gallery/"><b>KidsGastro Photo Gallery</b><small>Photos and clinical activities</small></a></div></details><details class="nav-dropdown"><summary>Health Library<svg aria-hidden="true" viewbox="0 0 16 16"><path d="m3 6 5 5 5-5"></path></svg></summary><div class="nav-dropdown-menu"><a href="/latest/"><b>Latest from KidsGastro<img alt="Dr. Nitin Mohan KidsGastro logo" class="inline-kg-mark circular-brand-logo" data-embedded-logo="true" decoding="async" fetchpriority="low" loading="lazy" src="/assets/images/kg-logo-circle-512.png" width="58" height="58" sizes="(max-width: 760px) 48px, 58px"/></b><small>Stories, videos and audio</small></a><a href="/publications/"><b>Research articles &amp; publications</b><small>Published work by Dr. Nitin Mohan</small></a><a href="/newsletter/"><b>Family newsletter</b><small>Request clinic updates</small></a></div></details><details class="nav-dropdown"><summary>Contact Info<svg aria-hidden="true" viewbox="0 0 16 16"><path d="m3 6 5 5 5-5"></path></svg></summary><div class="nav-dropdown-menu"><a href="tel:+919821020576"><b>Phone</b><small>+91 98210 20576</small></a><a href="/clinic/"><b>Churamani Multispeciality Hospital</b><small>Hisar, Haryana</small></a><a href="/clinic/"><b>View map</b><small>Google Maps location</small></a></div></details><details class="nav-dropdown nav-login-dropdown"><summary><svg aria-hidden="true" class="kg-nav-icon" viewbox="0 0 24 24"><circle cx="12" cy="8" r="3.5"></circle><path d="M5 20v-1.5a7 7 0 0 1 14 0V20Z"></path></svg><span>Login</span><svg aria-hidden="true" viewbox="0 0 16 16"><path d="m3 6 5 5 5-5"></path></svg></summary><div class="nav-dropdown-menu"><a class="kg-admin-menu-link" href="/admin.html"><b>Login</b></a></div></details></div><form class="site-search" id="site-search" role="search"><label class="sr-only" for="site-search-input">Search this website</label><input autocomplete="off" id="site-search-input" placeholder="Search this website" type="search"/><button aria-label="Search this website" type="submit">⌕</button><span aria-live="polite" class="search-status" id="search-status" role="status"></span></form></nav></header>
 <main id="main">
 <section class="hero" id="top"><div aria-label="Illustrative pediatric consultation with a clinician, parent and child" class="hero-photo" role="img"></div><div class="container"><div class="hero-grid"><div class="reveal"><span class="eyebrow">Paediatric gastroenterology</span><h1 aria-label="Paediatric gastroenterology care in Hisar for children, by Dr. Nitin Mohan" class="hero-typing-headline"><span class="hero-typing-text">Paediatric gastroenterologist in Hisar for children</span><span aria-hidden="true" class="hero-typing-cursor"></span></h1><div class="actions"><div class="booking-menu">
@@ -3600,7 +3657,13 @@ function weekdayForKey(key){const [y,m,d]=key.split('-').map(Number);return new 
    dateSummary.textContent="";dateError.textContent="";clearTimeout(dateErrorTimer);
    viewDate=new Date(y,m-1,1);error.textContent='';drawCalendar();updateClock();populateTimeSlots(key);return true;
  }
- function openDialog(){bookingHandoffStarted=false;if(bookingSubmitButton){bookingSubmitButton.disabled=false;bookingSubmitButton.removeAttribute('aria-busy');bookingSubmitButton.textContent='Continue to WhatsApp'}error.textContent='';bookingDialogTitle.textContent='Choose a preferred date and time';childNameInput.value='';childAgeInput.value='';parentNameInput.value='';selectedDate='';dateInput.value='';manualDateInput.value='';typedTime.value='';timeSource='clock';timeChosen=false;lastValidTime='';manualPeriod='AM';periodExplicit=false;datePanel.disabled=false;timePanel.disabled=false;dateSummary.textContent="";dateError.textContent="";clearTimeout(dateErrorTimer);viewDate=new Date();viewDate.setDate(1);hour=9;minute=0;period='AM';part='hour';drawCalendar();populateTimeSlots('');document.body.classList.add('kg-booking-dialog-open');try{if(!dialog.open&&typeof dialog.showModal==='function'){dialog.showModal()}else if(!dialog.open){dialog.setAttribute('open','');dialog.style.position='fixed';dialog.style.inset='0';dialog.style.margin='auto';dialog.style.zIndex='2147483647';}}catch(openError){console.error('Could not open the appointment dialog as a modal:',openError);if(!dialog.open){dialog.setAttribute('open','');dialog.style.position='fixed';dialog.style.inset='0';dialog.style.margin='auto';dialog.style.zIndex='2147483647';}}loadRecaptchaV2Invisible().catch(()=>{});requestAnimationFrame(updateClock);setTimeout(()=>childNameInput.focus(),50)}
+ function openDialog(){bookingHandoffStarted=false;if(bookingSubmitButton){bookingSubmitButton.disabled=false;bookingSubmitButton.removeAttribute('aria-busy');bookingSubmitButton.textContent='Continue to WhatsApp'}error.textContent='';bookingDialogTitle.textContent='Choose a preferred date and time';childNameInput.value='';childAgeInput.value='';parentNameInput.value='';selectedDate='';dateInput.value='';manualDateInput.value='';typedTime.value='';timeSource='clock';timeChosen=false;lastValidTime='';manualPeriod='AM';periodExplicit=false;datePanel.disabled=false;timePanel.disabled=false;dateSummary.textContent="";dateError.textContent="";clearTimeout(dateErrorTimer);viewDate=new Date();viewDate.setDate(1);hour=9;minute=0;period='AM';part='hour';drawCalendar();populateTimeSlots('');document.body.classList.add('kg-booking-dialog-open');try{if(!dialog.open&&typeof dialog.show==='function'){dialog.show();}else if(!dialog.open){dialog.setAttribute('open','');}
+     dialog.style.position='fixed';
+     dialog.style.inset='0';
+     dialog.style.margin='auto';
+     dialog.style.zIndex='1999999999';
+     dialog.style.maxHeight='min(92vh,820px)';
+     dialog.style.overflowY='auto';}catch(openError){console.error('Could not open the appointment dialog as a modal:',openError);if(!dialog.open){dialog.setAttribute('open','');dialog.style.position='fixed';dialog.style.inset='0';dialog.style.margin='auto';dialog.style.zIndex='2147483647';}}loadRecaptchaV2Invisible().catch(()=>{});requestAnimationFrame(updateClock);setTimeout(()=>childNameInput.focus(),50)}
  window.addEventListener('kg:book-another-appointment',()=>{openDialog()});
 function updateNameGate(){bookingDialogTitle.textContent=selectedDate?"Choose a preferred date and time":"Select an appointment date";if(datePanel)datePanel.disabled=false;}
   childAgeInput.addEventListener('input',()=>{const match=childAgeInput.value.match(/^\d*(?:\.\d*)?/);const clean=match?match[0]:'';if(clean!==childAgeInput.value){childAgeInput.value=clean;showTemporaryError('Enter the age as a number.')}updateNameGate()});
@@ -3865,7 +3928,7 @@ timeSource='typed';const match=getManualTime();if(match&&!periodExplicit){const 
      let settled=false;
      const timeoutId=setTimeout(()=>{
        finish(new Error('CAPTCHA did not finish within 30 seconds. Check whether your browser is blocking Google reCAPTCHA, then try again.'));
-     },30000);
+     },90000);
 
      function finish(error,token){
        if(settled)return;
@@ -7980,6 +8043,170 @@ html body iframe{
   },true);
 })();
 </script>
+
+
+<style id="kg-desktop-recaptcha-challenge-layer-fix">
+/* Keep the booking surface visually modal without placing it in the browser
+   top layer. Google's interactive reCAPTCHA challenge must be able to appear
+   above it when desktop risk checks require an image challenge. */
+body.kg-booking-dialog-open::before{
+  content:"";
+  position:fixed;
+  inset:0;
+  z-index:1999999998;
+  background:rgba(7,24,44,.58);
+  -webkit-backdrop-filter:blur(3px);
+  backdrop-filter:blur(3px);
+  pointer-events:auto;
+}
+#whatsapp-booking-dialog.booking-dialog[open]{
+  position:fixed!important;
+  inset:0!important;
+  margin:auto!important;
+  z-index:1999999999!important;
+  overflow-y:auto!important;
+  overscroll-behavior:contain;
+}
+#appointment-recaptcha-v2{
+  pointer-events:auto!important;
+}
+/* Google injects the interactive image challenge as a separate body-level
+   layer. Keep that challenge above the non-modal booking surface. */
+body > div[style*="z-index: 2000000000"],
+body > div[style*="z-index:2000000000"]{
+  z-index:2147483647!important;
+  pointer-events:auto!important;
+}
+</style>
+<script id="kg-desktop-booking-focus-containment">
+(function(){
+  const dialog=document.getElementById('whatsapp-booking-dialog');
+  if(!dialog)return;
+  dialog.addEventListener('keydown',function(event){
+    if(event.key==='Escape'){
+      event.preventDefault();
+      dialog.close();
+      return;
+    }
+    if(event.key!=='Tab')return;
+    /* Do not intercept keyboard navigation inside Google's cross-origin
+       challenge iframe; that frame must remain fully interactive. */
+    if(document.activeElement&&document.activeElement.tagName==='IFRAME')return;
+    const items=Array.from(dialog.querySelectorAll(
+      'a[href],button:not([disabled]),input:not([disabled]),select:not([disabled]),textarea:not([disabled]),[tabindex]:not([tabindex="-1"])'
+    )).filter(el=>el.getClientRects().length&&!el.hasAttribute('hidden'));
+    if(!items.length)return;
+    const first=items[0],last=items[items.length-1];
+    if(event.shiftKey&&document.activeElement===first){
+      event.preventDefault();last.focus();
+    }else if(!event.shiftKey&&document.activeElement===last){
+      event.preventDefault();first.focus();
+    }
+  });
+})();
+</script>
+
+
+<style id="kg-recaptcha-badge-only-during-whatsapp-booking">
+/* Google's badge is shown only while the WhatsApp appointment form is active.
+   The booking script adds/removes kg-booking-dialog-open on open/close,
+   including repeat-booking and cancellation paths. */
+body:not(.kg-booking-dialog-open) .grecaptcha-badge{
+  visibility:hidden!important;
+  opacity:0!important;
+  pointer-events:none!important;
+}
+body.kg-booking-dialog-open .grecaptcha-badge{
+  visibility:visible!important;
+  opacity:1!important;
+  display:block!important;
+  pointer-events:auto!important;
+  z-index:2147483000!important;
+}
+body.kg-booking-dialog-open .grecaptcha-badge iframe{
+  visibility:visible!important;
+  opacity:1!important;
+  pointer-events:auto!important;
+}
+/* The badge must not reserve layout space or intercept the floating WhatsApp
+   control after the appointment dialog closes. */
+body:not(.kg-booking-dialog-open) .grecaptcha-badge *{
+  pointer-events:none!important;
+}
+/* A body-level Google image challenge remains usable above the active form. */
+body.kg-booking-dialog-open > div[style*="z-index: 2000000000"],
+body.kg-booking-dialog-open > div[style*="z-index:2000000000"]{
+  z-index:2147483647!important;
+  pointer-events:auto!important;
+}
+</style>
+
+
+<style id="kg-restore-main-header-cosmic-animation">
+/* Restore the site's shared animated orbital/cosmic layer in the main header.
+   Keep the animation behind the brand, search, and navigation controls. */
+.header.kg-cosmos-host{
+  position:relative!important;
+  isolation:isolate!important;
+  overflow:visible!important;
+  background-color:#0759a8!important;
+}
+.header.kg-cosmos-host > .kg-cosmos-background,
+.header.kg-cosmos-host > .kg-orbit-overlay,
+.header.kg-cosmos-host > canvas.kg-sky{
+  position:absolute!important;
+  inset:0!important;
+  width:100%!important;
+  height:100%!important;
+  z-index:0!important;
+  pointer-events:none!important;
+  overflow:hidden!important;
+}
+.header.kg-cosmos-host > .nav,
+.header.kg-cosmos-host > nav,
+.header.kg-cosmos-host .nav{
+  position:relative!important;
+  z-index:2!important;
+}
+.header.kg-cosmos-host .toggle,
+.header.kg-cosmos-host #links{
+  z-index:15002!important;
+}
+@media(prefers-reduced-motion:reduce){
+  .header.kg-cosmos-host .kg-cosmos-background,
+  .header.kg-cosmos-host .kg-cosmos-background *{
+    animation-duration:.01ms!important;
+    animation-iteration-count:1!important;
+  }
+}
+</style>
+
+
+<style id="kg-final-main-header-cosmic-stacking-fix">
+/* Let the shared #kg-space canvas sit above the header background but below
+   the header's interactive content. The animation engine itself adds
+   .kg-space-panel to .header during initialization. */
+.header.kg-space-panel,
+header.header.kg-space-panel,
+.header.kg-cosmos-host.kg-space-panel{
+  position:relative!important;
+  z-index:auto!important;
+  isolation:auto!important;
+}
+.header.kg-space-panel>*,
+header.header.kg-space-panel>*{
+  position:relative!important;
+  z-index:2!important;
+}
+.header.kg-space-panel #links,
+.header.kg-space-panel .toggle,
+.header.kg-space-panel .hamburger-toggle,
+.header.kg-space-panel .menu-toggle,
+.header.kg-space-panel .navbar-toggler,
+.header.kg-space-panel .nav-dropdown-menu{
+  z-index:2147483004!important;
+}
+</style>
 
 </body>
 </html>

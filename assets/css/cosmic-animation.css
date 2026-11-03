@@ -30,3 +30,31 @@ header.kg-space-panel > *, .header.kg-space-panel > *,
 .site-header.kg-space-panel > *, #site-header.kg-space-panel > *,
 .main-header.kg-space-panel > *{position:relative;z-index:2;}
 #kg-space{pointer-events:none!important;}
+
+
+/* Main-header visibility fix:
+   The shared canvas is fixed at z-index:1 and the engine paints each panel
+   between the panel background and its direct content (z-index:2).
+   A high-z-index/isolation stacking context on .header hid the canvas behind
+   the entire header. Keep the header in the normal stacking context so the
+   animation is visible over its blue background while controls stay above it. */
+.header.kg-space-panel,
+header.header.kg-space-panel,
+.header.kg-cosmos-host.kg-space-panel {
+  position: relative !important;
+  z-index: auto !important;
+  isolation: auto !important;
+}
+.header.kg-space-panel > *,
+header.header.kg-space-panel > * {
+  position: relative !important;
+  z-index: 2 !important;
+}
+.header.kg-space-panel #links,
+.header.kg-space-panel .toggle,
+.header.kg-space-panel .hamburger-toggle,
+.header.kg-space-panel .menu-toggle,
+.header.kg-space-panel .navbar-toggler,
+.header.kg-space-panel .nav-dropdown-menu {
+  z-index: 2147483004 !important;
+}
