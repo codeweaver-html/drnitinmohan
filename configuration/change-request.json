@@ -1,11 +1,23 @@
 {
   "schemaVersion": 3,
   "configContract": "kidsgastro-manual-settings-v3",
-  "announcementContract": "all-sites-two-strip-uniform-v1",
+  "announcementContract": "all-sites-two-strip-uniform-v2",
+  "announcementStripLayout": {
+    "width": "100%",
+    "maxWidth": "100%",
+    "minWidth": "0",
+    "boxSizing": "border-box",
+    "display": "block",
+    "container": "full-available-viewport-width",
+    "horizontalOverflow": "hidden",
+    "uniformAcrossSites": true,
+    "sharedByStrips": true
+  },
   "siteScope": {
     "applyTo": "all-sites",
     "includeMainSite": true,
     "includeSubSites": true,
+    "phoneNumberVisibility": "all-sites",
     "renderAnnouncementOnEveryPage": true
   },
   "announcementSiteWide": {
@@ -20,6 +32,19 @@
     "renderOn": "every-page",
     "uniformAcrossSites": true,
     "coordinatedStrips": true,
+    "layout": {
+      "width": "100%",
+      "maxWidth": "100%",
+      "minWidth": "0",
+      "boxSizing": "border-box",
+      "display": "block",
+      "container": "full-available-viewport-width",
+      "horizontalOverflow": "hidden",
+      "uniformAcrossSites": true,
+      "sharedByStrips": true
+    },
+    "width": "100%",
+    "maxWidth": "100%",
     "action": "restore_default",
     "schedule": {
       "duration": "permanent",
@@ -28,6 +53,19 @@
       "endDateTime": null
     },
     "mainStrip": {
+      "layout": {
+        "width": "100%",
+        "maxWidth": "100%",
+        "minWidth": "0",
+        "boxSizing": "border-box",
+        "display": "block",
+        "container": "full-available-viewport-width",
+        "horizontalOverflow": "hidden",
+        "uniformAcrossSites": true,
+        "sharedByStrips": true
+      },
+      "width": "100%",
+      "maxWidth": "100%",
       "enabled": true,
       "text": "OFFLINE APPOINTMENTS AVAILABLE RIGHT NOW.               CLICK THE APPOINTMENT BUTTON BELOW TO PROCEED.",
       "textColor": "#0759a8",
@@ -46,6 +84,19 @@
       }
     },
     "additionalStrip": {
+      "layout": {
+        "width": "100%",
+        "maxWidth": "100%",
+        "minWidth": "0",
+        "boxSizing": "border-box",
+        "display": "block",
+        "container": "full-available-viewport-width",
+        "horizontalOverflow": "hidden",
+        "uniformAcrossSites": true,
+        "sharedByStrips": true
+      },
+      "width": "100%",
+      "maxWidth": "100%",
       "enabled": false,
       "text": "APPOINTMENT BOOKING HAS NOW BEEN OPENED!",
       "textColor": "#0759a8",
@@ -86,9 +137,27 @@
       "announceDisabledState": false
     }
   },
+  "phoneNumberVisibility": {
+    "visible": true,
+    "hidden": false,
+    "action": "enable",
+    "scope": "all-sites",
+    "targets": {
+      "mainSite": true,
+      "subSites": true,
+      "match": "all-kidsgastro-pages"
+    },
+    "applyTo": [
+      "shared-header",
+      "shared-footer",
+      "contact-sections",
+      "all-phone-number-displays"
+    ],
+    "preserveLayout": true
+  },
   "formTitle": "KidsGastro Website Change Request",
   "doctor": "Dr. Nitin Mohan",
-  "createdAt": "2026-11-02T12:22:09.074Z",
+  "createdAt": "2026-11-04T20:20:46.145Z",
   "timezone": "Asia/Kolkata",
   "targetFile": "configuration/change-request.json",
   "notice": "This is a request only. It does not modify or publish the website.",
@@ -111,9 +180,12 @@
       "appointmentButton": "continue",
       "whatsappBookingOption": "continue",
       "rezepRxBookingOption": "continue",
+      "phoneNumberVisibility": "enable",
       "announcementMarquee": "continue",
       "photoOfTheMonth": "update"
-    }
+    },
+    "showPhoneNumber": "yes",
+    "hidePhoneNumber": "no"
   },
   "changeSchedules": {
     "settings": {
@@ -133,15 +205,19 @@
         "duration": "permanent",
         "scheduleGroupId": null
       },
-      "photoOfTheMonth": {
-        "duration": "permanent",
-        "scheduleGroupId": null
-      },
       "mainAnnouncementStrip": {
         "duration": "permanent",
         "scheduleGroupId": null
       },
       "additionalAnnouncementStrip": {
+        "duration": "permanent",
+        "scheduleGroupId": null
+      },
+      "phoneNumberVisibility": {
+        "duration": "permanent",
+        "scheduleGroupId": null
+      },
+      "photoOfTheMonth": {
         "duration": "permanent",
         "scheduleGroupId": null
       }
@@ -182,10 +258,10 @@
       "customStrip": 83
     },
     "photoOfMonthAction": "update",
-    "photoOfMonth": "configuration/photo-of-the-month/abcd.webp",
-    "photoOfMonthFileName": "abcd.webp",
+    "photoOfMonth": "configuration/photo-of-the-month/photo nov.webp",
+    "photoOfMonthFileName": "photo nov.webp",
     "photoOfMonthDestinationFolder": "configuration/photo-of-the-month/",
-    "photoCaption": "An infant and his mother visiting Dr. Nitin Mohan",
+    "photoCaption": "Big world, little explorer.",
     "otherInstructions": "",
     "mainStripText": "OFFLINE APPOINTMENTS AVAILABLE RIGHT NOW.               CLICK THE APPOINTMENT BUTTON BELOW TO PROCEED.",
     "additionalStripText": "APPOINTMENT BOOKING HAS NOW BEEN OPENED!",
@@ -230,6 +306,19 @@
       "renderOn": "every-page",
       "uniformAcrossSites": true,
       "coordinatedStrips": true,
+      "layout": {
+        "width": "100%",
+        "maxWidth": "100%",
+        "minWidth": "0",
+        "boxSizing": "border-box",
+        "display": "block",
+        "container": "full-available-viewport-width",
+        "horizontalOverflow": "hidden",
+        "uniformAcrossSites": true,
+        "sharedByStrips": true
+      },
+      "width": "100%",
+      "maxWidth": "100%",
       "action": "restore_default",
       "schedule": {
         "duration": "permanent",
@@ -238,6 +327,19 @@
         "endDateTime": null
       },
       "mainStrip": {
+        "layout": {
+          "width": "100%",
+          "maxWidth": "100%",
+          "minWidth": "0",
+          "boxSizing": "border-box",
+          "display": "block",
+          "container": "full-available-viewport-width",
+          "horizontalOverflow": "hidden",
+          "uniformAcrossSites": true,
+          "sharedByStrips": true
+        },
+        "width": "100%",
+        "maxWidth": "100%",
         "enabled": true,
         "text": "OFFLINE APPOINTMENTS AVAILABLE RIGHT NOW.               CLICK THE APPOINTMENT BUTTON BELOW TO PROCEED.",
         "textColor": "#0759a8",
@@ -256,6 +358,19 @@
         }
       },
       "additionalStrip": {
+        "layout": {
+          "width": "100%",
+          "maxWidth": "100%",
+          "minWidth": "0",
+          "boxSizing": "border-box",
+          "display": "block",
+          "container": "full-available-viewport-width",
+          "horizontalOverflow": "hidden",
+          "uniformAcrossSites": true,
+          "sharedByStrips": true
+        },
+        "width": "100%",
+        "maxWidth": "100%",
         "enabled": false,
         "text": "APPOINTMENT BOOKING HAS NOW BEEN OPENED!",
         "textColor": "#0759a8",
@@ -273,6 +388,35 @@
           "endDateTime": null
         }
       }
+    },
+    "phoneNumberVisibility": {
+      "visible": true,
+      "hidden": false,
+      "action": "enable",
+      "scope": "all-sites",
+      "targets": {
+        "mainSite": true,
+        "subSites": true,
+        "match": "all-kidsgastro-pages"
+      },
+      "applyTo": [
+        "shared-header",
+        "shared-footer",
+        "contact-sections",
+        "all-phone-number-displays"
+      ],
+      "preserveLayout": true
+    },
+    "announcementStripLayout": {
+      "width": "100%",
+      "maxWidth": "100%",
+      "minWidth": "0",
+      "boxSizing": "border-box",
+      "display": "block",
+      "container": "full-available-viewport-width",
+      "horizontalOverflow": "hidden",
+      "uniformAcrossSites": true,
+      "sharedByStrips": true
     }
   },
   "duration": "permanent",
@@ -283,11 +427,12 @@
   },
   "mergeMetadata": {
     "baselineFile": "change-request.json",
-    "generatedAt": "2026-11-02T12:22:09.074Z",
+    "generatedAt": "2026-11-04T20:20:46.145Z",
     "actions": {
       "appointmentButton": "continue",
       "whatsappBookingOption": "continue",
       "rezepRxBookingOption": "continue",
+      "phoneNumberVisibility": "enable",
       "announcementMarquee": "continue",
       "photoOfTheMonth": "update"
     },
