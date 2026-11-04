@@ -1,0 +1,17 @@
+/* KidsGastro shared navigation state layer.
+   Visual styling remains page-owned; this file standardizes behavior only. */
+header.header nav.nav #links[aria-hidden="true"] {
+  pointer-events: none;
+}
+header.header nav.nav #links.open[aria-hidden="false"] {
+  pointer-events: auto;
+}
+header.header nav.nav button.toggle[aria-expanded="true"] {
+  touch-action: manipulation;
+}
+@media (prefers-reduced-motion: reduce) {
+  header.header nav.nav #links {
+    scroll-behavior: auto;
+    transition-duration: 0.01ms !important;
+  }
+}
