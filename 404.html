@@ -1,24 +1,34 @@
 
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="robots" content="noindex, nofollow">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Page Not Found | KidsGastro</title>
+  <meta name="robots" content="noindex, follow">
   <meta name="theme-color" content="#0759a8">
-  <title>Page not found | KidsGastro</title>
+  <meta name="description" content="The requested page could not be found on KidsGastro.">
+
+  <link rel="icon" href="/assets/kg%20logo.webp" type="image/webp">
 
   <style>
     :root {
-      --kg-blue: #0759a8;
-      --kg-deep: #064b8d;
-      --kg-ink: #18384d;
-      --kg-muted: #526775;
-      --kg-bg: #f6f8fa;
+      --blue: #0759a8;
+      --deep-blue: #064b8d;
+      --yellow: #ffc400;
+      --text: #183047;
+      --muted: #647589;
+      --background: #f5f8fc;
+      --white: #ffffff;
     }
 
     * {
       box-sizing: border-box;
+    }
+
+    html {
+      min-height: 100%;
     }
 
     body {
@@ -26,143 +36,169 @@
       min-height: 100vh;
       display: flex;
       flex-direction: column;
-      background: var(--kg-bg);
-      color: var(--kg-ink);
-      font: 16px/1.6 Arial, "Segoe UI", sans-serif;
+      font-family: Arial, Helvetica, sans-serif;
+      color: var(--text);
+      background: var(--background);
     }
 
-    header {
-      min-height: 82px;
+    /* Header */
+    .site-header {
+      width: 100%;
+      min-height: 76px;
       display: flex;
       align-items: center;
-      background: var(--kg-blue);
-      padding: 12px max(22px, calc((100% - 1120px)/2));
+      padding: 12px 6%;
+      background: var(--blue);
     }
 
     .brand {
       display: inline-flex;
       align-items: center;
-      gap: 13px;
+      gap: 12px;
+      color: var(--white);
       text-decoration: none;
     }
 
     .brand img {
-      display: block;
-      width: 58px;
-      height: 58px;
+      width: 48px;
+      height: 48px;
       object-fit: contain;
+      border-radius: 50%;
+      background: var(--white);
     }
 
-    .brand span {
-      color: #fff;
-      font-size: 1rem;
+    .brand-name {
+      font-size: 21px;
       font-weight: 700;
+      letter-spacing: 0.2px;
     }
 
+    /* Main content */
     main {
-      width: min(100% - 36px, 720px);
-      margin: auto;
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
       padding: 64px 20px;
-      text-align: center;
     }
 
-    .error-number {
-      margin: 0;
-      color: var(--kg-blue);
-      font-size: clamp(5rem, 15vw, 8rem);
+    .error-content {
+      width: 100%;
+      max-width: 620px;
+      padding: 48px 32px;
+      text-align: center;
+      background: var(--white);
+      border-radius: 18px;
+      box-shadow: 0 12px 40px rgba(16, 56, 94, 0.07);
+    }
+
+    .error-code {
+      margin: 0 0 12px;
+      color: var(--blue);
+      font-size: clamp(76px, 15vw, 120px);
+      line-height: 1;
       font-weight: 800;
-      letter-spacing: -.075em;
-      line-height: .95;
+      letter-spacing: -5px;
     }
 
     h1 {
-      margin: 22px 0 8px;
-      font-size: clamp(1.5rem, 4vw, 2rem);
+      margin: 18px 0 12px;
+      font-size: clamp(23px, 4vw, 31px);
       line-height: 1.25;
+      color: var(--deep-blue);
     }
 
-    p {
-      margin: 0 auto;
-      max-width: 440px;
-      color: var(--kg-muted);
-      font-size: 1rem;
+    .message {
+      margin: 0 auto 30px;
+      max-width: 430px;
+      color: var(--muted);
+      font-size: 16px;
+      line-height: 1.7;
     }
 
-    .actions {
-      display: flex;
-      justify-content: center;
-      flex-wrap: wrap;
-      gap: 12px;
-      margin-top: 28px;
-    }
-
-    .btn {
+    /* Home button */
+    .home-button {
       display: inline-flex;
-      min-height: 49px;
-      align-items: center;
       justify-content: center;
-      padding: 0 23px;
-      border: 2px solid var(--kg-blue);
-      border-radius: 4px;
+      align-items: center;
+      min-height: 48px;
+      padding: 13px 25px;
+      border: 2px solid var(--yellow);
+      border-radius: 8px;
+      background: var(--yellow);
+      color: #172b3e;
+      font-size: 15px;
+      font-weight: 700;
       text-decoration: none;
-      font: 700 .95rem Arial, sans-serif;
-      transition: background .18s ease, transform .18s ease;
+      transition:
+        background 0.2s ease,
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
     }
 
-    .btn:hover {
-      transform: translateY(-1px);
+    .home-button:hover {
+      background: #ffd43b;
+      transform: translateY(-2px);
+      box-shadow: 0 5px 16px rgba(0, 0, 0, 0.12);
     }
 
-    .btn:focus-visible {
-      outline: 3px solid var(--kg-ink);
-      outline-offset: 3px;
+    .home-button:focus-visible,
+    .brand:focus-visible {
+      outline: 3px solid var(--yellow);
+      outline-offset: 4px;
     }
 
-    .home {
-      color: #fff;
-      background: var(--kg-blue);
-    }
-
-    .home:hover {
-      background: var(--kg-deep);
-    }
-
-    footer {
-      padding: 17px 20px;
+    /* Footer */
+    .site-footer {
+      padding: 22px 16px;
       text-align: center;
-      background: var(--kg-blue);
-      color: #e1ebff;
-      font-size: .78rem;
+      background: var(--deep-blue);
+      color: rgba(255, 255, 255, 0.9);
+      font-size: 13px;
     }
 
-    @media (max-width: 480px) {
-      header {
-        min-height: 72px;
+    .site-footer p {
+      margin: 0;
+    }
+
+    /* Mobile */
+    @media (max-width: 600px) {
+      .site-header {
+        min-height: 66px;
+        padding: 10px 5%;
       }
 
       .brand img {
-        width: 50px;
-        height: 50px;
+        width: 42px;
+        height: 42px;
+      }
+
+      .brand-name {
+        font-size: 18px;
       }
 
       main {
-        padding: 52px 10px;
+        padding: 35px 16px;
       }
 
-      .actions {
-        display: grid;
-        width: min(100%, 320px);
-        margin: 25px auto 0;
+      .error-content {
+        padding: 40px 22px;
+        border-radius: 14px;
       }
 
-      .btn {
-        width: 100%;
+      .message {
+        font-size: 15px;
       }
     }
 
     @media (prefers-reduced-motion: reduce) {
-      *, *::before, *::after {
-        transition-duration: .01ms !important;
+      *,
+      *::before,
+      *::after {
+        scroll-behavior: auto !important;
+        transition-duration: 0.01ms !important;
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
       }
     }
   </style>
@@ -170,37 +206,33 @@
 
 <body>
 
-  <header>
-    <a class="brand" href="https://drnitinmohan.com/"
-       aria-label="KidsGastro home">
-
-      <!-- Official KidsGastro logo -->
+  <header class="site-header">
+    <a class="brand" href="https://drnitinmohan.com/" aria-label="KidsGastro home">
       <img
-        src="PASTE_YOUR_OFFICIAL_LOGO_PATH_HERE"
+        src="/assets/kg%20logo.webp"
         alt="Dr. Nitin Mohan KidsGastro logo">
-
-      <span>KidsGastro</span>
+      <span class="brand-name">KidsGastro</span>
     </a>
   </header>
 
   <main>
-    <p class="error-number" aria-hidden="true">404</p>
+    <section class="error-content" aria-labelledby="error-heading">
+      <p class="error-code" aria-label="Error 404">404</p>
 
-    <h1>We couldn’t find this page.</h1>
+      <h1 id="error-heading">We couldn’t find this page.</h1>
 
-    <p>
-      It may have moved or the link may be incorrect.
-    </p>
+      <p class="message">
+        It may have moved or the link may be incorrect.
+      </p>
 
-    <div class="actions">
-      <a class="btn home" href="https://drnitinmohan.com/">
+      <a class="home-button" href="https://drnitinmohan.com/">
         Back to drnitinmohan.com
       </a>
-    </div>
+    </section>
   </main>
 
-  <footer>
-    © 2026 KidsGastro. All rights reserved.
+  <footer class="site-footer">
+    <p>© 2026 KidsGastro. All rights reserved.</p>
   </footer>
 
 </body>
