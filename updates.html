@@ -150,10 +150,6 @@ select{cursor:pointer}
 .time-card .time-pickers label{font-size:.78rem;color:var(--muted)}
 .time-card .time-pickers select{min-width:0;padding:10px 8px}
 @media(max-width:480px){.time-card .time-pickers{grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}.time-card .time-pickers select{font-size:.88rem;padding:10px 5px}}
-.time-card .manual-time-entry{margin-top:2px}
-.time-card .manual-time-entry input{max-width:260px}
-.time-card .time-pickers{margin-top:2px}
-
 
 
 /* Brighter, more playful control-panel styling */
@@ -257,20 +253,72 @@ select.setting-state-unchanged{
   background:#f7faff;color:#526879;font-size:.9rem;
 }
 
-
-.has-error{border:2px solid #b42318!important;background:#fff1f0!important;outline:none!important}
-#formControls:disabled{opacity:.62}
 </style>
 
 <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate, max-age=0">
 <meta http-equiv="Pragma" content="no-cache">
 <meta name="referrer" content="same-origin">
+<style>
+html:not(.kg-admin-ok) body{visibility:hidden!important}
+#kg-admin-lock{border:1px solid #b8cde0;background:#fff;color:#0759a8;border-radius:7px;padding:8px 12px;font-weight:700;cursor:pointer;margin:0 0 12px auto;display:block}
+</style>
+<script>
+/* Fail-closed browser gate for the 15-minute admin session.
+   This controls page display only; GitHub Pages cannot enforce server-side access. */
+(function(){
+  "use strict";
+  const KEY = "kg_admin_authenticated_until";
+  const LOGIN = new URL("/admin.html", window.location.origin);
+  let redirecting = false;
 
+  function readExpiry(){
+    try {
+      const raw = sessionStorage.getItem(KEY);
+      const expiry = Number(raw);
+      return raw && Number.isFinite(expiry) ? expiry : 0;
+    } catch (_) {
+      return 0; // Storage unavailable means no authenticated session.
+    }
+  }
+
+  function lock(){
+    if (redirecting) return;
+    redirecting = true;
+    try { sessionStorage.removeItem(KEY); } catch (_) {}
+    const returnTo = window.location.pathname + window.location.search + window.location.hash;
+    LOGIN.searchParams.set("return", returnTo);
+    window.location.replace(LOGIN.href);
+  }
+
+  function check(){
+    const expiry = readExpiry();
+    if (!expiry || Date.now() >= expiry) {
+      lock();
+      return false;
+    }
+    document.documentElement.classList.add("kg-admin-ok");
+    return true;
+  }
+
+  // Run synchronously in the document head, before the editor can be displayed.
+  if (!check()) return;
+
+  document.addEventListener("visibilitychange", function(){
+    if (!document.hidden) check();
+  });
+  window.addEventListener("focus", check);
+  window.addEventListener("pageshow", check);
+
+  const remaining = readExpiry() - Date.now();
+  window.setTimeout(lock, Math.max(0, remaining));
+})();
+</script>
 
 </head>
 <body>
 <div class="wrap">
 <header>
+  <button id="kg-admin-lock" type="button" onclick="sessionStorage.removeItem('kg_admin_authenticated_until');location.replace('/admin.html?return='+encodeURIComponent(location.pathname+location.search+location.hash))">Lock / Log out</button>
   <h1>Website Change Request</h1>
   <p><a class="back" href="https://drnitinmohan.com/">← Return to website</a></p>
 </header>
@@ -284,7 +332,6 @@ select.setting-state-unchanged{
         <span id="previousLoadState" class="previous-load-state" role="status" aria-live="polite"></span>
       </div>
     </section>
-    <fieldset id="formControls" disabled style="border:0;padding:0;margin:0;min-width:0">
     <section class="section">
       <div class="section-head"><span class="num">1</span><h2>Website settings</h2></div>
 
@@ -391,7 +438,6 @@ select.setting-state-unchanged{
 </section>
     <div class="actions"><button class="primary" type="button" id="download">↓ Create request</button><button class="secondary" type="reset">Reset form</button></div>
     <div class="status" id="status" role="status" aria-live="polite"></div>
-    </fieldset>
   </form>
 </main>
 </div>
@@ -503,17 +549,11 @@ select.setting-state-unchanged{
       el.textContent=`Previous state: ${label} · ${timing}${expiry}${dateLabel} · ${requested}`;
     });
   }
-  function unlockFormControls() {
-    const controls = $('formControls');
-    if (controls) controls.disabled = false;
-  }
-
   function loadPreviousJsonObject(obj,name='previous JSON') {
     if(!obj || typeof obj!=='object' || Array.isArray(obj)) throw new Error('The selected file is not a JSON configuration object.');
     previousConfig=obj;
     previousFileName=name;
     updatePreviousLabels();
-    unlockFormControls();
   }
   async function loadLatestSavedConfiguration({quiet=false}={}) {
     const state=$('previousLoadState');
@@ -585,7 +625,6 @@ select.setting-state-unchanged{
         if(!obj || typeof obj!=='object' || Array.isArray(obj)) throw new Error('The JSON must contain a configuration object at its top level.');
         previousConfig=obj;
         previousFileName=file.name;
-        unlockFormControls();
         try { updatePreviousLabels(); } catch(labelError) {}
         if(state){state.className='previous-load-state success';state.textContent=`Successfully loaded ${file.name} (${Math.round(file.size/1024)} KB).`;}
         $('status').classList.remove('status-error');
@@ -725,41 +764,7 @@ select.setting-state-unchanged{
         const minuteSelect=makeSelect('minute','Minute',minutes,minuteValue);
         const ampmSelect=makeSelect('ampm','AM / PM',['AM','PM'],match?ampm:'AM');
         timeRow.append(hourSelect,minuteSelect,ampmSelect);
-        timeRow.style.display='grid';
-        const manualTimeWrap=document.createElement('div');
-        manualTimeWrap.className='field manual-time-entry';
-        const manualTimeLabel=document.createElement('label');
-        manualTimeLabel.textContent='Or type the time manually';
-        const manualTimeInput=document.createElement('input');
-        manualTimeInput.type='text';
-        manualTimeInput.inputMode='text';
-        manualTimeInput.autocomplete='off';
-        manualTimeInput.placeholder='e.g. 10:30 AM or 22:30';
-        manualTimeInput.setAttribute('aria-label',label.textContent+' typed time');
-        manualTimeInput.value=match?`${hour12}:${minuteValue} ${ampm}`:'';
-        manualTimeWrap.append(manualTimeLabel,manualTimeInput);
-        const syncScheduleEdge=()=>{
-          const date=dateInput.value, hour=hourSelect.value, minute=minuteSelect.value, ap=ampmSelect.value;
-          if(!date||!hour||!minute||!ap){group[edge]='';return;}
-          let h=Number(hour)%12;
-          if(ap==='PM') h+=12;
-          group[edge]=`${date}T${String(h).padStart(2,'0')}:${minute}`;
-        };
-        manualTimeInput.addEventListener('input',()=>{
-          const value=manualTimeInput.value.trim();
-          const twelve=value.match(/^(0?[1-9]|1[0-2]):([0-5]\d)\s*(AM|PM)$/i);
-          const twentyFour=value.match(/^([01]?\d|2[0-3]):([0-5]\d)$/);
-          if(!twelve&&!twentyFour){group[edge]='';return;}
-          let h,ap;
-          if(twelve){h=Number(twelve[1]);ap=twelve[3].toUpperCase();}
-          else {const h24=Number(twentyFour[1]);h=h24%12||12;ap=h24>=12?'PM':'AM';}
-          hourSelect.value=String(h).padStart(2,'0');
-          minuteSelect.value=(twelve||twentyFour)[2];
-          ampmSelect.value=ap;
-          syncScheduleEdge();
-          updateClock();
-        });
-        [dateInput,hourSelect,minuteSelect,ampmSelect].forEach(el=>el.addEventListener('change',syncScheduleEdge));
+        timeRow.style.display='none';
         const picker=document.createElement('div');picker.className='clock-picker';
         const face=document.createElement('div');face.className='clock-face';face.setAttribute('role','group');face.setAttribute('aria-label','Animated clock time picker');
         const side=document.createElement('div');side.className='clock-side';
@@ -790,14 +795,9 @@ select.setting-state-unchanged{
         hourMode.addEventListener('click',()=>{clockStage='hour';drawDial(Array.from({length:12},(_,n)=>String(n+1).padStart(2,'0')));});
         minuteMode.addEventListener('click',()=>{clockStage='minute';drawDial(Array.from({length:12},(_,n)=>String(n*5).padStart(2,'0')));});
         ampmMode.addEventListener('click',()=>{ampmSelect.value=ampmSelect.value==='AM'?'PM':'AM';ampmSelect.dispatchEvent(new Event('change',{bubbles:true}));updateClock();});
-        [hourSelect,minuteSelect,ampmSelect].forEach(sel=>sel.addEventListener('change',()=>{
-          manualTimeInput.value=hourSelect.value&&minuteSelect.value&&ampmSelect.value
-            ?`${hourSelect.value}:${minuteSelect.value} ${ampmSelect.value}`:'';
-          syncScheduleEdge();
-          updateClock();
-        }));
+        [hourSelect,minuteSelect,ampmSelect].forEach(sel=>sel.addEventListener('change',updateClock));
         drawDial(Array.from({length:12},(_,n)=>String(n+1).padStart(2,'0')));
-        wrap.append(label,dateLabel,dateInput);if(currentButton)wrap.appendChild(currentButton);wrap.append(timeLabel,manualTimeWrap,timeRow,picker);grid.appendChild(wrap);
+        wrap.append(label,dateLabel,dateInput);if(currentButton)wrap.appendChild(currentButton);wrap.append(timeLabel,picker);grid.appendChild(wrap);
       });
       panel.appendChild(grid);editor.appendChild(panel);
     });
@@ -979,15 +979,6 @@ select.setting-state-unchanged{
   }, 0));
 
   $('download').addEventListener('click', () => {
-    document.querySelectorAll('.has-error').forEach(el => el.classList.remove('has-error'));
-    $('status').classList.remove('status-error','status-success');
-
-    if (!previousConfig) {
-      $('status').textContent = 'Please upload a valid previous JSON configuration file first to enable form submission.';
-      $('status').classList.add('status-error');
-      $('uploadPreviousJson').focus();
-      return;
-    }
 
     if (!changedFields().length && $('phoneVisibility').value === 'unchanged' && !previousConfig) {
       $('status').textContent = 'Load a previous JSON to carry it forward, or select at least one new website change.';
@@ -1007,45 +998,9 @@ select.setting-state-unchanged{
     for(const group of scheduleState.groups){
       const members=changedFields().filter(f=>scheduleState.settings[f.key]?.duration==='temporary'&&scheduleState.settings[f.key].groupId===group.id);
       if(!members.length)continue;
-      if(!group.start||!group.end){
-        const panel = [...document.querySelectorAll('.schedule-group')].find(el =>
-          el.querySelector(`[data-schedule-group="${group.id}"]`));
-        let firstInvalid = null;
-        ['start','end'].forEach(edge => {
-          ['date','hour','minute','ampm'].forEach(part => {
-            const input = panel?.querySelector(`[data-schedule-group="${group.id}"][data-edge="${edge}"][data-part="${part}"]`);
-            if (!input || !input.value) {
-              input?.classList.add('has-error');
-              if (!firstInvalid && input) firstInvalid = input;
-            }
-          });
-          const manual = panel?.querySelector(`.time-card input.manual-time-input[data-edge="${edge}"]`);
-          if (!group[edge] && manual && manual.value.trim()) {
-            manual.classList.add('has-error');
-            if (!firstInvalid) firstInvalid = manual;
-          }
-        });
-        $('status').textContent='For every temporary schedule, select a date, hour, minute and AM/PM for both start and end. You can also type the time manually.';
-        $('status').classList.add('status-error');
-        if (firstInvalid) { firstInvalid.scrollIntoView({behavior:'smooth',block:'center'}); firstInvalid.focus(); }
-        return;
-      }
-      if(new Date(group.end)<=new Date(group.start)){
-        $('status').textContent='Every temporary schedule must end after it starts.';
-        $('status').classList.add('status-error');
-        const panel = [...document.querySelectorAll('.schedule-group')].find(el => el.querySelector(`[data-schedule-group="${group.id}"]`));
-        const endDate = panel?.querySelector(`[data-schedule-group="${group.id}"][data-edge="end"][data-part="date"]`);
-        endDate?.classList.add('has-error'); endDate?.scrollIntoView({behavior:'smooth',block:'center'}); endDate?.focus();
-        return;
-      }
-      if(new Date(group.end)<=new Date()){
-        $('status').textContent='The end time of every temporary schedule must still be in the future. The start time may be in the past.';
-        $('status').classList.add('status-error');
-        const panel = [...document.querySelectorAll('.schedule-group')].find(el => el.querySelector(`[data-schedule-group="${group.id}"]`));
-        const endDate = panel?.querySelector(`[data-schedule-group="${group.id}"][data-edge="end"][data-part="date"]`);
-        endDate?.classList.add('has-error'); endDate?.scrollIntoView({behavior:'smooth',block:'center'}); endDate?.focus();
-        return;
-      }
+      if(!group.start||!group.end){$('status').textContent='For every temporary schedule, select a date, hour, minute and AM/PM for both start and end.';$('status').classList.add('status-error');return;}
+      if(new Date(group.end)<=new Date(group.start)){ $('status').textContent='Every temporary schedule must end after it starts.';$('status').classList.add('status-error');return;}
+      if(new Date(group.end)<=new Date()){ $('status').textContent='The end time of every temporary schedule must still be in the future. The start time may be in the past.';$('status').classList.add('status-error');return;}
       changeSchedules.groups.push({id:group.id,startDateTime:group.start,endDateTime:group.end,settings:members.map(f=>f.key)});
     }
     const durations=Object.values(changeSchedules.settings).map(x=>x.duration);
@@ -1248,6 +1203,26 @@ select.setting-state-unchanged{
       endDateTime:g.endDateTime,
       settings:(g.settings||[]).filter(k=>mergedScheduleSettings[k]?.duration==='temporary')
     }));
+    const announcementTargetSites = {
+      mainSite: { path: '/index.html', include: true },
+      subSites: [
+        '/publications/index.html',
+        '/services/index.html',
+        '/testimonials/index.html',
+        '/treatments/index.html',
+        '/about/index.html',
+        '/blog/index.html',
+        '/faqs/index.html',
+        '/gallery/index.html'
+      ],
+      excludedSites: [
+        '/updates.html',
+        '/admin.html',
+        '/updates/index.html',
+        '/admin/index.html'
+      ],
+      includeOnlyListedDisplayPages: true
+    };
     const changeSchedulesMerged = {
       settings:mergedScheduleSettings,
       groups:finalGroups,
@@ -1255,7 +1230,8 @@ select.setting-state-unchanged{
       announcementStrips:{
         coordinated:true,
         scope:'all-sites',
-        targets:{mainSite:true,subSites:true,match:'all-kidsgastro-pages'},
+        targets:{mainSite:true,subSites:true,match:'explicit-display-site-list',sites:announcementTargetSites},
+        excludedSites:announcementTargetSites.excludedSites,
         shareSchedule:true,
         settings:['announcementMarquee','mainAnnouncementStrip','additionalAnnouncementStrip']
       }
@@ -1296,22 +1272,37 @@ select.setting-state-unchanged{
     // One shared layout contract prevents the main site and any sub-site
     // from rendering announcement bars at different widths or with different
     // sizing rules. Both strips use the same full-available-width geometry.
+    // Fixed, shared strip geometry: both announcement bars must have the same
+    // dimensions on the main site and all eight display subsites.
     const announcementStripLayout = {
       width: '100%',
       maxWidth: '100%',
       minWidth: '0',
+      height: '46px',
+      minHeight: '46px',
+      maxHeight: '46px',
+      padding: '0 15px',
+      margin: '0',
       boxSizing: 'border-box',
-      display: 'block',
+      display: 'flex',
+      alignItems: 'center',
+      flex: '0 0 46px',
+      lineHeight: '1.35',
       container: 'full-available-viewport-width',
       horizontalOverflow: 'hidden',
+      verticalOverflow: 'hidden',
       uniformAcrossSites: true,
-      sharedByStrips: true
+      sharedByStrips: true,
+      equalDimensionsForBothStrips: true,
+      responsiveRule: 'same-height-and-width-rules-at-each-viewport-size'
     };
     const announcementSiteWide = {
       enabled: effectiveAnnouncementEnabled,
       scope: 'all-sites',
       applyTo: 'main-and-all-sub-sites',
-      targets: { mainSite: true, subSites: true, match: 'all-kidsgastro-pages' },
+      targets: { mainSite: true, subSites: true, match: 'explicit-display-site-list', sites: announcementTargetSites },
+      includedSubsitePaths: [...announcementTargetSites.subSites],
+      excludedSitePaths: [...announcementTargetSites.excludedSites],
       renderOn: 'every-page',
       uniformAcrossSites: true,
       coordinatedStrips: true,
@@ -1330,7 +1321,8 @@ select.setting-state-unchanged{
         backgroundColor: details.mainStripBackgroundColor ?? details.announcementBackgroundColors?.mainStrip ?? previousMainStrip.backgroundColor ?? '#ffc400',
         speedSeconds: details.announcementMarqueeSpeedsSeconds?.standardStrip ?? previousMainStrip.speedSeconds ?? 18,
         scope: 'all-sites',
-        targets: {mainSite:true,subSites:true},
+        targets: {mainSite:true,subSites:true,sites:announcementTargetSites},
+        excludedSites: [...announcementTargetSites.excludedSites],
         schedule: {...stripSchedule}
       },
       additionalStrip: {
@@ -1343,7 +1335,8 @@ select.setting-state-unchanged{
         backgroundColor: details.announcementBackgroundColors?.secondStrip ?? previousAdditionalStrip.backgroundColor ?? '#f3a6c8',
         speedSeconds: details.announcementMarqueeSpeedsSeconds?.customStrip ?? previousAdditionalStrip.speedSeconds ?? 18,
         scope: 'all-sites',
-        targets: {mainSite:true,subSites:true},
+        targets: {mainSite:true,subSites:true,sites:announcementTargetSites},
+        excludedSites: [...announcementTargetSites.excludedSites],
         schedule: {...stripSchedule}
       }
     };
@@ -1409,10 +1402,13 @@ select.setting-state-unchanged{
       configContract: 'kidsgastro-manual-settings-v3',
       announcementContract: 'all-sites-two-strip-uniform-v2',
       announcementStripLayout,
+      announcementTargetSites,
       siteScope: {
         applyTo: 'all-sites',
         includeMainSite: true,
         includeSubSites: true,
+        announcementTargets: announcementTargetSites,
+        excludedAnnouncementSites: [...announcementTargetSites.excludedSites],
         phoneNumberVisibility: 'all-sites',
         renderAnnouncementOnEveryPage: true
       },
