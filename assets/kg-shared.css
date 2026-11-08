@@ -239,3 +239,40 @@ header.kg-space-panel button.toggle[aria-expanded="true"]{
 @keyframes kg-appointment-shine-v4{0%,18%{background-position:130% 0}72%,100%{background-position:-130% 0}}
 @keyframes kg-appointment-attention-v4{0%,100%{box-shadow:0 5px 15px rgba(173,124,0,.27),0 0 0 3px rgba(255,196,0,.16)}50%{box-shadow:0 6px 19px rgba(173,124,0,.34),0 0 0 5px rgba(255,196,0,.22)}}
 @media(prefers-reduced-motion:reduce){.booking-toggle{animation:none!important;background-image:none!important;background-color:#ffc400!important;box-shadow:0 4px 14px rgba(173,124,0,.3),0 0 0 3px rgba(255,196,0,.18)!important}}
+
+
+/* ===== Reliability fixes: story imagery and WhatsApp contact ===== */
+.main-image-story{min-width:0;}
+.main-image-story-media{display:block!important;position:relative!important;min-width:0;min-height:clamp(320px,34vw,520px)!important;height:100%;visibility:visible!important;opacity:1!important;}
+.main-image-story-media img{display:block!important;position:absolute!important;inset:0!important;width:100%!important;height:100%!important;min-width:100%!important;min-height:100%!important;max-width:none!important;object-fit:cover!important;object-position:center center!important;visibility:visible!important;opacity:1!important;}
+@media(min-width:721px){.main-image-story{min-height:clamp(320px,34vw,520px)!important;align-items:stretch!important}.main-image-story-media{min-height:clamp(320px,34vw,520px)!important;}}
+@media(max-width:720px){.main-image-story-media{min-height:0!important;height:auto!important;aspect-ratio:4/3!important}.main-image-story-media img{position:absolute!important;}}
+.whatsapp-float{position:fixed!important;right:max(16px,env(safe-area-inset-right))!important;bottom:max(16px,env(safe-area-inset-bottom))!important;top:auto!important;z-index:2147483007!important;display:flex!important;visibility:visible!important;opacity:1!important;pointer-events:auto!important;touch-action:manipulation!important;-webkit-tap-highlight-color:transparent;user-select:none;-webkit-user-select:none;}
+.whatsapp-float.is-dragging{cursor:pointer!important;transition:none!important;}
+@media(max-width:760px){.whatsapp-float{right:max(14px,env(safe-area-inset-right))!important;bottom:max(14px,env(safe-area-inset-bottom))!important;width:54px!important;height:54px!important;min-width:54px!important;min-height:54px!important;padding:0!important;}}
+
+
+/* Final interaction and appointment-button polish. */
+a[href], a[href] *, area[href], [role="link"], [role="link"] * {
+  cursor: pointer !important;
+}
+.booking-toggle,
+.booking-toggle:visited,
+.booking-toggle:focus,
+.booking-toggle:focus-visible,
+.booking-toggle:active {
+  background-color: #ffc400 !important;
+  background-image: none !important;
+  color: #123c77 !important;
+  border-color: #ffc400 !important;
+}
+.booking-toggle:hover {
+  background-color: #ffc400 !important;
+  background-image: none !important;
+  color: #123c77 !important;
+  border-color: #ffc400 !important;
+}
+
+a[href], area[href], button, [role="button"], summary, label[for] {
+  cursor: pointer;
+}

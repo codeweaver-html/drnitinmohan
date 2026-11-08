@@ -294,32 +294,42 @@
  }
 
  function drawBlackHole(c,x,y,size,phase,fade){
-  // A clean, smooth black-hole silhouette: one dark core and one continuous
-  // luminous accretion disc. No clusters of dots, pits, or repeated small rings.
+  // Clip-art-inspired black hole: a clean black core wrapped by one broad,
+  // asymmetric white lensing band. Flat fills only; no glow, gradients or dots.
   c.save();c.translate(x,y);c.globalAlpha=fade;
-  const glow=c.createRadialGradient(0,0,size*.30,0,0,size*1.22);
-  glow.addColorStop(0,'rgba(255,255,255,.23)');
-  glow.addColorStop(.42,'rgba(191,222,255,.14)');
-  glow.addColorStop(1,'rgba(120,177,255,0)');
-  c.fillStyle=glow;c.beginPath();c.arc(0,0,size*1.22,0,TAU);c.fill();
-  // Broad, unbroken disc with a soft falloff at both ends.
-  c.save();c.rotate(Math.sin(phase*.22)*.08);
-  const disc=c.createLinearGradient(-size*1.05,0,size*1.05,0);
-  disc.addColorStop(0,'rgba(255,255,255,0)');
-  disc.addColorStop(.18,'rgba(204,229,255,.48)');
-  disc.addColorStop(.38,'rgba(255,255,255,.98)');
-  disc.addColorStop(.62,'rgba(255,255,255,.98)');
-  disc.addColorStop(.82,'rgba(204,229,255,.48)');
-  disc.addColorStop(1,'rgba(255,255,255,0)');
-  c.fillStyle=disc;c.beginPath();c.ellipse(0,0,size*.99,size*.34,0,0,TAU);c.fill();
+  c.rotate(Math.sin(phase*.18)*.035);
+  // Back half of the warped accretion silhouette. Slightly compress only
+  // the white disc vertically so its rim reads as a fine, natural band.
+  c.save();c.scale(1,.76);
+  c.fillStyle='#fff';
+  c.beginPath();
+  c.moveTo(-size*1.12,size*.02);
+  c.bezierCurveTo(-size*.96,-size*.30,-size*.78,-size*.35,-size*.58,-size*.67);
+  c.bezierCurveTo(-size*.30,-size*1.10,size*.28,-size*1.08,size*.62,-size*.69);
+  c.bezierCurveTo(size*.82,-size*.43,size*.83,-size*.17,size*1.18,size*.02);
+  c.bezierCurveTo(size*.78,size*.28,size*.40,size*.34,size*.04,size*.28);
+  c.bezierCurveTo(-size*.43,size*.20,-size*.82,size*.25,-size*1.12,size*.02);
+  c.closePath();c.fill();
   c.restore();
-  // One perfectly smooth event horizon; its silhouette stays uncluttered.
-  const core=c.createRadialGradient(-size*.12,-size*.15,size*.04,0,0,size*.47);
-  core.addColorStop(0,'#02050b');core.addColorStop(.78,'#030914');core.addColorStop(1,'#101d31');
-  c.fillStyle=core;c.beginPath();c.arc(0,0,size*.43,0,TAU);c.fill();
-  // A single restrained highlight gives depth without a dotted or pitted texture.
-  c.globalAlpha=fade*.28;c.strokeStyle='#fff';c.lineWidth=Math.max(1,size*.018);
-  c.beginPath();c.arc(0,0,size*.445,Math.PI*.12,Math.PI*.88);c.stroke();
+  // Event horizon: a single uninterrupted black silhouette.
+  c.fillStyle='#000';c.beginPath();
+  c.ellipse(size*.015,-size*.035,size*.49,size*.53,-.035,0,TAU);c.fill();
+  // Foreground portion of the disc bends across the lower face of the core.
+  // Keep it thinner than before for a more restrained lensing silhouette.
+  c.save();c.scale(1,.76);
+  c.fillStyle='#fff';c.beginPath();
+  c.moveTo(-size*1.26,size*.03);
+  c.bezierCurveTo(-size*1.08,-size*.19,-size*.78,-size*.18,-size*.54,-size*.35);
+  c.bezierCurveTo(-size*.20,-size*.56,size*.26,-size*.51,size*.58,-size*.28);
+  c.bezierCurveTo(size*.83,-size*.10,size*1.18,size*.01,size*1.31,size*.22);
+  c.bezierCurveTo(size*1.38,size*.38,size*1.05,size*.57,size*.66,size*.54);
+  c.bezierCurveTo(size*.26,size*.52,-size*.12,size*.37,-size*.54,size*.34);
+  c.bezierCurveTo(-size*.91,size*.31,-size*1.20,size*.19,-size*1.26,size*.03);
+  c.closePath();c.fill();
+  c.restore();
+  // Re-cut a crisp lower edge of the horizon so the black centre remains solid.
+  c.fillStyle='#000';c.beginPath();
+  c.ellipse(size*.015,size*.035,size*.485,size*.405,-.035,0,TAU);c.fill();
   c.restore();
  }
 
