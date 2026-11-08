@@ -1,3 +1,15 @@
+/* ===== PAGE SCOPE / ADMIN EXCLUSION ===== */
+(()=>{
+  const path=(location.pathname||"/").replace(/\\+/g,"/").toLowerCase();
+  const leaf=path.split("/").filter(Boolean).pop()||"";
+  const excluded=/(^|\/)(admin|updates)(\/|\.html$)/.test(path);
+  const home=(path==="/"||path==="/index.html");
+  document.documentElement.classList.toggle("kg-shared-excluded",excluded);
+  document.documentElement.classList.toggle("kg-shared-home",home&&!excluded);
+  document.documentElement.classList.toggle("kg-shared-subsite",!home&&!excluded);
+  window.KGSharedExcluded=excluded;
+})();
+
 /* KidsGastro shared JavaScript bundle.
    The announcement synchronizer self-disables on the homepage because
    #kg-manual-settings-bridge already owns homepage announcements. It remains
@@ -11,7 +23,7 @@
    data-kg-cosmos-panel="true" to that section.
    The engine creates its own fixed canvas if one is not already present. */
 (()=>{'use strict';
- if(window.KGCosmosSpace)return;
+ if(window.KGSharedExcluded||window.KGCosmosSpace)return;
  // Start only after the DOM body exists; safe for async/defer and head inclusion.
  const boot=()=>{
  if(window.KGCosmosSpace)return;
@@ -54,9 +66,10 @@
  const ctx=canvas.getContext('2d',{alpha:true});canvas.style.opacity=String(reduce?CONFIG.reducedOpacity:(coarse?CONFIG.mobileOpacity:CONFIG.opacity));
  const selectors=[
   '[data-kg-cosmos-panel]','.kg-space-panel',
-  '.header','.site-header','#site-header','.main-header','header',
+  '[role="banner"]','.header','.site-header','#site-header','.main-header','header',
+  'header #links','header .links','.site-header #links','.site-header .links',
   '.hero-grid > div:first-child','.newsletter-section','.social-intro',
-  '.footer-contact-band','.footer-bottom'
+  'footer','.footer','#site-footer','.footer-contact-band','.footer-bottom'
  ];
  const panels=[];let panelResizeObserver=null;
  let W=0,H=0,D=1,raf=0,last=0,scrollQueued=false,frameInterval=0,slowFrames=0,fastFrames=0,lastPerfCheck=0;
@@ -145,9 +158,10 @@
    p.r=p.el.getBoundingClientRect();
    const pr=p.r;if(!pr||pr.width<1||pr.height<1)return;
    p.blocked=[];p.safePoints=[];p.layoutWidth=pr.width;p.layoutHeight=pr.height;
-   // Apply the entire menu shield to every panel canvas, even when the menu
-   // extends beyond the header panel into the next section.
-   if(menuShield){
+   // Shield menu controls from the global scene, but let the expanded menu
+   // host its own canvas so the hamburger expansion has the same cosmic scene.
+   const isExpandedMenu=p.el.matches('header #links,header .links,.site-header #links,.site-header .links');
+   if(menuShield&&!isExpandedMenu){
     const left=clamp(menuShield.left,0,W),top=clamp(menuShield.top,0,H);
     const right=clamp(menuShield.right,0,W),bottom=clamp(menuShield.bottom,0,H);
     if(right>left&&bottom>top)p.blocked.push({left,top,right,bottom});
@@ -760,13 +774,13 @@
    const by=edge>=2?rand(y0+margin,y1-margin):(edge===0?y0+margin:y1-margin);
    panel.blackHole={x:bx,y:by,age:0,consumed:false,consumedCount:0,fragments:[],
     radius:clamp(scale*.075,small?13:18,small?18:30),phase:rand(0,TAU),
-    strength:rand(3.1,3.8)};
+    strength:rand(3.1,3.8),life:5.8};
    panel.nextBlackHole=now+rand(18000,32000)+panel.repeatStagger;
   }
   if(panel.blackHole){
    const bh=panel.blackHole;
    if(animate){bh.age+=dt;bh.phase+=dt*.9;}
-   const horizon=bh.radius*.53,reach=bh.radius*6.7;
+   const horizon=bh.radius*.53,reach=bh.radius*8.5;
    // A black hole is a one-object event: after the first successful swallow,
    // it stops pulling in anything else and rapidly fades out.
    if(!bh.consumedCount){
@@ -775,11 +789,11 @@
      const dx=bh.x-body.x,dy=bh.y-body.y,d=Math.max(1,Math.hypot(dx,dy));
      if((d<reach||body.obj._kgCaptured)&&animate){
       body.obj._kgCaptured=true;
-      const falloff=d<reach?Math.max(0,1-d/reach):.2;
+      const falloff=d<reach?Math.max(0,1-d/reach):.08;
       const influence=falloff*falloff*bh.strength,nx=dx/d,ny=dy/d;
-      const tangent=Math.min(2.5,influence*2.45),pull=48+influence*185;
-      body.obj.vx=(body.obj.vx||body.vx)+(nx*pull-ny*pull*1.65)*influence*dt;
-      body.obj.vy=(body.obj.vy||body.vy)+(ny*pull+nx*pull*1.65)*influence*dt;
+      const tangent=Math.min(3.4,influence*3.0),pull=52+influence*225;
+      body.obj.vx=(body.obj.vx||body.vx)+(nx*pull-ny*pull*(1.45+influence*1.8))*influence*dt;
+      body.obj.vy=(body.obj.vy||body.vy)+(ny*pull+nx*pull*(1.45+influence*1.8))*influence*dt;
       body.obj.x+=(-ny*tangent*31+nx*influence*30)*dt;
       body.obj.y+=( nx*tangent*31+ny*influence*30)*dt;
       body.obj._kgWarp=Math.max(body.obj._kgWarp||0,influence);
@@ -816,7 +830,7 @@
     });
     bh.fragments=bh.fragments.filter(f=>f.age<f.life);
    }
-   const fade=bh.consumedCount?Math.max(0,1-(bh.fadeOut||0)/.38):Math.min(1,bh.age/.65);
+   const fade=Math.min(1,bh.age/.65)*Math.max(0,Math.min(1,(bh.life-bh.age)/.65));
    drawBlackHole(ctx,bh.x,bh.y,bh.radius,bh.phase,fade);
    bh.fragments.forEach(f=>{
     const opacity=Math.max(0,1-f.age/f.life)*fade;
@@ -952,7 +966,7 @@
  */
 (() => {
   "use strict";
-  if (document.getElementById("kg-manual-settings-bridge")) return;
+  if (window.KGSharedExcluded || document.getElementById("kg-manual-settings-bridge")) return;
 
   const DEFAULT_TEXT =
     "OFFLINE APPOINTMENTS AVAILABLE RIGHT NOW. CLICK THE APPOINTMENT BUTTON BELOW TO PROCEED.";
@@ -1184,6 +1198,7 @@
 /* ===== SITE-WIDE HOME LOGO ROUTING ===== */
 (function(){
   "use strict";
+  if(window.KGSharedExcluded)return;
   function routeLogos(){
     document.querySelectorAll('a').forEach(function(link){
       if(link.closest('.booking-menu-panel,.booking-option,.booking-choice-logo'))return;
@@ -1206,6 +1221,7 @@
    Shared by the homepage and standalone sub-sites. Keeps page-specific content/scripts intact. */
 (function () {
   "use strict";
+  if(window.KGSharedExcluded)return;
 
   function init() {
     var header = document.querySelector("header.header");
@@ -1273,4 +1289,46 @@
   } else {
     init();
   }
+})();
+
+
+/* ===== VERTICAL-ONLY WHATSAPP FLOAT DRAG ===== */
+(()=>{
+ "use strict";
+ if(window.KGWhatsAppVerticalDrag)return;
+ const init=()=>{
+  const button=document.querySelector('.whatsapp-float');
+  if(!button||button.dataset.kgVerticalDrag==="1")return;
+  button.dataset.kgVerticalDrag="1";
+  button.style.touchAction="none";button.style.cursor="grab";
+  let active=false,moved=false,startY=0,startTop=0,pointerId=null;
+  const clampTop=value=>Math.max(8,Math.min(window.innerHeight-button.getBoundingClientRect().height-8,value));
+  button.addEventListener("pointerdown",event=>{
+   if(event.pointerType==="mouse"&&event.button!==0)return;
+   const rect=button.getBoundingClientRect();
+   active=true;moved=false;pointerId=event.pointerId;startY=event.clientY;startTop=rect.top;
+   button.classList.add("is-dragging");
+   button.style.left="auto";button.style.right="max(16px, env(safe-area-inset-right))";
+   button.style.bottom="auto";button.style.top=rect.top+"px";
+   try{button.setPointerCapture(pointerId);}catch(_){}
+   event.preventDefault();
+  });
+  button.addEventListener("pointermove",event=>{
+   if(!active||event.pointerId!==pointerId)return;
+   const delta=event.clientY-startY;if(Math.abs(delta)>3)moved=true;
+   button.style.top=clampTop(startTop+delta)+"px";event.preventDefault();
+  });
+  const finish=event=>{
+   if(!active||event.pointerId!==pointerId)return;
+   active=false;button.classList.remove("is-dragging");button.style.cursor="grab";
+   if(moved){button.dataset.kgDragged="1";window.setTimeout(()=>{delete button.dataset.kgDragged;},350);}
+   pointerId=null;
+  };
+  button.addEventListener("pointerup",finish);button.addEventListener("pointercancel",finish);
+  button.addEventListener("click",event=>{
+   if(button.dataset.kgDragged==="1"){event.preventDefault();event.stopImmediatePropagation();}
+  },true);
+  window.addEventListener("resize",()=>{if(button.style.top)button.style.top=clampTop(parseFloat(button.style.top)||0)+"px";},{passive:true});
+ };
+ if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",init,{once:true});else init();
 })();

@@ -276,3 +276,255 @@ a[href], a[href] *, area[href], [role="link"], [role="link"] * {
 a[href], area[href], button, [role="button"], summary, label[for] {
   cursor: pointer;
 }
+
+
+/* ========================================================================
+   KIDSGASTRO SUBSITE MASTER THEME
+   Exact identity from the supplied homepage: blue #0759A8, gold #FFC400,
+   white navigation, pale-blue content surfaces. Applied only when the shared
+   JS marks a regular subsite; never applied to admin.html or updates.html.
+   ======================================================================== */
+html.kg-shared-subsite{
+  --kg-blue:#0759a8; --kg-blue-deep:#064b8d; --kg-blue-dark:#123c77;
+  --kg-yellow:#ffc400; --kg-yellow-hover:#ffda4a; --kg-ink:#18384d;
+  --kg-muted:#596f81; --kg-page:#f7f9fb; --kg-pale:#eaf2f8;
+  --kg-line:#dce6ee; --kg-white:#fff;
+  --site-blue:#0759a8; --site-yellow:#ffc400;
+  --navblue:#0759a8; --navdeep:#064b8d;
+  --ink:#18384d; --muted:#596f81; --cream:#f7f9fb;
+  --line:#dce6ee; --teal:#0759a8; --mint:#eaf2f8;
+}
+html.kg-shared-subsite body{
+  background:#f7f9fb!important;color:#18384d!important;
+}
+html.kg-shared-subsite a{color:#0759a8;}
+html.kg-shared-subsite a:hover{color:#064b8d;}
+
+/* Header matches the homepage: blue shell, white brand/navigation, gold rule. */
+html.kg-shared-subsite header.header,
+html.kg-shared-subsite .header,
+html.kg-shared-subsite .site-header,
+html.kg-shared-subsite #site-header,
+html.kg-shared-subsite .main-header{
+  background:#0759a8!important;color:#fff!important;
+  border-bottom:3px solid #ffc400!important;
+  box-shadow:0 4px 16px rgba(0,35,82,.12)!important;
+}
+html.kg-shared-subsite header.header .brand,
+html.kg-shared-subsite header.header .brand *,
+html.kg-shared-subsite .site-header .brand,
+html.kg-shared-subsite .site-header .brand *,
+html.kg-shared-subsite header.header nav a:not(.btn),
+html.kg-shared-subsite .site-header nav a:not(.btn){color:#fff!important;}
+html.kg-shared-subsite header.header .brand small,
+html.kg-shared-subsite .site-header .brand small{color:#e1effb!important;}
+html.kg-shared-subsite header.header .brand .mark,
+html.kg-shared-subsite .site-header .brand .mark,
+html.kg-shared-subsite .footer-brand .mark{
+  background:#ffc400!important;color:#123c77!important;
+}
+html.kg-shared-subsite header.header .nav-dropdown>summary,
+html.kg-shared-subsite .site-header .nav-dropdown>summary{
+  color:#173e70!important;background:#f7fafc!important;border-color:#dce6ee!important;
+}
+html.kg-shared-subsite header.header .nav-dropdown-menu,
+html.kg-shared-subsite header.header .header-quick-menu,
+html.kg-shared-subsite .site-header .nav-dropdown-menu{
+  background:#fff!important;color:#18384d!important;border:1px solid #dce6ee!important;
+  box-shadow:0 14px 32px rgba(12,46,78,.18)!important;
+}
+
+/* Hamburger trigger: homepage blue button, white icon, gold focus ring. */
+html.kg-shared-subsite header.header .toggle,
+html.kg-shared-subsite header.header button.toggle,
+html.kg-shared-subsite .site-header .toggle{
+  background:#0759a8!important;color:#fff!important;border:1px solid #ffc400!important;
+  transition:background-color .22s ease,color .22s ease,transform .22s ease!important;
+}
+html.kg-shared-subsite header.header .toggle:hover,
+html.kg-shared-subsite header.header .toggle[aria-expanded="true"],
+html.kg-shared-subsite .site-header .toggle[aria-expanded="true"]{
+  background:#fff!important;color:#0759a8!important;transform:rotate(90deg)!important;
+  box-shadow:0 4px 14px rgba(7,89,168,.2)!important;
+}
+html.kg-shared-subsite header.header .toggle:focus-visible{outline:3px solid #ffc400!important;outline-offset:3px!important;}
+
+/* The expanded panel follows the homepage's white dropdown, with blue/gold
+   accents. The canvas animation is rendered inside this panel by the JS. */
+html.kg-shared-subsite header.header #links.open,
+html.kg-shared-subsite header.header .links.open,
+html.kg-shared-subsite .site-header #links.open,
+html.kg-shared-subsite .site-header .links.open{
+  position:absolute!important;isolation:isolate!important;overflow:hidden!important;
+  background:rgba(255,255,255,.86)!important;color:#18384d!important;
+  border:1px solid #d4e0e7!important;border-top:3px solid #ffc400!important;
+  box-shadow:0 18px 42px rgba(12,46,78,.22)!important;
+  animation:kg-uniform-menu-expand .26s cubic-bezier(.2,.75,.25,1) both!important;
+}
+html.kg-shared-subsite header.header #links.open a,
+html.kg-shared-subsite header.header .links.open a,
+html.kg-shared-subsite .site-header #links.open a,
+html.kg-shared-subsite .site-header .links.open a{
+  position:relative!important;z-index:2!important;color:#173e70!important;
+  border-radius:4px;transition:background .18s ease,color .18s ease!important;
+}
+html.kg-shared-subsite header.header #links.open a:hover,
+html.kg-shared-subsite header.header .links.open a:hover,
+html.kg-shared-subsite .site-header #links.open a:hover,
+html.kg-shared-subsite .site-header .links.open a:hover{
+  color:#0759a8!important;background:#eaf2f8!important;
+  box-shadow:inset 3px 0 #ffc400!important;
+}
+html.kg-shared-subsite header.header #links.open .nav-dropdown>summary,
+html.kg-shared-subsite header.header .links.open .nav-dropdown>summary{
+  background:#f7fafc!important;color:#173e70!important;border-bottom:1px solid #dce6ee!important;
+}
+html.kg-shared-subsite header.header #links.open .nav-dropdown-menu,
+html.kg-shared-subsite header.header .links.open .nav-dropdown-menu{
+  background:#fff!important;box-shadow:none!important;border-color:#dce6ee!important;
+}
+@keyframes kg-uniform-menu-expand{
+  from{opacity:0;transform:translateY(-8px) scale(.992)}
+  to{opacity:1;transform:translateY(0) scale(1)}
+}
+
+/* Footer: same flat homepage blue, white copy and gold separators/icons. */
+html.kg-shared-subsite footer.footer,
+html.kg-shared-subsite .footer,
+html.kg-shared-subsite #site-footer{
+  background:#0759a8!important;color:#fff!important;border-color:rgba(255,255,255,.2)!important;
+}
+html.kg-shared-subsite footer.footer a,
+html.kg-shared-subsite .footer a,
+html.kg-shared-subsite #site-footer a,
+html.kg-shared-subsite footer.footer p,
+html.kg-shared-subsite .footer p,
+html.kg-shared-subsite .footer small,
+html.kg-shared-subsite .footer .footnote{color:#f4f8ff!important;}
+html.kg-shared-subsite .footer-contact-band{background:#0759a8!important;color:#fff!important;}
+html.kg-shared-subsite .footer-contact-item,
+html.kg-shared-subsite .footer-bottom{border-color:rgba(255,196,0,.48)!important;}
+html.kg-shared-subsite .footer-contact-item>svg,
+html.kg-shared-subsite .footer .back-top{color:#ffc400!important;stroke:#ffc400!important;}
+html.kg-shared-subsite .footer a:hover{color:#ffc400!important;}
+
+/* Shared content palette: preserve every page's layout and typography while
+   normalizing recurring components, headings, cards, links and form controls. */
+html.kg-shared-subsite .secondary-page-content h1,
+html.kg-shared-subsite .secondary-page-content h2,
+html.kg-shared-subsite .secondary-page-content h3,
+html.kg-shared-subsite .about-profile-copy h2,
+html.kg-shared-subsite .treatment-card h2,
+html.kg-shared-subsite .service-card h2,
+html.kg-shared-subsite .secondary-facts h2,
+html.kg-shared-subsite .secondary-hospital h2,
+html.kg-shared-subsite .newsletter-panel h2,
+html.kg-shared-subsite .publication-list h2,
+html.kg-shared-subsite .faq-category-heading{color:#123c77!important;}
+html.kg-shared-subsite .secondary-lead,
+html.kg-shared-subsite .about-profile-copy,
+html.kg-shared-subsite .treatment-card p,
+html.kg-shared-subsite .service-card p,
+html.kg-shared-subsite .secondary-facts p,
+html.kg-shared-subsite .secondary-hospital p,
+html.kg-shared-subsite .publication-list p,
+html.kg-shared-subsite .faq-answer{color:#596f81!important;}
+html.kg-shared-subsite .treatment-card,
+html.kg-shared-subsite .service-card,
+html.kg-shared-subsite .secondary-facts article,
+html.kg-shared-subsite .newsletter-panel,
+html.kg-shared-subsite .secondary-hospital>div,
+html.kg-shared-subsite .secondary-gallery figure,
+html.kg-shared-subsite .secondary-socials>a{
+  background:#fff!important;border-color:#dce6ee!important;
+  box-shadow:0 8px 22px rgba(19,57,94,.06)!important;
+}
+html.kg-shared-subsite .treatment-card,
+html.kg-shared-subsite .service-card,
+html.kg-shared-subsite .secondary-facts article,
+html.kg-shared-subsite .newsletter-panel{border-top-color:#0759a8!important;}
+html.kg-shared-subsite .secondary-facts article:nth-child(2){border-top-color:#ffc400!important;}
+html.kg-shared-subsite .consultation-callout{background:#eaf2f8!important;border-left-color:#ffc400!important;color:#455d6b!important;}
+html.kg-shared-subsite .secondary-nav a{color:#16456f!important;}
+html.kg-shared-subsite .secondary-nav a:hover,
+html.kg-shared-subsite .secondary-nav a[aria-current="page"]{background:#0759a8!important;color:#fff!important;}
+html.kg-shared-subsite .publication-links a,
+html.kg-shared-subsite .faq-answer a,
+html.kg-shared-subsite .secondary-map,
+html.kg-shared-subsite .secondary-social-icon{color:#0759a8!important;}
+html.kg-shared-subsite .secondary-social-icon{background:#eaf2f8!important;}
+html.kg-shared-subsite input:focus,
+html.kg-shared-subsite select:focus,
+html.kg-shared-subsite textarea:focus{outline:3px solid rgba(255,196,0,.5)!important;border-color:#0759a8!important;}
+html.kg-shared-subsite .btn,
+html.kg-shared-subsite .about-primary,
+html.kg-shared-subsite .about-secondary{
+  background:#0759a8!important;border-color:#0759a8!important;color:#fff!important;
+}
+html.kg-shared-subsite .btn:hover,
+html.kg-shared-subsite .about-primary:hover{background:#064b8d!important;border-color:#064b8d!important;}
+html.kg-shared-subsite .btn:focus-visible{outline:3px solid #ffc400!important;outline-offset:3px!important;}
+html.kg-shared-subsite .booking-toggle,
+html.kg-shared-subsite #booking-menu-toggle{
+  background:#ffc400!important;background-color:#ffc400!important;background-image:none!important;
+  color:#123c77!important;border:2px solid #ffc400!important;
+}
+html.kg-shared-subsite .kg-shared-announcement-strip{background:#0759a8!important;color:#fff!important;}
+html.kg-shared-subsite .kg-shared-announcement-strip strong,
+html.kg-shared-subsite .kg-shared-announcement-strip b{color:#ffc400!important;}
+
+/* Floating WhatsApp: vertical-only movement, matching the homepage request. */
+html.kg-shared-subsite .whatsapp-float,
+html:not(.kg-shared-subsite).kg-shared-home .whatsapp-float{
+  animation:kg-whatsapp-vertical-bob 2.8s ease-in-out infinite!important;
+  transform:translate3d(0,0,0)!important;
+}
+@keyframes kg-whatsapp-vertical-bob{
+  0%,100%{transform:translate3d(0,0,0)}
+  50%{transform:translate3d(0,-10px,0)}
+}
+html.kg-shared-subsite .whatsapp-float:hover,
+html.kg-shared-subsite .whatsapp-float:focus-visible,
+html:not(.kg-shared-subsite).kg-shared-home .whatsapp-float:hover,
+html:not(.kg-shared-subsite).kg-shared-home .whatsapp-float:focus-visible{
+  animation-play-state:paused!important;transform:translate3d(0,0,0)!important;
+}
+@media(prefers-reduced-motion:reduce){
+  html.kg-shared-subsite header.header #links.open,
+  html.kg-shared-subsite header.header .links.open{animation:none!important;}
+  html.kg-shared-subsite .whatsapp-float{animation:none!important;}
+  html.kg-shared-subsite header.header .toggle[aria-expanded="true"]{transform:none!important;}
+}
+
+/* Keep shared scene above panel backgrounds but below the actual controls. */
+html.kg-shared-subsite header.header,
+html.kg-shared-subsite .site-header,
+html.kg-shared-subsite #site-header,
+html.kg-shared-subsite .main-header,
+html.kg-shared-subsite footer.footer,
+html.kg-shared-subsite .footer,
+html.kg-shared-subsite #site-footer{
+  position:relative!important;z-index:auto!important;isolation:auto!important;
+}
+html.kg-shared-subsite header.header>* ,
+html.kg-shared-subsite .site-header>* ,
+html.kg-shared-subsite footer.footer>* ,
+html.kg-shared-subsite .footer>*{position:relative;z-index:2;}
+html.kg-shared-subsite #kg-space{z-index:1!important;pointer-events:none!important;}
+
+
+/* ===== FINAL INTERACTION SAFEGUARDS ===== */
+.kg-space-panel .brand,.kg-space-panel .brand *,
+.kg-space-panel .circular-brand-logo,.kg-space-panel .kg-logo,
+.kg-space-panel .kg-logo-header,.kg-space-panel .kg-logo-secondary,
+.kg-space-panel .navbar-brand,.kg-space-panel .logo-link,
+.kg-space-panel .site-logo,.kg-space-panel .footer-brand,
+.kg-space-panel [data-embedded-logo]{
+ position:relative!important;z-index:2147483007!important;isolation:isolate!important;
+}
+.kg-space-panel .brand img,.kg-space-panel .circular-brand-logo,
+.kg-space-panel .kg-logo,.kg-space-panel [data-embedded-logo]{
+ animation:none!important;transform:none!important;
+}
+.whatsapp-float{touch-action:none!important;user-select:none!important;-webkit-user-select:none!important;cursor:grab!important;transition:box-shadow .18s ease,background-color .18s ease!important;}
+.whatsapp-float.is-dragging{cursor:grabbing!important;transition:none!important;will-change:top;}

@@ -2758,6 +2758,14 @@ body a.whatsapp-float:focus-visible {
 }
 </style>
 
+<style id="kg-final-logo-and-whatsapp-layer">
+.header .brand,.header .brand *, .header .circular-brand-logo,.header .kg-logo,
+.footer-brand,.footer-brand *, .circular-brand-logo,[data-embedded-logo]{
+ position:relative!important;z-index:2147483007!important;isolation:isolate!important;
+}
+.whatsapp-float{touch-action:none!important;cursor:grab!important;user-select:none!important;-webkit-user-select:none!important}
+.whatsapp-float.is-dragging{cursor:grabbing!important;transition:none!important;will-change:top}
+</style>
 </head><body>
 <!-- Main-site unified animation canvas; replaces legacy gallery animation layers. -->
 <canvas id="kg-space" aria-hidden="true"></canvas>
@@ -5143,6 +5151,41 @@ applyZoom();
 @media(prefers-reduced-motion:reduce){.booking-toggle{animation:none!important;background-image:none!important;background-color:#ffc400!important;box-shadow:0 4px 14px rgba(173,124,0,.3),0 0 0 3px rgba(255,196,0,.18)!important}}
 </style>
 
+
+<style id="kg-final-homepage-fixes">
+/* Highest-priority homepage appointment-button correction. */
+html body #booking-menu-toggle,
+html body #booking-menu-toggle:hover,
+html body #booking-menu-toggle:focus,
+html body #booking-menu-toggle:focus-visible,
+html body #booking-menu-toggle:active {
+  background: #ffc400 !important;
+  background-color: #ffc400 !important;
+  background-image: none !important;
+  color: #123c77 !important;
+  border: 2px solid #ffc400 !important;
+  opacity: 1 !important;
+  filter: none !important;
+  box-shadow: 0 4px 12px rgba(173,124,0,.24) !important;
+}
+body a.whatsapp-float {
+  animation: kg-whatsapp-bob-final 3.4s ease-in-out infinite !important;
+  will-change: transform;
+}
+@keyframes kg-whatsapp-bob-final {
+  0%,100% { transform: translate3d(0,0,0); }
+  50% { transform: translate3d(0,-10px,0); }
+}
+body a.whatsapp-float:hover,
+body a.whatsapp-float:focus-visible {
+  animation-play-state: paused !important;
+  transform: translate3d(0,0,0) !important;
+}
+@media(prefers-reduced-motion:reduce) {
+  body a.whatsapp-float { animation:none!important; transform:none!important; }
+}
+</style>
+
 </body></html>
 <style id="kg-consolidated-final-overrides">
 
@@ -5680,3 +5723,4 @@ img.kg-logo,
 </style>
 
 <style id="kg-final-social-logo-removal">.social-intro::after{content:none!important;background:none!important;display:none!important}</style>
+
