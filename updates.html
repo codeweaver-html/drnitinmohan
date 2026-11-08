@@ -263,26 +263,54 @@ html:not(.kg-admin-ok) body{visibility:hidden!important}
 #kg-admin-lock{border:1px solid #b8cde0;background:#fff;color:#0759a8;border-radius:7px;padding:8px 12px;font-weight:700;cursor:pointer;margin:0 0 12px auto;display:block}
 </style>
 <script>
+/* Fail-closed browser gate for the 15-minute admin session.
+   This controls page display only; GitHub Pages cannot enforce server-side access. */
 (function(){
-"use strict";
-const KEY="kg_admin_authenticated_until",LOGIN="/admin.html";
-function lock(){
- sessionStorage.removeItem(KEY);
- const back=location.pathname+location.search+location.hash;
- location.replace(LOGIN+"?return="+encodeURIComponent(back));
-}
-function check(){
- const until=Number(sessionStorage.getItem(KEY)||0);
- if(!until||Date.now()>=until){lock();return false;}
- document.documentElement.classList.add("kg-admin-ok");
- return true;
-}
-if(!check())return;
-document.addEventListener("visibilitychange",()=>{if(!document.hidden)check();});
-window.addEventListener("focus",check);
-window.addEventListener("pageshow",check);
-const remaining=Number(sessionStorage.getItem(KEY)||0)-Date.now();
-window.setTimeout(lock,Math.max(0,remaining));
+  "use strict";
+  const KEY = "kg_admin_authenticated_until";
+  const LOGIN = new URL("/admin.html", window.location.origin);
+  let redirecting = false;
+
+  function readExpiry(){
+    try {
+      const raw = sessionStorage.getItem(KEY);
+      const expiry = Number(raw);
+      return raw && Number.isFinite(expiry) ? expiry : 0;
+    } catch (_) {
+      return 0; // Storage unavailable means no authenticated session.
+    }
+  }
+
+  function lock(){
+    if (redirecting) return;
+    redirecting = true;
+    try { sessionStorage.removeItem(KEY); } catch (_) {}
+    const returnTo = window.location.pathname + window.location.search + window.location.hash;
+    LOGIN.searchParams.set("return", returnTo);
+    window.location.replace(LOGIN.href);
+  }
+
+  function check(){
+    const expiry = readExpiry();
+    if (!expiry || Date.now() >= expiry) {
+      lock();
+      return false;
+    }
+    document.documentElement.classList.add("kg-admin-ok");
+    return true;
+  }
+
+  // Run synchronously in the document head, before the editor can be displayed.
+  if (!check()) return;
+
+  document.addEventListener("visibilitychange", function(){
+    if (!document.hidden) check();
+  });
+  window.addEventListener("focus", check);
+  window.addEventListener("pageshow", check);
+
+  const remaining = readExpiry() - Date.now();
+  window.setTimeout(lock, Math.max(0, remaining));
 })();
 </script>
 
