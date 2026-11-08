@@ -18,7 +18,7 @@
     text: DEFAULT_TEXT,
     textColor: "#0759a8",
     backgroundColor: "#ffc400",
-    speed: 28,
+    speed: 8,
     additional: null
   };
 
