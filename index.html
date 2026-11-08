@@ -8116,6 +8116,9 @@ document.querySelectorAll('.nav-direct-link,.nav-dropdown-menu>a,.booking-menu-p
  // Listen at window capture so older document-level click handlers cannot
  // swallow photo clicks before the viewer receives them.
  window.addEventListener('click',e=>{
+   // Only a normal left-click opens the photo viewer. The existing contextmenu
+   // restriction below is unchanged, so right-click remains disabled.
+   if(e.button!==0)return;
    const img=imageFromTarget(e.target);
    if(!img)return;
    e.preventDefault();e.stopPropagation();openFrom(img);

@@ -3723,15 +3723,7 @@ function isExcluded(img){
    /\.gif$/i.test(name) || /^data:image\/gif/i.test(rawSrc) || excludedAssetNames.test(name) ||
    img.closest('.booking-menu-panel .rezept-booking-choice');
 }
-function isGalleryPhoto(img){
- return img instanceof HTMLImageElement &&
-   !!img.closest('#gallery-page-content .zip-photo-grid .photo-story-media');
-}
-function eligibleImages(){
- return [...document.querySelectorAll('#gallery-page-content .zip-photo-grid .photo-story-media img')]
-   .filter(img=>isGalleryPhoto(img)&&!isExcluded(img)&&img.isConnected&&
-     !!(img.getAttribute('src')||img.getAttribute('data-src')||img.getAttribute('data-lazy-src')));
-}
+function eligibleImages(){const main=document.querySelector('main#main');return main?[...main.querySelectorAll('img')].filter(img=>!isExcluded(img)&&img.isConnected&&!!(img.getAttribute('src')||img.getAttribute('data-src')||img.getAttribute('data-lazy-src'))):[];}
 function captionFor(img){
  const dataCaption=img.dataset.galleryCaption||'';
  if(dataCaption.trim())return dataCaption.trim();
@@ -3749,8 +3741,7 @@ function prepareImages(root=document){
  if(root instanceof HTMLImageElement)imgs.push(root);
  if(root.querySelectorAll)imgs.push(...root.querySelectorAll('img'));
  imgs.forEach(img=>{
-   // Only photos inside this subsite's dedicated gallery belong to this viewer.
-   if(!isGalleryPhoto(img)||isExcluded(img))return;
+   if(!img.closest('main#main')||isExcluded(img))return;
    img.classList.add('gallery-lightbox-trigger');
    if(!img.hasAttribute('tabindex'))img.tabIndex=0;
    if(!img.hasAttribute('role'))img.setAttribute('role','button');
@@ -3771,8 +3762,8 @@ function close(){modal.classList.remove('is-open');modal.setAttribute('aria-hidd
 prepareImages();
 const mutationObserver=new MutationObserver(records=>records.forEach(r=>r.addedNodes.forEach(n=>{if(n.nodeType===1)prepareImages(n)})));
 mutationObserver.observe(document.documentElement,{childList:true,subtree:true});
-document.addEventListener('click',e=>{const t=e.target.closest&&e.target.closest('img.gallery-lightbox-trigger');if(t&&isGalleryPhoto(t)&&!isExcluded(t)){openFrom(t);}});
-document.addEventListener('keydown',e=>{const t=e.target.closest&&e.target.closest('img.gallery-lightbox-trigger');if(t&&isGalleryPhoto(t)&&(e.key==='Enter'||e.key===' ')){e.preventDefault();openFrom(t);}});
+document.addEventListener('click',e=>{if(e.button!==0)return;const t=e.target.closest&&e.target.closest('main#main img.gallery-lightbox-trigger');if(t&&!isExcluded(t)){openFrom(t);}});
+document.addEventListener('keydown',e=>{const t=e.target.closest&&e.target.closest('img.gallery-lightbox-trigger');if(t&&(e.key==='Enter'||e.key===' ')){e.preventDefault();openFrom(t);}});
 modal.querySelector('.gallery-lightbox-prev').addEventListener('click',()=>show(index-1));modal.querySelector('.gallery-lightbox-next').addEventListener('click',()=>show(index+1));modal.querySelector('.gallery-lightbox-close').addEventListener('click',close);zoomButtons.forEach(b=>b.addEventListener('click',()=>setZoom(b.dataset.zoom)));modal.addEventListener('click',e=>{if(e.target===modal)close()});
 if(wrap){wrap.addEventListener('pointerdown',e=>{if(zoom<=1||e.target!==view)return;drag={x:e.clientX,y:e.clientY,px:panX,py:panY,id:e.pointerId};view.setPointerCapture?.(e.pointerId);view.style.cursor='grabbing';});wrap.addEventListener('pointermove',e=>{if(!drag||drag.id!==e.pointerId)return;panX=drag.px+e.clientX-drag.x;panY=drag.py+e.clientY-drag.y;applyZoom();view.style.cursor='grabbing';});const endDrag=e=>{if(drag&&drag.id===e.pointerId){drag=null;view.style.cursor=zoom>1?'grab':'default';}};wrap.addEventListener('pointerup',endDrag);wrap.addEventListener('pointercancel',endDrag);wrap.addEventListener('wheel',e=>{if(!modal.classList.contains('is-open'))return;e.preventDefault();setZoom(e.deltaY<0?'in':'out');},{passive:false});}
 document.addEventListener('keydown',e=>{if(!modal.classList.contains('is-open'))return;if(e.key==='Escape')close();else if(e.key==='ArrowLeft')show(index-1);else if(e.key==='ArrowRight')show(index+1);else if(e.key==='+'||e.key==='=')setZoom('in');else if(e.key==='-'||e.key==='_')setZoom('out');else if(e.key==='0')setZoom('reset');});
