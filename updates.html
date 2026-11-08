@@ -150,6 +150,10 @@ select{cursor:pointer}
 .time-card .time-pickers label{font-size:.78rem;color:var(--muted)}
 .time-card .time-pickers select{min-width:0;padding:10px 8px}
 @media(max-width:480px){.time-card .time-pickers{grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}.time-card .time-pickers select{font-size:.88rem;padding:10px 5px}}
+.time-card .manual-time-entry{margin-top:2px}
+.time-card .manual-time-entry input{max-width:260px}
+.time-card .time-pickers{margin-top:2px}
+
 
 
 /* Brighter, more playful control-panel styling */
@@ -764,7 +768,41 @@ html:not(.kg-admin-ok) body{visibility:hidden!important}
         const minuteSelect=makeSelect('minute','Minute',minutes,minuteValue);
         const ampmSelect=makeSelect('ampm','AM / PM',['AM','PM'],match?ampm:'AM');
         timeRow.append(hourSelect,minuteSelect,ampmSelect);
-        timeRow.style.display='none';
+        timeRow.style.display='grid';
+        const manualTimeWrap=document.createElement('div');
+        manualTimeWrap.className='field manual-time-entry';
+        const manualTimeLabel=document.createElement('label');
+        manualTimeLabel.textContent='Or type the time manually';
+        const manualTimeInput=document.createElement('input');
+        manualTimeInput.type='text';
+        manualTimeInput.inputMode='text';
+        manualTimeInput.autocomplete='off';
+        manualTimeInput.placeholder='e.g. 10:30 AM or 22:30';
+        manualTimeInput.setAttribute('aria-label',label.textContent+' typed time');
+        manualTimeInput.value=match?`${hour12}:${minuteValue} ${ampm}`:'';
+        manualTimeWrap.append(manualTimeLabel,manualTimeInput);
+        const syncScheduleEdge=()=>{
+          const date=dateInput.value, hour=hourSelect.value, minute=minuteSelect.value, ap=ampmSelect.value;
+          if(!date||!hour||!minute||!ap){group[edge]='';return;}
+          let h=Number(hour)%12;
+          if(ap==='PM') h+=12;
+          group[edge]=`${date}T${String(h).padStart(2,'0')}:${minute}`;
+        };
+        manualTimeInput.addEventListener('input',()=>{
+          const value=manualTimeInput.value.trim();
+          const twelve=value.match(/^(0?[1-9]|1[0-2]):([0-5]\d)\s*(AM|PM)$/i);
+          const twentyFour=value.match(/^([01]?\d|2[0-3]):([0-5]\d)$/);
+          if(!twelve&&!twentyFour){group[edge]='';return;}
+          let h,ap;
+          if(twelve){h=Number(twelve[1]);ap=twelve[3].toUpperCase();}
+          else {const h24=Number(twentyFour[1]);h=h24%12||12;ap=h24>=12?'PM':'AM';}
+          hourSelect.value=String(h).padStart(2,'0');
+          minuteSelect.value=(twelve||twentyFour)[2];
+          ampmSelect.value=ap;
+          syncScheduleEdge();
+          updateClock();
+        });
+        [dateInput,hourSelect,minuteSelect,ampmSelect].forEach(el=>el.addEventListener('change',syncScheduleEdge));
         const picker=document.createElement('div');picker.className='clock-picker';
         const face=document.createElement('div');face.className='clock-face';face.setAttribute('role','group');face.setAttribute('aria-label','Animated clock time picker');
         const side=document.createElement('div');side.className='clock-side';
@@ -795,9 +833,14 @@ html:not(.kg-admin-ok) body{visibility:hidden!important}
         hourMode.addEventListener('click',()=>{clockStage='hour';drawDial(Array.from({length:12},(_,n)=>String(n+1).padStart(2,'0')));});
         minuteMode.addEventListener('click',()=>{clockStage='minute';drawDial(Array.from({length:12},(_,n)=>String(n*5).padStart(2,'0')));});
         ampmMode.addEventListener('click',()=>{ampmSelect.value=ampmSelect.value==='AM'?'PM':'AM';ampmSelect.dispatchEvent(new Event('change',{bubbles:true}));updateClock();});
-        [hourSelect,minuteSelect,ampmSelect].forEach(sel=>sel.addEventListener('change',updateClock));
+        [hourSelect,minuteSelect,ampmSelect].forEach(sel=>sel.addEventListener('change',()=>{
+          manualTimeInput.value=hourSelect.value&&minuteSelect.value&&ampmSelect.value
+            ?`${hourSelect.value}:${minuteSelect.value} ${ampmSelect.value}`:'';
+          syncScheduleEdge();
+          updateClock();
+        }));
         drawDial(Array.from({length:12},(_,n)=>String(n+1).padStart(2,'0')));
-        wrap.append(label,dateLabel,dateInput);if(currentButton)wrap.appendChild(currentButton);wrap.append(timeLabel,picker);grid.appendChild(wrap);
+        wrap.append(label,dateLabel,dateInput);if(currentButton)wrap.appendChild(currentButton);wrap.append(timeLabel,manualTimeWrap,timeRow,picker);grid.appendChild(wrap);
       });
       panel.appendChild(grid);editor.appendChild(panel);
     });
