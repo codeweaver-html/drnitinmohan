@@ -294,42 +294,39 @@
  }
 
  function drawBlackHole(c,x,y,size,phase,fade){
-  // Clip-art-inspired black hole: a clean black core wrapped by one broad,
-  // asymmetric white lensing band. Flat fills only; no glow, gradients or dots.
-  c.save();c.translate(x,y);c.globalAlpha=fade;
-  c.rotate(Math.sin(phase*.18)*.035);
-  // Back half of the warped accretion silhouette. Slightly compress only
-  // the white disc vertically so its rim reads as a fine, natural band.
-  c.save();c.scale(1,.76);
+  // A black hole should read as a dark event horizon with a thin, edge-on
+  // accretion disc — never as an eye, eyelid or broad white blob.
+  c.save();
+  c.translate(x,y);
+  c.globalAlpha=fade;
+  c.rotate(-.10+Math.sin(phase*.18)*.018);
+
+  // Narrow, flattened disc behind the event horizon. Its elliptical profile
+  // stays horizontal and the central sphere hides the middle of the disc.
   c.fillStyle='#fff';
   c.beginPath();
-  c.moveTo(-size*1.12,size*.02);
-  c.bezierCurveTo(-size*.96,-size*.30,-size*.78,-size*.35,-size*.58,-size*.67);
-  c.bezierCurveTo(-size*.30,-size*1.10,size*.28,-size*1.08,size*.62,-size*.69);
-  c.bezierCurveTo(size*.82,-size*.43,size*.83,-size*.17,size*1.18,size*.02);
-  c.bezierCurveTo(size*.78,size*.28,size*.40,size*.34,size*.04,size*.28);
-  c.bezierCurveTo(-size*.43,size*.20,-size*.82,size*.25,-size*1.12,size*.02);
-  c.closePath();c.fill();
-  c.restore();
-  // Event horizon: a single uninterrupted black silhouette.
-  c.fillStyle='#000';c.beginPath();
-  c.ellipse(size*.015,-size*.035,size*.49,size*.53,-.035,0,TAU);c.fill();
-  // Foreground portion of the disc bends across the lower face of the core.
-  // Keep it thinner than before for a more restrained lensing silhouette.
-  c.save();c.scale(1,.76);
-  c.fillStyle='#fff';c.beginPath();
-  c.moveTo(-size*1.26,size*.03);
-  c.bezierCurveTo(-size*1.08,-size*.19,-size*.78,-size*.18,-size*.54,-size*.35);
-  c.bezierCurveTo(-size*.20,-size*.56,size*.26,-size*.51,size*.58,-size*.28);
-  c.bezierCurveTo(size*.83,-size*.10,size*1.18,size*.01,size*1.31,size*.22);
-  c.bezierCurveTo(size*1.38,size*.38,size*1.05,size*.57,size*.66,size*.54);
-  c.bezierCurveTo(size*.26,size*.52,-size*.12,size*.37,-size*.54,size*.34);
-  c.bezierCurveTo(-size*.91,size*.31,-size*1.20,size*.19,-size*1.26,size*.03);
-  c.closePath();c.fill();
-  c.restore();
-  // Re-cut a crisp lower edge of the horizon so the black centre remains solid.
-  c.fillStyle='#000';c.beginPath();
-  c.ellipse(size*.015,size*.035,size*.485,size*.405,-.035,0,TAU);c.fill();
+  c.ellipse(0,0,size*1.30,size*.245,-.025,0,TAU);
+  c.fill();
+
+  // A fine inner dark lane gives the disc a little depth without a glow.
+  c.fillStyle='rgba(0,0,0,.82)';
+  c.beginPath();
+  c.ellipse(0,0,size*.91,size*.105,-.025,0,TAU);
+  c.fill();
+
+  // Event horizon: the dominant feature is a clean, solid black sphere.
+  c.fillStyle='#000';
+  c.beginPath();
+  c.ellipse(0,-size*.012,size*.49,size*.53,-.035,0,TAU);
+  c.fill();
+
+  // Subtle narrow highlight on the far side of the disc, broken by the
+  // event horizon so the result reads as a lensing ring, not an eye.
+  c.strokeStyle='rgba(255,255,255,.72)';
+  c.lineWidth=Math.max(.7,size*.018);
+  c.beginPath();
+  c.ellipse(0,0,size*1.22,size*.205,-.025,Math.PI*1.08,Math.PI*1.92);
+  c.stroke();
   c.restore();
  }
 

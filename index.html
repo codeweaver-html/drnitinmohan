@@ -2715,6 +2715,49 @@ document.addEventListener('DOMContentLoaded',()=>{
 .booking-toggle:hover{background:#f1b900!important;background-color:#f1b900!important;border-color:#f1b900!important;color:#123c77!important}
 .booking-toggle::before,.booking-toggle::after{display:none!important;content:none!important;animation:none!important}
 </style>
+
+<style id="kg-final-cta-and-whatsapp-motion">
+/* Definitive homepage booking CTA override: solid site yellow in every state. */
+html body header.header nav.nav #booking-menu-toggle,
+html body header.header nav.nav #booking-menu-toggle:link,
+html body header.header nav.nav #booking-menu-toggle:visited,
+html body header.header nav.nav #booking-menu-toggle:hover,
+html body header.header nav.nav #booking-menu-toggle:focus,
+html body header.header nav.nav #booking-menu-toggle:focus-visible,
+html body header.header nav.nav #booking-menu-toggle:active {
+  background: #ffc400 !important;
+  background-color: #ffc400 !important;
+  background-image: none !important;
+  color: #123c77 !important;
+  border: 2px solid #ffc400 !important;
+  box-shadow: 0 3px 10px rgba(173,124,0,.22) !important;
+  opacity: 1 !important;
+  filter: none !important;
+}
+html body header.header nav.nav #booking-menu-toggle:hover {
+  background: #f1b900 !important;
+  background-color: #f1b900 !important;
+  border-color: #f1b900 !important;
+}
+/* Keep the WhatsApp booking control anchored bottom-right and bob vertically only. */
+body a.whatsapp-float {
+  animation: kg-whatsapp-vertical-float 3.2s ease-in-out infinite !important;
+  will-change: transform;
+}
+@keyframes kg-whatsapp-vertical-float {
+  0%, 100% { transform: translate3d(0, 0, 0); }
+  50% { transform: translate3d(0, -9px, 0); }
+}
+body a.whatsapp-float:hover,
+body a.whatsapp-float:focus-visible {
+  animation-play-state: paused !important;
+  transform: translate3d(0, -3px, 0) !important;
+}
+@media (prefers-reduced-motion: reduce) {
+  body a.whatsapp-float { animation: none !important; transform: none !important; }
+}
+</style>
+
 </head><body>
 <!-- Main-site unified animation canvas; replaces legacy gallery animation layers. -->
 <canvas id="kg-space" aria-hidden="true"></canvas>
