@@ -1,3 +1,7 @@
+/* KidsGastro shared bundle: page-wide singleton guard. */
+(function(){
+  if (window.KGSharedBundleLoaded) return;
+  window.KGSharedBundleLoaded = true;
 /* ===== PAGE SCOPE / ADMIN EXCLUSION ===== */
 (()=>{
   const path=(location.pathname||"/").replace(/\\+/g,"/").toLowerCase();
@@ -59,9 +63,9 @@
  const coarse=window.matchMedia('(hover:none),(pointer:coarse)').matches;
  const TAU=Math.PI*2,rand=(a,b)=>a+Math.random()*(b-a),clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
  // Relative inertial masses (arbitrary units): larger craft resist deflection more.
- const OBJECT_MASS={iss:1200,starship:900,skyCrane:520,marsRover:190,orion:280,hubble:180,asteroid:160,satellite:90,voyager:70,halley:45,astronaut:12};
+ const OBJECT_MASS={starship:900,skyCrane:520,marsRover:190,orion:280,hubble:180,asteroid:160,satellite:90,voyager:70,halley:45,astronaut:12};
  const massOf=id=>OBJECT_MASS[id]||60;
- const CONFIG={maxDpr:1.5,mobileDpr:1.25,opacity:.76,mobileOpacity:.66,reducedOpacity:.72,objectAlpha:.95,issAngularSpeed:.22,voyagerInterval:[10000,17000],starshipInterval:[9000,14500],satelliteInterval:[6500,10500],asteroidInterval:[1800,3600],hubbleInterval:[14000,22000],orionInterval:[10500,16500],halleyInterval:[18000,28000],voyagerInitialDelay:[500,1800],starshipInitialDelay:[400,1300],planetCount:3};
+ const CONFIG={maxDpr:1.25,mobileDpr:1,opacity:.76,mobileOpacity:.66,reducedOpacity:.72,objectAlpha:.95,voyagerInterval:[10000,17000],starshipInterval:[9000,14500],satelliteInterval:[6500,10500],asteroidInterval:[1800,3600],hubbleInterval:[14000,22000],orionInterval:[10500,16500],halleyInterval:[18000,28000],voyagerInitialDelay:[500,1800],starshipInitialDelay:[400,1300],planetCount:3};
  const canvas=document.getElementById('kg-space')||document.createElement('canvas');canvas.id='kg-space';canvas.setAttribute('aria-hidden','true');if(!canvas.isConnected)document.body.appendChild(canvas);
  const ctx=canvas.getContext('2d',{alpha:true});canvas.style.opacity=String(reduce?CONFIG.reducedOpacity:(coarse?CONFIG.mobileOpacity:CONFIG.opacity));
  const selectors=[
@@ -97,8 +101,8 @@
     secondaryTilt:rand(-1.4,1.4),secondaryScale:rand(1.12,1.55)
    };
   });
-  const sparks=Array.from({length:46},()=>({x:rand(.025,.975),y:rand(.04,.96),phase:rand(0,TAU),speed:rand(.22,.72),size:rand(.45,1.15),streak:Math.random()<.16?1:0}));
-  return {el,panelIndex,launchStagger,repeatStagger,lastActiveAt:performance.now(),bodies,collisionPairs:Object.create(null),collisionEffects:[],blackHole:null,nextBlackHole:performance.now()+rand(9000,18000)+launchStagger,iss:rand(0,TAU),issBody:null,voyager:null,ship:null,skyCrane:null,marsRover:null,nextSkyCrane:performance.now()+rand(6500,10500)+launchStagger,astronaut:null,nextAstronaut:performance.now()+rand(1800,4200),satellite:null,nextSatellite:performance.now()+rand(3500,6500),asteroid:null,nextAsteroid:performance.now()+rand(900,1800),hubble:null,nextHubble:performance.now()+rand(5000,9000),orion:null,nextOrion:performance.now()+rand(4000,7500),halley:null,nextHalley:performance.now()+rand(7000,12000),nextVoyager:performance.now()+rand(...CONFIG.voyagerInitialDelay),nextShip:performance.now()+rand(...CONFIG.starshipInitialDelay)+launchStagger,r:null,blocked:[],safePoints:[],sparks};
+  const sparks=Array.from({length:30},()=>({x:rand(.025,.975),y:rand(.04,.96),phase:rand(0,TAU),speed:rand(.22,.72),size:rand(.45,1.15),streak:Math.random()<.16?1:0}));
+  return {el,panelIndex,launchStagger,repeatStagger,lastActiveAt:performance.now(),bodies,collisionPairs:Object.create(null),collisionEffects:[],blackHole:null,nextBlackHole:performance.now()+rand(9000,18000)+launchStagger,voyager:null,ship:null,skyCrane:null,marsRover:null,nextSkyCrane:performance.now()+rand(6500,10500)+launchStagger,astronaut:null,nextAstronaut:performance.now()+rand(1800,4200),satellite:null,nextSatellite:performance.now()+rand(3500,6500),asteroid:null,nextAsteroid:performance.now()+rand(900,1800),hubble:null,nextHubble:performance.now()+rand(5000,9000),orion:null,nextOrion:performance.now()+rand(4000,7500),halley:null,nextHalley:performance.now()+rand(7000,12000),nextVoyager:performance.now()+rand(...CONFIG.voyagerInitialDelay),nextShip:performance.now()+rand(...CONFIG.starshipInitialDelay)+launchStagger,r:null,blocked:[],safePoints:[],sparks};
  }
  function scan(){
   // Only one simulation host is allowed for any nested visual box. Nested
@@ -192,7 +196,6 @@
   // Minimal planet marker: a small, crisp white circle rather than a shaded bubble.
   c.save();c.globalAlpha=.98;c.fillStyle='#fff';c.beginPath();c.arc(x,y,r,0,TAU);c.fill();c.restore();
  }
-  function drawISS(c,x,y,a,size,phase=0){c.save();c.translate(x,y);c.rotate(a);c.scale(size/44,size/44);c.strokeStyle=c.fillStyle='#fff';c.lineWidth=1.2;c.globalAlpha=.98;c.fillRect(-5,-2,10,4);c.fillRect(-21,-7,13,14);c.fillRect(8,-7,13,14);c.strokeRect(-21,-7,13,14);c.strokeRect(8,-7,13,14);c.beginPath();c.moveTo(-8,0);c.lineTo(8,0);c.moveTo(0,-8);c.lineTo(0,8);c.stroke();const blink=.35+.65*(.5+.5*Math.sin(phase*2.1));c.globalAlpha=blink;c.fillStyle='#fff';c.beginPath();c.arc(0,-5,1.35,0,TAU);c.fill();c.restore();}
  function drawVoyager(c,x,y,a,phase=0){c.save();c.translate(x,y);c.rotate(a);c.strokeStyle=c.fillStyle='#fff';c.lineWidth=1;c.globalAlpha=.85;c.beginPath();c.arc(-3,0,5,-1.25,1.25);c.stroke();c.fillRect(-1,-1,4,2);c.beginPath();c.moveTo(2,0);c.lineTo(15,0);c.moveTo(5,-2);c.lineTo(10,-7);c.stroke();c.save();c.translate(-3,0);c.rotate(Math.sin(phase*.4)*.09);c.globalAlpha=.65;c.beginPath();c.arc(0,0,7,-1.15,1.15);c.stroke();c.restore();c.restore();}
  function drawStarship(c,x,y,a,phase=0){
   c.save();c.translate(x,y);c.rotate(a);c.scale(1.21875,1.4625);c.globalAlpha=.96;c.fillStyle=c.strokeStyle='#fff';c.lineWidth=.8;
@@ -316,42 +319,47 @@
  }
 
  function drawBlackHole(c,x,y,size,phase,fade){
-  // A black hole should read as a dark event horizon with a thin, edge-on
-  // accretion disc — never as an eye, eyelid or broad white blob.
+  // Compact dark event horizon with a thin, asymmetric accretion disc.
+  // No blur, shadow, gradients, filters, or large animated transforms.
   c.save();
   c.translate(x,y);
+  c.rotate(-.10+Math.sin(phase*.16)*.012);
   c.globalAlpha=fade;
-  c.rotate(-.10+Math.sin(phase*.18)*.018);
 
-  // Narrow, flattened disc behind the event horizon. Its elliptical profile
-  // stays horizontal and the central sphere hides the middle of the disc.
-  c.fillStyle='#fff';
+  // Disc behind the horizon; slight phase movement gives a sense of rotation.
+  c.fillStyle='rgba(255,255,255,.92)';
   c.beginPath();
-  c.ellipse(0,0,size*1.30,size*.245,-.025,0,TAU);
+  c.ellipse(0,0,size*1.22,size*.19,Math.sin(phase)*.018,0,TAU);
   c.fill();
 
-  // A fine inner dark lane gives the disc a little depth without a glow.
-  c.fillStyle='rgba(0,0,0,.82)';
+  c.fillStyle='rgba(0,0,0,.9)';
   c.beginPath();
-  c.ellipse(0,0,size*.91,size*.105,-.025,0,TAU);
+  c.ellipse(0,0,size*.94,size*.105,0,0,TAU);
   c.fill();
 
-  // Event horizon: the dominant feature is a clean, solid black sphere.
+  // Solid event horizon.
   c.fillStyle='#000';
   c.beginPath();
-  c.ellipse(0,-size*.012,size*.49,size*.53,-.035,0,TAU);
+  c.arc(0,0,size*.49,0,TAU);
   c.fill();
 
-  // Subtle narrow highlight on the far side of the disc, broken by the
-  // event horizon so the result reads as a lensing ring, not an eye.
-  c.strokeStyle='rgba(255,255,255,.72)';
+  // A narrow far-side arc avoids the eye-like full-ring appearance.
+  c.strokeStyle='rgba(255,255,255,.78)';
   c.lineWidth=Math.max(.7,size*.018);
   c.beginPath();
-  c.ellipse(0,0,size*1.22,size*.205,-.025,Math.PI*1.08,Math.PI*1.92);
+  c.ellipse(0,0,size*1.17,size*.205,-.025,Math.PI*1.10,Math.PI*1.90);
+  c.stroke();
+
+  // Small, restrained orbital highlight on the near disc.
+  c.globalAlpha=fade*.38;
+  c.strokeStyle='#fff';
+  c.lineWidth=Math.max(.55,size*.012);
+  c.beginPath();
+  c.ellipse(Math.sin(phase*.35)*size*.12,0,size*.78,size*.075,.02,
+   Math.PI*.08+phase*.05,Math.PI*.46+phase*.05);
   c.stroke();
   c.restore();
  }
-
  function drawSkyCrane(c,x,y,a,size,phase=0,thrust=0){
   c.save();c.translate(x,y);c.rotate(a);c.scale(size/100,size/100);
   c.fillStyle='#fff';c.strokeStyle='#fff';c.lineWidth=2.2;c.lineCap='round';c.lineJoin='round';c.globalAlpha=.97;
@@ -494,18 +502,6 @@
    }
   });
   if(!small||panel.el.matches('.header,.social-intro')){
-   const issOrbit=Math.max(4,Math.min(r.width,r.height)*.065);
-   const issCx=x0+r.width*.84,issCy=y0+r.height*.19;
-   if(!panel.issBody)panel.issBody={x:issCx+Math.cos(panel.iss)*issOrbit,y:issCy+Math.sin(panel.iss)*issOrbit,vx:0,vy:0};
-   const iss=panel.issBody;
-   if(animate){
-    panel.iss+=CONFIG.issAngularSpeed*dt;
-    if(iss._kgCaptured){iss.x+=iss.vx*dt;iss.y+=iss.vy*dt;}
-    else{iss.x=issCx+Math.cos(panel.iss)*issOrbit;iss.y=issCy+Math.sin(panel.iss)*issOrbit;iss.vx=-Math.sin(panel.iss)*issOrbit*CONFIG.issAngularSpeed;iss.vy=Math.cos(panel.iss)*issOrbit*CONFIG.issAngularSpeed;}
-   }
-   const issSize=clamp(scale*.105,small?8:11,small?12:17);
-   drawISS(ctx,iss.x,iss.y,panel.iss+.35,issSize,now*.001);
-   movingThings.push({id:'iss',x:iss.x,y:iss.y,r:small?4.5:6,vx:iss.vx,vy:iss.vy,obj:iss});
    if(animate&&now>=panel.nextVoyager&&!panel.voyager){const dir=Math.random()<.5?1:-1;const lane=panel.safePoints.length?panel.safePoints[Math.floor(Math.random()*panel.safePoints.length)]:{y:r.height*.5};panel.voyager=lane?{x:dir>0?x0-18:x1+18,y:y0+lane.y,baseY:y0+lane.y,vx:dir*rand(38,56),vy:rand(-10,10),phase:rand(0,TAU),arc:rand(10,24)*(Math.random()<.5?-1:1)}:null;panel.nextVoyager=now+rand(...CONFIG.voyagerInterval);}
    if(panel.voyager){const v=panel.voyager;if(animate){v.x+=v.vx*dt;v.phase+=dt*.7;v.y+=v.vy*dt;v.y=v.baseY+v.arc*Math.sin(v.phase);}drawVoyager(ctx,v.x,v.y,Math.atan2(v.vy+v.arc*.7*Math.cos(v.phase),v.vx),v.phase);movingThings.push({id:'voyager',x:v.x,y:v.y,r:8,vx:v.vx,vy:v.vy+v.arc*.7*Math.cos(v.phase),obj:v});if(v.x<x0-70||v.x>x1+70)panel.voyager=null;}
    if(animate&&now>=panel.nextHalley&&!panel.halley){
@@ -704,7 +700,7 @@
     // more viable opportunities without choosing objects the astronaut cannot reach.
     const reach=Math.min(r.width*.56,320);
     const candidates=movingThings
-     .filter(m=>m.id!=='astronaut'&&m.id!=='iss'&&m.obj)
+     .filter(m=>m.id!=='astronaut'&&m.obj)
      .map(m=>({m,d:Math.hypot(m.x-au.x,m.y-au.y),speed:Math.hypot(m.vx||0,m.vy||0)}))
      .filter(v=>v.d<reach&&v.speed>8)
      .sort((a,b)=>(a.d+a.speed*.16)-(b.d+b.speed*.16));
@@ -773,85 +769,25 @@
    }
   }
 
-  // Random black holes are confined to this panel. Nearby objects curve around
-  // the lens, spiral inward and disappear at the event horizon.
+  // Black-hole event is deliberately visual-only: it never edits another
+  // animation's position, velocity, lifetime, or collision state.
   if(animate&&now>=panel.nextBlackHole&&!panel.blackHole){
    const margin=Math.min(58,Math.max(24,scale*.18));
    const edge=Math.floor(Math.random()*4);
    const bx=edge<2?rand(x0+margin,x1-margin):(edge===2?x0+margin:x1-margin);
    const by=edge>=2?rand(y0+margin,y1-margin):(edge===0?y0+margin:y1-margin);
-   panel.blackHole={x:bx,y:by,age:0,consumed:false,consumedCount:0,fragments:[],
-    radius:clamp(scale*.075,small?13:18,small?18:30),phase:rand(0,TAU),
-    strength:rand(3.1,3.8),life:5.8};
-   panel.nextBlackHole=now+rand(18000,32000)+panel.repeatStagger;
+   panel.blackHole={x:bx,y:by,age:0,radius:clamp(scale*.068,small?12:16,small?17:27),
+    phase:rand(0,TAU),life:5.2};
+   panel.nextBlackHole=now+rand(22000,36000)+panel.repeatStagger;
   }
   if(panel.blackHole){
    const bh=panel.blackHole;
-   if(animate){bh.age+=dt;bh.phase+=dt*.9;}
-   const horizon=bh.radius*.53,reach=bh.radius*8.5;
-   // A black hole is a one-object event: after the first successful swallow,
-   // it stops pulling in anything else and rapidly fades out.
-   if(!bh.consumedCount){
-    movingThings.forEach(body=>{
-     if(!body.obj||body.obj._kgAbsorbed||bh.consumedCount)return;
-     const dx=bh.x-body.x,dy=bh.y-body.y,d=Math.max(1,Math.hypot(dx,dy));
-     if((d<reach||body.obj._kgCaptured)&&animate){
-      body.obj._kgCaptured=true;
-      const falloff=d<reach?Math.max(0,1-d/reach):.08;
-      const influence=falloff*falloff*bh.strength,nx=dx/d,ny=dy/d;
-      const tangent=Math.min(3.4,influence*3.0),pull=52+influence*225;
-      body.obj.vx=(body.obj.vx||body.vx)+(nx*pull-ny*pull*(1.45+influence*1.8))*influence*dt;
-      body.obj.vy=(body.obj.vy||body.vy)+(ny*pull+nx*pull*(1.45+influence*1.8))*influence*dt;
-      body.obj.x+=(-ny*tangent*31+nx*influence*30)*dt;
-      body.obj.y+=( nx*tangent*31+ny*influence*30)*dt;
-      body.obj._kgWarp=Math.max(body.obj._kgWarp||0,influence);
-      ctx.save();ctx.translate(body.x,body.y);ctx.rotate(Math.atan2(dy,dx));
-      ctx.globalAlpha=Math.min(.42,influence*.5);ctx.strokeStyle='#fff';
-      ctx.lineWidth=.8+influence*.5;ctx.beginPath();
-      ctx.ellipse(0,0,Math.max(5,body.r*(1+influence*1.5)),Math.max(2,body.r*.38),0,-.9,1.9);ctx.stroke();ctx.restore();
-      body.x=body.obj.x;body.y=body.obj.y;
-      if(d<horizon+Math.max(3,body.r*.55)){
-       body.obj._kgAbsorbed=true;bh.consumed=true;bh.consumedCount=1;bh.fadeOut=0;
-       // Four elongated fragments briefly show the object being torn apart;
-       // no clouds of tiny dots or clustered circular details are drawn.
-       const base=body.r||5;
-       for(let k=0;k<4;k++){
-        const a=TAU*k/4+rand(-.12,.12),speed=rand(22,38);
-        bh.fragments.push({x:body.x+Math.cos(a)*base*.25,y:body.y+Math.sin(a)*base*.25,
-         vx:Math.cos(a)*speed,vy:Math.sin(a)*speed,angle:a,spin:rand(-4,4),
-         size:rand(3.8,5.8),age:0,life:rand(.28,.42)});
-       }
-       const prop={iss:'issBody',voyager:'voyager',halley:'halley',orion:'orion',hubble:'hubble',
-        asteroid:'asteroid',satellite:'satellite',skyCrane:'skyCrane',marsRover:'marsRover',
-        starship:'ship',astronaut:'astronaut'}[body.id];
-       if(prop&&panel[prop]===body.obj)panel[prop]=null;
-      }
-     }
-    });
-   }else if(animate){
-    bh.fadeOut=(bh.fadeOut||0)+dt;
-   }
-   if(animate&&bh.fragments.length){
-    bh.fragments.forEach(f=>{
-     f.age+=dt;f.vx+=(bh.x-f.x)*1.8*dt;f.vy+=(bh.y-f.y)*1.8*dt;
-     f.x+=f.vx*dt;f.y+=f.vy*dt;f.angle+=f.spin*dt;
-    });
-    bh.fragments=bh.fragments.filter(f=>f.age<f.life);
-   }
-   const fade=Math.min(1,bh.age/.65)*Math.max(0,Math.min(1,(bh.life-bh.age)/.65));
+   if(animate){bh.age+=dt;bh.phase+=dt*.42;}
+   const fade=Math.min(1,bh.age/.7)*Math.max(0,Math.min(1,(bh.life-bh.age)/.8));
    drawBlackHole(ctx,bh.x,bh.y,bh.radius,bh.phase,fade);
-   bh.fragments.forEach(f=>{
-    const opacity=Math.max(0,1-f.age/f.life)*fade;
-    ctx.save();ctx.translate(f.x,f.y);ctx.rotate(f.angle);ctx.globalAlpha=opacity;
-    ctx.fillStyle='#fff';ctx.beginPath();ctx.moveTo(-f.size*1.5,-f.size*.28);
-    ctx.lineTo(f.size*1.45,-f.size*.18);ctx.lineTo(f.size*.75,f.size*.3);
-    ctx.lineTo(-f.size*.8,f.size*.22);ctx.closePath();ctx.fill();ctx.restore();
-   });
-   // Disappear after the first object is swallowed, without waiting for
-   // unrelated objects or the remaining debris animation to finish.
-   if(bh.consumedCount>0&&(bh.fadeOut||0)>=.38){
+   if(animate&&bh.age>=bh.life){
     panel.blackHole=null;
-    panel.nextBlackHole=now+rand(18000,36000)+panel.repeatStagger;
+    panel.nextBlackHole=now+rand(22000,36000)+panel.repeatStagger;
    }
   }
   // Detect first contact. Head-on impacts destroy both craft briefly;
@@ -873,7 +809,6 @@
        strength:clamp((limit-distance)/Math.max(1,limit),.25,1),destroyed:headOn});
       if(headOn){
        [a,b].forEach(hit=>{
-        if(hit.id==='iss'){panel.iss+=Math.PI;return;}
         const prop={voyager:'voyager',halley:'halley',orion:'orion',hubble:'nextHubble',asteroid:'asteroid',satellite:'satellite',skyCrane:'skyCrane',marsRover:'marsRover',starship:'ship',astronaut:'astronaut'}[hit.id];
         if(prop==='marsRover'&&panel.marsRover===hit.obj){
          panel.marsRover=null;
@@ -932,10 +867,10 @@
  }
  function panelOnscreen(p){const r=p.r;return !!(r&&r.bottom>0&&r.top<H&&r.right>0&&r.left<W);}
  function shiftPanelClock(p,gap){['nextVoyager','nextShip','nextSatellite','nextAsteroid','nextHubble','nextOrion','nextHalley','nextSkyCrane','nextAstronaut','nextBlackHole'].forEach(k=>{if(Number.isFinite(p[k]))p[k]+=gap;});}
- function render(now,animate){measure();ctx.clearRect(0,0,W,H);const dt=Math.min(.05,Math.max(0,(now-last)/1000));last=now;panels.forEach(p=>{if(!panelOnscreen(p)){p.wasOnscreen=false;p.lastActiveAt=now;return;}if(!p.wasOnscreen&&p.lastActiveAt){shiftPanelClock(p,Math.max(0,now-p.lastActiveAt));}p.wasOnscreen=true;p.lastActiveAt=now;drawPanel(p,dt,now,animate);});}
+ function render(now,animate){ctx.clearRect(0,0,W,H);const dt=Math.min(.05,Math.max(0,(now-last)/1000));last=now;panels.forEach(p=>{if(!panelOnscreen(p)){p.wasOnscreen=false;p.lastActiveAt=now;return;}if(!p.wasOnscreen&&p.lastActiveAt){shiftPanelClock(p,Math.max(0,now-p.lastActiveAt));}p.wasOnscreen=true;p.lastActiveAt=now;drawPanel(p,dt,now,animate);});}
  function drawStatic(){if(!ctx)return;render(performance.now(),false);}
  function visible(){return !document.hidden&&panels.some(panelOnscreen);}
- function loop(now){raf=0;if(document.hidden)return;const target=frameInterval||(saverMode?1000/16:(coarse?1000/24:1000/45));if(now-last<target-1){raf=requestAnimationFrame(loop);return;}const started=performance.now();render(now,!reduce);const cost=performance.now()-started;if(now-lastPerfCheck>1800){lastPerfCheck=now;if(cost>19){slowFrames++;fastFrames=0;}else if(cost<11){fastFrames++;slowFrames=0;}if(slowFrames>=2){frameInterval=saverMode?1000/12:(coarse?1000/20:1000/30);slowFrames=0;}else if(fastFrames>=4){frameInterval=saverMode?1000/16:(coarse?1000/24:1000/45);fastFrames=0;}}if(!reduce&&visible())raf=requestAnimationFrame(loop);}
+ function loop(now){raf=0;if(document.hidden)return;const target=frameInterval||(saverMode?1000/14:(coarse?1000/20:1000/30));if(now-last<target-1){raf=requestAnimationFrame(loop);return;}const started=performance.now();render(now,!reduce);const cost=performance.now()-started;if(now-lastPerfCheck>1800){lastPerfCheck=now;if(cost>19){slowFrames++;fastFrames=0;}else if(cost<11){fastFrames++;slowFrames=0;}if(slowFrames>=2){frameInterval=saverMode?1000/12:(coarse?1000/18:1000/24);slowFrames=0;}else if(fastFrames>=4){frameInterval=saverMode?1000/14:(coarse?1000/20:1000/30);fastFrames=0;}}if(!reduce&&visible())raf=requestAnimationFrame(loop);}
  function wake(){if(reduce){drawStatic();return;}if(!raf&&!document.hidden&&visible()){last=performance.now();raf=requestAnimationFrame(loop);}}
  scan();resize();
  panelResizeObserver=new ResizeObserver(()=>{resize();wake();});
@@ -1339,4 +1274,6 @@
   window.addEventListener("resize",()=>{if(button.style.top)button.style.top=clampTop(parseFloat(button.style.top)||0)+"px";},{passive:true});
  };
  if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",init,{once:true});else init();
+})();
+
 })();
