@@ -8,39 +8,125 @@
 <title>Authorised Access | KidsGastro</title>
 <link rel="icon" href="/assets/logo%20kg.webp" type="image/webp">
 <style>
-:root{font-family:Arial,"Segoe UI",sans-serif;color:#17324d;background:#f3f7fa}
+:root{
+  color-scheme:light;
+  --ink:#172b43;--muted:#718096;--blue:#1769aa;--blue-dark:#105488;
+  --line:#dce5ee;--paper:#fff;--canvas:#f3f6f9;--soft:#edf4f9;
+  font-family:Inter,"Segoe UI",Arial,sans-serif;color:var(--ink);background:var(--canvas)
+}
 *{box-sizing:border-box}
-body{margin:0;min-height:100vh;display:grid;place-items:center;padding:24px;background:linear-gradient(145deg,#eaf3f9,#f7fbff)}
-#gate{width:min(100%,480px);padding:32px 28px;background:#fff;border:1px solid #d8e4ef;box-shadow:0 10px 30px rgba(18,58,93,.08);text-align:center}
-.authorised-message{margin:0 0 22px;color:#0759a8;font-size:1.35rem;font-weight:800}
-#login-id,#passphrase{display:block;width:100%;margin-top:11px;padding:13px 14px;border:1px solid #aebfd0;border-radius:6px;font:inherit;color:#17324d;background:#fff}
-#unlock{display:block;width:100%;margin-top:13px;padding:13px 16px;border:0;border-radius:6px;background:#0759a8;color:#fff;font:700 1rem Arial,sans-serif;cursor:pointer}
-#unlock:disabled{opacity:.65;cursor:wait}
-#error{min-height:1.4em;margin:12px 0 0;color:#b42318;font-size:.9rem}
+body{
+  margin:0;min-height:100vh;display:grid;place-items:center;padding:32px 20px;
+  background:
+    radial-gradient(ellipse at 12% 8%,rgba(37,112,169,.09),transparent 34rem),
+    radial-gradient(ellipse at 92% 92%,rgba(26,83,128,.07),transparent 30rem),
+    var(--canvas)
+}
+#gate{
+  width:min(100%,440px);padding:38px 38px 30px;background:var(--paper);
+  border:1px solid rgba(203,216,228,.9);border-radius:16px;
+  box-shadow:0 24px 65px rgba(23,48,73,.10),0 2px 8px rgba(23,48,73,.035);
+  text-align:left;position:relative;overflow:hidden
+}
+#gate:before{content:"";position:absolute;inset:0 0 auto;height:4px;background:linear-gradient(90deg,#145b91,#4b91bd)}
+#gate.is-error{animation:kg-shake .34s ease;border-color:#e6a6a2}
+#gate.is-error #login-id,#gate.is-error #passphrase{border-color:#d66a63;background:#fffafa}
+#gate.is-success{border-color:#9bcdb8;box-shadow:0 24px 65px rgba(23,48,73,.10),0 0 0 4px rgba(45,154,118,.10)}
+#gate.is-success #unlock{background:linear-gradient(180deg,#278b69,#207653);box-shadow:0 5px 12px rgba(32,118,83,.18)}
+#gate.is-success .access-dot{background:#278b69;box-shadow:0 0 0 4px rgba(45,154,118,.13);animation:kg-pulse .7s ease-out 1}
+@keyframes kg-shake{0%,100%{transform:translateX(0)}22%{transform:translateX(-5px)}44%{transform:translateX(5px)}66%{transform:translateX(-3px)}88%{transform:translateX(2px)}}
+@keyframes kg-pulse{0%{box-shadow:0 0 0 0 rgba(45,154,118,.28)}100%{box-shadow:0 0 0 7px rgba(45,154,118,0)}}
+.admin-brand{display:flex;align-items:center;gap:13px;margin:0 0 34px}
+.admin-brand img{width:48px;height:48px;object-fit:contain}
+.brand-copy{min-width:0}
+.brand-name{display:block;color:#18334d;font-size:1.02rem;font-weight:750;letter-spacing:-.025em}
+.brand-caption{display:block;margin-top:3px;color:#8291a0;font-size:.73rem;letter-spacing:.09em;text-transform:uppercase}
+.access-label{display:inline-flex;align-items:center;gap:7px;margin:0 0 13px;color:#286a9b;font-size:.72rem;font-weight:750;letter-spacing:.11em;text-transform:uppercase}
+.access-dot{width:7px;height:7px;border-radius:50%;background:#2d9a76;box-shadow:0 0 0 3px #e6f4ee}
+h1{margin:0;color:#172b43;font-size:1.8rem;line-height:1.2;letter-spacing:-.045em;font-weight:730}
+.login-intro{margin:10px 0 27px;color:var(--muted);font-size:.92rem;line-height:1.6}
+.field{margin-top:17px}
+.field label{display:block;margin:0 0 8px;color:#344b61;font-size:.82rem;font-weight:650}
+.input-wrap{position:relative}
+#login-id,#passphrase{
+  display:block;width:100%;height:49px;margin:0;padding:0 14px;
+  border:1px solid #d5e0e9;border-radius:8px;outline:none;
+  font:inherit;font-size:.94rem;color:#1c344c;background:#fbfcfd;
+  transition:border-color .18s,box-shadow .18s,background .18s
+}
+#login-id::placeholder,#passphrase::placeholder{color:#9aa8b5}
+#login-id:focus,#passphrase:focus{border-color:#4c8bb8;background:#fff;box-shadow:0 0 0 3px rgba(39,112,165,.12)}
+#passphrase{padding-right:76px}
+#toggle-password{
+  position:absolute;right:9px;top:50%;transform:translateY(-50%);border:0;
+  background:transparent;color:#52718a;font-family:inherit;font-size:.78rem;font-weight:650;cursor:pointer;padding:7px
+}
+#toggle-password:hover{color:var(--blue)}
+#unlock{
+  display:flex;align-items:center;justify-content:center;gap:10px;width:100%;
+  min-height:49px;margin-top:24px;padding:12px 18px;border:0;border-radius:8px;
+  background:linear-gradient(180deg,#1c70ad,#145b91);color:#fff;
+  font-family:inherit;font-size:.94rem;font-weight:650;letter-spacing:.01em;cursor:pointer;
+  box-shadow:0 5px 12px rgba(20,91,145,.18);transition:transform .15s,filter .15s,box-shadow .15s
+}
+#unlock:hover{filter:brightness(1.06);box-shadow:0 7px 16px rgba(20,91,145,.22);transform:translateY(-1px)}
+#unlock:active{transform:translateY(0)}
+#unlock:disabled{opacity:.68;cursor:wait;transform:none}
+.button-arrow{font-size:1.05rem;line-height:1}
+#error{min-height:1.35em;margin:12px 0 0;color:#b42318;font-size:.82rem;line-height:1.45}
+.login-foot{display:flex;align-items:center;justify-content:center;gap:7px;margin:23px 0 0;padding-top:18px;border-top:1px solid #edf1f5;color:#8a98a6;font-size:.74rem}
+.login-foot svg{width:13px;height:13px;flex:none;color:#7891a5}
 #content{width:100%}
 .admin-shell{width:min(100%,560px);margin:auto}
-.admin-brand{display:flex;align-items:center;gap:12px;margin:0 0 20px;color:#0759a8;font-weight:800}
 .admin-brand img{width:54px;height:54px;object-fit:contain}
 .admin-brand span small{display:block;color:#52677a;font-weight:500;font-size:.78rem;margin-top:3px}
-#kg-admin-portal{padding:30px 26px;border:1px solid #d8e4ef;background:#fff;color:#17324d;box-shadow:0 10px 30px rgba(18,58,93,.08)}
-#kg-admin-portal .authorised-message{color:#0759a8}
+#kg-admin-portal{padding:30px 26px;border:1px solid var(--line);border-radius:14px;background:#fff;color:var(--ink);box-shadow:0 10px 30px rgba(18,58,93,.08)}
+#kg-admin-portal .authorised-message{color:var(--blue)}
 #kg-admin-portal p{line-height:1.55}
-.kg-admin-action{display:inline-flex;align-items:center;justify-content:center;margin:14px 8px 0 0;padding:11px 16px;border-radius:6px;background:#0759a8;color:#fff!important;font-weight:700;text-decoration:none}
-.admin-back{display:inline-block;margin:18px 0 0;color:#0759a8;font-weight:700;text-decoration:underline;text-underline-offset:3px}
-@media(max-width:520px){body{padding:16px}#gate{padding:26px 20px}#kg-admin-portal{padding:24px 18px}}
+.kg-admin-action{display:inline-flex;align-items:center;justify-content:center;margin:14px 8px 0 0;padding:11px 16px;border-radius:7px;background:var(--blue);color:#fff!important;font-weight:700;text-decoration:none}
+.admin-back{display:inline-block;margin:18px 0 0;color:var(--blue);font-weight:700;text-decoration:underline;text-underline-offset:3px}
+@media(max-width:520px){
+  body{padding:18px 14px}
+  #gate{padding:30px 23px 24px;border-radius:13px}
+  .admin-brand{margin-bottom:29px}
+  h1{font-size:1.65rem}
+}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{transition:none!important;animation:none!important;scroll-behavior:auto!important}}
 </style>
 </head>
 <body>
-<section id="gate" aria-label="Authorised access">
-  <p class="authorised-message">Authorised access only.</p>
+<section id="gate" aria-label="KidsGastro administrator sign in">
+  <div class="admin-brand">
+    <img src="/assets/logo%20kg.webp" alt="KidsGastro logo">
+    <div class="brand-copy">
+      <span class="brand-name">KidsGastro</span>
+      <span class="brand-caption">Website administration</span>
+    </div>
+  </div>
+  <p class="access-label"><span class="access-dot" aria-hidden="true"></span> Restricted area</p>
+  <h1>Welcome back</h1>
+  <p class="login-intro">Sign in to access the website management panel.</p>
   <form id="unlock-form">
-    <label for="login-id" style="position:absolute;left:-9999px">Login ID</label>
-    <input id="login-id" type="text" autocomplete="username" placeholder="Login ID" required>
-    <label for="passphrase" style="position:absolute;left:-9999px">Password</label>
-    <input id="passphrase" type="password" autocomplete="current-password" placeholder="Password" required>
-    <button id="unlock" type="submit">Login</button>
+    <div class="field">
+      <label for="login-id">Login ID</label>
+      <div class="input-wrap">
+        <input id="login-id" type="text" autocomplete="off" autocapitalize="none" spellcheck="false" placeholder="Enter your login ID" required>
+      </div>
+    </div>
+    <div class="field">
+      <label for="passphrase">Password</label>
+      <div class="input-wrap">
+        <input id="passphrase" type="password" autocomplete="off" autocapitalize="none" spellcheck="false" placeholder="Enter your password" required>
+        <button id="toggle-password" type="button" aria-label="Show password" aria-pressed="false">Show</button>
+      </div>
+    </div>
+    <button id="unlock" type="submit"><span>Sign in securely</span><span class="button-arrow" aria-hidden="true">→</span></button>
     <p id="error" role="alert" aria-live="polite"></p>
   </form>
+  <div class="login-foot">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>
+    <span>Private administrator sign-in · 15-minute session</span>
+  </div>
 </section>
 <div id="content" hidden></div>
 <script>
@@ -51,42 +137,87 @@ const form=document.getElementById("unlock-form");
 const idInput=document.getElementById("login-id");
 const input=document.getElementById("passphrase");
 const button=document.getElementById("unlock");
+const buttonLabel=button.querySelector("span");
+const buttonArrow=button.querySelector(".button-arrow");
 const error=document.getElementById("error");
 const gate=document.getElementById("gate");
 const content=document.getElementById("content");
+const togglePassword=document.getElementById("toggle-password");
+let submitting=false;
+function hidePassword(){
+ if(input.type==="text"){
+  input.type="password";
+  togglePassword.textContent="Show";
+  togglePassword.setAttribute("aria-label","Show password");
+  togglePassword.setAttribute("aria-pressed","false");
+ }
+}
+togglePassword.addEventListener("click",function(){
+ const showing=input.type==="text";
+ input.type=showing?"password":"text";
+ togglePassword.textContent=showing?"Show":"Hide";
+ togglePassword.setAttribute("aria-label",showing?"Show password":"Hide password");
+ togglePassword.setAttribute("aria-pressed",String(!showing));
+});
+/* Keep the password masked whenever the field loses focus. */
+input.addEventListener("blur",hidePassword);
+[idInput,input].forEach(function(field){
+ field.addEventListener("input",function(){gate.classList.remove("is-error");error.textContent="";});
+});
 function fromB64(s){return Uint8Array.from(atob(s),c=>c.charCodeAt(0));}
+function pause(ms){return new Promise(resolve=>setTimeout(resolve,ms));}
 form.addEventListener("submit",async function(event){
- event.preventDefault();error.textContent="";button.disabled=true;button.textContent="Checking…";
+ event.preventDefault();
+ if(submitting)return;
+ submitting=true;
+ gate.classList.remove("is-error","is-success");
+ error.textContent="";
+ button.disabled=true;
+ buttonLabel.textContent="Verifying…";
+ buttonArrow.textContent="";
  try{
    const credential=idInput.value.trim()+":"+input.value;
    const material=await crypto.subtle.importKey("raw",new TextEncoder().encode(credential),"PBKDF2",false,["deriveKey"]);
    const key=await crypto.subtle.deriveKey({name:"PBKDF2",salt:fromB64(payload.salt),iterations:payload.iterations,hash:"SHA-256"},material,{name:"AES-GCM",length:256},false,["decrypt"]);
    const plain=await crypto.subtle.decrypt({name:"AES-GCM",iv:fromB64(payload.iv)},key,fromB64(payload.ciphertext));
+   gate.classList.add("is-success");
+   buttonLabel.textContent="Access granted";
+   buttonArrow.textContent="✓";
+   await pause(420);
    /* Successful credential verification: tab-scoped 15-minute session. */
    sessionStorage.setItem("kg_admin_authenticated_until", String(Date.now() + 15 * 60 * 1000));
    idInput.value="";input.value="";
-   const params = new URLSearchParams(location.search);
-   const requested = params.get("return");
-   if (requested) {
-     /* Redirected login: accept only the site's known updates editor. */
-     let returnTo = "/updates.html";
-     try {
-       const parsed = new URL(requested, location.origin);
-       if (parsed.origin === location.origin &&
-           parsed.pathname.replace(/\/+$/, "").toLowerCase() === "/updates.html") {
-         returnTo = parsed.pathname + parsed.search + parsed.hash;
+   const params=new URLSearchParams(location.search);
+   const requested=params.get("return");
+   if(requested){
+     let returnTo="/updates.html";
+     try{
+       const parsed=new URL(requested,location.origin);
+       if(parsed.origin===location.origin && parsed.pathname.replace(/\/+$/,"").toLowerCase()==="/updates.html"){
+         returnTo=parsed.pathname+parsed.search+parsed.hash;
        }
-     } catch (_) {}
+     }catch(_){}
      location.replace(returnTo);
-   } else {
-     /* Standalone login: preserve the original admin portal experience. */
-     content.innerHTML = new TextDecoder().decode(plain);
-     gate.hidden = true;
-     content.hidden = false;
-   } }catch(e){
+   }else{
+     content.innerHTML=new TextDecoder().decode(plain);
+     gate.hidden=true;
+     content.hidden=false;
+   }
+ }catch(e){
+   gate.classList.remove("is-success");
+   gate.classList.add("is-error");
    error.textContent="Incorrect Login ID or password. Please try again.";
-   input.value="";input.focus();
- }finally{button.disabled=false;button.textContent="Login";}
+   input.value="";
+   hidePassword();
+   input.focus();
+   buttonLabel.textContent="Try again";
+   buttonArrow.textContent="→";
+   await pause(650);
+   buttonLabel.textContent="Sign in securely";
+ }finally{
+   button.disabled=false;
+   submitting=false;
+ }
 });
 })();
 </script>
