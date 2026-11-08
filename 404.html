@@ -8,7 +8,6 @@
   <title>Page Not Found | KidsGastro</title>
   <meta name="robots" content="noindex, follow">
   <meta name="theme-color" content="#0759a8">
-  <meta name="description" content="The requested page could not be found on KidsGastro.">
 
   <link rel="icon" href="/assets/kg%20logo.webp" type="image/webp">
 
@@ -27,13 +26,16 @@
       box-sizing: border-box;
     }
 
-    html {
+    html,
+    body {
+      width: 100%;
       min-height: 100%;
+      margin: 0;
     }
 
     body {
-      margin: 0;
       min-height: 100vh;
+      min-height: 100svh;
       display: flex;
       flex-direction: column;
       font-family: Arial, Helvetica, sans-serif;
@@ -43,6 +45,7 @@
 
     /* Header */
     .site-header {
+      flex: 0 0 auto;
       width: 100%;
       min-height: 76px;
       display: flex;
@@ -60,6 +63,7 @@
     }
 
     .brand img {
+      display: block;
       width: 48px;
       height: 48px;
       object-fit: contain;
@@ -70,22 +74,27 @@
     .brand-name {
       font-size: 21px;
       font-weight: 700;
-      letter-spacing: 0.2px;
     }
 
-    /* Main content */
+    /* Precisely centred main section */
     main {
-      flex: 1;
+      flex: 1 0 auto;
+      width: 100%;
       display: flex;
-      justify-content: center;
       align-items: center;
-      padding: 64px 20px;
+      justify-content: center;
+      padding: 40px 20px;
     }
 
     .error-content {
       width: 100%;
       max-width: 620px;
-      padding: 48px 32px;
+      margin: auto;
+      padding: 42px 28px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
       text-align: center;
       background: var(--white);
       border-radius: 18px;
@@ -93,35 +102,46 @@
     }
 
     .error-code {
-      margin: 0 0 12px;
+      display: block;
+      width: 100%;
+      margin: 0;
       color: var(--blue);
       font-size: clamp(76px, 15vw, 120px);
       line-height: 1;
       font-weight: 800;
       letter-spacing: -5px;
+      text-align: center;
     }
 
     h1 {
-      margin: 18px 0 12px;
-      font-size: clamp(23px, 4vw, 31px);
-      line-height: 1.25;
+      display: block;
+      width: 100%;
+      margin: 22px 0 12px;
       color: var(--deep-blue);
+      font-size: clamp(23px, 4vw, 31px);
+      line-height: 1.3;
+      font-weight: 700;
+      text-align: center;
     }
 
     .message {
-      margin: 0 auto 30px;
-      max-width: 430px;
+      display: block;
+      width: 100%;
+      max-width: 440px;
+      margin: 0 auto 28px;
       color: var(--muted);
       font-size: 16px;
       line-height: 1.7;
+      text-align: center;
     }
 
-    /* Home button */
+    /* Button */
     .home-button {
       display: inline-flex;
-      justify-content: center;
       align-items: center;
+      justify-content: center;
       min-height: 48px;
+      margin: 0 auto;
       padding: 13px 25px;
       border: 2px solid var(--yellow);
       border-radius: 8px;
@@ -129,11 +149,10 @@
       color: #172b3e;
       font-size: 15px;
       font-weight: 700;
+      text-align: center;
       text-decoration: none;
-      transition:
-        background 0.2s ease,
-        transform 0.2s ease,
-        box-shadow 0.2s ease;
+      transition: background 0.2s ease, transform 0.2s ease,
+                  box-shadow 0.2s ease;
     }
 
     .home-button:hover {
@@ -150,11 +169,13 @@
 
     /* Footer */
     .site-footer {
-      padding: 22px 16px;
-      text-align: center;
+      flex: 0 0 auto;
+      width: 100%;
+      padding: 20px 16px;
       background: var(--deep-blue);
       color: rgba(255, 255, 255, 0.9);
       font-size: 13px;
+      text-align: center;
     }
 
     .site-footer p {
@@ -178,11 +199,11 @@
       }
 
       main {
-        padding: 35px 16px;
+        padding: 28px 16px;
       }
 
       .error-content {
-        padding: 40px 22px;
+        padding: 38px 20px;
         border-radius: 14px;
       }
 
@@ -207,19 +228,26 @@
 <body>
 
   <header class="site-header">
-    <a class="brand" href="https://drnitinmohan.com/" aria-label="KidsGastro home">
+    <a class="brand"
+       href="https://drnitinmohan.com/"
+       aria-label="KidsGastro home">
+
       <img
         src="/assets/kg%20logo.webp"
         alt="Dr. Nitin Mohan KidsGastro logo">
+
       <span class="brand-name">KidsGastro</span>
     </a>
   </header>
 
   <main>
     <section class="error-content" aria-labelledby="error-heading">
+
       <p class="error-code" aria-label="Error 404">404</p>
 
-      <h1 id="error-heading">We couldn’t find this page.</h1>
+      <h1 id="error-heading">
+        We couldn’t find this page.
+      </h1>
 
       <p class="message">
         It may have moved or the link may be incorrect.
@@ -228,6 +256,7 @@
       <a class="home-button" href="https://drnitinmohan.com/">
         Back to drnitinmohan.com
       </a>
+
     </section>
   </main>
 
