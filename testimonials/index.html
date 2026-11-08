@@ -2499,17 +2499,7 @@ html body #gallery-lightbox.gallery-lightbox{z-index:2147483600!important;displa
 html body #gallery-lightbox.gallery-lightbox.is-open{display:flex!important;}
 html body #gallery-lightbox .gallery-lightbox-image{max-width:100%!important;max-height:100%!important;object-fit:contain!important;}
 html body main#main img.kg-main-image-viewer-trigger{cursor:zoom-in!important;}
-/* Restore the existing cosmic layer: an old desktop-wide reduced-animation rule
-   accidentally shortened every animation on the page to 0.01ms. */
-html body header.header.kg-cosmos-host .kg-cosmos-background,
-html body header.header.kg-cosmos-host .kg-cosmos-background *,
-html body header.header.kg-cosmos-host .kg-orbit-overlay,
-html body header.header.kg-cosmos-host .kg-orbit-overlay *,
-html body header.header.kg-cosmos-host canvas.kg-sky{
-  animation-duration:12s!important;
-  animation-iteration-count:infinite!important;
-  animation-play-state:running!important;
-}
+/* Do not globally override animation timing: each cosmic layer keeps its own duration. */
 /* Self-contained visual fallback, so the blue header still has visible cosmic
    motion even if the shared external animation bundle fails to initialise. */
 html body header.header.kg-cosmos-host{
@@ -6814,6 +6804,26 @@ body > .kg-logo-css-text, body > pre.kg-logo-css-text, body > code.kg-logo-css-t
 @media(prefers-reduced-motion:reduce){#kg-space{opacity:.72!important;}}
 </style>
 <link rel="stylesheet" href="/assets/css/cosmic-animation.css">
+<style id="kg-cosmic-svg-safe-defaults">
+/* Safe SVG defaults: prevent unstyled orbital shapes from falling back to black. */
+.kg-orbit-overlay { background: transparent !important; }
+.kg-orbit-overlay .kg-orbit-ring,
+.kg-orbit-overlay .kg-orbit-ring ellipse {
+  fill: none;
+  stroke: rgba(189,226,255,.22);
+  stroke-width: 1;
+}
+.kg-orbit-overlay .kg-planet { fill: #cfe9ff; }
+.kg-orbit-overlay .kg-planet-halo { fill: rgba(189,226,255,.12); stroke: none; }
+.kg-orbit-overlay .kg-planet-ring { fill: none; stroke: rgba(207,233,255,.6); stroke-width: 1; }
+.kg-orbit-overlay .kg-moon-track { fill: none; stroke: rgba(189,226,255,.25); stroke-width: .6; }
+.kg-orbit-overlay .kg-moon { fill: #e6f3ff; }
+.kg-orbit-overlay .kg-asteroid { fill: rgba(207,233,255,.7); }
+html body header.header.kg-cosmos-host canvas.kg-sky,
+html body footer.footer.kg-cosmos-host canvas.kg-sky {
+  background: transparent !important;
+}
+</style>
 <link rel="stylesheet" href="/assets/css/kg-announcement-sync.css">
 <script defer src="/assets/js/cosmic-animation.js"></script>
 <script defer src="/assets/js/kg-announcement-sync.js"></script>
@@ -7827,19 +7837,19 @@ applyZoom();
       var rot=rand(-55,55), planetR=rand(2.2,10.5), speed=rand(-.00072,.00072);
       if(Math.abs(speed)<.00016)speed=speed<0?-.00019:.00019;
       var start=rand(0,Math.PI*2), px=ox+Math.cos(start)*rx, py=oy+Math.sin(start)*ry;
-      rings+='<ellipse cx="'+ox.toFixed(1)+'" cy="'+oy.toFixed(1)+'" rx="'+rx.toFixed(1)+'" ry="'+ry.toFixed(1)+'" transform="rotate('+rot.toFixed(1)+' '+ox.toFixed(1)+' '+oy.toFixed(1)+')"/>';
-      orbits+='<g class="kg-orbit-spin" data-radius="'+rx.toFixed(1)+'" data-speed="'+speed.toFixed(6)+'" style="transform-origin:'+cx+'px '+cy+'px"><circle class="kg-planet" cx="'+px.toFixed(1)+'" cy="'+py.toFixed(1)+'" r="'+planetR.toFixed(1)+'"/>';
-      if(Math.random()>.45)orbits+='<circle class="kg-planet-halo" cx="'+px.toFixed(1)+'" cy="'+py.toFixed(1)+'" r="'+(planetR*rand(1.7,3.1)).toFixed(1)+'"/>';
+      rings+='<ellipse fill="none" stroke="rgba(189,226,255,.22)" stroke-width="1" cx="'+ox.toFixed(1)+'" cy="'+oy.toFixed(1)+'" rx="'+rx.toFixed(1)+'" ry="'+ry.toFixed(1)+'" transform="rotate('+rot.toFixed(1)+' '+ox.toFixed(1)+' '+oy.toFixed(1)+')"/>';
+      orbits+='<g class="kg-orbit-spin" data-radius="'+rx.toFixed(1)+'" data-speed="'+speed.toFixed(6)+'" style="transform-origin:'+cx+'px '+cy+'px"><circle class="kg-planet" fill="#cfe9ff" cx="'+px.toFixed(1)+'" cy="'+py.toFixed(1)+'" r="'+planetR.toFixed(1)+'"/>';
+      if(Math.random()>.45)orbits+='<circle class="kg-planet-halo" fill="rgba(189,226,255,.12)" stroke="none" cx="'+px.toFixed(1)+'" cy="'+py.toFixed(1)+'" r="'+(planetR*rand(1.7,3.1)).toFixed(1)+'"/>';
       /* A few ringed worlds add a Saturn-like silhouette. */
-      if(planetR>5.4 && Math.random()>.38)orbits+='<ellipse class="kg-planet-ring" cx="'+px.toFixed(1)+'" cy="'+py.toFixed(1)+'" rx="'+(planetR*1.8).toFixed(1)+'" ry="'+(planetR*.62).toFixed(1)+'" transform="rotate(-24 '+px.toFixed(1)+' '+py.toFixed(1)+')"/>';
+      if(planetR>5.4 && Math.random()>.38)orbits+='<ellipse class="kg-planet-ring" fill="none" stroke="rgba(207,233,255,.6)" stroke-width="1" cx="'+px.toFixed(1)+'" cy="'+py.toFixed(1)+'" rx="'+(planetR*1.8).toFixed(1)+'" ry="'+(planetR*.62).toFixed(1)+'" transform="rotate(-24 '+px.toFixed(1)+' '+py.toFixed(1)+')"/>';
       /* Tiny moons travel around selected planets on their own circular tracks. */
-      if(Math.random()>.34){var mr=rand(1.1,2.1),md=planetR+rand(7,15),ma=rand(0,Math.PI*2),ms=(rand(.018,.055)*(Math.random()>.5?1:-1)).toFixed(3);orbits+='<g class="kg-moon-orbit" data-moon-speed="'+ms+'" data-moon-angle="'+ma.toFixed(3)+'" transform="translate('+px.toFixed(1)+' '+py.toFixed(1)+')"><circle class="kg-moon-track" r="'+md.toFixed(1)+'"/><circle class="kg-moon" r="'+mr.toFixed(1)+'" cx="'+md.toFixed(1)+'" cy="0"/></g>';}
-      if(Math.random()>.64){var p2=rand(0,Math.PI*2),pr2=rand(1.8,planetR*.9);orbits+='<circle class="kg-planet" cx="'+(ox+Math.cos(p2)*rx).toFixed(1)+'" cy="'+(oy+Math.sin(p2)*ry).toFixed(1)+'" r="'+pr2.toFixed(1)+'"/>';}
+      if(Math.random()>.34){var mr=rand(1.1,2.1),md=planetR+rand(7,15),ma=rand(0,Math.PI*2),ms=(rand(.018,.055)*(Math.random()>.5?1:-1)).toFixed(3);orbits+='<g class="kg-moon-orbit" data-moon-speed="'+ms+'" data-moon-angle="'+ma.toFixed(3)+'" transform="translate('+px.toFixed(1)+' '+py.toFixed(1)+')"><circle class="kg-moon-track" fill="none" stroke="rgba(189,226,255,.25)" stroke-width=".6" r="'+md.toFixed(1)+'"/><circle class="kg-moon" fill="#e6f3ff" r="'+mr.toFixed(1)+'" cx="'+md.toFixed(1)+'" cy="0"/></g>';}
+      if(Math.random()>.64){var p2=rand(0,Math.PI*2),pr2=rand(1.8,planetR*.9);orbits+='<circle class="kg-planet" fill="#cfe9ff" cx="'+(ox+Math.cos(p2)*rx).toFixed(1)+'" cy="'+(oy+Math.sin(p2)*ry).toFixed(1)+'" r="'+pr2.toFixed(1)+'"/>';}
       /* Small faceted asteroids, grouped into the same orbital motion. */
-      if(Math.random()>.30){var ax=ox+Math.cos(rand(0,Math.PI*2))*rx,ay=oy+Math.sin(rand(0,Math.PI*2))*ry,ar=rand(1.4,3.2);orbits+='<polygon class="kg-asteroid" points="'+(ax-ar).toFixed(1)+','+ay.toFixed(1)+' '+(ax-ar*.35).toFixed(1)+','+(ay-ar*1.1).toFixed(1)+' '+(ax+ar*.9).toFixed(1)+','+(ay-ar*.45).toFixed(1)+' '+(ax+ar*.55).toFixed(1)+','+(ay+ar*.8).toFixed(1)+' '+(ax-ar*.6).toFixed(1)+','+(ay+ar*.65).toFixed(1)+'"/>';}
+      if(Math.random()>.30){var ax=ox+Math.cos(rand(0,Math.PI*2))*rx,ay=oy+Math.sin(rand(0,Math.PI*2))*ry,ar=rand(1.4,3.2);orbits+='<polygon class="kg-asteroid" fill="rgba(207,233,255,.7)" points="'+(ax-ar).toFixed(1)+','+ay.toFixed(1)+' '+(ax-ar*.35).toFixed(1)+','+(ay-ar*1.1).toFixed(1)+' '+(ax+ar*.9).toFixed(1)+','+(ay-ar*.45).toFixed(1)+' '+(ax+ar*.55).toFixed(1)+','+(ay+ar*.8).toFixed(1)+' '+(ax-ar*.6).toFixed(1)+','+(ay+ar*.65).toFixed(1)+'"/>';}
       orbits+='</g>';
     }
-    return '<svg class="kg-orbit-overlay" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" aria-hidden="true" focusable="false"><g class="kg-orbit-ring">'+rings+'</g>'+orbits+'</svg>';
+    return '<svg class="kg-orbit-overlay" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" aria-hidden="true" focusable="false"><g class="kg-orbit-ring" fill="none" stroke="rgba(189,226,255,.22)" stroke-width="1">'+rings+'</g>'+orbits+'</svg>';
   }
   function add(){
     document.querySelectorAll(selector).forEach(function(el){
