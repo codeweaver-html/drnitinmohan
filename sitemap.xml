@@ -1,13 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url><loc>https://drnitinmohan.com/</loc></url>
-  <url><loc>https://drnitinmohan.com/treatments/</loc></url>
+  <!-- Main website -->
+  <url>
+    <loc>https://drnitinmohan.com/</loc>
+  </url>
+
+  <!-- Public section landing pages -->
+  <url><loc>https://drnitinmohan.com/about/</loc></url>
+  <url><loc>https://drnitinmohan.com/blog/</loc></url>
+  <url><loc>https://drnitinmohan.com/faqs/</loc></url>
+  <url><loc>https://drnitinmohan.com/gallery/</loc></url>
+  <url><loc>https://drnitinmohan.com/publications/</loc></url>
   <url><loc>https://drnitinmohan.com/services/</loc></url>
+  <url><loc>https://drnitinmohan.com/testimonials/</loc></url>
+  <url><loc>https://drnitinmohan.com/treatments/</loc></url>
+
+  <!-- Treatment pages -->
   <url><loc>https://drnitinmohan.com/treatments/paediatric-biliary-tract-diseases/</loc></url>
   <url><loc>https://drnitinmohan.com/treatments/paediatric-gastroenterology/</loc></url>
   <url><loc>https://drnitinmohan.com/treatments/paediatric-hepatology/</loc></url>
   <url><loc>https://drnitinmohan.com/treatments/paediatric-nutrition-growth/</loc></url>
   <url><loc>https://drnitinmohan.com/treatments/paediatric-pancreatology/</loc></url>
+
+  <!-- Service pages -->
   <url><loc>https://drnitinmohan.com/services/biliary-tract-investigations/</loc></url>
   <url><loc>https://drnitinmohan.com/services/gastrointestinal-diagnostic-investigations/</loc></url>
   <url><loc>https://drnitinmohan.com/services/hepatology-investigations/</loc></url>

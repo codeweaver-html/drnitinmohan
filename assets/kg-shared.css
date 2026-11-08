@@ -233,7 +233,7 @@ header.kg-space-panel button.toggle[aria-expanded="true"]{
  background-size:230% 100%!important;background-position:130% 0!important;
  color:#123c77!important;border:2px solid #e6ad00!important;opacity:1!important;filter:none!important;
  box-shadow:0 5px 15px rgba(173,124,0,.27),0 0 0 3px rgba(255,196,0,.16)!important;
- font-weight:850!important;animation:kg-appointment-shine-v4 3.2s ease-in-out infinite,kg-appointment-attention-v4 2.6s ease-in-out infinite!important;
+ font-weight:850!important;animation:kg-appointment-shine-v4 3.2s ease-in-out infinite!important;
 }
 .booking-toggle:hover,.booking-toggle:focus-visible{background-color:#ffd43b!important;transform:translateY(-2px)!important;outline:3px solid #0759a8!important;outline-offset:4px!important}
 @keyframes kg-appointment-shine-v4{0%,18%{background-position:130% 0}72%,100%{background-position:-130% 0}}
@@ -262,13 +262,19 @@ a[href], a[href] *, area[href], [role="link"], [role="link"] * {
 .booking-toggle:focus-visible,
 .booking-toggle:active {
   background-color: #ffc400 !important;
-  background-image: none !important;
+  background-image: linear-gradient(112deg,transparent 0%,transparent 38%,rgba(255,255,255,.62) 50%,transparent 62%,transparent 100%) !important;
+  background-size: 230% 100% !important;
+  background-position: 130% 0 !important;
+  animation: kg-appointment-shine-v4 3.2s ease-in-out infinite !important;
   color: #123c77 !important;
   border-color: #ffc400 !important;
 }
 .booking-toggle:hover {
   background-color: #ffc400 !important;
-  background-image: none !important;
+  background-image: linear-gradient(112deg,transparent 0%,transparent 38%,rgba(255,255,255,.62) 50%,transparent 62%,transparent 100%) !important;
+  background-size: 230% 100% !important;
+  background-position: 130% 0 !important;
+  animation: kg-appointment-shine-v4 3.2s ease-in-out infinite !important;
   color: #123c77 !important;
   border-color: #ffc400 !important;
 }
@@ -528,3 +534,33 @@ html.kg-shared-subsite #kg-space{z-index:1!important;pointer-events:none!importa
 }
 .whatsapp-float{touch-action:none!important;user-select:none!important;-webkit-user-select:none!important;cursor:grab!important;transition:box-shadow .18s ease,background-color .18s ease!important;}
 .whatsapp-float.is-dragging{cursor:grabbing!important;transition:none!important;will-change:top;}
+
+
+/* ===== FINAL SHARED-SCENE SAFEGUARDS ===== */
+/* The JS registers only top-level visual hosts; these rules keep each scene
+   clipped to its own blue box and keep all interactive content above it. */
+.kg-space-panel{position:relative!important;overflow:hidden!important;}
+.kg-space-panel>*{position:relative;z-index:2;}
+#kg-space{pointer-events:none!important;}
+
+/* One animation track per moving CTA; no competing pulse/shadow animation. */
+.booking-toggle,
+.booking-toggle:visited,
+.booking-toggle:focus,
+.booking-toggle:focus-visible,
+.booking-toggle:active{
+  animation:kg-appointment-shine-v4 3.2s ease-in-out infinite!important;
+}
+
+/* The WhatsApp control moves vertically only; dragging remains pointer-driven. */
+.whatsapp-float{touch-action:none!important;}
+.whatsapp-float.is-dragging{animation-play-state:paused!important;}
+
+@media(prefers-reduced-motion:reduce){
+  .booking-toggle,.whatsapp-float,
+  .kg-shared-announcement-track,
+  .header.kg-space-panel #links.open,
+  .kg-shared-subsite header.header #links.open{
+    animation:none!important;
+  }
+}

@@ -1,1 +1,207 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Page not found | KidsGastro</title><style>body{font:16px/1.6 Arial,sans-serif;margin:0;background:#f6f8fa;color:#18384d;display:grid;min-height:100vh;place-items:center}.box{max-width:620px;padding:32px;text-align:center}a{display:inline-block;margin-top:12px;padding:12px 20px;background:#ffc400;color:#123c77;text-decoration:none;font-weight:700;border-radius:4px}</style></head><body><main class="box"><h1>Page not found</h1><p>The page may have moved or the address may be incorrect.</p><a href="/">Return to KidsGastro home</a></main></body></html>
+
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="theme-color" content="#0759a8">
+  <title>Page not found | KidsGastro</title>
+
+  <style>
+    :root {
+      --kg-blue: #0759a8;
+      --kg-deep: #064b8d;
+      --kg-ink: #18384d;
+      --kg-muted: #526775;
+      --kg-bg: #f6f8fa;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      background: var(--kg-bg);
+      color: var(--kg-ink);
+      font: 16px/1.6 Arial, "Segoe UI", sans-serif;
+    }
+
+    header {
+      min-height: 82px;
+      display: flex;
+      align-items: center;
+      background: var(--kg-blue);
+      padding: 12px max(22px, calc((100% - 1120px)/2));
+    }
+
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 13px;
+      text-decoration: none;
+    }
+
+    .brand img {
+      display: block;
+      width: 58px;
+      height: 58px;
+      object-fit: contain;
+    }
+
+    .brand span {
+      color: #fff;
+      font-size: 1rem;
+      font-weight: 700;
+    }
+
+    main {
+      width: min(100% - 36px, 720px);
+      margin: auto;
+      padding: 64px 20px;
+      text-align: center;
+    }
+
+    .error-number {
+      margin: 0;
+      color: var(--kg-blue);
+      font-size: clamp(5rem, 15vw, 8rem);
+      font-weight: 800;
+      letter-spacing: -.075em;
+      line-height: .95;
+    }
+
+    h1 {
+      margin: 22px 0 8px;
+      font-size: clamp(1.5rem, 4vw, 2rem);
+      line-height: 1.25;
+    }
+
+    p {
+      margin: 0 auto;
+      max-width: 440px;
+      color: var(--kg-muted);
+      font-size: 1rem;
+    }
+
+    .actions {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 28px;
+    }
+
+    .btn {
+      display: inline-flex;
+      min-height: 49px;
+      align-items: center;
+      justify-content: center;
+      padding: 0 23px;
+      border: 2px solid var(--kg-blue);
+      border-radius: 4px;
+      text-decoration: none;
+      font: 700 .95rem Arial, sans-serif;
+      transition: background .18s ease, transform .18s ease;
+    }
+
+    .btn:hover {
+      transform: translateY(-1px);
+    }
+
+    .btn:focus-visible {
+      outline: 3px solid var(--kg-ink);
+      outline-offset: 3px;
+    }
+
+    .home {
+      color: #fff;
+      background: var(--kg-blue);
+    }
+
+    .home:hover {
+      background: var(--kg-deep);
+    }
+
+    footer {
+      padding: 17px 20px;
+      text-align: center;
+      background: var(--kg-blue);
+      color: #e1ebff;
+      font-size: .78rem;
+    }
+
+    @media (max-width: 480px) {
+      header {
+        min-height: 72px;
+      }
+
+      .brand img {
+        width: 50px;
+        height: 50px;
+      }
+
+      main {
+        padding: 52px 10px;
+      }
+
+      .actions {
+        display: grid;
+        width: min(100%, 320px);
+        margin: 25px auto 0;
+      }
+
+      .btn {
+        width: 100%;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        transition-duration: .01ms !important;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <header>
+    <a class="brand" href="https://drnitinmohan.com/"
+       aria-label="KidsGastro home">
+
+      <!-- Official KidsGastro logo -->
+      <img
+        src="PASTE_YOUR_OFFICIAL_LOGO_PATH_HERE"
+        alt="Dr. Nitin Mohan KidsGastro logo">
+
+      <span>KidsGastro</span>
+    </a>
+  </header>
+
+  <main>
+    <p class="error-number" aria-hidden="true">404</p>
+
+    <h1>We couldn’t find this page.</h1>
+
+    <p>
+      It may have moved or the link may be incorrect.
+    </p>
+
+    <div class="actions">
+      <a class="btn home" href="https://drnitinmohan.com/">
+        Back to drnitinmohan.com
+      </a>
+    </div>
+  </main>
+
+  <footer>
+    © 2026 KidsGastro. All rights reserved.
+  </footer>
+
+</body>
+</html>

@@ -101,9 +101,17 @@
   return {el,panelIndex,launchStagger,repeatStagger,lastActiveAt:performance.now(),bodies,collisionPairs:Object.create(null),collisionEffects:[],blackHole:null,nextBlackHole:performance.now()+rand(9000,18000)+launchStagger,iss:rand(0,TAU),issBody:null,voyager:null,ship:null,skyCrane:null,marsRover:null,nextSkyCrane:performance.now()+rand(6500,10500)+launchStagger,astronaut:null,nextAstronaut:performance.now()+rand(1800,4200),satellite:null,nextSatellite:performance.now()+rand(3500,6500),asteroid:null,nextAsteroid:performance.now()+rand(900,1800),hubble:null,nextHubble:performance.now()+rand(5000,9000),orion:null,nextOrion:performance.now()+rand(4000,7500),halley:null,nextHalley:performance.now()+rand(7000,12000),nextVoyager:performance.now()+rand(...CONFIG.voyagerInitialDelay),nextShip:performance.now()+rand(...CONFIG.starshipInitialDelay)+launchStagger,r:null,blocked:[],safePoints:[],sparks};
  }
  function scan(){
+  // Only one simulation host is allowed for any nested visual box. Nested
+  // selectors (header links, footer bands, hero children) otherwise duplicate
+  // every moving object inside the same parent panel.
   selectors.forEach(sel=>document.querySelectorAll(sel).forEach(el=>{
-   if(el.closest('#hospital-location')||el.dataset.kgSpacePanel==='1')return;
-   el.dataset.kgSpacePanel='1';el.dataset.kgOriginalPosition=getComputedStyle(el).position;el.classList.add('kg-space-panel');
+   if(!el || el.closest('#hospital-location') || el.dataset.kgSpacePanel==='1')return;
+   const isOpenMenu=el.matches('header #links.open,header .links.open,.site-header #links.open,.site-header .links.open');
+   if(panels.some(p=>p.el===el.parentElement || p.el.contains(el))&&!isOpenMenu)return;
+   if(panels.some(p=>el.contains(p.el)))return;
+   el.dataset.kgSpacePanel='1';
+   el.dataset.kgOriginalPosition=getComputedStyle(el).position;
+   el.classList.add('kg-space-panel');
    const panel=makePanel(el,panels.length);panels.push(panel);
    if(panelResizeObserver)panelResizeObserver.observe(el);
   }));
