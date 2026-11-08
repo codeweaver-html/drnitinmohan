@@ -257,72 +257,20 @@ select.setting-state-unchanged{
   background:#f7faff;color:#526879;font-size:.9rem;
 }
 
+
+.has-error{border:2px solid #b42318!important;background:#fff1f0!important;outline:none!important}
+#formControls:disabled{opacity:.62}
 </style>
 
 <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate, max-age=0">
 <meta http-equiv="Pragma" content="no-cache">
 <meta name="referrer" content="same-origin">
-<style>
-html:not(.kg-admin-ok) body{visibility:hidden!important}
-#kg-admin-lock{border:1px solid #b8cde0;background:#fff;color:#0759a8;border-radius:7px;padding:8px 12px;font-weight:700;cursor:pointer;margin:0 0 12px auto;display:block}
-</style>
-<script>
-/* Fail-closed browser gate for the 15-minute admin session.
-   This controls page display only; GitHub Pages cannot enforce server-side access. */
-(function(){
-  "use strict";
-  const KEY = "kg_admin_authenticated_until";
-  const LOGIN = new URL("/admin.html", window.location.origin);
-  let redirecting = false;
 
-  function readExpiry(){
-    try {
-      const raw = sessionStorage.getItem(KEY);
-      const expiry = Number(raw);
-      return raw && Number.isFinite(expiry) ? expiry : 0;
-    } catch (_) {
-      return 0; // Storage unavailable means no authenticated session.
-    }
-  }
-
-  function lock(){
-    if (redirecting) return;
-    redirecting = true;
-    try { sessionStorage.removeItem(KEY); } catch (_) {}
-    const returnTo = window.location.pathname + window.location.search + window.location.hash;
-    LOGIN.searchParams.set("return", returnTo);
-    window.location.replace(LOGIN.href);
-  }
-
-  function check(){
-    const expiry = readExpiry();
-    if (!expiry || Date.now() >= expiry) {
-      lock();
-      return false;
-    }
-    document.documentElement.classList.add("kg-admin-ok");
-    return true;
-  }
-
-  // Run synchronously in the document head, before the editor can be displayed.
-  if (!check()) return;
-
-  document.addEventListener("visibilitychange", function(){
-    if (!document.hidden) check();
-  });
-  window.addEventListener("focus", check);
-  window.addEventListener("pageshow", check);
-
-  const remaining = readExpiry() - Date.now();
-  window.setTimeout(lock, Math.max(0, remaining));
-})();
-</script>
 
 </head>
 <body>
 <div class="wrap">
 <header>
-  <button id="kg-admin-lock" type="button" onclick="sessionStorage.removeItem('kg_admin_authenticated_until');location.replace('/admin.html?return='+encodeURIComponent(location.pathname+location.search+location.hash))">Lock / Log out</button>
   <h1>Website Change Request</h1>
   <p><a class="back" href="https://drnitinmohan.com/">← Return to website</a></p>
 </header>
@@ -336,6 +284,7 @@ html:not(.kg-admin-ok) body{visibility:hidden!important}
         <span id="previousLoadState" class="previous-load-state" role="status" aria-live="polite"></span>
       </div>
     </section>
+    <fieldset id="formControls" disabled style="border:0;padding:0;margin:0;min-width:0">
     <section class="section">
       <div class="section-head"><span class="num">1</span><h2>Website settings</h2></div>
 
@@ -442,6 +391,7 @@ html:not(.kg-admin-ok) body{visibility:hidden!important}
 </section>
     <div class="actions"><button class="primary" type="button" id="download">↓ Create request</button><button class="secondary" type="reset">Reset form</button></div>
     <div class="status" id="status" role="status" aria-live="polite"></div>
+    </fieldset>
   </form>
 </main>
 </div>
@@ -553,11 +503,17 @@ html:not(.kg-admin-ok) body{visibility:hidden!important}
       el.textContent=`Previous state: ${label} · ${timing}${expiry}${dateLabel} · ${requested}`;
     });
   }
+  function unlockFormControls() {
+    const controls = $('formControls');
+    if (controls) controls.disabled = false;
+  }
+
   function loadPreviousJsonObject(obj,name='previous JSON') {
     if(!obj || typeof obj!=='object' || Array.isArray(obj)) throw new Error('The selected file is not a JSON configuration object.');
     previousConfig=obj;
     previousFileName=name;
     updatePreviousLabels();
+    unlockFormControls();
   }
   async function loadLatestSavedConfiguration({quiet=false}={}) {
     const state=$('previousLoadState');
@@ -629,6 +585,7 @@ html:not(.kg-admin-ok) body{visibility:hidden!important}
         if(!obj || typeof obj!=='object' || Array.isArray(obj)) throw new Error('The JSON must contain a configuration object at its top level.');
         previousConfig=obj;
         previousFileName=file.name;
+        unlockFormControls();
         try { updatePreviousLabels(); } catch(labelError) {}
         if(state){state.className='previous-load-state success';state.textContent=`Successfully loaded ${file.name} (${Math.round(file.size/1024)} KB).`;}
         $('status').classList.remove('status-error');
@@ -1022,6 +979,15 @@ html:not(.kg-admin-ok) body{visibility:hidden!important}
   }, 0));
 
   $('download').addEventListener('click', () => {
+    document.querySelectorAll('.has-error').forEach(el => el.classList.remove('has-error'));
+    $('status').classList.remove('status-error','status-success');
+
+    if (!previousConfig) {
+      $('status').textContent = 'Please upload a valid previous JSON configuration file first to enable form submission.';
+      $('status').classList.add('status-error');
+      $('uploadPreviousJson').focus();
+      return;
+    }
 
     if (!changedFields().length && $('phoneVisibility').value === 'unchanged' && !previousConfig) {
       $('status').textContent = 'Load a previous JSON to carry it forward, or select at least one new website change.';
@@ -1041,9 +1007,45 @@ html:not(.kg-admin-ok) body{visibility:hidden!important}
     for(const group of scheduleState.groups){
       const members=changedFields().filter(f=>scheduleState.settings[f.key]?.duration==='temporary'&&scheduleState.settings[f.key].groupId===group.id);
       if(!members.length)continue;
-      if(!group.start||!group.end){$('status').textContent='For every temporary schedule, select a date, hour, minute and AM/PM for both start and end.';$('status').classList.add('status-error');return;}
-      if(new Date(group.end)<=new Date(group.start)){ $('status').textContent='Every temporary schedule must end after it starts.';$('status').classList.add('status-error');return;}
-      if(new Date(group.end)<=new Date()){ $('status').textContent='The end time of every temporary schedule must still be in the future. The start time may be in the past.';$('status').classList.add('status-error');return;}
+      if(!group.start||!group.end){
+        const panel = [...document.querySelectorAll('.schedule-group')].find(el =>
+          el.querySelector(`[data-schedule-group="${group.id}"]`));
+        let firstInvalid = null;
+        ['start','end'].forEach(edge => {
+          ['date','hour','minute','ampm'].forEach(part => {
+            const input = panel?.querySelector(`[data-schedule-group="${group.id}"][data-edge="${edge}"][data-part="${part}"]`);
+            if (!input || !input.value) {
+              input?.classList.add('has-error');
+              if (!firstInvalid && input) firstInvalid = input;
+            }
+          });
+          const manual = panel?.querySelector(`.time-card input.manual-time-input[data-edge="${edge}"]`);
+          if (!group[edge] && manual && manual.value.trim()) {
+            manual.classList.add('has-error');
+            if (!firstInvalid) firstInvalid = manual;
+          }
+        });
+        $('status').textContent='For every temporary schedule, select a date, hour, minute and AM/PM for both start and end. You can also type the time manually.';
+        $('status').classList.add('status-error');
+        if (firstInvalid) { firstInvalid.scrollIntoView({behavior:'smooth',block:'center'}); firstInvalid.focus(); }
+        return;
+      }
+      if(new Date(group.end)<=new Date(group.start)){
+        $('status').textContent='Every temporary schedule must end after it starts.';
+        $('status').classList.add('status-error');
+        const panel = [...document.querySelectorAll('.schedule-group')].find(el => el.querySelector(`[data-schedule-group="${group.id}"]`));
+        const endDate = panel?.querySelector(`[data-schedule-group="${group.id}"][data-edge="end"][data-part="date"]`);
+        endDate?.classList.add('has-error'); endDate?.scrollIntoView({behavior:'smooth',block:'center'}); endDate?.focus();
+        return;
+      }
+      if(new Date(group.end)<=new Date()){
+        $('status').textContent='The end time of every temporary schedule must still be in the future. The start time may be in the past.';
+        $('status').classList.add('status-error');
+        const panel = [...document.querySelectorAll('.schedule-group')].find(el => el.querySelector(`[data-schedule-group="${group.id}"]`));
+        const endDate = panel?.querySelector(`[data-schedule-group="${group.id}"][data-edge="end"][data-part="date"]`);
+        endDate?.classList.add('has-error'); endDate?.scrollIntoView({behavior:'smooth',block:'center'}); endDate?.focus();
+        return;
+      }
       changeSchedules.groups.push({id:group.id,startDateTime:group.start,endDateTime:group.end,settings:members.map(f=>f.key)});
     }
     const durations=Object.values(changeSchedules.settings).map(x=>x.duration);
