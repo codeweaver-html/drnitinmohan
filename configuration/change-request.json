@@ -45,7 +45,7 @@
     },
     "width": "100%",
     "maxWidth": "100%",
-    "action": "restore_default",
+    "action": "add",
     "schedule": {
       "duration": "permanent",
       "scheduleGroupId": null,
@@ -70,7 +70,7 @@
       "text": "OFFLINE APPOINTMENTS AVAILABLE RIGHT NOW.               CLICK THE APPOINTMENT BUTTON BELOW TO PROCEED.",
       "textColor": "#0759a8",
       "backgroundColor": "#ffc400",
-      "speedSeconds": 83,
+      "speedSeconds": 10,
       "scope": "all-sites",
       "targets": {
         "mainSite": true,
@@ -97,11 +97,11 @@
       },
       "width": "100%",
       "maxWidth": "100%",
-      "enabled": false,
-      "text": "APPOINTMENT BOOKING HAS NOW BEEN OPENED!",
+      "enabled": true,
+      "text": "Happy Diwali from KidsGastro!",
       "textColor": "#0759a8",
       "backgroundColor": "#f3a6c8",
-      "speedSeconds": 83,
+      "speedSeconds": 5,
       "scope": "all-sites",
       "targets": {
         "mainSite": true,
@@ -157,7 +157,7 @@
   },
   "formTitle": "KidsGastro Website Change Request",
   "doctor": "Dr. Nitin Mohan",
-  "createdAt": "2026-11-04T20:20:46.145Z",
+  "createdAt": "2026-11-08T13:21:10.850Z",
   "timezone": "Asia/Kolkata",
   "targetFile": "configuration/change-request.json",
   "notice": "This is a request only. It does not modify or publish the website.",
@@ -171,7 +171,7 @@
     "showWhatsAppButton": "yes",
     "hideWhatsAppButton": "no",
     "changeAnnouncement": "yes",
-    "announcementMode": "restore_default",
+    "announcementMode": "add",
     "mainStripBackgroundColor": "#ffc400",
     "photoOfMonthAction": "update",
     "updatePhotoOfMonth": "yes",
@@ -181,8 +181,8 @@
       "whatsappBookingOption": "continue",
       "rezepRxBookingOption": "continue",
       "phoneNumberVisibility": "enable",
-      "announcementMarquee": "continue",
-      "photoOfTheMonth": "update"
+      "announcementMarquee": "add",
+      "photoOfTheMonth": "continue"
     },
     "showPhoneNumber": "yes",
     "hidePhoneNumber": "no"
@@ -201,10 +201,6 @@
         "duration": "permanent",
         "scheduleGroupId": null
       },
-      "announcementMarquee": {
-        "duration": "permanent",
-        "scheduleGroupId": null
-      },
       "mainAnnouncementStrip": {
         "duration": "permanent",
         "scheduleGroupId": null
@@ -214,15 +210,28 @@
         "scheduleGroupId": null
       },
       "phoneNumberVisibility": {
-        "duration": "permanent",
-        "scheduleGroupId": null
+        "duration": "temporary",
+        "scheduleGroupId": "new-schedule-1"
       },
       "photoOfTheMonth": {
         "duration": "permanent",
         "scheduleGroupId": null
+      },
+      "announcementMarquee": {
+        "duration": "permanent",
+        "scheduleGroupId": null
       }
     },
-    "groups": [],
+    "groups": [
+      {
+        "id": "new-schedule-1",
+        "startDateTime": "2026-11-08T18:48",
+        "endDateTime": "2026-11-09T23:59",
+        "settings": [
+          "phoneNumberVisibility"
+        ]
+      }
+    ],
     "activateTemporary": true,
     "announcementStrips": {
       "coordinated": true,
@@ -241,7 +250,7 @@
     }
   },
   "details": {
-    "announcementText": "",
+    "announcementText": "Happy Diwali from KidsGastro!",
     "defaultAnnouncementText": "OFFLINE APPOINTMENTS AVAILABLE RIGHT NOW.               CLICK THE APPOINTMENT BUTTON BELOW TO PROCEED.",
     "mainStripTextColor": "#0759a8",
     "mainStripBackgroundColor": "#ffc400",
@@ -254,8 +263,8 @@
       "secondStrip": "#f3a6c8"
     },
     "announcementMarqueeSpeedsSeconds": {
-      "standardStrip": 83,
-      "customStrip": 83
+      "standardStrip": 10,
+      "customStrip": 5
     },
     "photoOfMonthAction": "update",
     "photoOfMonth": "configuration/photo-of-the-month/photo nov.webp",
@@ -264,7 +273,7 @@
     "photoCaption": "Big world, little explorer.",
     "otherInstructions": "",
     "mainStripText": "OFFLINE APPOINTMENTS AVAILABLE RIGHT NOW.               CLICK THE APPOINTMENT BUTTON BELOW TO PROCEED.",
-    "additionalStripText": "APPOINTMENT BOOKING HAS NOW BEEN OPENED!",
+    "additionalStripText": "Happy Diwali from KidsGastro!",
     "announcementTextPreservation": {
       "whiteSpace": "pre",
       "preserveRepeatedSpaces": true,
@@ -319,7 +328,7 @@
       },
       "width": "100%",
       "maxWidth": "100%",
-      "action": "restore_default",
+      "action": "add",
       "schedule": {
         "duration": "permanent",
         "scheduleGroupId": null,
@@ -344,7 +353,7 @@
         "text": "OFFLINE APPOINTMENTS AVAILABLE RIGHT NOW.               CLICK THE APPOINTMENT BUTTON BELOW TO PROCEED.",
         "textColor": "#0759a8",
         "backgroundColor": "#ffc400",
-        "speedSeconds": 83,
+        "speedSeconds": 10,
         "scope": "all-sites",
         "targets": {
           "mainSite": true,
@@ -371,11 +380,11 @@
         },
         "width": "100%",
         "maxWidth": "100%",
-        "enabled": false,
-        "text": "APPOINTMENT BOOKING HAS NOW BEEN OPENED!",
+        "enabled": true,
+        "text": "Happy Diwali from KidsGastro!",
         "textColor": "#0759a8",
         "backgroundColor": "#f3a6c8",
-        "speedSeconds": 83,
+        "speedSeconds": 5,
         "scope": "all-sites",
         "targets": {
           "mainSite": true,
@@ -419,22 +428,30 @@
       "sharedByStrips": true
     }
   },
-  "duration": "permanent",
+  "duration": "mixed",
   "schedule": {
-    "type": "permanent",
-    "periods": [],
+    "type": "mixed",
+    "periods": [
+      {
+        "startDateTime": "2026-11-08T18:48",
+        "endDateTime": "2026-11-09T23:59",
+        "settings": [
+          "phoneNumberVisibility"
+        ]
+      }
+    ],
     "activateTemporary": true
   },
   "mergeMetadata": {
     "baselineFile": "change-request.json",
-    "generatedAt": "2026-11-04T20:20:46.145Z",
+    "generatedAt": "2026-11-08T13:21:10.849Z",
     "actions": {
       "appointmentButton": "continue",
       "whatsappBookingOption": "continue",
       "rezepRxBookingOption": "continue",
       "phoneNumberVisibility": "enable",
-      "announcementMarquee": "continue",
-      "photoOfTheMonth": "update"
+      "announcementMarquee": "add",
+      "photoOfTheMonth": "continue"
     },
     "note": "Settings marked continue were carried forward from the loaded previous configuration where available."
   }
