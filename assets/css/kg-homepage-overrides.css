@@ -1,0 +1,1555 @@
+/*
+ * KidsGastro homepage overrides stylesheet.
+ * Extracted from the original inline style blocks in source order.
+ * Loaded AFTER /assets/kg-shared.css to preserve the original cascade.
+ * Legacy priority declarations are retained in this pass to avoid visual regressions.
+ */
+
+
+/* ===== Extracted homepage override: kg-homepage-final-cleanup ===== */
+/* Main-site appointment CTA: solid, calm blue with no looping shine or pulsing. */
+.booking-toggle,.booking-toggle:hover,.booking-toggle:focus-visible,.booking-toggle:active{
+  background:#0759a8!important;background-color:#0759a8!important;color:#fff!important;
+  border:1px solid #0759a8!important;opacity:1!important;
+  box-shadow:0 2px 7px rgba(7,59,105,.16)!important;
+  transform:none!important;filter:none!important;
+  transition:background-color .16s ease,box-shadow .16s ease!important;
+}
+.booking-toggle:hover,.booking-toggle:focus-visible{background:#064b8d!important;border-color:#064b8d!important;box-shadow:0 3px 10px rgba(7,59,105,.2)!important}
+.booking-toggle::before,.booking-toggle::after{content:none!important;display:none!important;animation:none!important}
+.booking-toggle .appointment-mail-animation,.booking-toggle .appointment-mail-dot{animation:none!important}
+.booking-toggle .appointment-mail-dot{display:none!important}
+.booking-menu-panel{background:#fff!important;opacity:1!important}
+/* No custom pointer, trailing ring/dot, or blinking typewriter caret. */
+
+
+/* ===== Extracted homepage override: kg-final-yellow-booking-button ===== */
+.booking-toggle,.booking-toggle:visited,.booking-toggle:focus{background:#ffc400!important;background-color:#ffc400!important;color:#123c77!important;border:2px solid #ffc400!important;opacity:1!important;filter:none!important;text-shadow:none!important}
+.booking-toggle:hover{background:#f1b900!important;background-color:#f1b900!important;border-color:#f1b900!important;color:#123c77!important}
+.booking-toggle::before,.booking-toggle::after{display:none!important;content:none!important;animation:none!important}
+
+
+/* ===== Extracted homepage override: kg-final-cta-and-whatsapp-motion ===== */
+/* Definitive homepage booking CTA override: solid site yellow in every state. */
+html body header.header nav.nav #booking-menu-toggle,
+html body header.header nav.nav #booking-menu-toggle:link,
+html body header.header nav.nav #booking-menu-toggle:visited,
+html body header.header nav.nav #booking-menu-toggle:hover,
+html body header.header nav.nav #booking-menu-toggle:focus,
+html body header.header nav.nav #booking-menu-toggle:focus-visible,
+html body header.header nav.nav #booking-menu-toggle:active {
+  background: #ffc400 !important;
+  background-color: #ffc400 !important;
+  background-image: none !important;
+  color: #123c77 !important;
+  border: 2px solid #ffc400 !important;
+  box-shadow: 0 3px 10px rgba(173,124,0,.22) !important;
+  opacity: 1 !important;
+  filter: none !important;
+}
+html body header.header nav.nav #booking-menu-toggle:hover {
+  background: #f1b900 !important;
+  background-color: #f1b900 !important;
+  border-color: #f1b900 !important;
+}
+/* Keep the WhatsApp booking control anchored bottom-right and bob vertically only. */
+body a.whatsapp-float {
+  animation: kg-whatsapp-vertical-float 3.2s ease-in-out infinite !important;
+  will-change: transform;
+}
+@keyframes kg-whatsapp-vertical-float {
+  0%, 100% { transform: translate3d(0, 0, 0); }
+  50% { transform: translate3d(0, -9px, 0); }
+}
+body a.whatsapp-float:hover,
+body a.whatsapp-float:focus-visible {
+  animation-play-state: paused !important;
+  transform: translate3d(0, -3px, 0) !important;
+}
+@media (prefers-reduced-motion: reduce) {
+  body a.whatsapp-float { animation: none !important; transform: none !important; }
+}
+
+
+/* ===== Extracted homepage override: kg-final-logo-and-whatsapp-layer ===== */
+.header .brand,.header .brand *, .header .circular-brand-logo,.header .kg-logo,
+.footer-brand,.footer-brand *, .circular-brand-logo,[data-embedded-logo]{
+ position:relative!important;z-index:2147483007!important;isolation:isolate!important;
+}
+.whatsapp-float{touch-action:none!important;cursor:grab!important;user-select:none!important;-webkit-user-select:none!important}
+.whatsapp-float.is-dragging{cursor:grabbing!important;transition:none!important;will-change:top}
+
+
+/* ===== Extracted homepage override: kg-consolidated-body-styles ===== */
+/* ===== Original style block 95: why-dr-nitin-mohan-homepage-styles ===== */
+
+.why-dr-nitin-mohan-section{background:#0759a8;padding:clamp(42px,6vw,76px) 0;border-top:1px solid #0759a8;border-bottom:1px solid #0759a8}
+.why-dr-nitin-mohan-section .section-heading{max-width:800px;margin:0 0 22px}
+.why-dr-nitin-mohan-section .section-heading h2{margin:10px 0 0;color:#fff}
+.why-dr-nitin-mohan-copy{max-width:920px;padding:clamp(18px,3vw,28px);background:#f6f9fc;border-left:4px solid #0759a8;color:#405969;line-height:1.8;font-size:clamp(1rem,1.25vw,1.1rem)}
+.why-dr-nitin-mohan-copy p{margin:0 0 14px}
+.why-dr-nitin-mohan-copy p:last-child{margin-bottom:0}
+@media(max-width:600px){.why-dr-nitin-mohan-copy{padding:18px 16px;overflow-wrap:anywhere}}
+
+
+/* ===== Original style block 96: kg-testimonial-styles ===== */
+
+.kg-testimonials-section{padding:54px 0;background:#f4f8ff;color:#12365a}.kg-testimonials-section .section-heading{text-align:center;margin-bottom:24px}.kg-testimonials-section .section-heading h2{color:#0759a8}.kg-testimonial-window{overflow:hidden;position:relative;max-width:1080px;margin:0 auto}.kg-testimonial-track{display:flex;gap:18px;width:max-content;animation:kg-testimonial-gear 100s linear infinite;will-change:transform}.kg-testimonial-window:hover .kg-testimonial-track,.kg-testimonial-window:focus-within .kg-testimonial-track{animation-play-state:paused}.kg-testimonial-card{box-sizing:border-box;flex:0 0 clamp(270px,31vw,340px);min-height:190px;background:#fff;border:2px solid #d7e8fb;border-radius:8px;padding:22px;box-shadow:0 5px 18px rgba(7,89,168,.09);display:flex;flex-direction:column;justify-content:flex-start}.kg-testimonial-card p{margin:10px 0 0;line-height:1.65;color:#203c59}.kg-testimonial-stars{color:#f4b400;letter-spacing:3px;font-size:24px;line-height:1.2;font-family:Arial,sans-serif}.kg-testimonial-controls{display:flex;justify-content:center;gap:10px;margin-top:18px}.kg-testimonial-controls button{border:1px solid #0759a8;background:#fff;color:#0759a8;border-radius:6px;padding:9px 16px;font:inherit;cursor:pointer}.kg-testimonial-controls button:hover{background:#0759a8;color:#fff}.kg-testimonials-all{max-width:1080px;margin:32px auto 0;padding:0 16px}.kg-testimonials-all h3{color:#0759a8}.kg-testimonials-all-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,280px),1fr));gap:16px}.kg-testimonials-all .kg-testimonial-card{flex:auto;min-height:0}.kg-testimonials-link{display:inline-block;margin-top:20px;color:#0759a8;font-weight:700;text-decoration:underline;text-underline-offset:4px}@keyframes kg-testimonial-gear{from{transform:translateX(0)}to{transform:translateX(calc(-50%))}}@media(prefers-reduced-motion:reduce){.kg-testimonial-track{animation:none;flex-wrap:wrap;width:auto;transform:none}.kg-testimonial-window{overflow:visible}.kg-testimonial-card{flex:1 1 280px}}@media(max-width:600px){.kg-testimonials-section{padding:36px 0}.kg-testimonial-card{flex-basis:82vw;padding:18px}}
+
+
+/* ===== Original style block 97: kg-shared-testimonial-reel-control-style ===== */
+
+.kg-testimonial-controls .kg-testimonial-play{min-width:110px;min-height:44px;padding:8px 13px;border:1px solid #b6cbd8;border-radius:6px;background:#fff;color:#0759a8;font:700 .9rem/1.2 Arial,'Segoe UI',sans-serif;cursor:pointer}
+.kg-testimonial-controls .kg-testimonial-play:hover{background:#eaf3fa;border-color:#0759a8}
+.kg-testimonial-controls .kg-testimonial-play:focus-visible{outline:3px solid #0759a8;outline-offset:3px}
+/* Compact slot rows and a taller list make more appointment times visible at once. */
+.kg-slot-picker-list{max-height:min(68vh,560px)!important;padding:4px!important}
+.kg-slot-picker-option{min-height:34px!important;padding:6px 9px!important;gap:9px!important;font-size:.92rem!important;line-height:1.2!important}
+.kg-slot-booked-status{font-size:.74rem!important}
+@media(max-width:760px){.kg-slot-picker-list{max-height:min(62vh,480px)!important}.kg-slot-picker-option{min-height:32px!important;padding:5px 8px!important;font-size:.88rem!important}}
+@media(prefers-reduced-motion:reduce){.kg-testimonial-track{animation:none!important}.kg-testimonial-controls .kg-testimonial-play{transition:none!important}}
+
+
+/* ===== Original style block 98: white-all-accents-except-book-appointment ===== */
+
+/* Restrained palette: reserve yellow exclusively for the primary Book an appointment control. */
+:root{--site-yellow:#ffffff!important}
+.header{border-bottom-color:#ffffff!important}
+.header .brand .mark,.footer-brand .mark,.secondary-brand .mark,.newsletter-panel .mark{background:#ffffff!important;color:#0759a8!important}
+.site-search button,.site-search button:hover{background:#ffffff!important;border-color:#d5dfe5!important;color:#0759a8!important}
+.nav-dropdown>summary::after,.header-quick-dropdown>summary::after,.links>a.nav-direct-link::after,.nav-dropdown>summary:hover::after,.nav-dropdown[open]>summary::after{background:#ffffff!important}
+.hero .eyebrow:before,.eyebrow:before{background:#ffffff!important}
+.footer-contact-item{border-right-color:#ffffff55!important}
+.footer-contact-item>svg{stroke:#ffffff!important}
+.footer-contact-item a:hover,.footer-instagram:hover,.footer .back-top{color:#ffffff!important}
+.footer-bottom{border-top-color:#ffffff55!important}
+@media(max-width:760px){.footer-contact-item,.footer-contact-item:first-child,.footer-contact-item:last-child{border-bottom-color:#ffffff35!important}}
+.newsletter-section{border-top-color:#ffffff!important}
+.newsletter-controls input:focus{outline-color:#ffffff!important}
+.newsletter-section .newsletter-controls .btn,.newsletter-section .newsletter-controls .btn:hover,.newsletter-section .newsletter-controls .btn:focus-visible{background:#ffffff!important;border-color:#ffffff!important;color:#0759a8!important}
+.booking-dialog-actions .booking-submit,.booking-dialog-actions .booking-submit:hover{background:#ffffff!important;border-color:#ffffff!important;color:#0759a8!important}
+.opd-day span{border-left-color:#ffffff!important}
+.opd-closure,.secondary-nav a[aria-current="page"],.search-hit{background:#ffffff!important}
+.secondary-nav a[aria-current="page"]{border-color:#ffffff!important}
+.about-reasons article,.treatment-subgroups>div{border-left-color:#ffffff!important}
+.updated-map-link,.updated-map-link:hover{background:#ffffff!important;border-color:#ffffff!important;color:#0759a8!important}
+.booking-menu-panel>a:hover{box-shadow:inset 3px 0 #ffffff!important}
+.toggle:focus-visible{outline-color:#ffffff!important}
+
+
+/* ===== Original style block 99: dropdown-white-hover-lines-final-fix ===== */
+
+/* Reliable white underline for every dropdown item: inset shadow is visible even when pseudo-elements are affected by other styles. */
+.header .nav-dropdown-menu a,
+.header .header-quick-menu a {
+  position: relative !important;
+  text-decoration: none !important;
+  box-shadow: inset 0 -0px 0 #ffffff !important;
+  transition: background-color .16s ease, color .16s ease, box-shadow .16s ease !important;
+}
+.header .nav-dropdown-menu a:hover,
+.header .nav-dropdown-menu a:focus-visible,
+.header .header-quick-menu a:hover,
+.header .header-quick-menu a:focus-visible {
+  background-color: #0759a8 !important;
+  color: #ffffff !important;
+  box-shadow: inset 0 -2px 0 #ffffff !important;
+  outline: none !important;
+}
+.header .nav-dropdown-menu a:hover b,
+.header .nav-dropdown-menu a:focus-visible b,
+.header .nav-dropdown-menu a:hover small,
+.header .nav-dropdown-menu a:focus-visible small,
+.header .header-quick-menu a:hover,
+.header .header-quick-menu a:focus-visible { color: #ffffff !important; }
+.header .nav-dropdown-menu a:hover::after,
+.header .nav-dropdown-menu a:focus-visible::after,
+.header .header-quick-menu a:hover::after,
+.header .header-quick-menu a:focus-visible::after {
+  content: "" !important; position: absolute !important; left: 12px !important; right: 12px !important; bottom: 5px !important;
+  height: 2px !important; background: #ffffff !important; transform: scaleX(1) !important; opacity: 1 !important; z-index: 2 !important;
+}
+@media (prefers-reduced-motion: reduce) { .header .nav-dropdown-menu a, .header .header-quick-menu a { transition: none !important; } }
+
+
+/* ===== Original style block 100: top-level-nav-white-underline-fix ===== */
+
+/* Top-level menu items: show a clean white underline only while hovered or focused. */
+header nav .links > a.nav-direct-link,
+header nav .links > details.nav-dropdown > summary {
+  position: relative !important;
+  text-decoration: none !important;
+}
+header nav .links > a.nav-direct-link::after,
+header nav .links > details.nav-dropdown > summary::after {
+  content: "" !important;
+  position: absolute !important;
+  left: 12px !important;
+  right: 12px !important;
+  bottom: 4px !important;
+  display: block !important;
+  height: 2px !important;
+  width: auto !important;
+  background: #ffffff !important;
+  border: 0 !important;
+  border-radius: 2px !important;
+  opacity: 1 !important;
+  transform: scaleX(0) !important;
+  transform-origin: center !important;
+  transition: transform .2s ease !important;
+  pointer-events: none !important;
+}
+header nav .links > a.nav-direct-link:hover::after,
+header nav .links > a.nav-direct-link:focus-visible::after,
+header nav .links > details.nav-dropdown:hover > summary::after,
+header nav .links > details.nav-dropdown:focus-within > summary::after,
+header nav .links > details.nav-dropdown[open] > summary::after {
+  transform: scaleX(1) !important;
+}
+@media (prefers-reduced-motion: reduce) {
+  header nav .links > a.nav-direct-link::after,
+  header nav .links > details.nav-dropdown > summary::after { transition: none !important; }
+}
+
+
+/* ===== Original style block 101: footer-share-repair-style ===== */
+
+.footer-share-contact .footer-share{display:inline-flex;align-items:center;gap:5px;width:max-content;margin-top:3px;padding:2px 0;color:inherit!important;font:inherit;font-size:.92rem;font-weight:650;text-decoration:none;background:transparent;border:0;cursor:pointer;position:relative}
+.footer-share-contact .footer-share:after{content:"";position:absolute;left:0;right:100%;bottom:0;height:1px;background:currentColor;transition:right .22s ease}
+.footer-share-contact .footer-share:hover:after,.footer-share-contact .footer-share:focus-visible:after{right:0}
+.footer-share-status{display:block;font-size:.78rem;color:inherit;opacity:.9;min-height:1em;margin-top:2px;max-width:240px}
+.footer-share-contact svg{width:42px;height:42px;fill:none;stroke:currentColor;stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round}
+.footer-share-contact .footer-share:focus-visible{outline:2px solid currentColor;outline-offset:3px;border-radius:2px}
+/* Uniform outline thickness across all footer icons. */
+.footer .footer-contact-item>svg,
+.footer .footer-instagram svg,
+.footer .footer-share-contact svg{stroke-width:1.8!important;stroke-linecap:round!important;stroke-linejoin:round!important}
+
+
+/* ===== Original style block 102: pdf-style-search-navigation ===== */
+
+.site-search{position:relative}.search-status:not(:empty){position:fixed!important;top:82px!important;right:24px!important;z-index:2147483000!important;white-space:normal!important;min-width:0!important;max-width:calc(100vw - 24px)!important;padding:7px 9px!important;background:#fff!important;color:#17365d!important;border:1px solid #b8d1e5!important;border-left:4px solid #0759a8!important;border-radius:9px!important;box-shadow:0 5px 24px rgba(10,43,75,.24)!important;font-size:14px!important;line-height:1.2!important;box-sizing:border-box!important}.search-status .search-nav{display:flex;align-items:center;justify-content:center;gap:8px}.search-status .search-count{font-weight:750;white-space:nowrap;min-width:42px;text-align:center;font-variant-numeric:tabular-nums}.search-status .search-nav button{display:inline-grid;place-items:center;width:36px;height:36px;min-width:36px;padding:0;border:1px solid #c9dced;border-radius:7px;background:#eaf3fb!important;color:#0759a8!important;font-size:24px;line-height:1;cursor:pointer;touch-action:manipulation}.search-status .search-nav button:hover,.search-status .search-nav button:focus-visible{background:#d3e8f8!important;outline:2px solid #0759a8!important;outline-offset:1px}.search-status .search-nav button:last-child{background:#fff!important;color:#526775!important}.search-status .search-nav button:disabled{opacity:.35;cursor:not-allowed}.search-hit{outline:2px solid #0759a8!important;outline-offset:3px;background:#fff2b8!important}.search-hit-active{outline:3px solid #0759a8!important;outline-offset:4px;background:#ffe477!important;box-shadow:0 0 0 6px #0759a822!important}
+@media(max-width:760px){.search-status:not(:empty){top:auto!important;right:auto!important;bottom:calc(env(safe-area-inset-bottom,0px) + 12px)!important;left:50%!important;transform:translateX(-50%)!important;width:max-content!important;max-width:calc(100vw - 16px)!important;padding:7px 8px!important}.search-status .search-nav{gap:7px!important}.search-status .search-nav button{width:40px;height:40px;min-width:40px;flex:0 0 40px;font-size:26px}.search-status .search-count{min-width:44px}}
+
+
+/* ===== Original style block 103: exact-search-text-highlights ===== */
+.search-hit{outline:none!important;background:transparent!important;box-shadow:none!important}.search-hit-text{background:#fff0a6!important;color:inherit!important;border-radius:2px;outline:1px solid #e5c34a}.search-hit-text-active{background:#ffc400!important;color:#172f46!important;outline:2px solid #0759a8!important;outline-offset:1px}
+
+/* ===== Original style block 104: search-no-match-message-style ===== */
+.search-no-match-message{display:inline-block;margin-left:4px;color:#a62c2c;font-weight:650;animation:searchNoMatchIn .18s ease-out}@keyframes searchNoMatchIn{from{opacity:0;transform:translateY(-2px)}to{opacity:1;transform:translateY(0)}}@media(prefers-reduced-motion:reduce){.search-no-match-message{animation:none}}
+
+/* ===== Original style block 105: contextual-breadcrumb-styles ===== */
+
+.site-breadcrumbs{display:flex;align-items:center;flex-wrap:wrap;gap:8px;margin:0 0 18px;font-size:.88rem;line-height:1.5;color:#5c7182}
+.site-breadcrumbs a{display:inline-block;color:#0759a8;text-decoration:none;border-bottom:1px solid transparent;padding:2px 1px;cursor:pointer;transition:border-color .18s ease,color .18s ease}
+.site-breadcrumbs a:hover,.site-breadcrumbs a:focus-visible{color:#064b8d;border-bottom-color:#0759a8}
+.site-breadcrumbs .crumb-separator{color:#9aabb8;user-select:none}
+.site-breadcrumbs [aria-current="page"]{color:#526775;font-weight:600;border-bottom-color:transparent}.site-breadcrumbs [aria-current="page"]:hover,.site-breadcrumbs [aria-current="page"]:focus-visible{color:#0759a8;border-bottom-color:#0759a8}
+@media(max-width:600px){.site-breadcrumbs{font-size:.82rem;gap:6px;margin-bottom:14px}}
+
+
+/* ===== Original style block 106: kg-requested-icon-cleanup ===== */
+
+/* Keep OPD timings text-only; remove the clock mark. */
+.opd-hours h2::before{content:none!important;display:none!important}
+/* No decorative icon under the Clinical Work eyebrow. */
+.reel-heading h2>.kg-section-icon{display:none!important}
+/* News, video and audio category marks are white silhouettes, never colored badges. */
+.latest-card>.kg-card-icon{background:transparent!important;color:#fff!important;border:0!important;box-shadow:none!important}
+.latest-card>.kg-card-icon .kg-ui-icon{fill:#fff!important;stroke:#fff!important;stroke-width:1.7!important}
+.latest-card>.kg-card-icon{filter:none!important}
+
+
+/* ===== Original style block 107: kg-hide-dropdown-submenu-icons ===== */
+
+/* Keep icons on top-level menu options, but remove them from dropdown submenu links. */
+.nav-dropdown-menu > a > .kg-nav-icon,
+.nav-dropdown-menu > a > .kg-menu-icon,
+.nav-dropdown-menu > a > svg,
+.booking-menu-panel > a > .kg-nav-icon,
+.booking-menu-panel > a > .kg-menu-icon,
+.booking-menu-panel > a > svg { display:none!important; }
+.nav-dropdown-menu > a { grid-template-columns:minmax(0,1fr)!important; column-gap:0!important; }
+.nav-dropdown-menu > a > .kg-nav-copy,
+.nav-dropdown-menu > a > b,
+.nav-dropdown-menu > a > small { grid-column:1!important; }
+
+
+/* ===== Original style block 108: clock-single-period-controls-final ===== */
+
+/* One shared clock face with one visible AM/PM control pair. */
+.manual-periods{display:none!important}
+/* Make the primary booking action unmistakably yellow. */
+.booking-dialog-actions .booking-submit,.booking-dialog-actions .booking-submit:hover,.booking-dialog-actions .booking-submit:focus-visible{background:#ffc400!important;border-color:#ffc400!important;color:#123c77!important}
+.booking-dialog-actions .booking-submit:hover{background:#f1b900!important}
+/* Keep every footer outline icon at the same stroke weight. */
+.footer .footer-contact-item>svg,.footer .footer-instagram svg,.footer .footer-share-contact svg{stroke-width:1.8!important;stroke-linecap:round!important;stroke-linejoin:round!important}
+ .clock-number-inner{font-size:.82em!important;opacity:.92}
+
+
+/* ===== Original style block 109: abstract-white-watermark-style ===== */
+
+/* Subtle non-branded abstract watermark for blue sections and footer. */
+.abstract-watermark-host{position:relative!important;isolation:isolate;overflow:hidden}
+.abstract-watermark{position:absolute;z-index:0;pointer-events:none;user-select:none;right:-clamp(35px,7vw,100px);top:50%;width:clamp(180px,31vw,390px);aspect-ratio:1;border-radius:50%;transform:translateY(-50%);opacity:.58;background:radial-gradient(circle at center,transparent 0 29%,rgba(255,255,255,.075) 29.3% 29.8%,transparent 30.1% 43%,rgba(255,255,255,.11) 43.3% 43.8%,transparent 44.1% 57%,rgba(255,255,255,.08) 57.3% 57.8%,transparent 58.1%);animation:abstract-watermark-drift 16s ease-in-out infinite alternate}
+.abstract-watermark::before,.abstract-watermark::after{content:"";position:absolute;border:1px solid rgba(255,255,255,.13);border-radius:50%;}
+.abstract-watermark::before{width:24%;height:24%;top:9%;left:12%;box-shadow:0 0 0 13px rgba(255,255,255,.018),0 0 0 28px rgba(255,255,255,.012)}
+.abstract-watermark::after{width:10%;height:10%;right:14%;bottom:15%;box-shadow:0 0 0 11px rgba(255,255,255,.025)}
+.abstract-watermark-host>.container,.abstract-watermark-host>.footer-contact-band>.container,.abstract-watermark-host>.footer-bottom,.abstract-watermark-host>.newsletter-wrap,.abstract-watermark-host>.social-wrap,.abstract-watermark-host>.section-heading,.abstract-watermark-host>.hospital-location-grid{position:relative;z-index:1}
+@keyframes abstract-watermark-drift{from{translate:0 -1.5%;rotate:-4deg;scale:.98}to{translate:-2% 1.5%;rotate:4deg;scale:1.03}}
+@media(max-width:700px){.abstract-watermark{width:clamp(160px,48vw,250px);right:-55px;opacity:.48}}
+@media(prefers-reduced-motion:reduce){.abstract-watermark{animation:none!important}}
+
+
+/* ===== Original style block 110: compact-footer-normalization ===== */
+
+/* Compact, balanced footer proportions on desktop and mobile */
+.footer-contact-band{
+  padding:22px 0 16px!important;
+  background:#0759a8!important;
+}
+.footer-contact-grid{
+  display:grid!important;
+  grid-template-columns:minmax(0,1.15fr) minmax(0,1fr)!important;
+  align-items:center!important;
+  gap:12px 24px!important;
+}
+.footer-contact-item,
+.footer-contact-item:first-child,
+.footer-contact-item:last-child{
+  display:flex!important;
+  align-items:center!important;
+  gap:16px!important;
+  min-height:76px!important;
+  padding:12px 20px!important;
+  border:0!important;
+  border-right:1px solid #ffffff42!important;
+  border-bottom:0!important;
+}
+.footer-contact-item:last-child{border-right:0!important}
+.footer-contact-item>svg{
+  width:54px!important;height:54px!important;flex:0 0 54px!important;
+  padding:12px!important;border-radius:50%!important;
+  background:#ffffff16!important;stroke:#fff!important;stroke-width:1.8!important;
+}
+.footer-contact-item>div{min-width:0;display:flex;flex-direction:column;align-items:flex-start;gap:3px}
+.footer-contact-item strong{
+  font-size:clamp(1rem,1.25vw,1.35rem)!important;
+  line-height:1.3!important;letter-spacing:0!important;margin:0!important;
+}
+.footer-contact-item span,.footer-contact-item a,.footer-share-contact .footer-share{
+  font-size:clamp(.88rem,.95vw,1rem)!important;line-height:1.5!important;
+}
+.footer-contact-item a{margin-top:3px!important}
+.footer-bottom{
+  grid-template-columns:auto minmax(0,1fr) auto!important;
+  gap:12px 20px!important;padding:18px 0 16px!important;
+}
+.footer-brand .mark{width:36px!important;height:36px!important}
+.footer-disclaimer{margin-top:2px!important;padding-top:10px!important;font-size:.72rem!important;line-height:1.5!important}
+.newsletter-section{padding:28px 0!important}
+.newsletter-section .newsletter-wrap{gap:28px!important;padding:0!important;align-items:center!important}
+.newsletter-section h2{font-size:clamp(1.8rem,3vw,2.8rem)!important;line-height:1.12!important;margin:0 0 8px!important}
+.newsletter-section .newsletter-wrap>div>p{font-size:1rem!important;line-height:1.5!important}
+.newsletter-section .newsletter-form label{font-size:.95rem!important;margin-bottom:7px!important}
+.newsletter-section .newsletter-controls input{min-height:48px!important;padding:11px 14px!important;font-size:1rem!important}
+.newsletter-section .newsletter-controls .btn{min-height:48px!important;padding:0 18px!important;font-size:.92rem!important}
+@media(max-width:760px){
+ .footer-contact-band{padding:14px 0 8px!important}
+ .footer-contact-grid{display:grid!important;grid-template-columns:minmax(0,1fr)!important;gap:0!important}
+ .footer-contact-item,.footer-contact-item:first-child,.footer-contact-item:last-child{
+   min-height:0!important;padding:14px 4px!important;gap:14px!important;
+   border-right:0!important;border-bottom:1px solid #ffffff35!important;
+ }
+ .footer-contact-item:last-child{border-bottom:0!important}
+ .footer-contact-item>svg{width:52px!important;height:52px!important;flex-basis:52px!important;padding:11px!important}
+ .footer-contact-item strong{font-size:1.08rem!important;line-height:1.3!important}
+ .footer-contact-item span,.footer-contact-item a,.footer-share-contact .footer-share{font-size:.9rem!important;line-height:1.45!important}
+ .footer-bottom{grid-template-columns:minmax(0,1fr) auto!important;gap:12px!important;padding:16px 0 14px!important}
+ .footer-brand{grid-column:1/-1!important}
+ .footer .copyright{grid-column:1/-1!important;grid-row:auto!important;font-size:.78rem!important}
+ .footer .back-top{grid-column:2!important;grid-row:1!important;font-size:.82rem!important}
+ .footer-disclaimer{grid-column:1/-1!important;font-size:.68rem!important;line-height:1.5!important}
+ .newsletter-section{padding:24px 0!important}
+ .newsletter-section .newsletter-wrap{grid-template-columns:minmax(0,1fr)!important;gap:18px!important}
+ .newsletter-section h2{font-size:2rem!important}
+}
+@media(max-width:420px){
+ .footer-contact-item>svg{width:44px!important;height:44px!important;flex-basis:44px!important;padding:9px!important}
+ .footer-contact-item,.footer-contact-item:first-child,.footer-contact-item:last-child{gap:11px!important}
+ .newsletter-section .newsletter-controls{flex-direction:column!important}
+ .newsletter-section .newsletter-controls .btn{width:100%!important}
+}
+
+
+/* ===== Original style block 111: booking-options-and-complete-gallery-final ===== */
+
+.booking-menu{position:relative;display:inline-flex;align-items:flex-start;z-index:30}
+.booking-menu .booking-toggle{display:inline-flex;align-items:center;gap:10px}
+.booking-chevron{font-size:1.15rem;line-height:1;margin-left:2px}
+.booking-menu-panel{position:absolute;top:calc(100% + 10px);left:0;width:min(390px,calc(100vw - 36px));z-index:80;background:#fff;border:1px solid #d5e0e8;border-radius:12px;padding:10px;box-shadow:0 18px 45px rgba(12,48,79,.2)}
+.booking-menu-panel[hidden]{display:none!important}
+.booking-menu-heading{padding:10px 12px 12px;border-bottom:1px solid #e3eaf0;margin-bottom:5px}
+.booking-menu-heading strong,.booking-menu-heading span{display:block}
+.booking-menu-heading strong{font-size:.95rem;color:#17395c;line-height:1.35}
+.booking-menu-heading span{font-size:.78rem;color:#627788;line-height:1.45;margin-top:4px}
+.booking-option{width:100%;display:grid;grid-template-columns:76px minmax(0,1fr) 20px;align-items:center;gap:12px;min-height:76px;padding:12px 10px;border:0;border-bottom:1px solid #e8eef2;border-radius:7px;background:#fff;color:#17395c;text-align:left;text-decoration:none;cursor:pointer;font:inherit}
+.booking-option:last-child{border-bottom:0}
+.booking-option:hover,.booking-option:focus-visible{background:#f2f7fb;outline:2px solid #0759a8;outline-offset:-2px}
+.booking-option>span:nth-child(2){min-width:0}
+.booking-option strong,.booking-option small{display:block}
+.booking-option strong{font-size:.94rem;line-height:1.35;font-weight:750}
+.booking-option small{font-size:.78rem;line-height:1.45;color:#627788;margin-top:4px}
+.booking-option-arrow{color:#0759a8;font-size:1.05rem;text-align:center}
+.booking-option .booking-choice-icon{width:52px;height:46px;border-radius:9px;display:flex;align-items:center;justify-content:center}
+.booking-choice-icon.whatsapp-choice{background:#e8f7ee;color:#168c50}
+.booking-choice-icon.whatsapp-choice svg{width:27px;height:27px}
+.booking-choice-logo{width:76px;min-height:42px;display:flex;align-items:center;justify-content:center;padding:6px;background:#fff;border:1px solid #e0e8ef;border-radius:8px}
+.booking-choice-logo img{display:block;width:100%;max-height:28px;object-fit:contain}
+.booking-dialog-intro{margin:4px 0 16px;color:#5c7180;font-size:.88rem;line-height:1.5}
+.zip-gallery-section{background:#edf3f7;padding:64px 0}
+.zip-photo-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;align-items:stretch}
+.zip-photo-grid .photo-story{min-width:0;display:flex;flex-direction:column;background:#fff;border:1px solid #d5e0e8;border-radius:8px;overflow:hidden;box-shadow:0 4px 15px rgba(22,56,78,.06)}
+.zip-photo-grid .photo-story-media{position:relative;aspect-ratio:4/3;min-height:0;margin:0;overflow:hidden;background:#e1eaf0}
+.zip-photo-grid .photo-story-media img{display:block;width:100%;height:100%;object-fit:cover;transition:transform .3s ease}
+.zip-photo-grid .photo-story:hover .photo-story-media img{transform:scale(1.025)}
+.zip-photo-grid .photo-story-media figcaption{position:absolute;left:0;right:0;bottom:0;padding:30px 12px 11px;background:linear-gradient(transparent,rgba(10,34,53,.78));color:#fff;font-size:.86rem;font-weight:700;line-height:1.3}
+.zip-photo-grid .photo-story-featured{grid-column:span 1}
+.gallery-note{margin:18px 0 0;color:#627788;font-size:.78rem;line-height:1.5}
+@media(max-width:900px){.zip-photo-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:640px){.zip-gallery-section{padding:48px 0}.zip-photo-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.zip-photo-grid .photo-story-media{aspect-ratio:3/4}.zip-photo-grid .photo-story-media figcaption{font-size:.76rem;padding:26px 9px 9px}.booking-menu{max-width:100%}.booking-menu-panel{left:0;max-width:calc(100vw - 34px)}.booking-option{grid-template-columns:58px minmax(0,1fr) 16px;gap:9px;padding:10px 8px}.booking-choice-logo{width:58px}.booking-option .booking-choice-icon{width:48px}}
+@media(max-width:380px){.zip-photo-grid{grid-template-columns:1fr}.zip-photo-grid .photo-story-media{aspect-ratio:4/3}}
+@media(prefers-reduced-motion:reduce){.zip-photo-grid .photo-story-media img{transition:none}.zip-photo-grid .photo-story:hover .photo-story-media img{transform:none}}
+
+
+/* ===== Original style block 112: responsive-dropdown-performance-fixes ===== */
+
+/* Responsive dropdown and performance refinements */
+*,*::before,*::after{box-sizing:border-box}
+.booking-menu{position:relative;display:inline-flex;max-width:100%;isolation:isolate}
+.booking-toggle{min-height:48px;white-space:normal;text-align:center;line-height:1.25;max-width:100%;}
+.booking-menu-panel{position:absolute;top:calc(100% + 10px);left:0;right:auto;width:min(360px,calc(100vw - 32px));max-width:calc(100vw - 32px);max-height:min(72vh,520px);overflow-y:auto;overscroll-behavior:contain;padding:10px;z-index:1000;border-radius:14px;box-shadow:0 14px 36px rgba(14,49,82,.18);}
+.booking-menu-panel[hidden]{display:none!important}
+.booking-menu-heading{padding:10px 10px 12px;display:grid;gap:5px;line-height:1.45}
+.booking-menu-heading strong{font-size:.96rem;line-height:1.35}
+.booking-menu-heading span{font-size:.82rem;color:#637789}
+.booking-menu-panel .booking-option{display:grid;grid-template-columns:40px minmax(0,1fr) 18px;align-items:center;gap:11px;width:100%;min-height:64px;padding:12px 10px;border:0;border-radius:10px;background:transparent;color:#17395c;text-align:left;text-decoration:none;cursor:pointer;line-height:1.35}
+.booking-menu-panel .booking-option:hover,.booking-menu-panel .booking-option:focus-visible{background:#edf7fc;outline:2px solid #8bb8d6;outline-offset:-2px}
+.booking-menu-panel .booking-option>span:nth-child(2){min-width:0;overflow-wrap:anywhere}
+.booking-menu-panel .booking-option strong{font-size:.93rem;line-height:1.35}
+.booking-menu-panel .booking-option small{font-size:.78rem;line-height:1.4;color:#637789;white-space:normal}
+.booking-choice-icon,.booking-choice-logo{width:40px;height:40px;display:grid;place-items:center;overflow:hidden;flex-shrink:0;border-radius:10px}
+.booking-choice-logo img{display:block;width:100%;height:100%;object-fit:contain}
+.booking-option-arrow{justify-self:end}
+.nav-dropdown{position:relative;min-width:0}
+.nav-dropdown>summary{display:flex;align-items:center;justify-content:space-between;gap:8px;cursor:pointer;list-style:none;min-height:42px}
+.nav-dropdown>summary::-webkit-details-marker{display:none}
+.nav-dropdown-menu{position:absolute;top:calc(100% + 8px);left:0;z-index:1100;width:max-content;min-width:220px;max-width:min(340px,calc(100vw - 28px));max-height:min(65vh,460px);overflow-y:auto;overscroll-behavior:contain;padding:8px;background:#fff;border:1px solid #d5e4ee;border-radius:12px;box-shadow:0 14px 34px rgba(14,49,82,.18)}
+.nav-dropdown-menu a{display:block;padding:11px 12px;border-radius:8px;line-height:1.35;white-space:normal;overflow-wrap:anywhere}
+.nav-dropdown-menu a:hover,.nav-dropdown-menu a:focus-visible{background:#edf7fc;outline:2px solid #8bb8d6;outline-offset:-2px}
+@media(max-width:760px){
+ .booking-menu{display:flex;width:100%;max-width:100%}
+ .booking-toggle{width:100%;min-width:0;justify-content:center}
+ .booking-menu-panel{left:0;right:0;width:100%;max-width:100%;top:calc(100% + 8px);padding:8px;max-height:min(66vh,460px)}
+ .booking-menu-panel .booking-option{grid-template-columns:36px minmax(0,1fr) 16px;gap:9px;padding:11px 8px}
+ .booking-choice-icon,.booking-choice-logo{width:36px;height:36px}
+ .nav-dropdown-menu{position:static;width:100%;min-width:0;max-width:100%;max-height:none;margin:4px 0 8px;box-shadow:none;border-radius:8px;background:#f7fbfd}
+ .nav-dropdown>summary{width:100%;}
+}
+@media(max-width:420px){
+ .booking-menu-panel{padding:6px;border-radius:12px}
+ .booking-menu-heading{padding:9px 8px 10px}
+ .booking-menu-panel .booking-option{gap:8px;min-height:58px}
+ .booking-menu-panel .booking-option strong{font-size:.9rem}
+ .booking-menu-panel .booking-option small{font-size:.75rem}
+}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
+
+
+/* ===== Original style block 113: gallery-blue-white-zoom-ui ===== */
+
+.gallery-lightbox{background:rgba(15,48,75,.48)!important;backdrop-filter:blur(7px);-webkit-backdrop-filter:blur(7px);padding:clamp(10px,2.5vw,28px)!important;color:#153b5a!important}
+.gallery-lightbox-inner{width:min(1240px,100%)!important;height:min(92dvh,940px)!important;padding:clamp(12px,2vw,22px)!important;box-sizing:border-box;background:#fff;border:1px solid #d7e7f4;border-radius:22px;box-shadow:0 24px 80px rgba(11,52,84,.25);gap:14px!important}
+.gallery-lightbox-image-wrap{background:linear-gradient(145deg,#f7fbff,#eaf4fc)!important;border:1px solid #d8e8f5!important;border-radius:16px!important;padding:44px 58px 14px!important;box-shadow:inset 0 1px 0 #fff!important}
+.gallery-lightbox-image{transform:scale(var(--gallery-zoom,1));transform-origin:center center;transition:transform .16s ease;max-width:100%;max-height:100%;box-shadow:0 12px 30px rgba(20,66,100,.14)!important;border:1px solid #e0ebf4}
+.gallery-lightbox-caption{color:#123b5b!important}.gallery-lightbox-count{color:#3979a6!important;background:#f0f7fc!important;border-color:#d8e8f5!important}
+.gallery-lightbox-control{background:#fff!important;color:#176da9!important;border:1px solid #c7dfef!important;box-shadow:0 5px 18px rgba(20,75,115,.13)!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+.gallery-lightbox-control:hover,.gallery-lightbox-control:focus-visible{background:#176da9!important;color:#fff!important;border-color:#176da9!important;outline:2px solid #b9ddf5!important}
+.gallery-lightbox-close{top:9px!important;right:9px!important}
+.gallery-lightbox-prev{left:10px!important}.gallery-lightbox-next{right:10px!important}
+.gallery-zoom-toolbar{position:absolute;z-index:4;top:10px;left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:6px;padding:5px;background:rgba(255,255,255,.96);border:1px solid #d1e4f2;border-radius:999px;box-shadow:0 5px 18px rgba(19,72,111,.12)}
+.gallery-zoom-btn{min-width:36px;height:34px;padding:0 10px;display:inline-flex;align-items:center;justify-content:center;border:1px solid transparent;border-radius:999px;background:#edf6fc;color:#155b8b;font:700 20px/1 system-ui,-apple-system,Segoe UI,sans-serif;cursor:pointer;transition:background .15s ease,color .15s ease,border-color .15s ease}
+.gallery-zoom-btn:hover,.gallery-zoom-btn:focus-visible{background:#176da9;color:#fff;border-color:#176da9;outline:2px solid #c5e5f8;outline-offset:1px}
+.gallery-zoom-reset{font-size:12px;letter-spacing:.01em;min-width:54px}
+.gallery-zoom-btn:disabled{opacity:.4;cursor:not-allowed}
+@media(max-width:640px){.gallery-lightbox-inner{height:91dvh!important;padding:9px!important;border-radius:16px!important;gap:9px!important}.gallery-lightbox-image-wrap{padding:54px 36px 10px!important;border-radius:12px!important}.gallery-zoom-toolbar{top:8px;gap:4px;padding:4px}.gallery-zoom-btn{min-width:32px;height:31px;padding:0 8px}.gallery-zoom-reset{min-width:49px;font-size:11px}.gallery-lightbox-inner>div:last-child{padding:0 40px 4px!important}.gallery-lightbox-control{width:38px!important;height:38px!important}.gallery-lightbox-prev{left:2px!important}.gallery-lightbox-next{right:2px!important}}
+@media(prefers-reduced-motion:reduce){.gallery-lightbox-image{transition:none}}
+
+/* Site-wide photo viewer triggers: exclude brand marks, RezeptRx and animated GIFs. */
+
+img.gallery-lightbox-trigger{cursor:zoom-in;touch-action:manipulation}
+img.gallery-lightbox-trigger:focus-visible{outline:3px solid #0759a8;outline-offset:3px}
+.gallery-lightbox-image{touch-action:none;user-select:none;-webkit-user-select:none}
+
+
+/* ===== Original style block 114: original-style-block-114 ===== */
+
+/* Find the clinic: paired hospital photo and lazy-loaded map */
+#hospital-location { padding-block: clamp(2.5rem, 5vw, 4.5rem); }
+#hospital-location .section-heading { max-width: 760px; margin-inline: auto; text-align: center; }
+#hospital-location .hospital-location-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: clamp(1rem, 2.5vw, 1.5rem); align-items: stretch; margin-top: clamp(1.25rem, 3vw, 2rem); }
+#hospital-location .clinic-photo-card, #hospital-location .clinic-map-card { min-width: 0; overflow: hidden; border: 1px solid rgba(35, 105, 165, .16); border-radius: 18px; background: #fff; box-shadow: 0 10px 28px rgba(24, 74, 115, .08); }
+#hospital-location .clinic-entrance-photo { display: block; width: 100%; height: 100%; min-height: 300px; max-height: 430px; object-fit: cover; }
+#hospital-location .clinic-photo-card { position: relative; }
+#hospital-location .clinic-photo-caption { position: absolute; left: 12px; bottom: 12px; padding: .5rem .8rem; border: 1px solid rgba(255,255,255,.55); border-radius: 999px; background: rgba(255,255,255,.92); color: #174b76; font-size: .88rem; font-weight: 650; box-shadow: 0 4px 14px rgba(0,0,0,.08); }
+#hospital-location .clinic-map-card { display: flex; flex-direction: column; }
+#hospital-location .clinic-map-card iframe { display: block; width: 100%; min-height: 300px; height: 100%; flex: 1 1 auto; border: 0; background: #eef5fb; }
+#hospital-location .clinic-map-actions { display: flex; justify-content: flex-start; padding: .85rem 1rem; border-top: 1px solid #e4edf5; }
+#hospital-location .clinic-map-open { display: inline-flex; align-items: center; justify-content: center; gap: .4rem; min-height: 42px; padding: .65rem 1rem; border-radius: 10px; background: #eaf4fc; color: #145b91; font-weight: 650; text-decoration: none; }
+#hospital-location .clinic-map-open:hover { background: #dceefb; }
+@media (max-width: 720px) { #hospital-location .hospital-location-grid { grid-template-columns: minmax(0,1fr); } #hospital-location .clinic-entrance-photo { min-height: 220px; max-height: 340px; } #hospital-location .clinic-map-card iframe { min-height: 270px; height: 270px; flex: none; } }
+@media (prefers-reduced-motion: reduce) { #hospital-location * { scroll-behavior: auto !important; } }
+
+
+/* ===== Original style block 115: appointment-mail-notification-animation ===== */
+
+/* White-space cosmic calendar/check clipart; retain the red pulsing alert and gentle shake. */
+.booking-toggle{position:relative;isolation:isolate;overflow:visible!important}
+.appointment-mail-animation{position:relative;display:inline-grid;place-items:center;width:34px;height:31px;flex:0 0 34px;animation:appointment-mail-nudge 3.2s ease-in-out infinite;transform-origin:50% 65%;filter:drop-shadow(0 1px 0 rgba(16,47,99,.12))}
+.appointment-mail-icon{display:block!important;width:32px;height:32px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;overflow:visible}
+.appointment-mail-dot{position:absolute;right:-1px;top:-3px;width:9px;height:9px;border:2px solid #ffc400;border-radius:50%;background:#f01818;box-sizing:content-box;animation:appointment-mail-pulse 1.8s ease-out infinite;z-index:2}
+.booking-toggle:hover .appointment-mail-animation,.booking-toggle:focus-visible .appointment-mail-animation{animation-duration:.65s}
+@keyframes appointment-mail-nudge{0%,76%,100%{transform:rotate(0) translateY(0)}80%{transform:rotate(-9deg) translateY(-1px)}84%{transform:rotate(8deg) translateY(-1px)}88%{transform:rotate(-5deg)}92%{transform:rotate(3deg)}96%{transform:rotate(0)}}
+@keyframes appointment-mail-pulse{0%{box-shadow:0 0 0 0 rgba(240,24,24,.45)}70%,100%{box-shadow:0 0 0 6px rgba(240,24,24,0)}}
+@media(prefers-reduced-motion:reduce){.appointment-mail-animation,.appointment-mail-dot{animation:none!important}}
+/* Repeating light sweep across the appointment button, behind its readable content. */
+.booking-toggle{overflow:hidden!important}
+.booking-toggle::after{content:"";position:absolute;inset:0;z-index:0;pointer-events:none;border-radius:inherit;clip-path:inset(0 round 7px);background:linear-gradient(112deg,transparent 0%,rgba(255,255,255,0) 34%,rgba(255,255,255,.62) 47%,rgba(255,255,255,.12) 53%,rgba(255,255,255,0) 64%,transparent 100%);transform:translateX(-125%);animation:appointment-button-shine 2.2s ease-in-out infinite}
+.booking-toggle>*{position:relative;z-index:1}
+@keyframes appointment-button-shine{0%,12%{transform:translateX(-125%)}48%,100%{transform:translateX(125%)}}
+@media(prefers-reduced-motion:reduce){.booking-toggle::after{animation:none!important;display:none!important}}
+
+
+/* ===== Original style block 116: hero-typewriter-animation ===== */
+
+.hero .hero-typing-headline{max-width:870px;min-height:2.24em}
+.hero-typing-text{display:inline;overflow-wrap:anywhere}
+.hero-typing-prefix{display:inline}
+
+
+
+
+/* Final fix: keep the actual embedded logo circular in the header and footer too. */
+.header .brand img.mark.circular-brand-logo,
+.footer-brand img.footer-emblem.circular-brand-logo,
+.secondary-brand img.mark.circular-brand-logo,
+.newsletter-panel img.mark.circular-brand-logo {
+  display:block!important;
+  width:58px!important;height:58px!important;min-width:58px!important;
+  flex:0 0 58px!important;padding:0!important;
+  aspect-ratio:1/1!important;object-fit:contain!important;object-position:center!important;
+  border-radius:50%!important;overflow:hidden!important;
+  background:#fff!important;box-sizing:border-box!important;
+}
+.header .brand img.mark.circular-brand-logo {
+  width:58px!important;height:58px!important;min-width:58px!important;
+  border:2px solid #fff!important;
+}
+.footer-brand img.footer-emblem.circular-brand-logo {
+  width:48px!important;height:48px!important;min-width:48px!important;flex-basis:48px!important;
+  border:2px solid #fff!important;
+}
+@media(max-width:760px){
+ .header .brand img.mark.circular-brand-logo{width:48px!important;height:48px!important;min-width:48px!important;flex-basis:48px!important}
+ .footer-brand img.footer-emblem.circular-brand-logo{width:44px!important;height:44px!important;min-width:44px!important;flex-basis:44px!important}
+}
+
+
+/* ===== Original style block 117: continue-booking-click-animation-css ===== */
+
+/* Reference-inspired click interaction, recoloured to the KidsGastro blue/yellow palette. */
+.booking-dialog-actions .booking-submit{
+ position:relative!important;isolation:isolate;overflow:hidden!important;
+ border-radius:999px!important;background:#ffc400!important;border-color:#ffc400!important;color:#123c77!important;
+ transition:transform .18s ease,box-shadow .18s ease,filter .18s ease,background-color .18s ease!important;
+ box-shadow:0 4px 0 rgba(18,60,119,.18),0 8px 20px rgba(7,89,168,.16)!important;
+}
+.booking-dialog-actions .booking-submit::after{
+ content:"";position:absolute;top:-45%;left:-75%;width:42%;height:190%;
+ background:linear-gradient(110deg,transparent,rgba(255,255,255,.86),transparent);
+ transform:skewX(-22deg);opacity:0;pointer-events:none;z-index:1;
+}
+.booking-dialog-actions .booking-submit.booking-click-shine::after{opacity:1;animation:bookingContinueSweep .75s ease-out 1}
+.booking-dialog-actions .booking-submit.booking-click-shine{transform:scale(.975);filter:saturate(1.08);box-shadow:0 2px 0 rgba(18,60,119,.2),0 4px 12px rgba(7,89,168,.2)!important}
+.booking-dialog-actions .booking-submit:active{transform:scale(.97)!important;background:#f1b900!important}
+@keyframes bookingContinueSweep{from{left:-75%}to{left:145%}}
+
+
+
+/* ===== Original style block 118: book-appointment-click-animation-css ===== */
+
+/* Match the Continue to WhatsApp click animation on the main Book an appointment CTA. */
+.booking-toggle{position:relative!important;isolation:isolate;overflow:hidden!important;transition:transform .18s ease,box-shadow .18s ease,filter .18s ease!important}
+.booking-toggle::before{content:"";position:absolute;top:-45%;left:-75%;width:42%;height:190%;background:linear-gradient(110deg,transparent,rgba(255,255,255,.9),transparent);transform:skewX(-22deg);opacity:0;pointer-events:none;z-index:2}
+.booking-toggle.booking-click-shine::before{opacity:1;animation:bookingToggleSweep .75s ease-out 1}
+.booking-toggle.booking-click-shine{transform:scale(.975)!important;filter:saturate(1.08);box-shadow:0 2px 0 rgba(18,60,119,.2),0 4px 12px rgba(7,89,168,.2)!important}
+@keyframes bookingToggleSweep{from{left:-75%}to{left:145%}}
+
+
+
+/* ===== Original style block 119: kg-menu-icon-alignment-only ===== */
+
+/* Alignment-only fix: preserve existing menu text, colors, spacing, and backgrounds. */
+#links > a > .kg-nav-icon,
+#links > .nav-dropdown > summary > .kg-nav-icon,
+#links > a > .kg-menu-icon,
+#links > .nav-dropdown > summary > .kg-menu-icon {
+  box-sizing:border-box !important;
+  width:28px !important;
+  min-width:28px !important;
+  max-width:28px !important;
+  height:28px !important;
+  flex:0 0 28px !important;
+  display:inline-flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  margin:0 12px 0 0 !important;
+  vertical-align:middle !important;
+}
+#links > a > .kg-nav-icon svg,
+#links > .nav-dropdown > summary > .kg-nav-icon svg,
+#links > a > .kg-menu-icon svg,
+#links > .nav-dropdown > summary > .kg-menu-icon svg,
+#links > a > svg.kg-nav-icon,
+#links > .nav-dropdown > summary > svg.kg-nav-icon,
+#links > a > svg.kg-menu-icon,
+#links > .nav-dropdown > summary > svg.kg-menu-icon {
+  display:block !important; width:22px !important; height:22px !important;
+  flex:0 0 22px !important; margin:0 !important;
+}
+
+
+/* ===== Original style block 120: remove-old-connect-animation ===== */
+
+/* Remove legacy decorative motion from Stay connected; keep the new planet overlay. */
+.social-section::before,.social-section::after{content:none!important;display:none!important;animation:none!important;box-shadow:none!important}
+.social-section .abstract-watermark,.social-section.kg-pointer-glow::before,.social-section.kg-pointer-glow::after{display:none!important;content:none!important;animation:none!important;transition:none!important}
+
+
+/* Stay Connected: remove legacy dot pattern, sliding gradient, and old watermark; leave the new orbiting planets intact. */
+.social-intro{background:#0759a8!important;background-image:none!important;background-size:auto!important;animation:none!important;}
+.social-intro::before,.social-intro::after{content:none!important;display:none!important;animation:none!important;transition:none!important;box-shadow:none!important;}
+
+
+/* ===== Original style block 121: mobile-chrome-safari-compatibility ===== */
+
+/* Android Chrome + iOS Safari responsive and touch compatibility. */
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%;scroll-padding-top:calc(16px + env(safe-area-inset-top,0px))}
+body{min-width:0;overflow-x:clip;overscroll-behavior-x:none;-webkit-tap-highlight-color:rgba(7,89,168,.15)}
+img,svg,video,iframe{max-width:100%}
+.container,.hero-grid,.hero-grid>div,.section-heading,.contact,.visit,.hospital-location-grid,.newsletter-wrap,.social-wrap,.footer-contact-grid{min-width:0}
+button,a,input,select,textarea,summary{-webkit-tap-highlight-color:rgba(7,89,168,.15)}
+button,a,summary{touch-action:manipulation}
+input,select,textarea{font-size:16px;max-width:100%}
+.offline-appointment-marquee{padding-left:max(12px,env(safe-area-inset-left,0px))!important;padding-right:max(12px,env(safe-area-inset-right,0px))!important}
+.offline-appointment-marquee__text{line-height:1.5!important}
+@media(max-width:760px){
+ .container{width:calc(100% - 32px);width:calc(100% - max(32px,env(safe-area-inset-left,0px) + env(safe-area-inset-right,0px)))}
+ .nav{padding-left:0;padding-right:0;gap:10px}
+ .brand{min-width:0;max-width:calc(100% - 58px);gap:8px}
+ .brand span{min-width:0;overflow-wrap:anywhere;line-height:1.25}
+ .toggle{min-width:44px;min-height:44px;display:grid;place-items:center}
+ .links{max-height:calc(100vh - 90px);max-height:calc(100dvh - 90px);overflow-y:auto;overscroll-behavior:contain;padding-bottom:max(20px,env(safe-area-inset-bottom,0px));-webkit-overflow-scrolling:touch}
+ .links a:not(.btn),.nav-dropdown>summary{min-height:44px;display:flex;align-items:center}
+ .nav-dropdown-menu a{min-height:44px;padding-top:10px;padding-bottom:10px}
+ .booking-menu-panel{max-width:calc(100vw - 32px);max-height:70vh;max-height:70dvh;overflow-y:auto;-webkit-overflow-scrolling:touch}
+ .hero-grid>div:first-child{overflow-wrap:anywhere}
+ .hero h1{overflow-wrap:normal;word-break:normal}
+ .actions,.appointment-actions{gap:10px}
+ .actions .btn,.appointment-actions .btn,.about-actions a{min-height:48px}
+ .form-grid,.qr-grid,.journal-grid,.latest-grid,.credentials-grid{min-width:0}
+ .map-frame,.map-frame iframe{width:100%;max-width:100%}
+ .footer-bottom{padding-bottom:max(22px,env(safe-area-inset-bottom,0px))}
+}
+@media(max-width:390px){
+ .container{width:calc(100% - 28px)}
+ .hero-grid>div:first-child{padding:22px 16px!important}
+ .brand{font-size:.9rem}
+ .header .brand img.mark.circular-brand-logo{width:42px!important;height:42px!important;min-width:42px!important;flex-basis:42px!important}
+ .offline-appointment-marquee{font-size:10px;letter-spacing:0}
+ .hero .actions .btn:first-child{padding-inline:14px}
+}
+@supports(height:100dvh){.hamburger-panel,.links{max-height:calc(100dvh - 90px)}}
+@media(hover:none),(pointer:coarse){.card:hover,.latest-card:hover .latest-image img,.reel-control:hover,.whatsapp-float:hover{transform:none;box-shadow:none}.latest-card:hover .latest-image img{transform:none}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto!important}.offline-appointment-marquee__track{animation:none!important}.hero-typing-highlight{text-decoration-style:wavy}}
+
+
+/* ===== Original style block 122: marquee-two-line-spacing-speed-final ===== */
+
+/* Two comfortably separated announcement lines; faster continuous marquee. */
+.offline-appointment-marquee{
+  height:auto!important;
+  min-height:58px!important;
+  padding-block:7px!important;
+  overflow:hidden!important;
+  background:#ffc400!important;
+  color:#0759a8!important;
+}
+.offline-appointment-marquee__track{
+  align-items:center!important;
+  animation-duration:5s!important;
+}
+.offline-appointment-marquee__text{
+  color:#0759a8!important;
+  line-height:1.9!important;
+  padding-block:3px!important;
+  padding-inline:36px!important;
+  margin-right:8vw!important;
+}
+.offline-appointment-marquee__text br{
+  display:block!important;
+  content:""!important;
+  margin-bottom:5px!important;
+}
+@media(max-width:480px){
+  .offline-appointment-marquee{min-height:54px!important;padding-block:5px!important}
+  .offline-appointment-marquee__track{animation-duration:4.5s!important}
+  .offline-appointment-marquee__text{padding-inline:24px!important;margin-right:12vw!important;line-height:1.85!important}
+}
+@media(prefers-reduced-motion:reduce){
+  .offline-appointment-marquee__track{animation:none!important}
+  .offline-appointment-marquee__text{margin-right:0!important}
+}
+/* Keep both announcement messages on one horizontal line with a clear gap. */
+.offline-appointment-marquee__text{
+  display:inline-block!important;
+  white-space:nowrap!important;
+  line-height:1.35!important;
+  padding-block:3px!important;
+}
+.offline-appointment-marquee__text br{display:none!important}
+.marquee-inline-gap{display:inline!important;white-space:nowrap!important}
+@media(max-width:480px){
+  .offline-appointment-marquee{min-height:36px!important;height:36px!important;overflow:hidden!important}
+  .offline-appointment-marquee__text{white-space:nowrap!important;line-height:1.3!important;padding-inline:24px!important}
+  .marquee-inline-gap{letter-spacing:.04em}
+}
+
+
+/* ===== Original style block 123: hero-phrases-same-horizontal-plane ===== */
+
+/* Keep the changing suffixes on one consistent baseline, without wrapping between words. */
+.hero-typing-headline{white-space:nowrap!important;max-width:100%!important;width:100%;font-size:clamp(1.15rem,4.3vw,3.35rem)!important;line-height:1.15!important;letter-spacing:-.04em!important;}
+.hero-typing-text{white-space:nowrap!important;overflow-wrap:normal!important;word-break:keep-all!important;display:inline!important;}
+.hero-typing-highlight{display:inline-block!important;white-space:nowrap!important;vertical-align:baseline!important;}
+@media(max-width:760px){.hero-typing-headline{font-size:clamp(1rem,5.25vw,2.25rem)!important;letter-spacing:-.045em!important;line-height:1.12!important;}}
+@media(max-width:360px){.hero-typing-headline{font-size:clamp(.9rem,4.9vw,1.15rem)!important;letter-spacing:-.05em!important;}}
+
+
+/* ===== Original style block 124: hero-headline-prefix-and-phrase-stacked-final ===== */
+
+/* Put the rotating phrase directly below “Best gastro care”. Keep both phrases on the same baseline. */
+.hero .hero-typing-headline{
+  white-space:normal!important;
+  min-height:2.25em!important;
+  line-height:1.08!important;
+  overflow:visible!important;
+}
+.hero .hero-typing-text-stacked{
+  display:block!important;
+  white-space:normal!important;
+  overflow-wrap:normal!important;
+  word-break:normal!important;
+}
+.hero .hero-typing-prefix-line{
+  display:block!important;
+  white-space:nowrap!important;
+}
+.hero .hero-typing-phrase-line{
+  display:block!important;
+  width:max-content!important;
+  max-width:100%!important;
+  min-height:1.15em;
+  white-space:nowrap!important;
+  vertical-align:baseline!important;
+  text-decoration-line:underline!important;
+  text-decoration-style:wavy!important;
+  text-decoration-color:#F08ACB!important;
+  text-decoration-thickness:3px!important;
+  text-underline-offset:7px!important;
+}
+
+@media(max-width:760px){
+  .hero .hero-typing-headline{font-size:clamp(1.55rem,7.5vw,2.5rem)!important;line-height:1.12!important;min-height:2.3em!important}
+  .hero .hero-typing-prefix-line,.hero .hero-typing-phrase-line{white-space:nowrap!important}
+}
+@media(max-width:360px){.hero .hero-typing-headline{font-size:clamp(1.35rem,7vw,1.65rem)!important}}
+
+
+/* ===== Original style block 125: kg-secondary-testimonial-prominence ===== */
+
+/* Make the full testimonials page visually consistent with the featured homepage cards. */
+#secondary-page-content .kg-testimonials-all .kg-testimonial-card,
+#secondary-page-content .kg-testimonial-card {
+  border: 2px solid #0759a8 !important;
+  border-radius: 8px;
+  background: #fff;
+  box-shadow: 0 5px 18px rgba(7, 89, 168, .12);
+}
+#secondary-page-content .kg-testimonials-all .kg-testimonial-card p,
+#secondary-page-content .kg-testimonial-card p {
+  color: #0759a8 !important;
+  font-weight: 700 !important;
+  line-height: 1.7;
+}
+#secondary-page-content .kg-testimonials-all .kg-testimonial-stars,
+#secondary-page-content .kg-testimonial-stars {
+  color: #d99a00;
+  font-size: 23px;
+  letter-spacing: 2px;
+}
+
+
+/* ===== Original style block 126: hero-typing-animation-final-fix ===== */
+
+.hero .hero-typing-headline{white-space:normal!important;display:block!important;}
+.hero .hero-typing-text-stacked{display:block!important;white-space:normal!important;}
+.hero .hero-typing-prefix-line{display:block!important;white-space:nowrap!important;}
+.hero .hero-typing-phrase-line{display:block!important;width:max-content!important;max-width:100%!important;min-height:1.2em;white-space:nowrap!important;text-decoration:none!important;}
+.hero .hero-typing-phrase-line.hero-typing-highlight{text-decoration-line:underline!important;text-decoration-style:wavy!important;text-decoration-color:#F08ACB!important;text-decoration-thickness:3px!important;text-underline-offset:7px!important;text-decoration-skip-ink:none!important;}
+
+
+
+/* ===== Original style block 127: remove-header-and-top-blue-box-dotted-fiber-texture ===== */
+
+/* Remove the dotted/fibre texture only from the header and the blue notice strip immediately below it. */
+.header, .header::before, .header::after, .header .nav, .header .nav::before, .header .nav::after,
+.notice, .notice::before, .notice::after {
+  background-image: none !important;
+  background-repeat: no-repeat !important;
+  filter: none;
+}
+.header::before, .header::after, .header .nav::before, .header .nav::after,
+.notice::before, .notice::after { content: none !important; display: none !important; }
+
+
+/* ===== Original style block 128: mobile-menu-overlay-performance-and-marquee-final ===== */
+
+/* Keep the mobile menu as an overlay so opening it never reflows the page below. */
+@media (max-width:760px){
+  .header{position:relative!important;z-index:1000!important;overflow:visible!important;isolation:isolate!important}
+  .header .nav{position:relative!important;display:grid!important;grid-template-columns:minmax(0,1fr) 48px!important;grid-template-areas:"brand brand" "search toggle"!important;grid-template-rows:auto auto!important;overflow:visible!important;}
+  .header #links.open{
+    position:absolute!important;top:calc(100% + 7px)!important;left:0!important;right:0!important;bottom:auto!important;
+    width:100%!important;max-width:100%!important;box-sizing:border-box!important;
+    max-height:calc(100vh - 145px)!important;max-height:calc(100dvh - 145px)!important;
+    overflow-x:hidden!important;overflow-y:auto!important;overscroll-behavior:contain!important;
+    z-index:1400!important;box-shadow:0 14px 32px rgba(0,20,45,.24)!important;
+    border:1px solid rgba(255,255,255,.22)!important;border-radius:0 0 12px 12px!important;
+    padding:12px!important;margin:0!important;gap:7px!important;
+    transform-origin:top center!important;animation:kg-mobile-menu-enter .16s ease-out both!important;
+    contain:layout paint style!important;
+  }
+  .header #links.open>.nav-direct-link,
+  .header #links.open>.nav-dropdown>summary{box-sizing:border-box!important;width:100%!important;min-height:48px!important;}
+  .header #links.open>.nav-dropdown[open]>.nav-dropdown-menu{max-height:none!important;overflow:visible!important;}
+  .header #links.open .nav-dropdown-menu a{padding:11px 13px!important;line-height:1.35!important;overflow-wrap:anywhere!important;}
+  .header #links.open .nav-dropdown-menu a:hover,
+  .header #links.open .nav-dropdown-menu a:focus-visible{background:#0759a8!important;color:#fff!important;outline:2px solid #7cbcff!important;outline-offset:-2px!important;}
+  .header #links.open>.nav-dropdown>summary:focus-visible,
+  .header #links.open>.nav-direct-link:focus-visible{outline:2px solid #ffd13b!important;outline-offset:2px!important;}
+  /* Pause decorative header motion while the menu is open to reduce mobile rendering load. */
+  .header:has(#links.open) .kg-cosmos-background,
+  .header:has(#links.open) .kg-cosmos-background *{animation-play-state:paused!important;}
+}
+@keyframes kg-mobile-menu-enter{from{opacity:0;transform:translateY(-5px)}to{opacity:1;transform:translateY(0)}}
+@media(prefers-reduced-motion:reduce){.header #links.open{animation:none!important}}
+/* The earlier CSS had a later 5-second override; this final rule restores a genuinely slow loop. */
+.offline-appointment-marquee__track{animation-duration:38s!important;}
+@media(max-width:480px){.offline-appointment-marquee__track{animation-duration:32s!important;}}
+@media(prefers-reduced-motion:reduce){.offline-appointment-marquee__track{animation:none!important;}}
+
+
+/* ===== Original style block 129: booking-menu-visibility-repair ===== */
+
+/* Render appointment choices in a viewport-level layer so hero/blue-section overflow cannot clip them. */
+.hero .actions,.hero .booking-menu{position:relative!important;overflow:visible!important}
+.hero .booking-menu{z-index:1200!important;isolation:isolate}
+#booking-menu-panel[hidden]{display:none!important;visibility:hidden!important;pointer-events:none!important}
+#booking-menu-panel:not([hidden]){display:block!important;visibility:visible!important;opacity:1!important;pointer-events:auto!important;position:fixed!important;z-index:2147483000!important;width:min(100%,calc(100vw - 24px))!important;max-width:calc(100vw - 24px)!important;max-height:min(72vh,620px)!important;max-height:min(72dvh,620px)!important;overflow-y:auto!important;overflow-x:hidden!important;-webkit-overflow-scrolling:touch!important;overscroll-behavior:contain!important;background:#fff!important;color:#17395c!important;border:1px solid #d8e4ed!important;border-radius:18px!important;box-shadow:0 16px 38px rgba(10,45,78,.20)!important;padding:12px!important;box-sizing:border-box!important;margin:0!important;transform:none!important}
+#booking-menu-panel .booking-option{display:grid!important;grid-template-columns:52px minmax(0,1fr) 16px!important;align-items:center!important;gap:12px!important;width:100%!important;min-height:66px!important;padding:10px 8px!important;background:#fff!important;color:#17395c!important;text-align:left!important;white-space:normal!important}
+#booking-menu-panel .booking-option strong{color:#17395c!important;white-space:normal!important}
+#booking-menu-panel .booking-option small{color:#5b7183!important;white-space:normal!important}
+@media(max-width:620px){#booking-menu-panel:not([hidden]){width:calc(100vw - 24px)!important;max-width:calc(100vw - 24px)!important;padding:9px!important;border-radius:14px!important}#booking-menu-panel .booking-option{grid-template-columns:44px minmax(0,1fr) 16px!important;gap:9px!important;min-height:58px!important;padding:8px 5px!important}#booking-menu-panel .booking-choice-logo,#booking-menu-panel .booking-choice-icon{width:44px!important;height:44px!important;min-height:44px!important;flex-basis:44px!important;padding:5px!important}}
+
+
+/* ===== Original style block 130: booking-choice-ux-polish ===== */
+
+/* Distinguish booking methods clearly while keeping the panel aligned to its trigger. */
+#booking-menu-panel:not([hidden]) {
+  width: min(var(--booking-trigger-width, 420px), calc(100vw - 24px)) !important;
+  max-width: calc(100vw - 24px) !important;
+  box-sizing: border-box !important;
+  padding: 10px !important;
+  border-radius: 16px !important;
+  overflow-x: hidden !important;
+}
+#booking-menu-panel .booking-menu-heading { padding: 10px 12px 12px !important; }
+#booking-menu-panel .booking-menu-heading strong { font-size: 1rem !important; color: #17395c !important; }
+#booking-menu-panel > a.booking-option {
+  display: grid !important;
+  grid-template-columns: minmax(0,1fr) !important;
+  gap: 10px !important;
+  min-height: 58px !important;
+  padding: 10px 12px !important;
+  margin: 5px 0 !important;
+  border: 1px solid transparent !important;
+  border-radius: 11px !important;
+  box-sizing: border-box !important;
+  text-decoration: none !important;
+  transition: background-color .16s ease, border-color .16s ease, transform .16s ease !important;
+}
+#booking-menu-panel > a.whatsapp-booking-choice {
+  background: #eafaf0 !important;
+  border-color: #bdebd0 !important;
+  box-shadow: inset 3px 0 #25D366 !important;
+}
+#booking-menu-panel > a.whatsapp-booking-choice:hover,
+#booking-menu-panel > a.whatsapp-booking-choice:focus-visible {
+  background: #d7f7e3 !important;
+  border-color: #25D366 !important;
+}
+#booking-menu-panel > a.rezept-booking-choice {
+  background: #eff6ff !important;
+  border-color: #c9def5 !important;
+  box-shadow: inset 3px 0 #0759a8 !important;
+}
+#booking-menu-panel > a.rezept-booking-choice:hover,
+#booking-menu-panel > a.rezept-booking-choice:focus-visible {
+  background: #e0efff !important;
+  border-color: #0759a8 !important;
+}
+#booking-menu-panel > a.booking-option:focus-visible { outline: 3px solid #17395c !important; outline-offset: 2px !important; }
+#booking-menu-panel .booking-choice-logo { gap: 12px !important; min-width: 0 !important; }
+#booking-menu-panel .booking-choice-logo > span:last-child { min-width: 0 !important; overflow-wrap: anywhere !important; }
+#booking-menu-panel .booking-choice-logo strong { color: #17395c !important; font-size: .96rem !important; line-height: 1.3 !important; }
+#booking-menu-panel .booking-choice-logo small { color: #4c6478 !important; font-size: .78rem !important; line-height: 1.35 !important; margin-top: 3px !important; }
+#booking-menu-panel .booking-choice-whatsapp-mark { background: #25D366 !important; color: #fff !important; flex: 0 0 42px !important; width: 42px !important; height: 42px !important; }
+#booking-menu-panel .rezept-booking-choice .booking-choice-logo img { flex: 0 0 72px !important; width: 72px !important; height: 40px !important; max-width: 72px !important; object-fit: contain !important; }
+#booking-menu-panel .booking-option-arrow { color: #0759a8 !important; }
+.booking-toggle .booking-chevron { display: inline-block; margin-left: 3px; transition: transform .18s ease; }
+.booking-toggle[aria-expanded="true"] .booking-chevron { transform: rotate(180deg); }
+@media (max-width: 480px) {
+  #booking-menu-panel:not([hidden]) { width: min(var(--booking-trigger-width, 360px), calc(100vw - 24px)) !important; max-width: calc(100vw - 24px) !important; padding: 8px !important; }
+  #booking-menu-panel > a.booking-option { min-height: 54px !important; padding: 9px 8px !important; gap: 8px !important; }
+  #booking-menu-panel .booking-choice-whatsapp-mark { flex-basis: 38px !important; width: 38px !important; height: 38px !important; }
+  #booking-menu-panel .rezept-booking-choice .booking-choice-logo img { flex-basis: 64px !important; width: 64px !important; max-width: 64px !important; }
+}
+@media (prefers-reduced-motion: reduce) { #booking-menu-panel > a.booking-option, .booking-toggle .booking-chevron { transition: none !important; } }
+
+
+/* ===== Original style block 131: booking-menu-clean-options-final ===== */
+
+#booking-menu-panel > a.booking-option { grid-template-columns: minmax(0,1fr) !important; }
+#booking-menu-panel .booking-choice-logo small { display:none !important; }
+#booking-menu-panel .booking-option-arrow { display:none !important; }
+#booking-menu-panel .booking-choice-whatsapp-mark { display:inline-flex !important; align-items:center !important; justify-content:center !important; flex:0 0 42px !important; width:42px !important; height:42px !important; aspect-ratio:1 / 1 !important; border-radius:50% !important; background:#25D366 !important; color:#fff !important; overflow:hidden !important; }
+#booking-menu-panel .booking-choice-whatsapp-mark svg { display:block !important; width:27px !important; height:27px !important; color:#fff !important; }
+#booking-menu-panel .booking-choice-whatsapp-mark svg path { fill:currentColor !important; }
+@media(max-width:480px) { #booking-menu-panel .booking-choice-whatsapp-mark { flex-basis:38px !important; width:38px !important; height:38px !important; } }
+
+
+/* ===== Original style block 132: booked-slot-prominence ===== */
+
+/* Booked slots remain disabled. A restrained red status and a strike through the time characters distinguish them. */
+#time-slot-select option:disabled {
+  color: #b4232f !important;
+  font-weight: 400 !important;
+  background-color: #fff !important;
+  text-decoration: none !important;
+}
+
+
+/* ===== Original style block 133: logo-visibility-and-size-final-fix ===== */
+
+/* Load the external logo directly and enlarge it without crowding the wordmark. */
+.header .brand img.mark.circular-brand-logo{display:block!important;width:60px!important;height:60px!important;min-width:60px!important;max-width:60px!important;flex:0 0 60px!important;object-fit:contain!important;object-position:center!important;border-radius:0!important;overflow:visible!important;background:transparent!important}
+.footer-brand img.mark.circular-brand-logo,.secondary-brand img.mark.circular-brand-logo,.newsletter-panel img.mark.circular-brand-logo{width:58px!important;height:58px!important;min-width:58px!important;flex:0 0 58px!important;object-fit:contain!important;border-radius:0!important;overflow:visible!important}
+.inline-kg-mark.circular-brand-logo{width:1.45em!important;height:1.45em!important;min-width:0!important;object-fit:contain!important;border-radius:0!important;overflow:visible!important}
+@media(max-width:760px){.header .brand img.mark.circular-brand-logo{width:48px!important;height:48px!important;min-width:48px!important;max-width:48px!important;flex-basis:48px!important}.header .brand{gap:8px!important}.header .brand span{min-width:0!important}}
+@media(max-width:380px){.header .brand img.mark.circular-brand-logo{width:44px!important;height:44px!important;min-width:44px!important;max-width:44px!important;flex-basis:44px!important}.header .brand{gap:6px!important}}
+
+
+/* ===== Original style block 134: larger-external-kidsgastro-logo ===== */
+
+/* Larger site mark without forcing the wordmark or navigation out of alignment. */
+.header .nav > .brand{gap:8px!important;min-width:0!important;max-width:min(42vw,330px)!important}
+.header .nav > .brand .mark{width:72px!important;height:54px!important;min-width:72px!important;flex:0 0 72px!important;object-fit:contain!important;padding:0!important}
+.header .nav > .brand > span{min-width:0!important;max-width:100%!important;overflow:hidden;text-overflow:ellipsis}
+.header .nav > .brand > span small{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.footer-brand .footer-emblem{width:64px!important;height:64px!important;min-width:64px!important;flex-basis:64px!important}
+.secondary-brand .mark,.newsletter-panel .mark{width:66px!important;height:50px!important;min-width:66px!important;flex:0 0 66px!important;object-fit:contain!important;padding:0!important}
+@media(max-width:760px){.header .nav > .brand{max-width:calc(100vw - 92px)!important}.header .nav > .brand .mark{width:62px!important;height:48px!important;min-width:62px!important;flex-basis:62px!important}.footer-brand .footer-emblem{width:58px!important;height:58px!important;min-width:58px!important;flex-basis:58px!important}.secondary-brand .mark,.newsletter-panel .mark{width:58px!important;height:46px!important;min-width:58px!important;flex-basis:58px!important}}
+
+
+/* ===== Original style block 135: kg-carousel-controls-and-smoothness-final ===== */
+
+/* Keep carousel controls together below the reel, centered and easy to tap. */
+.kg-watch-content-play-wrap{display:flex!important;align-items:center!important;justify-content:center!important;gap:10px!important;flex-wrap:wrap!important;width:100%;margin:12px auto 0!important;padding:0!important;text-align:center}
+.kg-watch-content-play-wrap .kg-watch-content-controls{display:flex!important;align-items:center!important;justify-content:center!important;gap:8px!important;flex:0 0 auto}
+.kg-watch-content-play-wrap .kg-watch-content-control{flex:0 0 auto;min-width:44px;min-height:44px}
+.kg-watch-content-play-wrap .kg-watch-content-play{display:inline-flex!important;align-items:center!important;justify-content:center!important;margin:0!important}
+.kg-watch-content-toolbar{display:none!important}
+#kg-watch-content-track{scroll-behavior:auto!important;overflow-anchor:none;contain:layout paint;}
+#kg-watch-content-track>.kg-watch-content-gif-link{backface-visibility:hidden;-webkit-backface-visibility:hidden}
+@media(max-width:760px){.kg-watch-content-play-wrap{gap:8px!important;margin-top:8px!important}.kg-watch-content-play-wrap .kg-watch-content-control{min-width:44px;min-height:44px}}
+@media(prefers-reduced-motion:reduce){#kg-watch-content-track{scroll-behavior:auto!important}}
+
+
+/* ===== Original style block 136: hamburger-last-resort-visibility-fix ===== */
+
+/* Final robust menu visibility rule: the real navigation list is #links. */
+.header{position:relative!important;z-index:1000!important;overflow:visible!important}
+.header .nav{position:relative!important;overflow:visible!important}
+.header .toggle{position:relative!important;z-index:1502!important;display:flex!important;visibility:visible!important;opacity:1!important;pointer-events:auto!important;touch-action:manipulation!important;cursor:pointer!important}
+.header #links{box-sizing:border-box!important;z-index:1501!important;pointer-events:auto!important}
+.header #links.open{display:flex!important;visibility:visible!important;opacity:1!important;pointer-events:auto!important}
+@media(max-width:760px){.header #links.open{position:absolute!important;top:calc(100% + 7px)!important;left:0!important;right:0!important;width:100%!important;max-width:100%!important;max-height:calc(100dvh - 130px)!important;overflow-y:auto!important;overflow-x:hidden!important;background:#0759a8!important;border:1px solid #fff!important;border-radius:0 0 12px 12px!important;box-shadow:0 14px 32px rgba(0,20,45,.3)!important;padding:12px!important;flex-direction:column!important}}
+
+
+/* ===== Original style block 137: kg-hamburger-reliable-final-fix ===== */
+
+/* Final navigation controller: the menu must visibly expand above page content. */
+.header{position:relative!important;z-index:12000!important;overflow:visible!important}
+.header .nav{position:relative!important;overflow:visible!important}
+.header #links{z-index:12010!important;pointer-events:auto!important}
+.header #links.open{display:flex!important;visibility:visible!important;opacity:1!important;pointer-events:auto!important;max-height:calc(100dvh - 100px)!important;overflow-y:auto!important}
+@media(max-width:760px){.header #links.open{position:absolute!important;top:100%!important;left:0!important;right:0!important;width:100%!important;max-width:100%!important;flex-direction:column!important;align-items:stretch!important;background:#0759a8!important;color:#fff!important;padding:12px!important;gap:8px!important;border-radius:0 0 12px 12px!important;box-shadow:0 14px 32px rgba(0,20,45,.28)!important}}
+@media(min-width:761px){.header #links.open{position:absolute!important;top:100%!important;right:0!important;left:auto!important;width:min(440px,calc(100vw - 32px))!important;flex-direction:column!important;background:#0759a8!important;color:#fff!important;padding:12px!important;border-radius:0 0 12px 12px!important;box-shadow:0 14px 32px rgba(0,20,45,.24)!important}}
+.header .toggle{position:relative!important;z-index:12020!important;pointer-events:auto!important;cursor:pointer!important}
+
+
+/* ===== Original style block 138: kg-hamburger-header-containment-fix ===== */
+
+/* The header must not paint-contain the navigation dropdown: menus extend below it. */
+.header.kg-cosmos-host,
+header.header.kg-cosmos-host,
+.header.kg-cosmos-host.kg-cosmos-system {
+  contain: none !important;
+  overflow: visible !important;
+  clip-path: none !important;
+  isolation: isolate !important;
+}
+.header.kg-cosmos-host > .kg-cosmos-background,
+.header.kg-cosmos-host > .kg-orbit-overlay {
+  overflow: hidden !important;
+  pointer-events: none !important;
+}
+@media (max-width: 760px) {
+  .header #links.open {
+    position: relative !important;
+    z-index: 12010 !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}
+
+
+/* ===== Extracted homepage override: kg-homepage-final-overrides ===== */
+/* Solid blue appointment CTA: intentionally opaque and visually quiet. */
+.booking-toggle,.booking-toggle:hover,.booking-toggle:focus-visible,.booking-toggle:active{background:#0759a8!important;background-color:#0759a8!important;color:#fff!important;border:1px solid #0759a8!important;opacity:1!important;box-shadow:0 2px 7px rgba(7,59,105,.16)!important;transform:none!important;filter:none!important;transition:background-color .16s ease,box-shadow .16s ease!important}
+.booking-toggle:hover,.booking-toggle:focus-visible{background:#064b8d!important;background-color:#064b8d!important;border-color:#064b8d!important;box-shadow:0 3px 10px rgba(7,59,105,.2)!important}
+.booking-toggle::before,.booking-toggle::after{content:none!important;display:none!important;animation:none!important}
+.booking-toggle .appointment-mail-animation,.booking-toggle .appointment-mail-dot{animation:none!important}
+.booking-toggle .appointment-mail-dot{display:none!important}
+.booking-menu-panel{background:#fff!important;opacity:1!important}
+/* Remove custom cursor rings/dots and the blinking hero caret completely. */
+
+
+/* ===== Extracted homepage override: kg-final-yellow-appointment-cta-v4 ===== */
+.booking-toggle,.booking-toggle:visited,.booking-toggle:focus,.booking-toggle:focus-visible,.booking-toggle:active{
+  position:relative!important;isolation:isolate!important;overflow:hidden!important;
+  background-color:#ffc400!important;
+  background-image:linear-gradient(112deg,transparent 0%,transparent 36%,rgba(255,255,255,.78) 49%,transparent 62%,transparent 100%)!important;
+  background-size:230% 100%!important;background-position:130% 0!important;
+  color:#123c77!important;border:2px solid #e6ad00!important;opacity:1!important;filter:none!important;
+  box-shadow:0 5px 15px rgba(173,124,0,.27),0 0 0 3px rgba(255,196,0,.16)!important;
+  text-shadow:none!important;font-weight:850!important;
+  animation:kg-appointment-shine-v4 3.2s ease-in-out infinite,kg-appointment-attention-v4 2.6s ease-in-out infinite!important;
+  transition:background-color .18s ease,box-shadow .18s ease,transform .18s ease!important;
+}
+.booking-toggle:hover,.booking-toggle:focus-visible{
+  background-color:#ffd43b!important;color:#102f5c!important;
+  box-shadow:0 7px 20px rgba(173,124,0,.34),0 0 0 4px rgba(255,196,0,.23)!important;
+  transform:translateY(-2px)!important;
+}
+.booking-toggle:focus-visible{outline:3px solid #0759a8!important;outline-offset:4px!important}
+@keyframes kg-appointment-shine-v4{0%,18%{background-position:130% 0}72%,100%{background-position:-130% 0}}
+@keyframes kg-appointment-attention-v4{0%,100%{box-shadow:0 5px 15px rgba(173,124,0,.27),0 0 0 3px rgba(255,196,0,.16)}50%{box-shadow:0 6px 19px rgba(173,124,0,.34),0 0 0 5px rgba(255,196,0,.22)}}
+@media(prefers-reduced-motion:reduce){.booking-toggle{animation:none!important;background-image:none!important;background-color:#ffc400!important;box-shadow:0 4px 14px rgba(173,124,0,.3),0 0 0 3px rgba(255,196,0,.18)!important}}
+
+
+/* ===== Extracted homepage override: kg-final-homepage-fixes ===== */
+/* Highest-priority homepage appointment-button correction. */
+html body #booking-menu-toggle,
+html body #booking-menu-toggle:hover,
+html body #booking-menu-toggle:focus,
+html body #booking-menu-toggle:focus-visible,
+html body #booking-menu-toggle:active {
+  background: #ffc400 !important;
+  background-color: #ffc400 !important;
+  background-image: none !important;
+  color: #123c77 !important;
+  border: 2px solid #ffc400 !important;
+  opacity: 1 !important;
+  filter: none !important;
+  box-shadow: 0 4px 12px rgba(173,124,0,.24) !important;
+}
+body a.whatsapp-float {
+  animation: kg-whatsapp-bob-final 3.4s ease-in-out infinite !important;
+  will-change: transform;
+}
+@keyframes kg-whatsapp-bob-final {
+  0%,100% { transform: translate3d(0,0,0); }
+  50% { transform: translate3d(0,-10px,0); }
+}
+body a.whatsapp-float:hover,
+body a.whatsapp-float:focus-visible {
+  animation-play-state: paused !important;
+  transform: translate3d(0,0,0) !important;
+}
+@media(prefers-reduced-motion:reduce) {
+  body a.whatsapp-float { animation:none!important; transform:none!important; }
+}
+
+
+/* ===== Extracted homepage override: kg-consolidated-final-overrides ===== */
+/* ===== Original style block 139: two-phrase-rotation-and-underline-fix ===== */
+
+.hero-typing-headline,.hero-typing-text,.hero-typing-prefix{ text-decoration:none!important; }
+.hero-typing-highlight{ text-decoration-line:underline!important;text-decoration-style:wavy!important;text-decoration-color:#F08ACB!important;text-decoration-thickness:3px!important;text-underline-offset:7px!important;text-decoration-skip-ink:none!important; }
+
+
+/* ===== Original style block 140: marquee-readable-font-size-final ===== */
+
+/* Larger, responsive announcement text while keeping both messages on one line. */
+.offline-appointment-marquee{font-size:clamp(13px,1.15vw + 8px,17px)!important}
+.offline-appointment-marquee__text{font-size:inherit!important;letter-spacing:.015em!important;white-space:nowrap!important}
+@media(max-width:480px){
+  .offline-appointment-marquee{font-size:clamp(12px,3.4vw,15px)!important;min-height:40px!important;height:40px!important;padding-block:6px!important}
+  .offline-appointment-marquee__text{font-size:inherit!important;padding-inline:24px!important}
+}
+
+
+/* ===== Original style block 141: uniform-mobile-navigation-final ===== */
+
+/* Uniform menu rows: keep the existing icon artwork and typography intact. */
+#links{gap:8px!important;align-items:stretch!important}
+#links>.nav-direct-link,#links>.nav-dropdown>summary{box-sizing:border-box!important;width:100%!important;min-height:58px!important;display:grid!important;grid-template-columns:38px minmax(0,1fr) 22px!important;align-items:center!important;column-gap:12px!important;padding:12px 16px!important;border:1px solid #e0eaf1!important;border-radius:10px!important;background:#eff5fa!important;color:#173e5b!important;text-align:left!important;text-decoration:none!important;font-family:inherit!important;font-size:1rem!important;font-weight:700!important;line-height:1.3!important;white-space:normal!important;transform:none!important}
+#links>.nav-direct-link{grid-template-columns:38px minmax(0,1fr)!important}
+#links>.nav-direct-link>svg.kg-nav-icon,#links>.nav-dropdown>summary>svg.kg-nav-icon{display:block!important;width:28px!important;height:28px!important;grid-column:1!important;grid-row:1!important;justify-self:start!important;fill:none!important;stroke:currentColor!important;stroke-width:1.8!important;stroke-linecap:round!important;stroke-linejoin:round!important}
+#links>.nav-direct-link::before,#links>.nav-direct-link::after,#links>.nav-dropdown>summary::after{content:none!important;display:none!important}
+#links>.nav-direct-link{grid-auto-flow:column;justify-content:stretch!important}
+#links>.nav-direct-link:not(:has(>svg.kg-nav-icon)){grid-template-columns:38px minmax(0,1fr)!important}
+#links>.nav-dropdown>summary>svg:not(.kg-nav-icon){grid-column:3!important;grid-row:1!important;width:20px!important;height:20px!important;justify-self:end!important;transform:none!important;transition:transform .2s ease!important}
+#links>.nav-dropdown[open]>summary>svg:not(.kg-nav-icon){transform:rotate(180deg)!important}
+#links>.nav-dropdown-menu{grid-column:1/-1!important;margin:4px 0 8px!important;padding:5px!important;border:1px solid #dce7ef!important;border-radius:9px!important;background:#fff!important}
+#links>.nav-dropdown-menu a{min-height:46px!important;padding:11px 14px!important;border-radius:6px!important;font-family:inherit!important;font-size:.94rem!important;line-height:1.35!important}
+#links .nav-login-note{padding:12px 14px;color:#173e5b;font-size:.94rem;line-height:1.4}
+#links .nav-login-note b,#links .nav-login-note small{display:block}
+#links .nav-login-note small{margin-top:4px;color:#637789;font-size:.8rem}
+#links>.nav-dropdown>summary:focus-visible,#links>.nav-direct-link:focus-visible{outline:3px solid #0759a8!important;outline-offset:2px!important}
+#links>.nav-dropdown>summary:hover,#links>.nav-direct-link:hover{background:#e5f0f8!important;color:#0759a8!important}
+@media(max-width:760px){#links,.links.open{grid-template-columns:minmax(0,1fr)!important;gap:8px!important;padding:12px!important}#links>.nav-direct-link,#links>.nav-dropdown>summary{min-height:58px!important;padding:12px 14px!important;font-size:1rem!important}#links>.nav-dropdown-menu{position:static!important;width:100%!important;max-width:100%!important}#links>.nav-login-dropdown{order:999!important}}
+@media(min-width:761px){#links>.nav-login-dropdown{order:999!important}}
+/* Remove the custom cursor dot/ring completely; retain the native pointer. */
+#kg-main-cursor-flow,#kg-main-cursor-ring{display:none!important}
+
+
+/* ===== Original style block 142: kg-testimonial-visual-polish ===== */
+
+/* Stronger blue framing and more vivid featured testimonial styling */
+#featured-testimonials .kg-testimonial-card {
+  border: 2px solid #0759a8 !important;
+  box-shadow: 0 5px 18px rgba(7,89,168,.13), inset 0 0 0 1px rgba(7,89,168,.06) !important;
+  background: #fff !important;
+}
+#featured-testimonials .kg-testimonial-card p {
+  color: #0759a8 !important;
+  font-weight: 700 !important;
+}
+#featured-testimonials .kg-testimonial-stars {
+  color: #d49a00 !important;
+  text-shadow: none !important;
+  animation: none !important;
+  transform: none !important;
+  font-size: 1.15rem !important;
+  font-weight: 600 !important;
+  letter-spacing: .12em !important;
+  line-height: 1.4 !important;
+}
+
+
+/* ===== Original style block 143: kg-cosmos-all-blue-boxes ===== */
+/* All five cosmic panels share the same isolated stacking context. */
+.kg-space-panel{position:relative!important;isolation:auto!important;z-index:auto!important;overflow:hidden!important}
+.kg-space-panel>*{position:relative;z-index:2}
+
+
+/* ===== Original style block 144: navigation-dropdown-interaction-final-fix ===== */
+
+/* Dropdowns: preserve native <details>/<summary> interaction and prevent the cosmic header from clipping menus. */
+.header.kg-cosmos-host{overflow:visible!important}
+.header .nav-dropdown{position:relative!important;display:block!important;min-width:0}
+.header .nav-dropdown>summary{position:relative!important;z-index:2!important;cursor:pointer!important;pointer-events:auto!important;touch-action:manipulation}
+.header .nav-dropdown[open]>.nav-dropdown-menu{display:block!important;visibility:visible!important;opacity:1!important;pointer-events:auto!important;z-index:1200!important}
+.header .nav-dropdown:not([open])>.nav-dropdown-menu{display:none!important}
+@media(max-width:760px){
+  .header #links{display:none!important}
+  .header #links.open{display:flex!important;flex-direction:column!important;align-items:stretch!important;position:relative!important;z-index:1300!important;width:100%!important;max-height:calc(100dvh - 100px)!important;overflow-y:auto!important;overflow-x:hidden!important;overscroll-behavior:contain!important;background:#0759a8!important}
+  .header #links.open>.nav-dropdown{display:block!important;width:100%!important;flex:0 0 auto!important;position:relative!important}
+  .header #links.open>.nav-dropdown[open]>.nav-dropdown-menu{position:static!important;inset:auto!important;display:block!important;width:100%!important;min-width:0!important;max-width:100%!important;max-height:none!important;overflow:visible!important;visibility:visible!important;opacity:1!important;margin:5px 0 9px!important;padding:6px!important;background:#fff!important;border:1px solid #dce7ef!important;border-radius:9px!important;box-shadow:none!important;transform:none!important}
+  .header #links.open>.nav-dropdown:not([open])>.nav-dropdown-menu{display:none!important}
+  .header #links.open>.nav-dropdown>summary{position:relative!important;z-index:2!important;display:grid!important;pointer-events:auto!important}
+  .header #links.open>.nav-dropdown>.nav-dropdown-menu a{display:block!important;position:relative!important;z-index:1!important;color:#18384d!important;pointer-events:auto!important;min-height:44px!important}
+  .header.kg-cosmos-host>.kg-cosmos-background{pointer-events:none!important;z-index:0!important}
+}
+
+/* Booking choice cards: keep the logo and readable label together in the first grid column. */
+.booking-menu-panel {
+  width: min(360px, calc(100vw - 32px)) !important;
+  max-width: calc(100vw - 32px) !important;
+  box-sizing: border-box !important;
+  padding: 10px !important;
+  overflow: visible !important;
+}
+.booking-menu-panel > a.booking-option {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) auto !important;
+  align-items: center !important;
+  gap: 12px !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  box-sizing: border-box !important;
+  padding: 12px !important;
+  text-decoration: none !important;
+  white-space: normal !important;
+}
+.booking-menu-panel .booking-choice-logo {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  gap: 12px !important;
+  min-width: 0 !important;
+  width: 100% !important;
+}
+.booking-menu-panel .booking-choice-logo > span:last-child {
+  display: block !important;
+  flex: 1 1 auto !important;
+  min-width: 0 !important;
+  white-space: normal !important;
+  writing-mode: horizontal-tb !important;
+  overflow-wrap: anywhere !important;
+}
+.booking-menu-panel .booking-choice-logo strong {
+  display: block !important;
+  color: #17395c !important;
+  font-size: 1rem !important;
+  line-height: 1.3 !important;
+  font-weight: 750 !important;
+  white-space: normal !important;
+  writing-mode: horizontal-tb !important;
+}
+.booking-menu-panel .booking-choice-logo small {
+  display: block !important;
+  margin-top: 3px !important;
+  color: #637789 !important;
+  font-size: .78rem !important;
+  line-height: 1.35 !important;
+}
+.booking-menu-panel .booking-choice-whatsapp-mark {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  flex: 0 0 42px !important;
+  width: 42px !important;
+  height: 42px !important;
+  border-radius: 50% !important;
+  background: #25D366 !important;
+  color: #FFFFFF !important;
+}
+.booking-menu-panel .booking-choice-whatsapp-mark svg {
+  display: block !important;
+  width: 29px !important;
+  height: 29px !important;
+  fill: none !important;
+  stroke: none !important;
+  color: #FFFFFF !important;
+}
+.booking-menu-panel .booking-choice-whatsapp-mark svg path {
+  fill: currentColor !important;
+}
+.booking-menu-panel .rezept-booking-choice .booking-choice-logo img {
+  display: block !important;
+  flex: 0 0 78px !important;
+  width: 78px !important;
+  height: 38px !important;
+  max-width: 78px !important;
+  object-fit: contain !important;
+  object-position: center !important;
+  background: #FFFFFF !important;
+}
+.booking-menu-panel .booking-option-arrow {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  flex: 0 0 20px !important;
+  width: 20px !important;
+  color: #0759a8 !important;
+  font-size: 1.15rem !important;
+}
+.booking-menu-panel > a.booking-option:hover,
+.booking-menu-panel > a.booking-option:focus-visible {
+  background: #edf7fc !important;
+  outline: 2px solid #b7d9ed !important;
+  outline-offset: -2px !important;
+}
+@media (max-width: 480px) {
+  .booking-menu-panel { width: min(340px, calc(100vw - 24px)) !important; max-width: calc(100vw - 24px) !important; }
+  .booking-menu-panel > a.booking-option { padding: 10px 8px !important; gap: 8px !important; }
+  .booking-menu-panel .booking-choice-whatsapp-mark { flex-basis: 38px !important; width: 38px !important; height: 38px !important; }
+  .booking-menu-panel .booking-choice-whatsapp-mark svg { width: 26px !important; height: 26px !important; }
+  .booking-menu-panel .rezept-booking-choice .booking-choice-logo img { flex-basis: 68px !important; width: 68px !important; max-width: 68px !important; }
+  .booking-menu-panel .booking-choice-logo strong { font-size: .94rem !important; }
+}
+
+
+
+/* ===== Original style block 145: final-mobile-header-overlay-fix ===== */
+
+/* Stable mobile header: the menu is an overlay and never participates in header layout. */
+@media (max-width: 760px) {
+  .header { position: relative !important; z-index: 1000 !important; overflow: visible !important; isolation: isolate !important; }
+  .header .nav {
+    position: relative !important; display: grid !important;
+    grid-template-columns: minmax(0, 1fr) 48px !important;
+    grid-template-areas: "brand brand" "search toggle" !important;
+    grid-template-rows: auto 48px !important;
+    align-items: center !important; justify-content: stretch !important;
+    gap: 9px 10px !important; height: auto !important; min-height: 0 !important;
+    padding: 10px 0 !important; overflow: visible !important;
+  }
+  .header .brand { grid-area: brand !important; width: 100% !important; max-width: 100% !important; min-width: 0 !important; }
+  .header .brand span { min-width: 0 !important; overflow-wrap: anywhere !important; }
+  .header .site-search { grid-area: search !important; position: relative !important; inset: auto !important;
+    width: 100% !important; min-width: 0 !important; max-width: none !important; height: 42px !important; margin: 0 !important; }
+  .header .toggle { grid-area: toggle !important; position: relative !important; justify-self: end !important;
+    align-self: center !important; display: flex !important; width: 48px !important; min-width: 48px !important;
+    height: 44px !important; margin: 0 !important; z-index: 1502 !important; }
+  .header #links, .header #links.open {
+    position: absolute !important; top: calc(100% + 4px) !important; left: 0 !important; right: 0 !important;
+    bottom: auto !important; width: 100% !important; max-width: 100% !important; height: auto !important;
+    max-height: calc(100vh - 145px) !important; max-height: calc(100dvh - 145px) !important;
+    margin: 0 !important; box-sizing: border-box !important; z-index: 1501 !important;
+    overflow-x: hidden !important; overflow-y: auto !important; overscroll-behavior: contain !important;
+    flex-direction: column !important; align-items: stretch !important;
+  }
+  .header #links:not(.open) { display: none !important; }
+  .header #links.open { display: flex !important; }
+}
+@media (min-width: 761px) {
+  .header #links.open { position: absolute !important; top: calc(100% + 5px) !important;
+    left: auto !important; right: 0 !important; bottom: auto !important; }
+}
+
+
+/* ===== Original style block 146: final-requested-hero-and-why-button-fix ===== */
+
+/* Keep the portrait beside the hero copy on desktop and below it on mobile; no name strip under the photo. */
+@media (min-width:761px){.hero .hero-grid{grid-template-areas:"copy portrait"!important;grid-template-columns:minmax(0,1.06fr) minmax(0,.94fr)!important;align-items:center!important;column-gap:30px!important;row-gap:0!important}.hero .hero-grid>.reveal{grid-area:copy!important}.hero .hero-grid>.visual{grid-area:portrait!important;margin:0 auto!important;max-width:430px!important;width:100%!important}}
+@media (max-width:760px){.hero .hero-grid{grid-template-areas:"copy" "portrait"!important;grid-template-columns:minmax(0,1fr)!important;row-gap:0!important}.hero .hero-grid>.reveal{grid-area:copy!important}.hero .hero-grid>.visual{grid-area:portrait!important;margin:18px auto 0!important;width:min(100%,430px)!important}}
+.why-dr-nitin-mohan-section .why-choose-heading h2 a{display:inline-flex;align-items:center;justify-content:center;gap:10px;min-height:50px;padding:0 22px;background:#0759a8;border:2px solid #fff;border-radius:5px;color:#fff!important;font-family:Arial,'Segoe UI',sans-serif;font-size:1rem;font-weight:700;line-height:1.35;letter-spacing:.01em;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;text-decoration:none!important;box-shadow:0 2px 5px rgba(0,0,0,.14);transition:background .18s ease,transform .18s ease,box-shadow .18s ease}
+.why-dr-nitin-mohan-section .why-choose-heading h2 a::after{content:'→';font-size:1.2rem;transition:transform .18s ease}
+.why-dr-nitin-mohan-section .why-choose-heading h2 a:hover,.why-dr-nitin-mohan-section .why-choose-heading h2 a:focus-visible{background:#064987;border-color:#fff;color:#fff!important;transform:translateY(-2px);box-shadow:0 6px 0 rgba(0,0,0,.18);outline:3px solid #fff;outline-offset:3px}
+.why-dr-nitin-mohan-section .why-choose-heading h2 a:hover::after{transform:translateX(3px)}
+
+
+/* ===== Original style block 147: professional-booking-and-button-finish ===== */
+
+/* Keep booked options readable and understated within the native select control. */
+.booking-dialog select option:disabled{color:#7b858e!important;background:#f7f8fa!important}
+.why-dr-nitin-mohan-section .why-choose-heading h2 a{font-family:Arial,'Segoe UI',sans-serif!important;font-size:1rem!important;font-weight:700!important;letter-spacing:.015em!important;-webkit-font-smoothing:antialiased!important;text-rendering:optimizeLegibility!important;text-shadow:none!important}
+
+
+/* ===== Original style block 148: outstanding-ios-carousel-dropdown-and-slot-fixes ===== */
+
+/* iOS Safari safe-area, scrolling, control and viewport fixes. */
+:root{--kg-safe-top:env(safe-area-inset-top,0px);--kg-safe-right:env(safe-area-inset-right,0px);--kg-safe-bottom:env(safe-area-inset-bottom,0px);--kg-safe-left:env(safe-area-inset-left,0px)}
+html{scroll-padding-top:calc(84px + var(--kg-safe-top));-webkit-text-size-adjust:100%;text-size-adjust:100%;overscroll-behavior-y:auto}
+body{min-width:0;overflow-x:clip;padding-left:var(--kg-safe-left);padding-right:var(--kg-safe-right);-webkit-overflow-scrolling:touch}
+img,video,iframe,svg{max-width:100%}
+button,a,input,select,textarea,summary{touch-action:manipulation}
+button,a,summary,[role="button"]{-webkit-tap-highlight-color:rgba(7,89,168,.15)}
+.header{padding-top:var(--kg-safe-top);isolation:auto;overflow:visible}
+.header .nav{overflow:visible}
+.header #links{overscroll-behavior:contain;-webkit-overflow-scrolling:touch;scrollbar-gutter:stable;max-height:calc(100vh - 110px)!important;max-height:calc(100dvh - 110px - var(--kg-safe-top))!important}
+.whatsapp-float{right:calc(16px + var(--kg-safe-right))!important;bottom:calc(16px + var(--kg-safe-bottom))!important;z-index:10010}
+.booking-dialog{max-height:calc(100vh - 24px - var(--kg-safe-top) - var(--kg-safe-bottom));max-height:calc(100dvh - 24px - var(--kg-safe-top) - var(--kg-safe-bottom));overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
+.booking-dialog-inner{max-height:calc(100vh - 24px - var(--kg-safe-top) - var(--kg-safe-bottom));max-height:calc(100dvh - 24px - var(--kg-safe-top) - var(--kg-safe-bottom));overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;padding-bottom:calc(20px + var(--kg-safe-bottom))}
+@supports not (overflow:clip){body{overflow-x:hidden}}
+@media(max-width:760px){
+ .container,.kg-watch-content-container{width:calc(100% - 32px);width:calc(100% - 32px - var(--kg-safe-left) - var(--kg-safe-right))}
+ .header #links{left:0!important;right:0!important;width:100%!important;max-width:100%!important}
+ .header #links .nav-dropdown{position:relative!important;z-index:1!important;overflow:visible!important}
+ .header #links .nav-dropdown[open]{z-index:10003!important}
+ .header #links .nav-dropdown-menu{position:static!important;max-width:100%!important;overflow:visible!important}
+ .booking-dialog{width:calc(100% - 20px);max-width:560px;padding:0}
+ .booking-dialog-inner{padding-left:16px;padding-right:16px}
+ .booking-dialog-actions{padding-bottom:calc(12px + var(--kg-safe-bottom))!important}
+ .hospital-location-grid,.qr-grid,.newsletter-wrap,.social-wrap{min-width:0}
+ .kg-watch-content-section{overflow:hidden}
+}
+@media(max-width:380px){.container,.kg-watch-content-container{width:calc(100% - 24px)}.kg-watch-content-control{min-height:42px;padding-inline:10px}}
+/* Desktop submenus must sit above neighbouring nav items; mobile menus stay in-flow. */
+.header #links{overflow:visible!important}
+.header #links .nav-dropdown{position:relative!important;z-index:2!important;overflow:visible!important;isolation:auto!important}
+.header #links .nav-dropdown:hover,.header #links .nav-dropdown:focus-within,.header #links .nav-dropdown[open]{z-index:10002!important}
+.header #links .nav-dropdown-menu{z-index:10003!important;max-height:min(72vh,640px);overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
+.header #links .nav-dropdown-menu a{position:relative;z-index:1}
+@media(max-width:760px){.header #links{overflow-y:auto!important}.header #links .nav-dropdown-menu{max-height:none!important;overflow:visible!important}}
+/* Three video carousel: slow track movement, touch scroll, and accessible controls. */
+.kg-watch-content-toolbar{display:flex;align-items:center;justify-content:space-between;gap:14px;margin:0 0 14px;text-align:left}
+.kg-watch-content-help{margin:0;color:#526775;font-size:.83rem;line-height:1.45}
+.kg-watch-content-controls{display:flex;align-items:center;gap:8px;flex:0 0 auto}
+.kg-watch-content-control{display:inline-flex;align-items:center;justify-content:center;min-width:44px;min-height:44px;padding:8px 13px;border:1px solid #b6cbd8;border-radius:6px;background:#fff;color:#0759a8;font:700 .9rem/1.2 Arial,'Segoe UI',sans-serif;cursor:pointer;touch-action:manipulation}
+.kg-watch-content-control:hover{background:#eaf3fa;border-color:#0759a8}
+.kg-watch-content-control:focus-visible{outline:3px solid #0759a8;outline-offset:3px}
+.kg-watch-content-grid{display:flex!important;flex-wrap:nowrap!important;gap:18px!important;align-items:stretch!important;justify-content:flex-start!important;overflow-x:auto!important;overflow-y:hidden!important;width:100%;padding:4px 2px 14px!important;scroll-snap-type:x mandatory;scrollbar-width:thin;scrollbar-color:#8ca8b7 transparent;overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch;touch-action:pan-x pan-y;scroll-behavior:auto!important}
+.kg-watch-content-grid .kg-watch-content-gif-link{display:block!important;flex:0 0 calc((100% - 36px)/3)!important;width:calc((100% - 36px)/3)!important;min-width:0!important;max-width:none!important;margin:0!important;scroll-snap-align:start;scroll-snap-stop:normal;overflow:hidden;border-radius:8px!important}
+.kg-watch-content-grid .kg-watch-content-gif-link img,.kg-watch-content-grid .kg-watch-content-gif-link video{display:block;width:100%;height:clamp(220px,27vw,360px)!important;max-height:none!important;object-fit:contain!important;background:#f7fafc}
+.kg-watch-content-live{min-height:1.25em;margin:5px 0 0;text-align:right;color:#526775;font-size:.76rem}
+.kg-watch-content-grid.is-user-paused{scroll-snap-type:x proximity}
+@media(max-width:760px){.kg-watch-content-toolbar{align-items:flex-start;flex-direction:column}.kg-watch-content-controls{width:100%;justify-content:flex-end}.kg-watch-content-grid{gap:13px!important}.kg-watch-content-grid .kg-watch-content-gif-link{flex-basis:84%!important;width:84%!important}.kg-watch-content-grid .kg-watch-content-gif-link img,.kg-watch-content-grid .kg-watch-content-gif-link video{height:auto!important;max-height:420px!important;min-height:230px;object-fit:contain!important}.kg-watch-content-help{font-size:.8rem}}
+@media(prefers-reduced-motion:reduce){.kg-watch-content-grid{scroll-behavior:auto!important;scroll-snap-type:x proximity}.kg-watch-content-control{transition:none!important}}
+/* Native <option> text decoration/color are inconsistent on Safari. Hide the select visually,
+   preserve it as the form/booking source of truth, and render an accessible custom listbox. */
+#time-panel .time-slot-select.kg-native-slot-source{position:absolute!important;width:1px!important;height:1px!important;min-height:1px!important;padding:0!important;margin:-1px!important;border:0!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;clip-path:inset(50%)!important;white-space:nowrap!important;opacity:0!important;pointer-events:none!important}
+.kg-slot-picker{position:relative;width:100%;margin:7px 0 16px;color:#17365d}
+.kg-slot-picker-trigger{display:flex;width:100%;min-height:50px;align-items:center;justify-content:space-between;gap:12px;padding:11px 13px;border:1px solid #b8cddd;border-radius:5px;background:#fff;color:#17365d;font:inherit;text-align:left;cursor:pointer}
+.kg-slot-picker-trigger:focus-visible,.kg-slot-picker-trigger[aria-expanded="true"]{outline:3px solid #1687bd35;border-color:#0759a8}
+.kg-slot-picker-trigger:disabled{opacity:.7;cursor:not-allowed}
+.kg-slot-picker-chevron{flex:0 0 auto;color:#0759a8}
+.kg-slot-picker-list{position:absolute;inset:calc(100% + 4px) 0 auto;z-index:10020;display:none;max-height:min(48vh,340px);overflow-y:auto;padding:5px;border:1px solid #cbd9e5;border-radius:7px;background:#fff;box-shadow:0 12px 28px rgba(16,50,78,.18);overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
+.kg-slot-picker.is-open .kg-slot-picker-list{display:block}
+.kg-slot-picker-option{display:flex;width:100%;align-items:center;gap:12px;min-height:44px;padding:9px 10px;border:0;border-radius:4px;background:#fff;color:#17365d;font:inherit;text-align:left;cursor:pointer}
+.kg-slot-picker-option:hover:not(:disabled),.kg-slot-picker-option:focus-visible:not(:disabled){background:#edf5fb;outline:2px solid #b7d3e6;outline-offset:-2px}
+.kg-slot-picker-option:disabled{cursor:not-allowed;background:#fff;color:#17365d;opacity:1}
+.kg-slot-time{flex:0 0 auto;color:inherit;text-decoration:none;text-decoration-thickness:1.5px;text-decoration-color:#b4232f;text-decoration-skip-ink:none}
+.kg-slot-picker-option.is-booked .kg-slot-time{text-decoration-line:line-through}
+.kg-slot-booked-status{color:#b4232f;font-size:.78rem;font-weight:500;line-height:1.25}
+.kg-slot-picker-option.is-placeholder{color:#607789}
+@media(max-width:760px){.kg-slot-picker-list{max-height:min(42vh,300px)}.kg-slot-picker-trigger{min-height:48px}}
+/* Final logo crop fix: clip square source artwork to a clean circle. */
+img.circular-brand-logo,
+img.kg-logo,
+.header .brand img.mark,
+.footer-brand img.footer-emblem,
+.secondary-brand img.mark,
+.newsletter-panel .mark img {
+  border-radius: 50% !important;
+  overflow: hidden !important;
+  clip-path: circle(50% at 50% 50%) !important;
+  object-position: center !important;
+  background: transparent !important;
+}
+.social-intro::after {
+  border-radius: 50% !important;
+  clip-path: circle(50% at 50% 50%) !important;
+  background-size: cover !important;
+  overflow: hidden !important;
+}
+@media (max-width: 760px) {
+  img.circular-brand-logo,
+  img.kg-logo,
+  .header .brand img.mark,
+  .footer-brand img.footer-emblem,
+  .secondary-brand img.mark,
+  .newsletter-panel .mark img { border-radius: 50% !important; }
+}
+/* Center the Watch Our Content pause/play control below the moving GIF strip. */
+.kg-watch-content-play-wrap{display:flex!important;justify-content:center!important;align-items:center!important;width:100%;margin:12px auto 2px!important}
+.kg-watch-content-play-wrap .kg-watch-content-play{width:44px!important;min-width:44px!important;height:44px!important;min-height:44px!important;padding:0!important;border-radius:50%!important;font-size:0!important;line-height:0!important}
+.kg-watch-content-play-wrap .kg-watch-content-play svg{display:block!important;width:18px!important;height:18px!important;fill:currentColor!important}
+.kg-watch-content-play-wrap .kg-watch-content-play:focus-visible{outline:3px solid #0759a8!important;outline-offset:3px!important}
+@media(prefers-reduced-motion:reduce){.kg-watch-content-play-wrap .kg-watch-content-play{transition:none!important}}
+
+
+/* ===== Original style block 149: kg-uniform-cosmic-hover-and-gallery-menu-final ===== */
+
+/* Gallery matches the adjacent Testimonials dropdown and stays usable on mobile. */
+#links>.kg-gallery-nav-dropdown{position:relative;z-index:10001}
+#links>.kg-gallery-nav-dropdown>.nav-dropdown-menu{width:270px}
+@media(max-width:760px){#links>.kg-gallery-nav-dropdown>.nav-dropdown-menu{position:static;width:100%;margin:4px 0 8px}}
+
+
+/* ===== Original style block 150: kg-synchronised-hamburger-transition ===== */
+
+/* One animated menu state: keep it rendered so opacity/height/transform can transition. */
+.header { position:relative!important; z-index:12000!important; overflow:visible!important; }
+.header .nav { position:relative!important; overflow:visible!important; }
+.header .toggle {
+  position:relative!important; z-index:12020!important; display:flex!important;
+  align-items:center!important; justify-content:center!important;
+  visibility:visible!important; opacity:1!important; pointer-events:auto!important;
+  cursor:pointer!important; touch-action:manipulation!important;
+  transform:rotate(0deg); transform-origin:center;
+  transition:transform .28s cubic-bezier(.2,.7,.25,1),background-color .25s ease,color .25s ease;
+}
+.header .toggle[aria-expanded="true"] { transform:rotate(90deg); }
+.header #links {
+  box-sizing:border-box!important; position:absolute!important; top:calc(100% + 4px)!important;
+  left:0!important; right:0!important; z-index:12010!important; width:100%!important;
+  max-height:0!important; min-height:0!important; overflow:hidden!important;
+  display:flex!important; flex-direction:column!important; align-items:stretch!important;
+  gap:8px!important; padding:0 14px!important; margin:0!important;
+  opacity:0!important; visibility:hidden!important; pointer-events:none!important;
+  transform:translateY(-9px)!important;
+  background:#0759a8!important; color:#fff!important;
+  border:1px solid transparent!important; border-radius:0 0 10px 10px!important;
+  box-shadow:0 14px 32px rgba(0,20,45,0)!important;
+  transition:max-height .32s cubic-bezier(.2,.7,.25,1),
+             padding .32s cubic-bezier(.2,.7,.25,1),
+             opacity .22s ease, transform .32s cubic-bezier(.2,.7,.25,1),
+             visibility 0s linear .32s, border-color .22s ease,
+             box-shadow .22s ease!important;
+}
+.header #links.open {
+  max-height:min(75vh,620px)!important; overflow-y:auto!important; overflow-x:hidden!important;
+  padding:12px 14px!important; opacity:1!important; visibility:visible!important;
+  pointer-events:auto!important; transform:translateY(0)!important;
+  border-color:rgba(255,255,255,.32)!important;
+  box-shadow:0 14px 32px rgba(0,20,45,.28)!important;
+  transition:max-height .32s cubic-bezier(.2,.7,.25,1),
+             padding .32s cubic-bezier(.2,.7,.25,1),
+             opacity .22s ease, transform .32s cubic-bezier(.2,.7,.25,1),
+             visibility 0s, border-color .22s ease,
+             box-shadow .22s ease!important;
+}
+.header #links a, .header #links summary { flex:0 0 auto; }
+@media(prefers-reduced-motion:reduce) {
+  .header .toggle,.header #links,.header #links.open { transition:none!important; transform:none!important; }
+}
+
+
+/* ===== Extracted homepage override: kg-homepage-final-overrides-v2 ===== */
+.booking-toggle,.booking-toggle:hover,.booking-toggle:focus-visible,.booking-toggle:active{background:#0759a8!important;background-color:#0759a8!important;color:#fff!important;border:1px solid #0759a8!important;opacity:1!important;box-shadow:0 2px 7px rgba(7,59,105,.16)!important;transform:none!important;filter:none!important;transition:background-color .16s ease,box-shadow .16s ease!important}
+.booking-toggle:hover,.booking-toggle:focus-visible{background:#064b8d!important;background-color:#064b8d!important;border-color:#064b8d!important;box-shadow:0 3px 10px rgba(7,59,105,.2)!important}
+.booking-toggle::before,.booking-toggle::after{content:none!important;display:none!important;animation:none!important}
+.booking-toggle .appointment-mail-animation,.booking-toggle .appointment-mail-dot{animation:none!important}
+.booking-toggle .appointment-mail-dot{display:none!important}
+.booking-menu-panel{background:#fff!important;opacity:1!important}
+
+
+/* ===== Extracted homepage override: kg-final-social-logo-removal ===== */
+.social-intro::after{content:none!important;background:none!important;display:none!important}
