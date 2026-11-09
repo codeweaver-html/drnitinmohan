@@ -574,7 +574,7 @@ timeSource='typed';const match=getManualTime();if(match&&!periodExplicit){const 
    const dateText=`${String(day).padStart(2,"0")}/${String(month).padStart(2,"0")}/${year}`;
    const timeText=timeSource==='typed'&&timeSlotSelect.value?timeSlotSelect.options[timeSlotSelect.selectedIndex].text:`${String(displayHour).padStart(2,'0')}:${String(displayMinute).padStart(2,'0')} ${displayPeriod}`;
    const childName=childNameInput.value.trim(),childAge=childAgeInput.value.trim();
-   const message=`Hello, I would like to request an appointment.
+   const message=`Hello, I would like to request an appointment with Dr. Nitin Mohan.
 
 Child: ${childName}
 Age: ${childAge} years
