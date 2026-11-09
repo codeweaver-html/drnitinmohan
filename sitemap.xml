@@ -3,6 +3,21 @@
         xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
   <url>
     <loc>https://drnitinmohan.com/</loc>
+    <image:image>
+      <image:loc>https://drnitinmohan.com/assets/kg%20logo.webp</image:loc>
+    </image:image>
+    <image:image>
+      <image:loc>https://drnitinmohan.com/assets/main%20pic.webp</image:loc>
+    </image:image>
+    <image:image>
+      <image:loc>https://drnitinmohan.com/assets/rezept-rx-logo.png</image:loc>
+    </image:image>
+    <image:image>
+      <image:loc>https://drnitinmohan.com/assets/gastro%20talk.webp</image:loc>
+    </image:image>
+    <image:image>
+      <image:loc>https://drnitinmohan.com/assets/hospital%20pic.webp</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://drnitinmohan.com/about/</loc>
