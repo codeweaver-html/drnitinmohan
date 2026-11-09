@@ -22,12 +22,12 @@
 
 /* ===== COSMIC ANIMATION ENGINE ===== */
 /* KidsGastro shared cosmic animation engine.
-   Reusable across the homepage and subpages.
+   Runs only on regular subsites; the homepage keeps its own independent presentation.
    To animate a custom section, add class="kg-space-panel" or
    data-kg-cosmos-panel="true" to that section.
    The engine creates its own fixed canvas if one is not already present. */
 (()=>{'use strict';
- if(window.KGSharedExcluded||window.KGCosmosSpace)return;
+ if(window.KGSharedExcluded||!document.documentElement.classList.contains('kg-shared-subsite')||window.KGCosmosSpace)return;
  // Start only after the DOM body exists; safe for async/defer and head inclusion.
  const boot=()=>{
  if(window.KGCosmosSpace)return;
@@ -67,7 +67,7 @@
  const massOf=id=>OBJECT_MASS[id]||60;
  const CONFIG={maxDpr:1.25,mobileDpr:1,opacity:.76,mobileOpacity:.66,reducedOpacity:.72,objectAlpha:.95,voyagerInterval:[10000,17000],starshipInterval:[9000,14500],satelliteInterval:[6500,10500],asteroidInterval:[1800,3600],hubbleInterval:[14000,22000],orionInterval:[10500,16500],halleyInterval:[18000,28000],voyagerInitialDelay:[500,1800],starshipInitialDelay:[400,1300],planetCount:3};
  const canvas=document.getElementById('kg-space')||document.createElement('canvas');canvas.id='kg-space';canvas.setAttribute('aria-hidden','true');if(!canvas.isConnected)document.body.appendChild(canvas);
- const ctx=canvas.getContext('2d',{alpha:true});canvas.style.opacity=String(reduce?CONFIG.reducedOpacity:(coarse?CONFIG.mobileOpacity:CONFIG.opacity));
+ const ctx=canvas.getContext('2d',{alpha:true});if(!ctx)return;canvas.style.opacity=String(reduce?CONFIG.reducedOpacity:(coarse?CONFIG.mobileOpacity:CONFIG.opacity));
  const selectors=[
   '[data-kg-cosmos-panel]','.kg-space-panel',
   '[role="banner"]','.header','.site-header','#site-header','.main-header','header',
@@ -102,7 +102,7 @@
    };
   });
   const sparks=Array.from({length:30},()=>({x:rand(.025,.975),y:rand(.04,.96),phase:rand(0,TAU),speed:rand(.22,.72),size:rand(.45,1.15),streak:Math.random()<.16?1:0}));
-  return {el,panelIndex,launchStagger,repeatStagger,lastActiveAt:performance.now(),bodies,collisionPairs:Object.create(null),collisionEffects:[],blackHole:null,nextBlackHole:performance.now()+rand(9000,18000)+launchStagger,voyager:null,ship:null,skyCrane:null,marsRover:null,nextSkyCrane:performance.now()+rand(6500,10500)+launchStagger,astronaut:null,nextAstronaut:performance.now()+rand(1800,4200),satellite:null,nextSatellite:performance.now()+rand(3500,6500),asteroid:null,nextAsteroid:performance.now()+rand(900,1800),hubble:null,nextHubble:performance.now()+rand(5000,9000),orion:null,nextOrion:performance.now()+rand(4000,7500),halley:null,nextHalley:performance.now()+rand(7000,12000),nextVoyager:performance.now()+rand(...CONFIG.voyagerInitialDelay),nextShip:performance.now()+rand(...CONFIG.starshipInitialDelay)+launchStagger,r:null,blocked:[],safePoints:[],sparks};
+  return {el,panelIndex,launchStagger,repeatStagger,lastActiveAt:performance.now(),bodies,collisionPairs:Object.create(null),collisionEffects:[],voyager:null,ship:null,skyCrane:null,marsRover:null,nextSkyCrane:performance.now()+rand(6500,10500)+launchStagger,astronaut:null,nextAstronaut:performance.now()+rand(1800,4200),satellite:null,nextSatellite:performance.now()+rand(3500,6500),asteroid:null,nextAsteroid:performance.now()+rand(900,1800),hubble:null,nextHubble:performance.now()+rand(5000,9000),orion:null,nextOrion:performance.now()+rand(4000,7500),halley:null,nextHalley:performance.now()+rand(7000,12000),nextVoyager:performance.now()+rand(...CONFIG.voyagerInitialDelay),nextShip:performance.now()+rand(...CONFIG.starshipInitialDelay)+launchStagger,r:null,blocked:[],safePoints:[],sparks};
  }
  function scan(){
   // Only one simulation host is allowed for any nested visual box. Nested
@@ -316,49 +316,6 @@
   c.strokeRect(-19,-6,11,12);c.strokeRect(8,-6,11,12);
   c.beginPath();c.moveTo(-8,0);c.lineTo(8,0);c.moveTo(0,-4);c.lineTo(0,-12);c.lineTo(4,-15);c.moveTo(0,4);c.lineTo(0,10);c.stroke();
   c.beginPath();c.arc(0,-16,2,0,TAU);c.stroke();c.restore();
- }
-
- function drawBlackHole(c,x,y,size,phase,fade){
-  // Compact dark event horizon with a thin, asymmetric accretion disc.
-  // No blur, shadow, gradients, filters, or large animated transforms.
-  c.save();
-  c.translate(x,y);
-  c.rotate(-.10+Math.sin(phase*.16)*.012);
-  c.globalAlpha=fade;
-
-  // Disc behind the horizon; slight phase movement gives a sense of rotation.
-  c.fillStyle='rgba(255,255,255,.92)';
-  c.beginPath();
-  c.ellipse(0,0,size*1.22,size*.19,Math.sin(phase)*.018,0,TAU);
-  c.fill();
-
-  c.fillStyle='rgba(0,0,0,.9)';
-  c.beginPath();
-  c.ellipse(0,0,size*.94,size*.105,0,0,TAU);
-  c.fill();
-
-  // Solid event horizon.
-  c.fillStyle='#000';
-  c.beginPath();
-  c.arc(0,0,size*.49,0,TAU);
-  c.fill();
-
-  // A narrow far-side arc avoids the eye-like full-ring appearance.
-  c.strokeStyle='rgba(255,255,255,.78)';
-  c.lineWidth=Math.max(.7,size*.018);
-  c.beginPath();
-  c.ellipse(0,0,size*1.17,size*.205,-.025,Math.PI*1.10,Math.PI*1.90);
-  c.stroke();
-
-  // Small, restrained orbital highlight on the near disc.
-  c.globalAlpha=fade*.38;
-  c.strokeStyle='#fff';
-  c.lineWidth=Math.max(.55,size*.012);
-  c.beginPath();
-  c.ellipse(Math.sin(phase*.35)*size*.12,0,size*.78,size*.075,.02,
-   Math.PI*.08+phase*.05,Math.PI*.46+phase*.05);
-  c.stroke();
-  c.restore();
  }
  function drawSkyCrane(c,x,y,a,size,phase=0,thrust=0){
   c.save();c.translate(x,y);c.rotate(a);c.scale(size/100,size/100);
@@ -768,28 +725,6 @@
     }
    }
   }
-
-  // Black-hole event is deliberately visual-only: it never edits another
-  // animation's position, velocity, lifetime, or collision state.
-  if(animate&&now>=panel.nextBlackHole&&!panel.blackHole){
-   const margin=Math.min(58,Math.max(24,scale*.18));
-   const edge=Math.floor(Math.random()*4);
-   const bx=edge<2?rand(x0+margin,x1-margin):(edge===2?x0+margin:x1-margin);
-   const by=edge>=2?rand(y0+margin,y1-margin):(edge===0?y0+margin:y1-margin);
-   panel.blackHole={x:bx,y:by,age:0,radius:clamp(scale*.068,small?12:16,small?17:27),
-    phase:rand(0,TAU),life:5.2};
-   panel.nextBlackHole=now+rand(22000,36000)+panel.repeatStagger;
-  }
-  if(panel.blackHole){
-   const bh=panel.blackHole;
-   if(animate){bh.age+=dt;bh.phase+=dt*.42;}
-   const fade=Math.min(1,bh.age/.7)*Math.max(0,Math.min(1,(bh.life-bh.age)/.8));
-   drawBlackHole(ctx,bh.x,bh.y,bh.radius,bh.phase,fade);
-   if(animate&&bh.age>=bh.life){
-    panel.blackHole=null;
-    panel.nextBlackHole=now+rand(22000,36000)+panel.repeatStagger;
-   }
-  }
   // Detect first contact. Head-on impacts destroy both craft briefly;
   // glancing impacts impart a small, persistent trajectory deflection.
   if(animate&&movingThings.length>1){
@@ -866,14 +801,14 @@
   ctx.restore();ctx.globalAlpha=1;
  }
  function panelOnscreen(p){const r=p.r;return !!(r&&r.bottom>0&&r.top<H&&r.right>0&&r.left<W);}
- function shiftPanelClock(p,gap){['nextVoyager','nextShip','nextSatellite','nextAsteroid','nextHubble','nextOrion','nextHalley','nextSkyCrane','nextAstronaut','nextBlackHole'].forEach(k=>{if(Number.isFinite(p[k]))p[k]+=gap;});}
+ function shiftPanelClock(p,gap){['nextVoyager','nextShip','nextSatellite','nextAsteroid','nextHubble','nextOrion','nextHalley','nextSkyCrane','nextAstronaut'].forEach(k=>{if(Number.isFinite(p[k]))p[k]+=gap;});}
  function render(now,animate){ctx.clearRect(0,0,W,H);const dt=Math.min(.05,Math.max(0,(now-last)/1000));last=now;panels.forEach(p=>{if(!panelOnscreen(p)){p.wasOnscreen=false;p.lastActiveAt=now;return;}if(!p.wasOnscreen&&p.lastActiveAt){shiftPanelClock(p,Math.max(0,now-p.lastActiveAt));}p.wasOnscreen=true;p.lastActiveAt=now;drawPanel(p,dt,now,animate);});}
  function drawStatic(){if(!ctx)return;render(performance.now(),false);}
  function visible(){return !document.hidden&&panels.some(panelOnscreen);}
  function loop(now){raf=0;if(document.hidden)return;const target=frameInterval||(saverMode?1000/14:(coarse?1000/20:1000/30));if(now-last<target-1){raf=requestAnimationFrame(loop);return;}const started=performance.now();render(now,!reduce);const cost=performance.now()-started;if(now-lastPerfCheck>1800){lastPerfCheck=now;if(cost>19){slowFrames++;fastFrames=0;}else if(cost<11){fastFrames++;slowFrames=0;}if(slowFrames>=2){frameInterval=saverMode?1000/12:(coarse?1000/18:1000/24);slowFrames=0;}else if(fastFrames>=4){frameInterval=saverMode?1000/14:(coarse?1000/20:1000/30);fastFrames=0;}}if(!reduce&&visible())raf=requestAnimationFrame(loop);}
  function wake(){if(reduce){drawStatic();return;}if(!raf&&!document.hidden&&visible()){last=performance.now();raf=requestAnimationFrame(loop);}}
  scan();resize();
- panelResizeObserver=new ResizeObserver(()=>{resize();wake();});
+ panelResizeObserver=new ResizeObserver(()=>{measure();drawStatic();wake();});
  panels.forEach(p=>panelResizeObserver.observe(p.el));
  // Observe all common navigation variants, not just one site's .header class.
  const navNodes=document.querySelectorAll(
@@ -884,10 +819,21 @@
   '#mobile-menu,.mobile-menu'
  );
  navNodes.forEach(node=>panelResizeObserver.observe(node));
- const navMutationObserver=new MutationObserver(()=>{scan();measure();wake();});
- // Body-level observation also catches subsite menus and dynamically inserted panels.
+ let mutationQueued=false;
+ const navMutationObserver=new MutationObserver(()=>{
+  if(mutationQueued)return;
+  mutationQueued=true;
+  requestAnimationFrame(()=>{
+   mutationQueued=false;
+   scan();
+   measure();
+   drawStatic();
+   wake();
+  });
+ });
+ // Observe structural/menu state changes only; ignore inline style churn.
  navMutationObserver.observe(document.body,{subtree:true,childList:true,attributes:true,
-  attributeFilter:['class','open','hidden','aria-expanded','style','data-kg-cosmos-panel']});
+  attributeFilter:['class','open','hidden','aria-expanded','data-kg-cosmos-panel']});
  window.addEventListener('resize',()=>{resize();measure();wake();},{passive:true});window.addEventListener('scroll',()=>{if(!scrollQueued){scrollQueued=true;requestAnimationFrame(()=>{scrollQueued=false;measure();wake();});}},{passive:true});
  document.addEventListener('visibilitychange',()=>{if(document.hidden){if(raf)cancelAnimationFrame(raf);raf=0;}else wake();});
  if(!reduce)wake();
@@ -1124,7 +1070,7 @@
     refresh().catch(() => render(FALLBACK));
     window.setInterval(() => {
       if (!document.hidden) refresh().catch(() => {});
-    }, 60000);
+    }, 300000);
     document.addEventListener("visibilitychange", () => {
       if (!document.hidden) refresh().catch(() => {});
     });

@@ -801,3 +801,49 @@ header.kg-space-panel #links.open[aria-hidden="false"]{
     flex-wrap:wrap!important;
   }
 }
+
+
+/* ===== PERFORMANCE + LAYOUT-STABILITY PATCH (2026-11-09) ===== */
+/* The shared canvas scene is subsite-only. The homepage keeps its own UI. */
+html.kg-shared-home #kg-space,
+html.kg-shared-excluded #kg-space {
+  display: none !important;
+}
+
+/* Reserve a stable announcement row before its configuration fetch completes. */
+.kg-shared-announcement-strip {
+  box-sizing: border-box !important;
+  min-height: 36px !important;
+  height: 36px !important;
+  padding-block: 0 !important;
+  contain: layout paint;
+}
+.kg-shared-announcement-track {
+  min-height: 36px !important;
+  align-items: center !important;
+  will-change: auto !important;
+}
+.kg-shared-announcement-text {
+  line-height: 1.35 !important;
+}
+
+/* Keep decorative layers from creating extra stacking/paint work. */
+#kg-space {
+  pointer-events: none !important;
+  contain: strict !important;
+  transform: none !important;
+  filter: none !important;
+}
+.kg-space-panel > * {
+  will-change: auto !important;
+}
+
+/* Avoid animated effects on low-power / reduced-motion devices. */
+@media (prefers-reduced-motion: reduce) {
+  #kg-space { display: none !important; }
+  .kg-shared-announcement-track,
+  .booking-toggle,
+  .whatsapp-float {
+    animation: none !important;
+  }
+}
