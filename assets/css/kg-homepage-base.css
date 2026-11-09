@@ -1,7 +1,9 @@
 /*
- * KidsGastro homepage foundation stylesheet.
- * Loaded BEFORE /assets/kg-shared.css to preserve the original cascade.
- * Do not move this link below kg-shared.css without testing the visual result.
+ * KIDSGASTRO MAIN-SITE CSS — FOUNDATION LAYER
+ * Owner: the main-site app shell only (html[data-kg-site="main"]).
+ * Load first; load kg-homepage-overrides.css immediately after this file.
+ * Do not load this stylesheet on standalone subsites.
+ * The main site does not import kg-shared.css or the subsite animation engine.
  */
 /* ===== Original style block 1: final-navigation-and-button-rules ===== */
 .secondary-nav{display:none!important}.opd-hours>.eyebrow{display:none}.opd-hours h2{font-size:0!important;margin:0 0 14px!important}.opd-hours h2::before{content:none!important;display:none!important}.opd-hours h2::after{content:"OPD Timings";font-size:1.55rem;line-height:1.2}.btn,.updated-map-link,.newsletter-section .newsletter-controls .btn{background:#fff!important;border-color:#fff!important;color:#0759a8!important}.btn:hover,.updated-map-link:hover,.newsletter-section .newsletter-controls .btn:hover{background:#eaf2f8!important;border-color:#eaf2f8!important;color:#064b8d!important}.booking-toggle,.booking-dialog-actions .booking-submit{background:#ffc400!important;border-color:#ffc400!important;color:#123c77!important}.booking-toggle:hover,.booking-dialog-actions .booking-submit:hover{background:#f1b900!important;border-color:#f1b900!important}.hero .eyebrow,.hero h1{color:#fff!important}.faq-item summary{color:#123c77!important}
@@ -28,7 +30,7 @@
 
 
 
-/* ===== Original style block 2: original-style-block-2 ===== */
+/* ===== MAIN FOUNDATION: layout, branding, navigation, booking and responsive components ===== */
 
 :root{--ink:#183a3c;--muted:#617577;--teal:#176b67;--cream:#f7f8f4;--line:#dce7e2;--mint:#e9f3ef;--shadow:0 24px 70px #143f3912;--sans:Arial,'Segoe UI',sans-serif;--display:Georgia,'Times New Roman',serif}*{box-sizing:border-box}html{scroll-behavior:smooth;scroll-padding-top:85px}body{margin:0;background:var(--cream);color:var(--ink);font:16px/1.65 var(--sans)}a{color:inherit;text-decoration:none}button,input,textarea,select{font:inherit}.container{width:min(1160px,calc(100% - 44px));margin:auto}h1,h2,h3{font-family:var(--display);letter-spacing:-.04em;line-height:1.12}h1{font-size:clamp(2.7rem,6vw,5rem);margin:20px 0;max-width:700px}h2{font-size:clamp(2rem,4vw,3.1rem);margin:14px 0}h3{font-size:1.3rem}.eyebrow{color:var(--teal);font-weight:700;letter-spacing:.12em;text-transform:uppercase;font-size:.78rem}.eyebrow:before{content:'';display:inline-block;width:20px;height:2px;background:#f1a47b;margin:0 9px 3px 0}.lead,.muted{color:var(--muted);font-size:1.08rem}.btn{display:inline-flex;align-items:center;justify-content:center;padding:0 21px;min-height:50px;border-radius:99px;background:var(--teal);color:white;font-weight:700;border:0;cursor:pointer;transition:.2s}.btn:hover{transform:translateY(-2px);background:#125653;box-shadow:0 8px 20px #176b6730}.outline{background:white;color:var(--teal);border:1px solid var(--line)}.notice{padding:8px;text-align:center;background:#173f3e;color:#e9f3ef;font-size:.77rem}.notice strong{color:#ffd0b4}.header{position:sticky;top:0;z-index:10;background:#f7f8f4ed;backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}.nav{height:72px;display:flex;align-items:center;justify-content:space-between}.brand{display:flex;align-items:center;gap:10px;font:800 1rem var(--display)}.mark{width:40px;height:40px;display:grid;place-items:center;background:var(--teal);color:white;border-radius:50% 50% 45% 12%;font-size:1.2rem}.brand small{display:block;color:var(--muted);font:500 .68rem var(--sans)}.links{display:flex;align-items:center;gap:24px;font-weight:600;font-size:.9rem}.links .btn{min-height:43px}.toggle{display:none;background:none;border:0;font-size:1.5rem}.hero{padding:75px 0 88px;background:radial-gradient(ellipse at 90% 20%,#d9ece2,transparent 35%),var(--cream)}.hero-grid{display:grid;grid-template-columns:1.08fr .92fr;gap:48px;align-items:center}.actions{display:flex;gap:12px;flex-wrap:wrap}.trust{color:var(--muted);font-size:.88rem;margin-top:24px}.visual{position:relative;min-height:420px}.portrait{position:absolute;inset:0 18px 10px 34px;border-radius:44% 44% 24px 24px;overflow:hidden;background:linear-gradient(140deg,#d6e9df,#f2ddcf);box-shadow:var(--shadow)}.portrait img{width:100%;height:100%;object-fit:cover}.badge{position:absolute;bottom:24px;left:0;background:white;padding:14px 18px;border-radius:14px;box-shadow:var(--shadow);font-weight:700}.badge small{display:block;color:var(--muted);font-weight:500}.float{position:absolute;right:0;top:28px;width:70px;height:70px;border-radius:20px;background:#f8c6a9;display:grid;place-items:center;font-size:2rem}.caption{position:absolute;right:24px;bottom:-8px;background:#fffe;color:var(--muted);font-size:.7rem;padding:4px 8px}.strip{background:#174c49;color:white;padding:30px 0}.strip-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}.strip-grid>div{display:flex;align-items:center;gap:14px}.icon{width:44px;height:44px;display:grid;place-items:center;border-radius:14px;background:#ffffff1b}.strip small{display:block;color:#c1d8d2;font-size:.75rem}.section{padding:86px 0}.intro,.visit,.contact{display:grid;grid-template-columns:.9fr 1.1fr;gap:60px;align-items:center}.art{min-height:320px;background:linear-gradient(145deg,#dceee7,#f5ddce);border-radius:26px;display:grid;place-items:center;position:relative;overflow:hidden}.art:before,.art:after{content:'';position:absolute;width:240px;height:240px;border:1px solid #fff9;border-radius:50%}.art:after{width:315px;height:315px}.heart{z-index:1;width:120px;height:120px;border-radius:50%;background:#fff8;display:grid;place-items:center;color:var(--teal);font-size:4rem}.art small{position:absolute;bottom:14px;left:17px;color:#496364}.credential{display:inline-block;padding:12px 15px;background:white;border:1px solid var(--line);border-radius:12px;margin:7px 6px 0 0;font-weight:700}.credential small{display:block;color:var(--muted);font-size:.7rem;font-weight:500}.soft{background:#eef4ef}.center{max-width:700px;margin:0 auto 40px;text-align:center}.center p,.card p{color:var(--muted)}.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}.card{background:white;border:1px solid var(--line);border-radius:18px;padding:24px;transition:.25s}.card:hover{transform:translateY(-5px);box-shadow:var(--shadow)}.card .icon{background:var(--mint);margin-bottom:18px}.card p{margin:0;font-size:.94rem}.visit{grid-template-columns:1fr 1fr}.list{list-style:none;padding:0;display:grid;gap:14px;color:#425e5e}.list li:before{content:'✓';color:var(--teal);font-weight:bold;margin-right:10px}.details,.form{background:white;padding:27px;border-radius:22px;box-shadow:var(--shadow)}dl{margin:0}dl div{display:grid;grid-template-columns:105px 1fr;padding:12px 0;border-bottom:1px solid var(--line)}dt{color:var(--muted);font-size:.88rem}dd{margin:0;font-weight:700}.tag{color:#995737;background:#fff0e6;border-radius:5px;padding:3px 6px;font-size:.66rem;text-transform:uppercase}.contact{grid-template-columns:.8fr 1.2fr}.contact p{color:var(--muted)}.contact-lines{display:grid;gap:14px;margin-top:25px}.contact-lines small{display:block;color:var(--muted)}.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}.field{display:grid;gap:6px}.full{grid-column:1/-1}.field label{font-size:.84rem;font-weight:700}.field input,.field select,.field textarea{width:100%;border:1px solid #d3e0da;border-radius:9px;background:#fbfcfa;padding:11px;color:var(--ink)}.field textarea{min-height:100px}.field :focus{outline:3px solid #176b6720;border-color:var(--teal)}.note,.status{font-size:.78rem;color:var(--muted)}.status{color:var(--teal);min-height:20px}.footer{background:#143b3a;color:#e8f2ed;padding:34px 0}.foot{display:flex;justify-content:space-between;gap:20px}.footlinks{display:flex;gap:18px}.footnote{border-top:1px solid #ffffff24;margin-top:20px;padding-top:15px;color:#b9ceca;font-size:.73rem}.reveal{opacity:0;transform:translateY(16px);transition:.65s}.reveal.visible{opacity:1;transform:none}.d1{transition-delay:.1s}.d2{transition-delay:.2s}.skip-link{position:absolute;left:-9999px;top:8px;background:white;padding:10px;z-index:30}.skip-link:focus{left:10px}:focus-visible{outline:3px solid #e49c76;outline-offset:3px}
 @media(max-width:900px){.hero-grid{gap:26px}.visual{min-height:360px}.intro{gap:35px}.links{gap:14px}.cards{grid-template-columns:repeat(2,1fr)}}@media(max-width:700px){.container{width:calc(100% - 34px)}.toggle{display:block}.nav{height:65px}.links{display:none;position:absolute;top:65px;left:0;right:0;padding:20px 24px;background:var(--cream);border-bottom:1px solid var(--line);flex-direction:column;align-items:stretch}.links.open{display:flex}.links .btn{align-self:flex-start}.hero{padding:50px 0 65px}.hero-grid,.intro,.visit,.contact{grid-template-columns:1fr;gap:28px}.visual{min-height:325px;width:min(100%,410px);margin:auto}.portrait{inset:0 15px 8px 25px}.section{padding:65px 0}.art{min-height:250px}.strip-grid{grid-template-columns:1fr;gap:15px}.cards,.form-grid{grid-template-columns:1fr}.full{grid-column:auto}.foot{flex-direction:column}.footlinks{flex-wrap:wrap}}@media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;transition-duration:.01ms!important}.reveal{opacity:1;transform:none}}
@@ -1965,7 +1967,6 @@ input,select,textarea,button{font:inherit}
  .header{position:relative;z-index:1200}
  .header #links.open{position:absolute!important;left:0;right:0;top:100%;margin:0!important;animation:kg-mobile-menu-enter .16s ease-out both}
  /* Reduce expensive blur/large shadows on small touch devices. */
- .kg-cosmos-background,.kg-cosmos-background *{backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
  .header #links.open{box-shadow:0 8px 22px rgba(0,25,60,.18)!important}
  .offline-appointment-marquee{max-width:100%;overflow:hidden;contain:layout paint}
  .offline-appointment-marquee__track{will-change:transform;transform:translateZ(0)}
@@ -1978,13 +1979,11 @@ input,select,textarea,button{font:inherit}
 }
 @media(hover:none) and (pointer:coarse){
  a:hover,button:hover,summary:hover{filter:none}
- .kg-cosmos-background *{animation-duration:1.15s}
 }
 @media(prefers-reduced-motion:reduce){
  *,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
 }
 /* Pause only decorative animation when the tab is backgrounded. */
-html.kg-tab-hidden .kg-cosmos-background,html.kg-tab-hidden .kg-cosmos-background *{animation-play-state:paused!important}
 
 
 /* ===== Original style block 73: main-image-stories-styles ===== */
@@ -2043,9 +2042,7 @@ html.kg-tab-hidden .kg-cosmos-background,html.kg-tab-hidden .kg-cosmos-backgroun
 /* ===== Original style block 75: kg-footer-bottom-static-no-cosmos ===== */
 
 /* The final/copyright strip of the footer stays clean and static. */
-.footer-bottom,
-.footer-bottom.kg-orbit-surface,
-.footer-bottom.kg-cosmos-host {
+.footer-bottom {
   position: relative !important;
   isolation: isolate !important;
   background: #0759a8 !important;
@@ -2055,10 +2052,6 @@ html.kg-tab-hidden .kg-cosmos-background,html.kg-tab-hidden .kg-cosmos-backgroun
 }
 .footer-bottom::before,
 .footer-bottom::after,
-.footer-bottom > .kg-cosmos-background,
-.footer-bottom > .kg-orbit-overlay,
-.footer-bottom .kg-cosmos-background,
-.footer-bottom .kg-orbit-overlay,
 .footer-bottom .abstract-watermark {
   display: none !important;
   content: none !important;
@@ -2408,13 +2401,6 @@ html.kg-tab-hidden .kg-cosmos-background,html.kg-tab-hidden .kg-cosmos-backgroun
   .header #links.open>.nav-dropdown:not([open])>.nav-dropdown-menu{display:none!important;}
   .header #links.open>.nav-dropdown>.nav-dropdown-menu>a{position:relative!important;display:block!important;z-index:3!important;min-height:46px!important;width:100%!important;padding:12px 14px!important;color:#18384d!important;background:#fff!important;white-space:normal!important;overflow-wrap:anywhere!important;pointer-events:auto!important;}
 }
-/* Unified canvas is clipped to each blue panel; the retired DOM scene is not used. */
-.kg-cosmos-host{overflow:hidden!important;clip-path:none!important;}
-.kg-cosmos-host>.kg-cosmos-background{inset:0!important;width:100%!important;height:100%!important;overflow:hidden!important;clip-path:inset(0)!important;border-radius:0!important;}
-.kg-cosmos-system{overflow:visible!important;clip-path:none!important;border:0!important;outline:0!important;box-shadow:none!important;border-radius:0!important;}
-.kg-cosmos-system .kg-cosmos-orbit{overflow:visible!important;clip-path:none!important;}
-/* Keep the established orbital paths; remove only any extra circular frame around the animation system. */
-.kg-cosmos-system:before,.kg-cosmos-system:after{content:none!important;display:none!important;}
 
 
 /* ===== Original style block 89: final-reels-portrait-and-cosmos-motion-fix ===== */
@@ -2437,19 +2423,10 @@ html.kg-tab-hidden .kg-cosmos-background,html.kg-tab-hidden .kg-cosmos-backgroun
   .kg-watch-content-grid>.kg-watch-content-gif-link{aspect-ratio:9/16!important;height:auto!important}
   .kg-watch-content-grid .kg-watch-content-gif-link img,.kg-watch-content-grid .kg-watch-content-gif-link video{height:100%!important;aspect-ratio:9/16!important;object-fit:cover!important}
 }
-/* Legacy DOM cosmic objects removed; the unified Canvas renderer owns the scene. */
+/* Reel card sizing is handled by the main-site CSS; no shared canvas is required. */
 
 
-/* ===== Original style block 90: kg-cosmos-unified-css ===== */
-
-/* ONE shared cosmic layer. Only the five .kg-space-panel regions are ever painted. */
-#kg-space{position:fixed;inset:0;width:100%;height:100%;z-index:1001!important;pointer-events:none!important;opacity:.92!important;}
-.kg-space-panel{position:relative!important;isolation:auto!important;z-index:auto!important;}
-.kg-space-panel>*{position:relative;z-index:2;}
-@media(max-width:600px){#kg-space{opacity:.88!important}}
-@media(prefers-reduced-motion:reduce){#kg-space{opacity:.88!important}}
-
-
+/* Shared subsite canvas rules intentionally do not belong in the main-site stylesheet. */
 
 /* ===== Original style block 91: kg-unified-animation-system ===== */
 
@@ -2468,14 +2445,13 @@ html.kg-tab-hidden .kg-cosmos-background,html.kg-tab-hidden .kg-cosmos-backgroun
 .d2 { transition-delay: 0.16s; }
 
 
-/* ===== Original style block 92: kg-cosmos-ui-clear-zones ===== */
+/* ===== MAIN FOUNDATION: interaction layer order ===== */
 
-.booking-toggle,.back-top,#site-search,.site-search,.toggle,#hamburger-panel{
+.booking-toggle,.back-top,#site-search,.site-search,.toggle,#links{
   position:relative;
   z-index:1003!important;
   isolation:isolate;
 }
-#kg-space{pointer-events:none!important;}
 
 
 /* ===== Original style block 93: kg-hamburger-expanded-animation-shield ===== */

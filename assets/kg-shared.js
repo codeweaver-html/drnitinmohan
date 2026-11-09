@@ -1,28 +1,35 @@
-/* KidsGastro shared bundle: page-wide singleton guard. */
+/*
+ * KIDSGASTRO SUBSITE-ONLY JAVASCRIPT
+ * Shared behavior for standalone public subsites; not for the main-site shell.
+ */
 (function(){
   if (window.KGSharedBundleLoaded) return;
   window.KGSharedBundleLoaded = true;
 /* ===== PAGE SCOPE / ADMIN EXCLUSION ===== */
 (()=>{
   const path=(location.pathname||"/").replace(/\\+/g,"/").toLowerCase();
-  const leaf=path.split("/").filter(Boolean).pop()||"";
   const excluded=/(^|\/)(admin|updates)(\/|\.html$)/.test(path);
-  const home=(path==="/"||path==="/index.html");
+  const declaredMain=document.documentElement.dataset.kgSite==="main";
+  const home=declaredMain||path==="/"||path==="/index.html";
+  const subsite=!excluded&&!home;
   document.documentElement.classList.toggle("kg-shared-excluded",excluded);
   document.documentElement.classList.toggle("kg-shared-home",home&&!excluded);
-  document.documentElement.classList.toggle("kg-shared-subsite",!home&&!excluded);
-  window.KGSharedExcluded=excluded;
+  document.documentElement.classList.toggle("kg-shared-subsite",subsite);
+  window.KGSharedExcluded=excluded||home;
+  window.KGSharedHome=home&&!excluded;
+  window.KGSharedSubsite=subsite;
 })();
 
-/* KidsGastro shared JavaScript bundle.
-   The announcement synchronizer self-disables on the homepage because
-   #kg-manual-settings-bridge already owns homepage announcements. It remains
-   active on standalone sub-sites without that bridge.
+/* Critical isolation: do not install any shared handlers or animation on the main app shell. */
+if (!window.KGSharedSubsite) return;
+
+/* Shared JavaScript bundle for standalone public subsites only.
+   The homepage owns its own navigation, announcement and interaction code.
 */
 
 /* ===== COSMIC ANIMATION ENGINE ===== */
 /* KidsGastro shared cosmic animation engine.
-   Runs only on regular subsites; the homepage keeps its own independent presentation.
+   Runs only on regular standalone subsites; the main-site shell is excluded above.
    To animate a custom section, add class="kg-space-panel" or
    data-kg-cosmos-panel="true" to that section.
    The engine creates its own fixed canvas if one is not already present. */
@@ -850,8 +857,7 @@
  * configuration/temporary_overrides.json
  * configuration/change-request.json
  *
- * The main homepage keeps using its existing kg-manual-settings-bridge.
- * This file is for independent associated sub-sites (FAQ, testimonials, etc.).
+ * This copy is loaded by standalone subsites only; the main-site copy lives in kg-homepage.js.
  */
 (() => {
   "use strict";
@@ -1106,8 +1112,8 @@
 })();
 
 /* ===== SHARED NAVIGATION CONTROLLER ===== */
-/* KidsGastro shared navigation controller
-   Shared by the homepage and standalone sub-sites. Keeps page-specific content/scripts intact. */
+/* KidsGastro shared navigation controller for standalone subsites.
+   The main-site controller lives in kg-homepage.js. */
 (function () {
   "use strict";
   if(window.KGSharedExcluded)return;
@@ -1134,7 +1140,7 @@
       var effectiveOpen = compact && !!open;
       panel.classList.toggle("open", effectiveOpen);
       panel.hidden = false;
-      /* Only standalone subsites expose a permanent desktop link row. Keep the homepage state unchanged. */
+      /* Standalone subsites expose the permanent desktop link row. */
       var isSubsite = document.documentElement.classList.contains("kg-shared-subsite");
       panel.setAttribute("aria-hidden", String(compact ? !effectiveOpen : !isSubsite));
       button.setAttribute("aria-expanded", String(effectiveOpen));

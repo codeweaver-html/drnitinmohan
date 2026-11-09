@@ -26,11 +26,16 @@
   --kg-site-yellow:var(--kg-yellow);
 }
 
-/* KidsGastro shared CSS bundle. Page-specific homepage CSS remains in index.html. */
+/*
+ * KIDSGASTRO SUBSITE-ONLY CSS
+ * Load on standalone public subsites only. Never include on the main-site shell.
+ * Main-site presentation belongs to kg-homepage-base.css and
+ * kg-homepage-overrides.css.
+ */
 
 /* ===== COSMIC ANIMATION CSS ===== */
 /* KidsGastro shared cosmic animation layer.
-   Loaded by the main site and every subsite from /assets/kg-shared.css; pair it with /assets/kg-shared.js.
+   Loaded only by standalone subsites from /assets/kg-shared.css; pair it with /assets/kg-shared.js.
    Keep page-specific content and layout styles in each page's own stylesheet. */
 /* One shared monochrome cosmic layer. Every detected site header is automatically included. */
 #kg-space{position:fixed;inset:0;width:100%;height:100%;z-index:1!important;pointer-events:none!important;opacity:.92!important;}
@@ -46,7 +51,7 @@
 .kg-space-panel>*{position:relative;z-index:2}
 
 
-/* Shared header integration contract: compatible with the main site and sub-sites. */
+/* Shared header integration contract for supported standalone subsite header variants. */
 header,.header,.site-header,#site-header,.main-header{position:relative;}
 header.kg-space-panel > *, .header.kg-space-panel > *,
 .site-header.kg-space-panel > *, #site-header.kg-space-panel > *,
@@ -135,7 +140,7 @@ header.header nav.nav button.toggle[aria-expanded="true"] {
 }
 
 
-/* ===== BLACK-HOLE SCENE / UNIVERSAL HEADER HOST ===== */
+/* ===== SUBSITE COSMIC SCENE / HEADER HOST ===== */
 header.kg-space-panel,
 .header.kg-space-panel,
 .site-header.kg-space-panel,
@@ -334,7 +339,7 @@ html.kg-shared-subsite body{
 html.kg-shared-subsite a{color:#0759a8;}
 html.kg-shared-subsite a:hover{color:#064b8d;}
 
-/* Header matches the homepage: blue shell, white brand/navigation, gold rule. */
+/* Subsite header visual system follows the main-site brand palette. */
 html.kg-shared-subsite header.header,
 html.kg-shared-subsite .header,
 html.kg-shared-subsite .site-header,
@@ -610,7 +615,7 @@ header.header.kg-space-panel #links,header.header.kg-space-panel .links{pointer-
 
 /* ===== UNIFIED SHARED SITE CHROME ===== */
 
-/* Migrated from main-site-footer-style in index.html */
+/* Shared footer presentation for standalone subsites. */
 /* Main website footer styling, shared with the FAQ subsite */
 .footer{display:block!important;background:#0759a8!important;color:#fff!important;padding:0!important;margin-top:0!important}
 .footer-contact-band{padding:30px 0;background:#0759a8!important;border-bottom:1px solid #ffc40088}
@@ -634,7 +639,7 @@ header.header.kg-space-panel #links,header.header.kg-space-panel .links{pointer-
 @media(max-width:760px){.footer-contact-grid{grid-template-columns:1fr;gap:0}.footer-contact-item,.footer-contact-item:first-child,.footer-contact-item:last-child{padding:17px 4px;border-right:0;border-bottom:1px solid #ffc40066;min-height:0}.footer-contact-item:last-child{border-bottom:0}.footer-bottom{grid-template-columns:1fr auto;gap:14px}.footer-brand{grid-column:1}.footer .copyright{grid-column:1/-1;grid-row:2}.footer .back-top{grid-column:2;grid-row:1}.footer-disclaimer{grid-row:3}}
 
 
-/* Migrated from kg-master-site-chrome in index.html */
+/* Shared header, navigation and footer presentation for standalone subsites. */
 /* Master KidsGastro header, navigation, dropdown and footer presentation. */
 :root{--kg-site-blue:#0759a8;--kg-site-yellow:#ffc400;}
 .header{position:relative!important;z-index:100!important;overflow:visible!important;background:#0759a8!important;color:#fff!important;border-bottom:3px solid #ffc400!important}

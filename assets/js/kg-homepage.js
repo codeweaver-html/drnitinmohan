@@ -1,13 +1,261 @@
+
+/* ===== PAGE OWNERSHIP GUARD ===== */
+(() => {
+  "use strict";
+  if (document.documentElement.dataset.kgSite !== "main") return;
+
+/* ===== MAIN-SITE ANNOUNCEMENT SYNCHRONIZER ===== */
+/* Main-site announcement synchronizer.
+ * Reads the configuration JSON used by the site:
+ * configuration/defaults.json
+ * configuration/temporary_overrides.json
+ * configuration/change-request.json
+ *
+ * This main-site copy renders into the existing offline-appointment-marquee.
+ * The separate subsite copy remains inside kg-shared.js.
+ */
+(() => {
+  "use strict";
+  if (document.documentElement.dataset.kgSite !== "main" || document.getElementById("kg-manual-settings-bridge")) return;
+
+  const DEFAULT_TEXT =
+    "OFFLINE APPOINTMENTS AVAILABLE RIGHT NOW. CLICK THE APPOINTMENT BUTTON BELOW TO PROCEED.";
+  const ROOT = "/configuration/";
+  const FALLBACK = {
+    text: DEFAULT_TEXT,
+    textColor: "#0759a8",
+    backgroundColor: "#ffc400",
+    speed: 8,
+    additional: null
+  };
+
+  const safeColor = value =>
+    typeof value === "string" && /^#[0-9a-f]{6}$/i.test(value);
+  const clampSpeed = value => {
+    const n = Number(value);
+    return Number.isFinite(n) ? Math.min(60, Math.max(2, n)) : 28;
+  };
+  const readJson = async path => {
+    try {
+      const response = await fetch(path, { cache: "no-cache" });
+      if (!response.ok) return null;
+      const value = await response.json();
+      return value && typeof value === "object" ? value : null;
+    } catch (_) {
+      return null;
+    }
+  };
+  const indiaLocalDateTimeToMs = value => {
+    if (typeof value !== "string") return NaN;
+    const m = value.match(/^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})(?::(\d{2}))?$/);
+    if (!m) return NaN;
+    const [, y, mo, d, h, mi, sec = "0"] = m;
+    return Date.UTC(+y, +mo - 1, +d, +h, +mi, +sec) - 19800000;
+  };
+  const periodIsActive = (period, key, now) => {
+    if (!period || (Array.isArray(period.settings) && !period.settings.includes(key))) return false;
+    const start = indiaLocalDateTimeToMs(period.startDateTime || period.start);
+    const end = indiaLocalDateTimeToMs(period.endDateTime || period.end);
+    return Number.isFinite(start) && Number.isFinite(end) && end > start && now >= start && now < end;
+  };
+  const settingIsActive = (request, key, now) => {
+    const schedules = request && request.changeSchedules;
+    const meta = schedules && schedules.settings && schedules.settings[key];
+    if (meta && meta.duration === "permanent") return true;
+    if (!meta && request && (request.duration === "permanent" ||
+        (request.schedule && request.schedule.type === "permanent"))) return true;
+    if (meta && meta.duration === "temporary" && schedules.activateTemporary === true) {
+      const group = (schedules.groups || []).find(g =>
+        g && g.id === meta.scheduleGroupId && Array.isArray(g.settings) && g.settings.includes(key));
+      if (periodIsActive(group, key, now)) return true;
+    }
+    if (request && request.schedule && request.schedule.activateTemporary === true) {
+      const period = (request.schedule.periods || []).find(p =>
+        p && Array.isArray(p.settings) && p.settings.includes(key));
+      if (periodIsActive(period, key, now)) return true;
+    }
+    return false;
+  };
+  const requestIsActive = (request, key, now) => {
+    if (!request || !request.changeSchedules) {
+      if (request && request.duration === "permanent") return true;
+      if (request && request.duration === "temporary" && request.schedule &&
+          request.schedule.activateTemporary === true) {
+        const start = indiaLocalDateTimeToMs(request.schedule.startDateTime);
+        const end = indiaLocalDateTimeToMs(request.schedule.endDateTime);
+        return Number.isFinite(start) && Number.isFinite(end) && end > start && now >= start && now < end;
+      }
+      if (request && request.schedule && request.schedule.activateTemporary === true) {
+        const period = (request.schedule.periods || []).find(p =>
+          p && Array.isArray(p.settings) && p.settings.includes(key));
+        return periodIsActive(period, key, now);
+      }
+      return false;
+    }
+    return settingIsActive(request, key, now);
+  };
+
+  function resolve(defaultsFile, overridesFile, requestFile) {
+    const result = { ...FALLBACK };
+    if (defaultsFile && defaultsFile.settings && typeof defaultsFile.settings === "object") {
+      const s = defaultsFile.settings;
+      if (typeof s.marqueeText === "string" && s.marqueeText.trim()) result.text = s.marqueeText.trim();
+      if (safeColor(s.marqueeTextColor)) result.textColor = s.marqueeTextColor;
+      if (safeColor(s.marqueeBackgroundColor)) result.backgroundColor = s.marqueeBackgroundColor;
+      if (Number.isFinite(Number(s.marqueeSpeedSeconds))) result.speed = clampSpeed(s.marqueeSpeedSeconds);
+    }
+
+    const now = Date.now();
+    const valid = new Set(["marqueeText", "marqueeTextColor", "marqueeBackgroundColor", "marqueeSpeedSeconds"]);
+    const activeOverrides = Array.isArray(overridesFile && overridesFile.overrides)
+      ? overridesFile.overrides.filter(item => {
+          if (!item || item.enabled !== true || !valid.has(item.key)) return false;
+          const start = indiaLocalDateTimeToMs(item.startAt);
+          const end = indiaLocalDateTimeToMs(item.endAt);
+          return Number.isFinite(start) && Number.isFinite(end) && end > start && now >= start && now < end;
+        })
+      : [];
+    activeOverrides.forEach(item => {
+      if (item.key === "marqueeText" && typeof item.value === "string" && item.value.trim()) result.text = item.value.trim();
+      if (item.key === "marqueeTextColor" && safeColor(item.value)) result.textColor = item.value;
+      if (item.key === "marqueeBackgroundColor" && safeColor(item.value)) result.backgroundColor = item.value;
+      if (item.key === "marqueeSpeedSeconds") result.speed = clampSpeed(item.value);
+    });
+
+    if (!requestFile || requestFile.doctor !== "Dr. Nitin Mohan" ||
+        !requestFile.changes || typeof requestFile.changes !== "object") return result;
+
+    const c = requestFile.changes;
+    const d = requestFile.details || {};
+    if (!requestIsActive(requestFile, "announcementMarquee", now) || c.changeAnnouncement !== "yes") return result;
+
+    const mode = c.announcementMode;
+    if (mode === "edit" && typeof d.announcementText === "string" &&
+        d.announcementText.trim() && d.announcementText.length <= 500) {
+      result.text = d.announcementText.trim();
+      const color = (d.announcementTextColors && d.announcementTextColors.customStrip) ||
+        d.mainStripTextColor || c.mainStripTextColor;
+      const bg = d.mainStripBackgroundColor || c.mainStripBackgroundColor ||
+        (d.announcementBackgroundColors && d.announcementBackgroundColors.mainStrip);
+      if (safeColor(color)) result.textColor = color;
+      if (safeColor(bg)) result.backgroundColor = bg;
+      const speed = Number(d.announcementMarqueeSpeedsSeconds && d.announcementMarqueeSpeedsSeconds.customStrip);
+      if (Number.isFinite(speed)) result.speed = clampSpeed(speed);
+      result.additional = null;
+    } else if (mode === "restore_default") {
+      result.text = DEFAULT_TEXT;
+      result.textColor = "#0759a8";
+      result.backgroundColor = "#ffc400";
+      result.speed = 8;
+      result.additional = null;
+    } else if (mode === "add" && typeof d.announcementText === "string" &&
+        d.announcementText.trim() && d.announcementText.length <= 500) {
+      const mainColor = d.announcementTextColors && d.announcementTextColors.defaultStrip;
+      if (safeColor(mainColor)) result.textColor = mainColor;
+      const mainSpeed = Number(d.announcementMarqueeSpeedsSeconds && d.announcementMarqueeSpeedsSeconds.standardStrip);
+      if (Number.isFinite(mainSpeed)) result.speed = clampSpeed(mainSpeed);
+      result.additional = {
+        text: d.announcementText.trim(),
+        textColor: safeColor(d.announcementTextColors && d.announcementTextColors.customStrip)
+          ? d.announcementTextColors.customStrip : "#ffffff",
+        backgroundColor: safeColor(d.announcementBackgroundColors && d.announcementBackgroundColors.secondStrip)
+          ? d.announcementBackgroundColors.secondStrip : "#0759a8",
+        speed: clampSpeed(Number(d.announcementMarqueeSpeedsSeconds &&
+          d.announcementMarqueeSpeedsSeconds.customStrip) || 8)
+      };
+    }
+    return result;
+  }
+
+  function buildStrip(id, label, text, style) {
+    let strip = document.getElementById(id);
+    if (!strip) {
+      strip = document.createElement("div");
+      strip.id = id;
+      strip.className = "offline-appointment-marquee";
+      strip.setAttribute("role", "region");
+      strip.setAttribute("aria-label", label);
+    }
+    strip.replaceChildren();
+    const track = document.createElement("div");
+    track.className = "offline-appointment-marquee__track";
+    track.style.setProperty("animation-duration", style.speed + "s", "important");
+    for (let i = 0; i < 2; i++) {
+      const span = document.createElement("span");
+      span.className = "offline-appointment-marquee__text";
+      span.textContent = text;
+      span.style.setProperty("color", style.textColor, "important");
+      track.appendChild(span);
+    }
+    strip.appendChild(track);
+    strip.style.setProperty("background-color", style.backgroundColor, "important");
+    strip.style.setProperty("color", style.textColor, "important");
+    return strip;
+  }
+
+  function render(settings) {
+    if (!document.body) return;
+    let main = buildStrip("kg-shared-main-announcement", "Appointment announcement",
+      settings.text, settings);
+    const existingMain = document.querySelector(".offline-appointment-marquee:not(#kg-shared-main-announcement)");
+    if (existingMain && !document.getElementById("kg-shared-main-announcement")) {
+      main.id = "kg-shared-main-announcement";
+      existingMain.replaceWith(main);
+    } else if (!main.isConnected) {
+      const header = document.querySelector("header, .site-header, .header");
+      if (header && header.parentNode) header.parentNode.insertBefore(main, header);
+      else document.body.insertBefore(main, document.body.firstChild);
+    }
+
+    const oldAdditional = document.getElementById("kg-shared-additional-announcement");
+    if (settings.additional) {
+      const extra = buildStrip("kg-shared-additional-announcement", "Additional announcement",
+        settings.additional.text, settings.additional);
+      main.insertAdjacentElement("afterend", extra);
+    } else if (oldAdditional) {
+      oldAdditional.remove();
+    }
+  }
+
+  async function refresh() {
+    const [defaultsFile, overridesFile, requestFile] = await Promise.all([
+      readJson(ROOT + "defaults.json"),
+      readJson(ROOT + "temporary_overrides.json"),
+      readJson(ROOT + "change-request.json")
+    ]);
+    render(resolve(defaultsFile, overridesFile, requestFile));
+  }
+
+  function start() {
+    render(FALLBACK);
+    refresh().catch(() => render(FALLBACK));
+    window.setInterval(() => {
+      if (!document.hidden) refresh().catch(() => {});
+    }, 300000);
+    document.addEventListener("visibilitychange", () => {
+      if (!document.hidden) refresh().catch(() => {});
+    });
+    window.KGHomepageAnnouncementSync = { refresh };
+  }
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", start, { once: true });
+  } else {
+    start();
+  }
+})();
+
+
 /*
- * KidsGastro homepage interaction bundle.
- * Inline scripts consolidated from index.html in their original execution order.
- * Shared navigation, announcement and cosmic-animation engines remain in
- * /assets/kg-shared.js and /assets/js/kg-announcement-sync.js.
- * All KidsGastro logo references use /assets/kg%20logo.webp.
+ * KIDSGASTRO MAIN-SITE JAVASCRIPT
+ * Owner: the main-site app shell only (html[data-kg-site="main"]).
+ * Contains homepage interactions, in-shell page routes, announcement sync,
+ * main navigation and the homepage WhatsApp control.
+ * Standalone subsite behavior belongs exclusively to /assets/kg-shared.js.
+ * Main logo source: /assets/kg%20logo.webp.
  */
 
 
-/* ===== inline script 1 ===== */
+/* ===== MAIN: navigation content and FAQ cleanup ===== */
 {
 document.addEventListener('DOMContentLoaded',()=>{const health=[...document.querySelectorAll('.nav-dropdown')].find(menu=>menu.querySelector('summary')?.textContent.trim().startsWith('Health Library'));if(health)health.querySelectorAll('.nav-dropdown-menu a').forEach(link=>{if(link.dataset.secondaryPage!=='publications')link.remove()});const tidyFaq=()=>setTimeout(()=>{const content=document.querySelector('#secondary-page-content');if(!content)return;const eyebrow=[...content.querySelectorAll('.eyebrow')].find(item=>item.textContent.trim()==='Family information');if(eyebrow)eyebrow.remove();const disclaimer=[...content.querySelectorAll('details')].find(item=>item.querySelector('summary')?.textContent.trim()==='Medical Disclaimer');if(disclaimer)disclaimer.open=true},0);tidyFaq();window.addEventListener('popstate',tidyFaq)})
 }
@@ -70,18 +318,18 @@ document.addEventListener('DOMContentLoaded',()=>{
 })();
 }
 
-/* ===== inline script 10 ===== */
+/* ===== MAIN: dropdowns, reveal effects, newsletter and full-site search ===== */
 {
 document.querySelectorAll('.nav-dropdown').forEach(dropdown=>{const syncUnderline=()=>dropdown.classList.toggle('dropdown-active',dropdown.open);dropdown.addEventListener('toggle',syncUnderline);dropdown.querySelector(':scope > summary')?.addEventListener('click',()=>{document.querySelectorAll('.nav-dropdown[open]').forEach(other=>{if(other!==dropdown)other.open=false})});syncUnderline()});document.addEventListener('click',event=>{if(!event.target.closest('.nav-dropdown'))document.querySelectorAll('.nav-dropdown[open]').forEach(dropdown=>dropdown.open=false)});/* Removed duplicate hamburger handlers that were immediately reversing the menu state. The primary handler controls #links. */const observer=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible','scroll-visible');observer.unobserve(e.target)}}),{threshold:.12});document.querySelectorAll('.reveal').forEach(e=>observer.observe(e));const cinematicTargets=document.querySelectorAll('.strip-grid>div,.section-heading,.credential-card,.reel-slide,.latest-card,.qr-card,.hospital-photo,.map-frame,.social-placeholder');cinematicTargets.forEach((el,index)=>{el.classList.add('scroll-cinematic');el.style.setProperty('--scroll-delay',(index%3)*90+'ms');observer.observe(el)});document.querySelectorAll('.reel-slide img,.photo-story-media img,.latest-image img,.hospital-photo img').forEach(img=>{img.classList.add('scroll-photo');observer.observe(img)});
 document.querySelector('#newsletter-form').addEventListener('submit',e=>{e.preventDefault();const f=e.currentTarget;if(!f.reportValidity())return;const email=new FormData(f).get('email');const subject=encodeURIComponent('Newsletter subscription request');const body=encodeURIComponent('Please add this email address to the clinic newsletter list: '+email);document.querySelector('#newsletter-status').textContent='Your email app will open with a subscription request for you to review and send.';location.href='mailto:drnitinmohanpaedsgastro@gmail.com?subject='+subject+'&body='+body});const siteSearch=document.querySelector('#site-search'),searchInput=document.querySelector('#site-search-input'),searchStatus=document.querySelector('#search-status'),mainContent=document.querySelector('#main'),secondaryTemplates=document.querySelector('#secondary-templates'),secondaryContent=document.querySelector('#secondary-page-content');let searchMatches=[],searchCursor=0,lastSearch='';const searchPageNames={profile:'About Dr. Nitin Mohan',treatments:'Treatments',services:'Services',publications:'Research Articles & Publications',hospital:'Hospital',clinical:'Clinical work',gallery:'KidsGastro Photo Gallery',latest:'Latest from KidsGastro',newsletter:'Newsletter',socials:'Social profiles',faqs:'FAQs',testimonials:'Patient & Family Testimonials'};function normalizedSearchText(value){return value.replace(/\s+/g,' ').trim().toLocaleLowerCase()}function buildFullSiteSearchIndex(){const entries=[],seen=new Set(),selector='h1,h2,h3,p,li,summary,dt,dd,small,strong,figcaption';function add(element,page,targetId){const text=element.textContent.replace(/\s+/g,' ').trim();if(!text)return;const key=(page||'home')+'|'+normalizedSearchText(text);if(seen.has(key))return;seen.add(key);entries.push({element,page,text,targetId})}mainContent.querySelectorAll(selector).forEach(element=>{const target=element.closest('#main [id]');add(element,'',target?target.id:'top')});secondaryTemplates.content.querySelectorAll('section[data-page]').forEach(section=>{const page=section.dataset.page;section.querySelectorAll(selector).forEach(element=>add(element,page,''))});return entries}function showSearchMatch(match){const pageRoutes={profile:'about',hospital:'clinic'};const destination=match.page?'/'+(pageRoutes[match.page]||match.page)+'/':'#'+match.targetId;if(match.page&&location.pathname!==destination){location.href=destination;return;}requestAnimationFrame(()=>requestAnimationFrame(()=>{let target=match.element;if(match.page){const candidates=secondaryContent.querySelectorAll('h1,h2,h3,p,li,summary,dt,dd,small,strong,figcaption');target=[...candidates].find(element=>normalizedSearchText(element.textContent)===normalizedSearchText(match.text))||secondaryContent.querySelector('[data-page]')}if(target){document.querySelectorAll('.search-hit').forEach(element=>element.classList.remove('search-hit'));target.classList.add('search-hit');target.scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'center'})}}))}siteSearch.addEventListener('submit',event=>{event.preventDefault();const rawQuery=searchInput.value.trim(),query=normalizedSearchText(rawQuery);document.querySelectorAll('.search-hit').forEach(element=>element.classList.remove('search-hit'));if(!query){searchStatus.textContent='Enter a word or phrase to search all pages.';return}if(query!==lastSearch){searchMatches=buildFullSiteSearchIndex().filter(entry=>normalizedSearchText(entry.text).includes(query));searchCursor=0;lastSearch=query}const count=searchMatches.length;if(!count){searchStatus.textContent='No matches';return}searchStatus.textContent=count+' '+(count===1?'match':'matches');const match=searchMatches[searchCursor];searchCursor=(searchCursor+1)%count;showSearchMatch(match)});searchInput.addEventListener('input',()=>{searchStatus.textContent='';lastSearch='';searchCursor=0})
 }
 
-/* ===== inline script 11 ===== */
+/* ===== MAIN: internal route renderer for the main-site shell ===== */
 {
 (()=>{const main=document.querySelector('#main'),site=document.querySelector('#secondary-site'),content=document.querySelector('#secondary-page-content'),templates=document.querySelector('#secondary-templates');if(!main||!site||!content||!templates)return;const labels={profile:'About Dr. Nitin Mohan',treatments:'Treatments',services:'Services',publications:'Research Articles & Publications',hospital:'Hospital',clinical:'Clinical work',gallery:'KidsGastro Photo Gallery',latest:'Latest from KidsGastro',blog:'KidsGastro Blog',newsletter:'KidsGastro newsletter',socials:'KidsGastro social profiles',faqs:'Frequently asked questions',testimonials:'Patient & Family Testimonials'};function renderRoute(){const routeSlug=location.pathname.split('/').filter(Boolean)[0]||'';const routeToTemplate={about:'profile',clinic:'hospital'};const id=routeToTemplate[routeSlug]||routeSlug||null;if(!labels[id]){site.hidden=true;main.hidden=false;document.title='KidsGastro | Kids Gastro in Hisar · Dr. Nitin Mohan';return}const template=templates.content.querySelector('[data-page="'+id+'"]');if(!template)return;main.hidden=true;site.hidden=false;content.innerHTML=template.innerHTML;const localTop=document.createElement('a');localTop.className='secondary-page-back-top';localTop.href='/gallery/';localTop.innerHTML='Back to top of this section <span aria-hidden="true">↑</span>';localTop.setAttribute('aria-label','Back to top of this section');content.appendChild(localTop);localTop.addEventListener('click',event=>{event.preventDefault();const behavior=matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth';const activePage=site.querySelector('#secondary-page-content');if(activePage){const header=document.querySelector('.header');const offset=(header?header.getBoundingClientRect().height:0)+12;const targetY=activePage.getBoundingClientRect().top+window.scrollY-offset;window.scrollTo({top:Math.max(0,targetY),behavior});}else{content.scrollIntoView({behavior,block:'start'});}});document.title=labels[id]+' | KidsGastro';site.querySelectorAll('.secondary-nav a').forEach(a=>{if(a.dataset.secondaryPage===id)a.setAttribute('aria-current','page');else a.removeAttribute('aria-current')});window.scrollTo({top:0,behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'})}document.addEventListener('click',e=>{const a=e.target.closest('a[data-secondary-page]');if(!a)return;return;const treatmentIndex=a.hasAttribute('data-treatment-index')?Number(a.dataset.treatmentIndex):null;const serviceIndex=a.hasAttribute('data-service-index')?Number(a.dataset.serviceIndex):null;const goToIndexedSection=()=>{if(treatmentIndex!==null){const card=content.querySelectorAll('.treatment-card')[treatmentIndex];if(card){card.setAttribute('tabindex','-1');card.scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'start'});card.focus({preventScroll:true});}}if(serviceIndex!==null){const card=content.querySelectorAll('.service-card')[serviceIndex];if(card){card.setAttribute('tabindex','-1');card.scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'start'});card.focus({preventScroll:true});}}};if(treatmentIndex!==null||serviceIndex!==null)requestAnimationFrame(()=>requestAnimationFrame(goToIndexedSection));});window.addEventListener('popstate',renderRoute);renderRoute()})();
 }
 
-/* ===== inline script 12 ===== */
+/* ===== MAIN: core page interactions and navigation utilities ===== */
 {
 (()=>{
  const dialog=document.getElementById('whatsapp-booking-dialog');
@@ -903,7 +1151,7 @@ applyZoom();
 })();
 }
 
-/* ===== inline script 26 ===== */
+/* ===== MAIN: lazy clinic image loader ===== */
 {
 (function(){function loadClinicPhoto(){var target=document.querySelector("#hospital-location .clinic-entrance-photo");if(!target||target.dataset.loadedClinicPhoto)return;var source=document.querySelector('img[data-asset-id="kgasset6"]')||document.querySelector('img[alt="Hospital entrance and location"]');if(source&&source.src){target.src=source.src;target.dataset.loadedClinicPhoto="true";}}var target=document.querySelector("#hospital-location .clinic-entrance-photo");if(!target)return;if("IntersectionObserver" in window){var observer=new IntersectionObserver(function(entries){if(entries.some(function(entry){return entry.isIntersecting;})){loadClinicPhoto();observer.disconnect();}},{rootMargin:"300px"});observer.observe(target);}else{loadClinicPhoto();}})();
 }
@@ -1089,7 +1337,7 @@ applyZoom();
 })();
 }
 
-/* ===== kg-final-back-top-and-all-cosmic-hover-fix ===== */
+/* ===== MAIN: back-to-top and scroll reset ===== */
 {
 (()=>{
   const reduced=()=>window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -1111,47 +1359,7 @@ applyZoom();
 })();
 }
 
-/* ===== kg-clinic-animation-exclusion-guard ===== */
-{
-(() => {
-  const selector = '#hospital-location';
-  function cleanClinic() {
-    const clinic = document.querySelector(selector);
-    if (!clinic) return;
-    clinic.classList.remove('kg-cosmos-host', 'kg-orbit-surface', 'abstract-watermark-host');
-    clinic.querySelectorAll(
-      '.kg-cosmos-background, .kg-orbit-overlay, canvas.kg-sky, .abstract-watermark'
-    ).forEach(node => node.remove());
-    // Remove only animation-related inline properties; retain layout and map styles.
-    clinic.querySelectorAll('*').forEach(node => {
-      if (node.matches('img, iframe, .clinic-photo-card, .clinic-map-card')) {
-        node.style.removeProperty('animation');
-        node.style.removeProperty('transition');
-        node.style.removeProperty('transform');
-        node.style.removeProperty('filter');
-        node.style.removeProperty('will-change');
-      }
-    });
-  }
-  const start = () => {
-    cleanClinic();
-    const clinic = document.querySelector(selector);
-    if (!clinic || !('MutationObserver' in window)) return;
-    let queued = false;
-    const observer = new MutationObserver(() => {
-      if (queued) return;
-      queued = true;
-      queueMicrotask(() => { queued = false; cleanClinic(); });
-    });
-    observer.observe(clinic, { childList: true, subtree: true });
-  };
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', start, { once: true });
-  } else {
-    start();
-  }
-})();
-}
+/* Subsite-only canvas cleanup is not part of the main-site bundle. */
 
 /* ===== kg-fast-section-entrance-js ===== */
 {
@@ -1296,3 +1504,161 @@ applyZoom();
  new MutationObserver(init).observe(document.documentElement,{childList:true,subtree:true});
 })();
 }
+
+/* ===== MAIN-SITE NAVIGATION CONTROLLER ===== */
+(() => {
+  "use strict";
+  if (document.documentElement.dataset.kgSite !== "main") return;
+
+  function initMainNavigation() {
+    const header = document.querySelector("header.header");
+    const nav = header && header.querySelector("nav.nav");
+    const button = nav && nav.querySelector("button.toggle");
+    const panel = nav && nav.querySelector("#links");
+    if (!header || !nav || !button || !panel || button.dataset.kgMainNav === "1") return;
+
+    button.dataset.kgMainNav = "1";
+    button.type = "button";
+    button.setAttribute("aria-controls", "links");
+
+    const isOpen = () => panel.classList.contains("open");
+    const placePanel = () => {
+      if (!isOpen()) return;
+      const rect = header.getBoundingClientRect();
+      const top = Math.max(8, Math.min(Math.round(rect.bottom + 5), window.innerHeight - 100));
+      panel.style.setProperty("--kg-final-menu-top", top + "px");
+    };
+
+    function setOpen(open) {
+      const compact = window.matchMedia("(max-width: 1100px)").matches;
+      const effectiveOpen = compact && Boolean(open);
+      panel.classList.toggle("open", effectiveOpen);
+      panel.hidden = false;
+      panel.setAttribute("aria-hidden", String(compact ? !effectiveOpen : false));
+      button.setAttribute("aria-expanded", String(effectiveOpen));
+      button.setAttribute("aria-label", effectiveOpen ? "Close navigation" : "Open navigation");
+      button.classList.toggle("is-open", effectiveOpen);
+      document.body.classList.toggle("kg-final-menu-open", effectiveOpen);
+
+      if (effectiveOpen) {
+        placePanel();
+        window.requestAnimationFrame(placePanel);
+      } else {
+        panel.querySelectorAll("details[open]").forEach(item => { item.open = false; });
+        panel.style.removeProperty("--kg-final-menu-top");
+      }
+    }
+
+    // Capture phase ensures a single click produces a single menu state change.
+    document.addEventListener("click", event => {
+      const hit = event.target && event.target.closest
+        ? event.target.closest('header.header button.toggle[aria-controls="links"]')
+        : null;
+      if (hit !== button) return;
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      setOpen(!isOpen());
+    }, true);
+
+    document.addEventListener("click", event => {
+      if (isOpen() && !panel.contains(event.target) && !button.contains(event.target)) setOpen(false);
+    });
+    panel.addEventListener("click", event => {
+      if (event.target.closest("a[href]")) setOpen(false);
+    });
+    document.addEventListener("keydown", event => {
+      if (event.key === "Escape" && isOpen()) {
+        setOpen(false);
+        button.focus();
+      }
+    });
+    window.addEventListener("resize", () => setOpen(false), { passive: true });
+    window.addEventListener("scroll", placePanel, { passive: true });
+    setOpen(false);
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initMainNavigation, { once: true });
+  } else {
+    initMainNavigation();
+  }
+})();
+
+/* ===== MAIN-SITE WHATSAPP VERTICAL DRAG ===== */
+(() => {
+  "use strict";
+  if (document.documentElement.dataset.kgSite !== "main" || window.KGHomepageWhatsAppDrag) return;
+  window.KGHomepageWhatsAppDrag = true;
+
+  const init = () => {
+    const button = document.querySelector(".whatsapp-float");
+    if (!button || button.dataset.kgVerticalDrag === "1") return;
+    button.dataset.kgVerticalDrag = "1";
+    button.style.touchAction = "none";
+    button.style.cursor = "grab";
+
+    let active = false;
+    let moved = false;
+    let startY = 0;
+    let startTop = 0;
+    let pointerId = null;
+    const clampTop = value => Math.max(8, Math.min(
+      window.innerHeight - button.getBoundingClientRect().height - 8, value
+    ));
+
+    button.addEventListener("pointerdown", event => {
+      if (event.pointerType === "mouse" && event.button !== 0) return;
+      const rect = button.getBoundingClientRect();
+      active = true;
+      moved = false;
+      pointerId = event.pointerId;
+      startY = event.clientY;
+      startTop = rect.top;
+      button.classList.add("is-dragging");
+      button.style.left = "auto";
+      button.style.right = "max(16px, env(safe-area-inset-right))";
+      button.style.bottom = "auto";
+      button.style.top = rect.top + "px";
+      try { button.setPointerCapture(pointerId); } catch (_) {}
+      event.preventDefault();
+    });
+    button.addEventListener("pointermove", event => {
+      if (!active || event.pointerId !== pointerId) return;
+      const delta = event.clientY - startY;
+      if (Math.abs(delta) > 3) moved = true;
+      button.style.top = clampTop(startTop + delta) + "px";
+      event.preventDefault();
+    });
+    const finish = event => {
+      if (!active || event.pointerId !== pointerId) return;
+      active = false;
+      button.classList.remove("is-dragging");
+      button.style.cursor = "grab";
+      if (moved) {
+        button.dataset.kgDragged = "1";
+        window.setTimeout(() => { delete button.dataset.kgDragged; }, 350);
+      }
+      pointerId = null;
+    };
+    button.addEventListener("pointerup", finish);
+    button.addEventListener("pointercancel", finish);
+    button.addEventListener("click", event => {
+      if (button.dataset.kgDragged === "1") {
+        event.preventDefault();
+        event.stopImmediatePropagation();
+      }
+    }, true);
+    window.addEventListener("resize", () => {
+      if (button.style.top) button.style.top = clampTop(parseFloat(button.style.top) || 0) + "px";
+    }, { passive: true });
+  };
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", init, { once: true });
+  } else {
+    init();
+  }
+})();
+
+
+})();
