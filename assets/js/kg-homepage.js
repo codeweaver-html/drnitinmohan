@@ -1451,15 +1451,103 @@ applyZoom();
   const pauseForInteraction=()=>{interacting=true;clearTimeout(resumeTimer);stopFrame();updateButton();setStatus('Paused while you interact.');};
   const resumeAfterInteraction=()=>{clearTimeout(resumeTimer);resumeTimer=setTimeout(()=>{interacting=false;updateButton();start()},2600)};
   addClones();
+  /* Lazy-load the reel previews only when they approach the viewport.
+     The HTML keeps the five WebM URLs in data-src so they do not compete with
+     the hero image and first-screen CSS/JS during the initial page load. */
+  const reelVideos=()=>Array.from(track.querySelectorAll('video.kg-watch-content-video'));
+  const markVideoUnavailable=video=>{
+    const card=video.closest('.kg-watch-content-gif-link');
+    if(card)card.classList.add('kg-video-unavailable');
+  };
+  const hydrateVideo=video=>{
+    if(!video||video.dataset.kgVideoLoaded==='true')return;
+    const source=video.querySelector('source[data-src]');
+    if(!source){
+      if(!video.querySelector('source[src]'))markVideoUnavailable(video);
+      return;
+    }
+    if(video.canPlayType&&!video.canPlayType(source.type||'video/webm')){
+      markVideoUnavailable(video);
+      return;
+    }
+    const url=source.getAttribute('data-src');
+    if(!url){markVideoUnavailable(video);return;}
+    video.dataset.kgVideoLoaded='true';
+    video.muted=true;
+    video.defaultMuted=true;
+    video.playsInline=true;
+    video.loop=true;
+    video.preload='auto';
+    source.setAttribute('src',url);
+    source.removeAttribute('data-src');
+    video.load();
+  };
+  const videoInViewport=video=>{
+    const r=video.getBoundingClientRect();
+    return r.width>0&&r.height>0&&r.right>0&&r.left<window.innerWidth&&r.bottom>0&&r.top<window.innerHeight;
+  };
+  const syncVideoPlayback=video=>{
+    if(!video)return;
+    if(document.hidden||(reduce&&reduce.matches)||!videoInViewport(video)){
+      if(!video.paused)video.pause();
+      return;
+    }
+    hydrateVideo(video);
+    if(video.dataset.kgVideoLoaded==='true'&&video.paused){
+      const result=video.play();
+      if(result&&typeof result.catch==='function')result.catch(()=>{});
+    }
+  };
+  let reelLoadObserver=null,reelPlaybackObserver=null;
+  reelVideos().forEach(video=>{
+    video.addEventListener('error',()=>markVideoUnavailable(video),{once:true});
+    video.addEventListener('loadeddata',()=>{
+      const card=video.closest('.kg-watch-content-gif-link');
+      if(card)card.classList.remove('kg-video-unavailable');
+    },{once:true});
+  });
+  const syncAllReelVideos=()=>reelVideos().forEach(syncVideoPlayback);
+  if('IntersectionObserver' in window){
+    /* Prefetch just before a card enters view; a second zero-margin observer
+       starts/stops playback on actual viewport intersection. */
+    reelLoadObserver=new IntersectionObserver(entries=>{
+      entries.forEach(entry=>{if(entry.isIntersecting)hydrateVideo(entry.target);});
+    },{root:null,rootMargin:'160px 220px',threshold:0.01});
+    reelPlaybackObserver=new IntersectionObserver(entries=>{
+      entries.forEach(entry=>{
+        if(entry.isIntersecting)syncVideoPlayback(entry.target);
+        else if(!entry.target.paused)entry.target.pause();
+      });
+    },{root:null,rootMargin:'0px',threshold:0.08});
+    reelVideos().forEach(video=>{
+      reelLoadObserver.observe(video);
+      reelPlaybackObserver.observe(video);
+    });
+  }else{
+    reelVideos().forEach(video=>{hydrateVideo(video);syncVideoPlayback(video);});
+  }
+  track.addEventListener('scroll',syncAllReelVideos,{passive:true});
+  window.addEventListener('resize',syncAllReelVideos,{passive:true});
+  document.addEventListener('visibilitychange',syncAllReelVideos);
+  window.addEventListener('pagehide',()=>reelVideos().forEach(video=>video.pause()),{once:true});
+
+  /* Keep the loop continuous in both directions when a visitor uses the arrows. */
+  const moveCarousel=direction=>{
+    pauseForInteraction();
+    if(direction<0&&track.scrollLeft<=2&&originalSpan>0)track.scrollLeft=originalSpan;
+    else if(direction>0&&originalSpan>0&&track.scrollLeft>=originalSpan)track.scrollLeft-=originalSpan;
+    track.scrollBy({left:direction*Math.max(180,track.clientWidth*.75),behavior:reduce&&reduce.matches?'auto':'smooth'});
+    resumeAfterInteraction();
+  };
   if(playButton)playButton.addEventListener('click',()=>{userPaused=!userPaused;if(!userPaused){interacting=false;hovering=false}updateButton();start()});
-  if(back)back.addEventListener('click',()=>{pauseForInteraction();track.scrollBy({left:-Math.max(180,track.clientWidth*.75),behavior:reduce&&reduce.matches?'auto':'smooth'});resumeAfterInteraction()});
-  if(forward)forward.addEventListener('click',()=>{pauseForInteraction();track.scrollBy({left:Math.max(180,track.clientWidth*.75),behavior:reduce&&reduce.matches?'auto':'smooth'});resumeAfterInteraction()});
+  if(back)back.addEventListener('click',()=>moveCarousel(-1));
+  if(forward)forward.addEventListener('click',()=>moveCarousel(1));
   ['pointerdown','touchstart','wheel','keydown','focusin'].forEach(type=>track.addEventListener(type,()=>{pauseForInteraction();resumeAfterInteraction()},{passive:type!=='keydown'}));
   ['pointerup','touchend','touchcancel','pointercancel'].forEach(type=>track.addEventListener(type,()=>{resumeAfterInteraction()},{passive:true}));
   /* Scroll events are also emitted by the automatic animation; user input events above pause it without false-triggering on programmatic scrolls. */
   track.addEventListener('pointerenter',()=>{hovering=true;stopFrame();updateButton()});track.addEventListener('pointerleave',()=>{hovering=false;start()});
   document.addEventListener('visibilitychange',start);
-  if(reduce){const onMotionChange=()=>{if(reduce.matches){userPaused=true;stopFrame();updateButton();setStatus('Automatic movement paused for reduced-motion preference.')}else{start()}};if(reduce.addEventListener)reduce.addEventListener('change',onMotionChange);else if(reduce.addListener)reduce.addListener(onMotionChange)}
+  if(reduce){const onMotionChange=()=>{if(reduce.matches){userPaused=true;stopFrame();updateButton();setStatus('Automatic movement paused for reduced-motion preference.');syncAllReelVideos()}else{start();syncAllReelVideos()}};if(reduce.addEventListener)reduce.addEventListener('change',onMotionChange);else if(reduce.addListener)reduce.addListener(onMotionChange)}
   window.addEventListener('resize',()=>{measure();if(track.scrollLeft>=originalSpan&&originalSpan)track.scrollLeft%=originalSpan;start()},{passive:true});
   updateButton();measure();start();
  }
@@ -1661,4 +1749,22 @@ applyZoom();
 })();
 
 
+})();
+
+/* Load decorative motion after first paint so it never competes with the hero. */
+(()=>{
+ 'use strict';
+ if(document.documentElement.dataset.kgSite!=='main'||window.KGCosmosMotionRequested)return;
+ window.KGCosmosMotionRequested=true;
+ const load=()=>{
+  if(window.KGCosmosSpace||document.querySelector('script[data-kg-homepage-motion]'))return;
+  const script=document.createElement('script');
+  script.src='/assets/js/kg-homepage-motion.js?v=main-home-20261109-2';
+  script.async=true;
+  script.dataset.kgHomepageMotion='true';
+  if('fetchPriority' in script)script.fetchPriority='low';
+  document.head.appendChild(script);
+ };
+ if('requestIdleCallback' in window)window.requestIdleCallback(load,{timeout:1200});
+ else window.setTimeout(load,480);
 })();

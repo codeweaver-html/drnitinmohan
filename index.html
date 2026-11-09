@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 
-<!-- External image assets: keep these files in the same repository folder as index.html. -->
-<!-- Website image assets expected beside index.html:
+<!-- Main-site media assets are stored in the repository /assets/ directory. -->
+<!-- Website media assets expected in /assets/:
      gastro talk.webp
      rezept-rx-logo.png
      endo gallery pic.webp
@@ -20,7 +20,7 @@
 <html lang="en" data-kg-site="main"><head>
 <meta charset="utf-8">
 <!-- MAIN-SITE ONLY: foundation first, final overrides second. -->
-<link rel="stylesheet" href="/assets/css/kg-homepage-base.css">
+<link rel="stylesheet" href="/assets/css/kg-homepage-base.css?v=main-home-20261109-2">
 
 <meta content="width=device-width, initial-scale=1, viewport-fit=cover" name="viewport"/><meta content="#0759a8" name="theme-color"/>
 <meta content="Explore the KidsGastro photo gallery featuring clinical work, clinic and hospital settings, professional education, and family-friendly moments in Hisar." name="description"/>
@@ -39,7 +39,7 @@
 
 
 <!-- Subsite-only assets are intentionally not loaded on this main-site shell. -->
-<link rel="stylesheet" href="/assets/css/kg-homepage-overrides.css">
+<link rel="stylesheet" href="/assets/css/kg-homepage-overrides.css?v=main-home-20261109-2">
 
 
 <link rel="preload" as="image" href="/assets/main%20pic.webp" fetchpriority="high">
@@ -267,5 +267,5 @@
 <!-- Main-site JS only. Subsite pages must use kg-shared.js instead. -->
 
 
-<script defer src="/assets/js/kg-homepage.js?v=main-only-20261109"></script>
+<script defer src="/assets/js/kg-homepage.js?v=main-home-20261109-2"></script>
 </body></html>

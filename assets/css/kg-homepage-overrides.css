@@ -1519,3 +1519,35 @@ img.kg-logo,
 
 /* ===== Extracted homepage override: kg-final-social-logo-removal ===== */
 .social-intro::after{content:none!important;background:none!important;display:none!important}
+
+/* ===== MAIN-SITE COSMIC ANIMATION LAYER ===== */
+/* This layer belongs only to the main homepage; subsites keep kg-shared.css. */
+#kg-space{
+  position:fixed!important;inset:0!important;width:100%!important;height:100%!important;
+  z-index:1!important;pointer-events:none!important;opacity:.76;
+}
+.kg-space-panel{
+  position:relative!important;z-index:auto!important;isolation:auto!important;
+}
+.kg-space-panel>*{position:relative!important;z-index:2!important}
+/* The existing header's high stacking value otherwise places its blue surface
+   above the fixed canvas. Keep menu and dropdown controls in the foreground. */
+.header.kg-space-panel{
+  position:relative!important;z-index:auto!important;isolation:auto!important;overflow:visible!important;
+}
+.header.kg-space-panel>.nav{position:relative!important;z-index:2!important;overflow:visible!important}
+.header.kg-space-panel #links,.header.kg-space-panel .toggle,
+.header.kg-space-panel .nav-dropdown-menu{
+  z-index:2147483004!important;pointer-events:auto!important;
+}
+@media(prefers-reduced-motion:reduce){#kg-space{opacity:.7}}
+
+/* Graceful carousel fallback if an expected WebM preview is missing or unsupported. */
+.kg-watch-content-gif-link{position:relative}
+.kg-watch-content-gif-link.kg-video-unavailable::after{
+  content:"Preview unavailable · Open reel on Instagram";
+  position:absolute;inset:auto 8px 8px;padding:7px 9px;border-radius:6px;
+  background:rgba(7,42,72,.88);color:#fff;text-align:center;
+  font:600 .76rem/1.35 Arial,'Segoe UI',sans-serif;pointer-events:none;
+}
+
