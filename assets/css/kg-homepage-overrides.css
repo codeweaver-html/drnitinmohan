@@ -1,9 +1,8 @@
 /*
- * KIDSGASTRO MAIN-SITE CSS — FINAL OVERRIDES
- * Owner: the main-site app shell only (html[data-kg-site="main"]).
- * Load after kg-homepage-base.css. The file order is intentional: later
- * declarations resolve accumulated legacy conflicts and protect the final UI.
- * Do not load this stylesheet on standalone subsites.
+ * KidsGastro homepage overrides stylesheet.
+ * Extracted from the original inline style blocks in source order.
+ * Loaded AFTER /assets/kg-shared.css to preserve the original cascade.
+ * Legacy priority declarations are retained in this pass to avoid visual regressions.
  */
 
 
@@ -859,6 +858,9 @@ input,select,textarea{font-size:16px;max-width:100%}
   .header #links.open .nav-dropdown-menu a:focus-visible{background:#0759a8!important;color:#fff!important;outline:2px solid #7cbcff!important;outline-offset:-2px!important;}
   .header #links.open>.nav-dropdown>summary:focus-visible,
   .header #links.open>.nav-direct-link:focus-visible{outline:2px solid #ffd13b!important;outline-offset:2px!important;}
+  /* Pause decorative header motion while the menu is open to reduce mobile rendering load. */
+  .header:has(#links.open) .kg-cosmos-background,
+  .header:has(#links.open) .kg-cosmos-background *{animation-play-state:paused!important;}
 }
 @keyframes kg-mobile-menu-enter{from{opacity:0;transform:translateY(-5px)}to{opacity:1;transform:translateY(0)}}
 @media(prefers-reduced-motion:reduce){.header #links.open{animation:none!important}}
@@ -1027,7 +1029,33 @@ input,select,textarea{font-size:16px;max-width:100%}
 .header .toggle{position:relative!important;z-index:12020!important;pointer-events:auto!important;cursor:pointer!important}
 
 
-/* Header dropdowns are allowed to extend beyond the header; no shared animation host is used on the main site. */
+/* ===== Original style block 138: kg-hamburger-header-containment-fix ===== */
+
+/* The header must not paint-contain the navigation dropdown: menus extend below it. */
+.header.kg-cosmos-host,
+header.header.kg-cosmos-host,
+.header.kg-cosmos-host.kg-cosmos-system {
+  contain: none !important;
+  overflow: visible !important;
+  clip-path: none !important;
+  isolation: isolate !important;
+}
+.header.kg-cosmos-host > .kg-cosmos-background,
+.header.kg-cosmos-host > .kg-orbit-overlay {
+  overflow: hidden !important;
+  pointer-events: none !important;
+}
+@media (max-width: 760px) {
+  .header #links.open {
+    position: relative !important;
+    z-index: 12010 !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}
+
+
 /* ===== Extracted homepage override: kg-homepage-final-overrides ===== */
 /* Solid blue appointment CTA: intentionally opaque and visually quiet. */
 .booking-toggle,.booking-toggle:hover,.booking-toggle:focus-visible,.booking-toggle:active{background:#0759a8!important;background-color:#0759a8!important;color:#fff!important;border:1px solid #0759a8!important;opacity:1!important;box-shadow:0 2px 7px rgba(7,59,105,.16)!important;transform:none!important;filter:none!important;transition:background-color .16s ease,box-shadow .16s ease!important}
@@ -1163,11 +1191,16 @@ body a.whatsapp-float:focus-visible {
 }
 
 
-/* Shared subsite canvas-panel rules intentionally do not belong in the main-site stylesheet. */
+/* ===== Original style block 143: kg-cosmos-all-blue-boxes ===== */
+/* All five cosmic panels share the same isolated stacking context. */
+.kg-space-panel{position:relative!important;isolation:auto!important;z-index:auto!important;overflow:hidden!important}
+.kg-space-panel>*{position:relative;z-index:2}
+
 
 /* ===== Original style block 144: navigation-dropdown-interaction-final-fix ===== */
 
 /* Dropdowns: preserve native <details>/<summary> interaction and prevent the cosmic header from clipping menus. */
+.header.kg-cosmos-host{overflow:visible!important}
 .header .nav-dropdown{position:relative!important;display:block!important;min-width:0}
 .header .nav-dropdown>summary{position:relative!important;z-index:2!important;cursor:pointer!important;pointer-events:auto!important;touch-action:manipulation}
 .header .nav-dropdown[open]>.nav-dropdown-menu{display:block!important;visibility:visible!important;opacity:1!important;pointer-events:auto!important;z-index:1200!important}
@@ -1180,6 +1213,7 @@ body a.whatsapp-float:focus-visible {
   .header #links.open>.nav-dropdown:not([open])>.nav-dropdown-menu{display:none!important}
   .header #links.open>.nav-dropdown>summary{position:relative!important;z-index:2!important;display:grid!important;pointer-events:auto!important}
   .header #links.open>.nav-dropdown>.nav-dropdown-menu a{display:block!important;position:relative!important;z-index:1!important;color:#18384d!important;pointer-events:auto!important;min-height:44px!important}
+  .header.kg-cosmos-host>.kg-cosmos-background{pointer-events:none!important;z-index:0!important}
 }
 
 /* Booking choice cards: keep the logo and readable label together in the first grid column. */
@@ -1520,34 +1554,215 @@ img.kg-logo,
 /* ===== Extracted homepage override: kg-final-social-logo-removal ===== */
 .social-intro::after{content:none!important;background:none!important;display:none!important}
 
-/* ===== MAIN-SITE COSMIC ANIMATION LAYER ===== */
-/* This layer belongs only to the main homepage; subsites keep kg-shared.css. */
-#kg-space{
-  position:fixed!important;inset:0!important;width:100%!important;height:100%!important;
-  z-index:1!important;pointer-events:none!important;opacity:.76;
-}
-.kg-space-panel{
-  position:relative!important;z-index:auto!important;isolation:auto!important;
-}
-.kg-space-panel>*{position:relative!important;z-index:2!important}
-/* The existing header's high stacking value otherwise places its blue surface
-   above the fixed canvas. Keep menu and dropdown controls in the foreground. */
-.header.kg-space-panel{
-  position:relative!important;z-index:auto!important;isolation:auto!important;overflow:visible!important;
-}
-.header.kg-space-panel>.nav{position:relative!important;z-index:2!important;overflow:visible!important}
-.header.kg-space-panel #links,.header.kg-space-panel .toggle,
-.header.kg-space-panel .nav-dropdown-menu{
-  z-index:2147483004!important;pointer-events:auto!important;
-}
-@media(prefers-reduced-motion:reduce){#kg-space{opacity:.7}}
 
-/* Graceful carousel fallback if an expected WebM preview is missing or unsupported. */
-.kg-watch-content-gif-link{position:relative}
-.kg-watch-content-gif-link.kg-video-unavailable::after{
-  content:"Preview unavailable · Open reel on Instagram";
-  position:absolute;inset:auto 8px 8px;padding:7px 9px;border-radius:6px;
-  background:rgba(7,42,72,.88);color:#fff;text-align:center;
-  font:600 .76rem/1.35 Arial,'Segoe UI',sans-serif;pointer-events:none;
+/* ===== November 10 repair: desktop hero portrait visibility ===== */
+@media (min-width: 761px) {
+  html body #top.hero .hero-grid {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1.06fr) minmax(0, .94fr) !important;
+    grid-template-areas: "copy portrait" ". credentials" !important;
+    align-items: start !important;
+    column-gap: 30px !important;
+    row-gap: 0 !important;
+  }
+  html body #top.hero .hero-grid > .visual {
+    display: flex !important;
+    position: relative !important;
+    grid-area: portrait !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    width: 100% !important;
+    max-width: 430px !important;
+    min-height: 0 !important;
+    height: auto !important;
+    margin: 0 auto !important;
+    overflow: visible !important;
+  }
+  html body #top.hero .hero-grid > .visual > .portrait {
+    display: block !important;
+    position: relative !important;
+    inset: auto !important;
+    width: 100% !important;
+    height: auto !important;
+    min-height: 0 !important;
+    aspect-ratio: 4 / 5 !important;
+    overflow: hidden !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+  }
+  html body #top.hero .hero-grid > .visual > .portrait > img.hero-doctor-photo {
+    display: block !important;
+    position: static !important;
+    width: 100% !important;
+    height: 100% !important;
+    min-height: 0 !important;
+    object-fit: cover !important;
+    object-position: center 30% !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+  }
 }
 
+/* ===== November 10 repair: one working hamburger menu on desktop and mobile ===== */
+html body .header { position: relative !important; z-index: 1000 !important; overflow: visible !important; }
+html body .header .nav { position: relative !important; overflow: visible !important; }
+html body .header .toggle {
+  display: inline-flex !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  align-items: center !important;
+  justify-content: center !important;
+  position: relative !important;
+  z-index: 1502 !important;
+  width: 48px !important;
+  height: 48px !important;
+  min-width: 48px !important;
+  padding: 0 !important;
+  border: 1px solid rgba(255,255,255,.55) !important;
+  border-radius: 8px !important;
+  background: #064b8d !important;
+  color: #fff !important;
+  font-size: 27px !important;
+  line-height: 1 !important;
+  cursor: pointer !important;
+  pointer-events: auto !important;
+}
+html body .header #links:not(.open) { display: none !important; }
+html body .header #links.open {
+  display: flex !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  pointer-events: auto !important;
+  position: absolute !important;
+  top: calc(100% + 6px) !important;
+  left: auto !important;
+  right: 0 !important;
+  bottom: auto !important;
+  z-index: 1501 !important;
+  box-sizing: border-box !important;
+  width: min(560px, calc(100vw - 32px)) !important;
+  max-width: calc(100vw - 32px) !important;
+  max-height: calc(100dvh - 110px) !important;
+  overflow-x: hidden !important;
+  overflow-y: auto !important;
+  flex-direction: column !important;
+  align-items: stretch !important;
+  justify-content: flex-start !important;
+  gap: 7px !important;
+  padding: 14px !important;
+  border: 1px solid rgba(255,255,255,.45) !important;
+  border-radius: 10px !important;
+  background: #0759a8 !important;
+  color: #fff !important;
+  box-shadow: 0 14px 32px rgba(0,20,45,.3) !important;
+}
+html body .header #links.open > a,
+html body .header #links.open > details > summary {
+  display: flex !important;
+  align-items: center !important;
+  min-height: 42px !important;
+  padding: 9px 12px !important;
+  color: #fff !important;
+  border-radius: 6px !important;
+}
+html body .header #links.open .nav-dropdown-menu {
+  position: static !important;
+  display: block !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  margin: 5px 0 8px !important;
+  background: #fff !important;
+  color: #18384d !important;
+  border-radius: 7px !important;
+}
+html body .header #links.open .nav-dropdown-menu a { color: #18384d !important; }
+@media (max-width: 760px) {
+  html body .header #links.open {
+    left: 0 !important;
+    right: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    max-height: calc(100dvh - 120px) !important;
+    border-radius: 0 0 10px 10px !important;
+  }
+}
+
+/* ===== November 10 repair: keep the real Google reCAPTCHA badge/challenge visible ===== */
+html body .grecaptcha-badge {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  pointer-events: auto !important;
+  position: fixed !important;
+  z-index: 2147483000 !important;
+  right: 12px !important;
+  left: auto !important;
+  bottom: 12px !important;
+  transform: none !important;
+}
+html body .grecaptcha-badge iframe,
+html body iframe[src*="recaptcha"] {
+  visibility: visible !important;
+  opacity: 1 !important;
+  pointer-events: auto !important;
+  z-index: 2147483001 !important;
+}
+html body #appointment-recaptcha-v2 {
+  position: fixed !important;
+  left: 0 !important;
+  bottom: 0 !important;
+  width: 1px !important;
+  height: 1px !important;
+  overflow: visible !important;
+  z-index: 2147483002 !important;
+  pointer-events: auto !important;
+}
+body.kg-booking-dialog-open { overflow: hidden !important; }
+body.kg-booking-dialog-open::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 1999999998;
+  background: rgba(7,24,44,.62);
+  backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(3px);
+}
+#whatsapp-booking-dialog.booking-dialog[open] {
+  position: fixed !important;
+  inset: 0 !important;
+  margin: auto !important;
+  z-index: 1999999999 !important;
+  max-height: calc(100dvh - 24px) !important;
+  overflow: visible !important;
+}
+#whatsapp-booking-dialog .booking-dialog-inner {
+  max-height: calc(100dvh - 24px) !important;
+  overflow-y: auto !important;
+  -webkit-overflow-scrolling: touch !important;
+}
+@media (max-width: 640px) {
+  #whatsapp-booking-dialog.booking-dialog[open] {
+    width: calc(100vw - 16px) !important;
+    max-width: calc(100vw - 16px) !important;
+    max-height: calc(100dvh - 16px) !important;
+  }
+  #whatsapp-booking-dialog .booking-dialog-inner {
+    max-height: calc(100dvh - 16px) !important;
+    padding-bottom: calc(18px + env(safe-area-inset-bottom)) !important;
+  }
+}
+
+/* ===== November 10 repair: WhatsApp drag cursor/thumb affordance ===== */
+html body a.whatsapp-float {
+  touch-action: none !important;
+  user-select: none !important;
+  -webkit-user-select: none !important;
+  cursor: grab !important;
+}
+html body a.whatsapp-float.is-dragging {
+  cursor: grabbing !important;
+  animation: none !important;
+  transform: none !important;
+  transition: none !important;
+  will-change: top;
+}

@@ -1,261 +1,13 @@
-
-/* ===== PAGE OWNERSHIP GUARD ===== */
-(() => {
-  "use strict";
-  if (document.documentElement.dataset.kgSite !== "main") return;
-
-/* ===== MAIN-SITE ANNOUNCEMENT SYNCHRONIZER ===== */
-/* Main-site announcement synchronizer.
- * Reads the configuration JSON used by the site:
- * configuration/defaults.json
- * configuration/temporary_overrides.json
- * configuration/change-request.json
- *
- * This main-site copy renders into the existing offline-appointment-marquee.
- * The separate subsite copy remains inside kg-shared.js.
- */
-(() => {
-  "use strict";
-  if (document.documentElement.dataset.kgSite !== "main" || document.getElementById("kg-manual-settings-bridge")) return;
-
-  const DEFAULT_TEXT =
-    "OFFLINE APPOINTMENTS AVAILABLE RIGHT NOW. CLICK THE APPOINTMENT BUTTON BELOW TO PROCEED.";
-  const ROOT = "/configuration/";
-  const FALLBACK = {
-    text: DEFAULT_TEXT,
-    textColor: "#0759a8",
-    backgroundColor: "#ffc400",
-    speed: 8,
-    additional: null
-  };
-
-  const safeColor = value =>
-    typeof value === "string" && /^#[0-9a-f]{6}$/i.test(value);
-  const clampSpeed = value => {
-    const n = Number(value);
-    return Number.isFinite(n) ? Math.min(60, Math.max(2, n)) : 28;
-  };
-  const readJson = async path => {
-    try {
-      const response = await fetch(path, { cache: "no-cache" });
-      if (!response.ok) return null;
-      const value = await response.json();
-      return value && typeof value === "object" ? value : null;
-    } catch (_) {
-      return null;
-    }
-  };
-  const indiaLocalDateTimeToMs = value => {
-    if (typeof value !== "string") return NaN;
-    const m = value.match(/^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})(?::(\d{2}))?$/);
-    if (!m) return NaN;
-    const [, y, mo, d, h, mi, sec = "0"] = m;
-    return Date.UTC(+y, +mo - 1, +d, +h, +mi, +sec) - 19800000;
-  };
-  const periodIsActive = (period, key, now) => {
-    if (!period || (Array.isArray(period.settings) && !period.settings.includes(key))) return false;
-    const start = indiaLocalDateTimeToMs(period.startDateTime || period.start);
-    const end = indiaLocalDateTimeToMs(period.endDateTime || period.end);
-    return Number.isFinite(start) && Number.isFinite(end) && end > start && now >= start && now < end;
-  };
-  const settingIsActive = (request, key, now) => {
-    const schedules = request && request.changeSchedules;
-    const meta = schedules && schedules.settings && schedules.settings[key];
-    if (meta && meta.duration === "permanent") return true;
-    if (!meta && request && (request.duration === "permanent" ||
-        (request.schedule && request.schedule.type === "permanent"))) return true;
-    if (meta && meta.duration === "temporary" && schedules.activateTemporary === true) {
-      const group = (schedules.groups || []).find(g =>
-        g && g.id === meta.scheduleGroupId && Array.isArray(g.settings) && g.settings.includes(key));
-      if (periodIsActive(group, key, now)) return true;
-    }
-    if (request && request.schedule && request.schedule.activateTemporary === true) {
-      const period = (request.schedule.periods || []).find(p =>
-        p && Array.isArray(p.settings) && p.settings.includes(key));
-      if (periodIsActive(period, key, now)) return true;
-    }
-    return false;
-  };
-  const requestIsActive = (request, key, now) => {
-    if (!request || !request.changeSchedules) {
-      if (request && request.duration === "permanent") return true;
-      if (request && request.duration === "temporary" && request.schedule &&
-          request.schedule.activateTemporary === true) {
-        const start = indiaLocalDateTimeToMs(request.schedule.startDateTime);
-        const end = indiaLocalDateTimeToMs(request.schedule.endDateTime);
-        return Number.isFinite(start) && Number.isFinite(end) && end > start && now >= start && now < end;
-      }
-      if (request && request.schedule && request.schedule.activateTemporary === true) {
-        const period = (request.schedule.periods || []).find(p =>
-          p && Array.isArray(p.settings) && p.settings.includes(key));
-        return periodIsActive(period, key, now);
-      }
-      return false;
-    }
-    return settingIsActive(request, key, now);
-  };
-
-  function resolve(defaultsFile, overridesFile, requestFile) {
-    const result = { ...FALLBACK };
-    if (defaultsFile && defaultsFile.settings && typeof defaultsFile.settings === "object") {
-      const s = defaultsFile.settings;
-      if (typeof s.marqueeText === "string" && s.marqueeText.trim()) result.text = s.marqueeText.trim();
-      if (safeColor(s.marqueeTextColor)) result.textColor = s.marqueeTextColor;
-      if (safeColor(s.marqueeBackgroundColor)) result.backgroundColor = s.marqueeBackgroundColor;
-      if (Number.isFinite(Number(s.marqueeSpeedSeconds))) result.speed = clampSpeed(s.marqueeSpeedSeconds);
-    }
-
-    const now = Date.now();
-    const valid = new Set(["marqueeText", "marqueeTextColor", "marqueeBackgroundColor", "marqueeSpeedSeconds"]);
-    const activeOverrides = Array.isArray(overridesFile && overridesFile.overrides)
-      ? overridesFile.overrides.filter(item => {
-          if (!item || item.enabled !== true || !valid.has(item.key)) return false;
-          const start = indiaLocalDateTimeToMs(item.startAt);
-          const end = indiaLocalDateTimeToMs(item.endAt);
-          return Number.isFinite(start) && Number.isFinite(end) && end > start && now >= start && now < end;
-        })
-      : [];
-    activeOverrides.forEach(item => {
-      if (item.key === "marqueeText" && typeof item.value === "string" && item.value.trim()) result.text = item.value.trim();
-      if (item.key === "marqueeTextColor" && safeColor(item.value)) result.textColor = item.value;
-      if (item.key === "marqueeBackgroundColor" && safeColor(item.value)) result.backgroundColor = item.value;
-      if (item.key === "marqueeSpeedSeconds") result.speed = clampSpeed(item.value);
-    });
-
-    if (!requestFile || requestFile.doctor !== "Dr. Nitin Mohan" ||
-        !requestFile.changes || typeof requestFile.changes !== "object") return result;
-
-    const c = requestFile.changes;
-    const d = requestFile.details || {};
-    if (!requestIsActive(requestFile, "announcementMarquee", now) || c.changeAnnouncement !== "yes") return result;
-
-    const mode = c.announcementMode;
-    if (mode === "edit" && typeof d.announcementText === "string" &&
-        d.announcementText.trim() && d.announcementText.length <= 500) {
-      result.text = d.announcementText.trim();
-      const color = (d.announcementTextColors && d.announcementTextColors.customStrip) ||
-        d.mainStripTextColor || c.mainStripTextColor;
-      const bg = d.mainStripBackgroundColor || c.mainStripBackgroundColor ||
-        (d.announcementBackgroundColors && d.announcementBackgroundColors.mainStrip);
-      if (safeColor(color)) result.textColor = color;
-      if (safeColor(bg)) result.backgroundColor = bg;
-      const speed = Number(d.announcementMarqueeSpeedsSeconds && d.announcementMarqueeSpeedsSeconds.customStrip);
-      if (Number.isFinite(speed)) result.speed = clampSpeed(speed);
-      result.additional = null;
-    } else if (mode === "restore_default") {
-      result.text = DEFAULT_TEXT;
-      result.textColor = "#0759a8";
-      result.backgroundColor = "#ffc400";
-      result.speed = 8;
-      result.additional = null;
-    } else if (mode === "add" && typeof d.announcementText === "string" &&
-        d.announcementText.trim() && d.announcementText.length <= 500) {
-      const mainColor = d.announcementTextColors && d.announcementTextColors.defaultStrip;
-      if (safeColor(mainColor)) result.textColor = mainColor;
-      const mainSpeed = Number(d.announcementMarqueeSpeedsSeconds && d.announcementMarqueeSpeedsSeconds.standardStrip);
-      if (Number.isFinite(mainSpeed)) result.speed = clampSpeed(mainSpeed);
-      result.additional = {
-        text: d.announcementText.trim(),
-        textColor: safeColor(d.announcementTextColors && d.announcementTextColors.customStrip)
-          ? d.announcementTextColors.customStrip : "#ffffff",
-        backgroundColor: safeColor(d.announcementBackgroundColors && d.announcementBackgroundColors.secondStrip)
-          ? d.announcementBackgroundColors.secondStrip : "#0759a8",
-        speed: clampSpeed(Number(d.announcementMarqueeSpeedsSeconds &&
-          d.announcementMarqueeSpeedsSeconds.customStrip) || 8)
-      };
-    }
-    return result;
-  }
-
-  function buildStrip(id, label, text, style) {
-    let strip = document.getElementById(id);
-    if (!strip) {
-      strip = document.createElement("div");
-      strip.id = id;
-      strip.className = "offline-appointment-marquee";
-      strip.setAttribute("role", "region");
-      strip.setAttribute("aria-label", label);
-    }
-    strip.replaceChildren();
-    const track = document.createElement("div");
-    track.className = "offline-appointment-marquee__track";
-    track.style.setProperty("animation-duration", style.speed + "s", "important");
-    for (let i = 0; i < 2; i++) {
-      const span = document.createElement("span");
-      span.className = "offline-appointment-marquee__text";
-      span.textContent = text;
-      span.style.setProperty("color", style.textColor, "important");
-      track.appendChild(span);
-    }
-    strip.appendChild(track);
-    strip.style.setProperty("background-color", style.backgroundColor, "important");
-    strip.style.setProperty("color", style.textColor, "important");
-    return strip;
-  }
-
-  function render(settings) {
-    if (!document.body) return;
-    let main = buildStrip("kg-shared-main-announcement", "Appointment announcement",
-      settings.text, settings);
-    const existingMain = document.querySelector(".offline-appointment-marquee:not(#kg-shared-main-announcement)");
-    if (existingMain && !document.getElementById("kg-shared-main-announcement")) {
-      main.id = "kg-shared-main-announcement";
-      existingMain.replaceWith(main);
-    } else if (!main.isConnected) {
-      const header = document.querySelector("header, .site-header, .header");
-      if (header && header.parentNode) header.parentNode.insertBefore(main, header);
-      else document.body.insertBefore(main, document.body.firstChild);
-    }
-
-    const oldAdditional = document.getElementById("kg-shared-additional-announcement");
-    if (settings.additional) {
-      const extra = buildStrip("kg-shared-additional-announcement", "Additional announcement",
-        settings.additional.text, settings.additional);
-      main.insertAdjacentElement("afterend", extra);
-    } else if (oldAdditional) {
-      oldAdditional.remove();
-    }
-  }
-
-  async function refresh() {
-    const [defaultsFile, overridesFile, requestFile] = await Promise.all([
-      readJson(ROOT + "defaults.json"),
-      readJson(ROOT + "temporary_overrides.json"),
-      readJson(ROOT + "change-request.json")
-    ]);
-    render(resolve(defaultsFile, overridesFile, requestFile));
-  }
-
-  function start() {
-    render(FALLBACK);
-    refresh().catch(() => render(FALLBACK));
-    window.setInterval(() => {
-      if (!document.hidden) refresh().catch(() => {});
-    }, 300000);
-    document.addEventListener("visibilitychange", () => {
-      if (!document.hidden) refresh().catch(() => {});
-    });
-    window.KGHomepageAnnouncementSync = { refresh };
-  }
-  if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", start, { once: true });
-  } else {
-    start();
-  }
-})();
-
-
 /*
- * KIDSGASTRO MAIN-SITE JAVASCRIPT
- * Owner: the main-site app shell only (html[data-kg-site="main"]).
- * Contains homepage interactions, in-shell page routes, announcement sync,
- * main navigation and the homepage WhatsApp control.
- * Standalone subsite behavior belongs exclusively to /assets/kg-shared.js.
- * Main logo source: /assets/kg%20logo.webp.
+ * KidsGastro homepage interaction bundle.
+ * Inline scripts consolidated from index.html in their original execution order.
+ * Shared navigation, announcement and cosmic-animation engines remain in
+ * /assets/kg-shared.js and /assets/js/kg-announcement-sync.js.
+ * All KidsGastro logo references use /assets/kg%20logo.webp.
  */
 
 
-/* ===== MAIN: navigation content and FAQ cleanup ===== */
+/* ===== inline script 1 ===== */
 {
 document.addEventListener('DOMContentLoaded',()=>{const health=[...document.querySelectorAll('.nav-dropdown')].find(menu=>menu.querySelector('summary')?.textContent.trim().startsWith('Health Library'));if(health)health.querySelectorAll('.nav-dropdown-menu a').forEach(link=>{if(link.dataset.secondaryPage!=='publications')link.remove()});const tidyFaq=()=>setTimeout(()=>{const content=document.querySelector('#secondary-page-content');if(!content)return;const eyebrow=[...content.querySelectorAll('.eyebrow')].find(item=>item.textContent.trim()==='Family information');if(eyebrow)eyebrow.remove();const disclaimer=[...content.querySelectorAll('details')].find(item=>item.querySelector('summary')?.textContent.trim()==='Medical Disclaimer');if(disclaimer)disclaimer.open=true},0);tidyFaq();window.addEventListener('popstate',tidyFaq)})
 }
@@ -318,18 +70,18 @@ document.addEventListener('DOMContentLoaded',()=>{
 })();
 }
 
-/* ===== MAIN: dropdowns, reveal effects, newsletter and full-site search ===== */
+/* ===== inline script 10 ===== */
 {
 document.querySelectorAll('.nav-dropdown').forEach(dropdown=>{const syncUnderline=()=>dropdown.classList.toggle('dropdown-active',dropdown.open);dropdown.addEventListener('toggle',syncUnderline);dropdown.querySelector(':scope > summary')?.addEventListener('click',()=>{document.querySelectorAll('.nav-dropdown[open]').forEach(other=>{if(other!==dropdown)other.open=false})});syncUnderline()});document.addEventListener('click',event=>{if(!event.target.closest('.nav-dropdown'))document.querySelectorAll('.nav-dropdown[open]').forEach(dropdown=>dropdown.open=false)});/* Removed duplicate hamburger handlers that were immediately reversing the menu state. The primary handler controls #links. */const observer=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible','scroll-visible');observer.unobserve(e.target)}}),{threshold:.12});document.querySelectorAll('.reveal').forEach(e=>observer.observe(e));const cinematicTargets=document.querySelectorAll('.strip-grid>div,.section-heading,.credential-card,.reel-slide,.latest-card,.qr-card,.hospital-photo,.map-frame,.social-placeholder');cinematicTargets.forEach((el,index)=>{el.classList.add('scroll-cinematic');el.style.setProperty('--scroll-delay',(index%3)*90+'ms');observer.observe(el)});document.querySelectorAll('.reel-slide img,.photo-story-media img,.latest-image img,.hospital-photo img').forEach(img=>{img.classList.add('scroll-photo');observer.observe(img)});
 document.querySelector('#newsletter-form').addEventListener('submit',e=>{e.preventDefault();const f=e.currentTarget;if(!f.reportValidity())return;const email=new FormData(f).get('email');const subject=encodeURIComponent('Newsletter subscription request');const body=encodeURIComponent('Please add this email address to the clinic newsletter list: '+email);document.querySelector('#newsletter-status').textContent='Your email app will open with a subscription request for you to review and send.';location.href='mailto:drnitinmohanpaedsgastro@gmail.com?subject='+subject+'&body='+body});const siteSearch=document.querySelector('#site-search'),searchInput=document.querySelector('#site-search-input'),searchStatus=document.querySelector('#search-status'),mainContent=document.querySelector('#main'),secondaryTemplates=document.querySelector('#secondary-templates'),secondaryContent=document.querySelector('#secondary-page-content');let searchMatches=[],searchCursor=0,lastSearch='';const searchPageNames={profile:'About Dr. Nitin Mohan',treatments:'Treatments',services:'Services',publications:'Research Articles & Publications',hospital:'Hospital',clinical:'Clinical work',gallery:'KidsGastro Photo Gallery',latest:'Latest from KidsGastro',newsletter:'Newsletter',socials:'Social profiles',faqs:'FAQs',testimonials:'Patient & Family Testimonials'};function normalizedSearchText(value){return value.replace(/\s+/g,' ').trim().toLocaleLowerCase()}function buildFullSiteSearchIndex(){const entries=[],seen=new Set(),selector='h1,h2,h3,p,li,summary,dt,dd,small,strong,figcaption';function add(element,page,targetId){const text=element.textContent.replace(/\s+/g,' ').trim();if(!text)return;const key=(page||'home')+'|'+normalizedSearchText(text);if(seen.has(key))return;seen.add(key);entries.push({element,page,text,targetId})}mainContent.querySelectorAll(selector).forEach(element=>{const target=element.closest('#main [id]');add(element,'',target?target.id:'top')});secondaryTemplates.content.querySelectorAll('section[data-page]').forEach(section=>{const page=section.dataset.page;section.querySelectorAll(selector).forEach(element=>add(element,page,''))});return entries}function showSearchMatch(match){const pageRoutes={profile:'about',hospital:'clinic'};const destination=match.page?'/'+(pageRoutes[match.page]||match.page)+'/':'#'+match.targetId;if(match.page&&location.pathname!==destination){location.href=destination;return;}requestAnimationFrame(()=>requestAnimationFrame(()=>{let target=match.element;if(match.page){const candidates=secondaryContent.querySelectorAll('h1,h2,h3,p,li,summary,dt,dd,small,strong,figcaption');target=[...candidates].find(element=>normalizedSearchText(element.textContent)===normalizedSearchText(match.text))||secondaryContent.querySelector('[data-page]')}if(target){document.querySelectorAll('.search-hit').forEach(element=>element.classList.remove('search-hit'));target.classList.add('search-hit');target.scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'center'})}}))}siteSearch.addEventListener('submit',event=>{event.preventDefault();const rawQuery=searchInput.value.trim(),query=normalizedSearchText(rawQuery);document.querySelectorAll('.search-hit').forEach(element=>element.classList.remove('search-hit'));if(!query){searchStatus.textContent='Enter a word or phrase to search all pages.';return}if(query!==lastSearch){searchMatches=buildFullSiteSearchIndex().filter(entry=>normalizedSearchText(entry.text).includes(query));searchCursor=0;lastSearch=query}const count=searchMatches.length;if(!count){searchStatus.textContent='No matches';return}searchStatus.textContent=count+' '+(count===1?'match':'matches');const match=searchMatches[searchCursor];searchCursor=(searchCursor+1)%count;showSearchMatch(match)});searchInput.addEventListener('input',()=>{searchStatus.textContent='';lastSearch='';searchCursor=0})
 }
 
-/* ===== MAIN: internal route renderer for the main-site shell ===== */
+/* ===== inline script 11 ===== */
 {
 (()=>{const main=document.querySelector('#main'),site=document.querySelector('#secondary-site'),content=document.querySelector('#secondary-page-content'),templates=document.querySelector('#secondary-templates');if(!main||!site||!content||!templates)return;const labels={profile:'About Dr. Nitin Mohan',treatments:'Treatments',services:'Services',publications:'Research Articles & Publications',hospital:'Hospital',clinical:'Clinical work',gallery:'KidsGastro Photo Gallery',latest:'Latest from KidsGastro',blog:'KidsGastro Blog',newsletter:'KidsGastro newsletter',socials:'KidsGastro social profiles',faqs:'Frequently asked questions',testimonials:'Patient & Family Testimonials'};function renderRoute(){const routeSlug=location.pathname.split('/').filter(Boolean)[0]||'';const routeToTemplate={about:'profile',clinic:'hospital'};const id=routeToTemplate[routeSlug]||routeSlug||null;if(!labels[id]){site.hidden=true;main.hidden=false;document.title='KidsGastro | Kids Gastro in Hisar · Dr. Nitin Mohan';return}const template=templates.content.querySelector('[data-page="'+id+'"]');if(!template)return;main.hidden=true;site.hidden=false;content.innerHTML=template.innerHTML;const localTop=document.createElement('a');localTop.className='secondary-page-back-top';localTop.href='/gallery/';localTop.innerHTML='Back to top of this section <span aria-hidden="true">↑</span>';localTop.setAttribute('aria-label','Back to top of this section');content.appendChild(localTop);localTop.addEventListener('click',event=>{event.preventDefault();const behavior=matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth';const activePage=site.querySelector('#secondary-page-content');if(activePage){const header=document.querySelector('.header');const offset=(header?header.getBoundingClientRect().height:0)+12;const targetY=activePage.getBoundingClientRect().top+window.scrollY-offset;window.scrollTo({top:Math.max(0,targetY),behavior});}else{content.scrollIntoView({behavior,block:'start'});}});document.title=labels[id]+' | KidsGastro';site.querySelectorAll('.secondary-nav a').forEach(a=>{if(a.dataset.secondaryPage===id)a.setAttribute('aria-current','page');else a.removeAttribute('aria-current')});window.scrollTo({top:0,behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'})}document.addEventListener('click',e=>{const a=e.target.closest('a[data-secondary-page]');if(!a)return;return;const treatmentIndex=a.hasAttribute('data-treatment-index')?Number(a.dataset.treatmentIndex):null;const serviceIndex=a.hasAttribute('data-service-index')?Number(a.dataset.serviceIndex):null;const goToIndexedSection=()=>{if(treatmentIndex!==null){const card=content.querySelectorAll('.treatment-card')[treatmentIndex];if(card){card.setAttribute('tabindex','-1');card.scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'start'});card.focus({preventScroll:true});}}if(serviceIndex!==null){const card=content.querySelectorAll('.service-card')[serviceIndex];if(card){card.setAttribute('tabindex','-1');card.scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'start'});card.focus({preventScroll:true});}}};if(treatmentIndex!==null||serviceIndex!==null)requestAnimationFrame(()=>requestAnimationFrame(goToIndexedSection));});window.addEventListener('popstate',renderRoute);renderRoute()})();
 }
 
-/* ===== MAIN: core page interactions and navigation utilities ===== */
+/* ===== inline script 12 ===== */
 {
 (()=>{
  const dialog=document.getElementById('whatsapp-booking-dialog');
@@ -404,12 +156,12 @@ function weekdayForKey(key){const [y,m,d]=key.split('-').map(Number);return new 
    dateSummary.textContent="";dateError.textContent="";clearTimeout(dateErrorTimer);
    viewDate=new Date(y,m-1,1);error.textContent='';drawCalendar();updateClock();populateTimeSlots(key);return true;
  }
- function openDialog(){error.textContent='';bookingDialogTitle.textContent='Choose a preferred date and time';childNameInput.value='';childAgeInput.value='';if(parentNameInput)parentNameInput.value='';if(phoneStep)phoneStep.hidden=true;if(parentNameInput)parentNameInput.required=false;selectedDate='';dateInput.value='';manualDateInput.value='';typedTime.value='';timeSource='clock';timeChosen=false;lastValidTime='';manualPeriod='AM';periodExplicit=false;datePanel.disabled=false;timePanel.disabled=false;dateSummary.textContent="";dateError.textContent="";clearTimeout(dateErrorTimer);viewDate=new Date();viewDate.setDate(1);hour=9;minute=0;period='AM';part='hour';drawCalendar();populateTimeSlots('');if(typeof dialog.showModal==='function')dialog.showModal();else dialog.setAttribute('open','');requestAnimationFrame(updateClock);childNameInput.focus()}
+ function openDialog(){bookingVerificationInProgress=false;bookingHandoffStarted=false;if(bookingSubmitButton){bookingSubmitButton.disabled=false;bookingSubmitButton.removeAttribute('aria-busy');bookingSubmitButton.textContent='Continue to WhatsApp'}error.textContent='';error.classList.remove('is-pending','is-success','is-error');bookingDialogTitle.textContent='Choose a preferred date and time';childNameInput.value='';childAgeInput.value='';if(parentNameInput)parentNameInput.value='';if(phoneStep)phoneStep.hidden=false;if(parentNameInput)parentNameInput.required=false;selectedDate='';dateInput.value='';manualDateInput.value='';typedTime.value='';timeSource='clock';timeChosen=false;lastValidTime='';manualPeriod='AM';periodExplicit=false;datePanel.disabled=false;timePanel.disabled=false;dateSummary.textContent="";dateError.textContent="";clearTimeout(dateErrorTimer);viewDate=new Date();viewDate.setDate(1);hour=9;minute=0;period='AM';part='hour';drawCalendar();populateTimeSlots('');document.body.classList.add('kg-booking-dialog-open');dialog.setAttribute('aria-modal','true');if(!dialog.open&&typeof dialog.show==='function')dialog.show();else if(!dialog.open)dialog.setAttribute('open','');loadRecaptchaV2Invisible().catch(()=>{});requestAnimationFrame(updateClock);childNameInput.focus()}
 function updateNameGate(){bookingDialogTitle.textContent=selectedDate?"Choose a preferred date and time":"Select an appointment date";if(datePanel)datePanel.disabled=false;}
   childAgeInput.addEventListener('input',()=>{const match=childAgeInput.value.match(/^\d*(?:\.\d*)?/);const clean=match?match[0]:'';if(clean!==childAgeInput.value){childAgeInput.value=clean;showTemporaryError('Enter the age as a number.')}updateNameGate()});
 childAgeInput.addEventListener('blur',()=>{let value=childAgeInput.value.trim();if(value.startsWith('.'))value='0'+value;if(value.endsWith('.'))value=value.slice(0,-1);childAgeInput.value=value});
 function sanitizeName(field){const original=field.value;const clean=Array.from(original).filter(character=>/[\p{L}\p{M}\s.'’-]/u.test(character)).join('');if(clean!==original){field.value=clean;showTemporaryError('Use letters for names.')}updateNameGate()}
-childNameInput.addEventListener('input',()=>sanitizeName(childNameInput));if(parentNameInput)parentNameInput.addEventListener('input',()=>updateNameGate());
+childNameInput.addEventListener('input',()=>sanitizeName(childNameInput));if(parentNameInput)parentNameInput.addEventListener('input',()=>{const clean=parentNameInput.value.replace(/\D/g,'').slice(0,10);if(clean!==parentNameInput.value){parentNameInput.value=clean;showTemporaryError('Enter numbers only for the 10-digit mobile number.')}updateNameGate()});
  function drawCalendar(){
    const year=viewDate.getFullYear(),month=viewDate.getMonth();
    monthLabel.textContent=new Intl.DateTimeFormat('en-IN',{month:'long',year:'numeric'}).format(viewDate);
@@ -551,39 +303,193 @@ timeSource='typed';const match=getManualTime();if(match&&!periodExplicit){const 
   document.addEventListener('keydown',event=>{if(event.key==='Escape')closeBookingMenu()});
  dialog.querySelector('.booking-dialog-close').addEventListener('click',()=>dialog.close());
  dialog.querySelector('.booking-cancel').addEventListener('click',()=>dialog.close());
+ dialog.addEventListener('close',()=>document.body.classList.remove('kg-booking-dialog-open'));
  dialog.addEventListener('click',event=>{if(event.target===dialog)dialog.close()});
  window.addEventListener('resize',()=>{if(dialog.open)updateClock()});
- form.addEventListener('submit',event=>{
-   event.preventDefault();error.textContent='';
-   if(!childNameInput.value.trim()){error.textContent='Please enter the child’s name.';childNameInput.focus();return}
-   if(!childAgeInput.value.trim()||!Number.isFinite(Number(childAgeInput.value))||Number(childAgeInput.value)<0){error.textContent='Please enter the child’s age in years.';childAgeInput.focus();return}
-   if(!selectedDate){error.textContent='Please choose a date from the calendar or date field.';document.getElementById('calendar-previous').focus();return}
-   if(selectedDate<todayKey||selectedDate>tomorrowKey){error.textContent='Please choose today or tomorrow only.';return}
-   if(!timeSlotSelect.value){error.textContent='Please choose a 30-minute appointment slot.';timeSlotSelect.focus();return}
+ // Google reCAPTCHA v2 Invisible: load only when the user submits a booking.
+ const RECAPTCHA_SITE_KEY='6LfFKg4uAAAAAOxm7Evqvms6EGZHfO5AoulNITCc';
+ let recaptchaLoadPromise=null;
+ let recaptchaWidgetId=null;
+ let recaptchaAttempt=null;
+ let bookingVerificationInProgress=false;
+ let bookingHandoffStarted=false;
+ const bookingSubmitButton=form.querySelector('.booking-submit');
+
+ function loadRecaptchaV2Invisible(){
+   if(recaptchaWidgetId!==null)return Promise.resolve(recaptchaWidgetId);
+   if(recaptchaLoadPromise)return recaptchaLoadPromise;
+   recaptchaLoadPromise=new Promise((resolve,reject)=>{
+     let settled=false;
+     let renderStarted=false;
+     const timeoutId=window.setTimeout(()=>finish(new Error('Google reCAPTCHA loading timed out. Check your connection or browser content blocker, then try again.')),20000);
+     function finish(loadError){
+       if(settled)return;
+       settled=true;
+       window.clearTimeout(timeoutId);
+       if(loadError){recaptchaLoadPromise=null;reject(loadError);}
+       else resolve(recaptchaWidgetId);
+     }
+     function renderWidget(){
+       if(renderStarted||settled)return;
+       renderStarted=true;
+       if(!window.grecaptcha||typeof window.grecaptcha.ready!=='function'){
+         finish(new Error('Google reCAPTCHA is unavailable. Refresh the page and try again.'));
+         return;
+       }
+       window.grecaptcha.ready(()=>{
+         if(!window.grecaptcha||typeof window.grecaptcha.render!=='function'){
+           finish(new Error('The Invisible reCAPTCHA API could not be initialized.'));
+           return;
+         }
+         try{
+           let container=document.getElementById('appointment-recaptcha-v2');
+           if(!container){
+             container=document.createElement('div');
+             container.id='appointment-recaptcha-v2';
+             container.style.position='fixed';
+             container.style.left='0';
+             container.style.bottom='0';
+             container.style.width='1px';
+             container.style.height='1px';
+             container.style.overflow='visible';
+             container.style.zIndex='2147483002';
+             document.body.appendChild(container);
+           }
+           recaptchaWidgetId=window.grecaptcha.render(container,{
+             sitekey:RECAPTCHA_SITE_KEY,
+             size:'invisible',
+             callback:token=>{if(recaptchaAttempt)recaptchaAttempt.resolve(token);},
+             'error-callback':()=>{if(recaptchaAttempt)recaptchaAttempt.reject(new Error('Google reCAPTCHA encountered a network or configuration error. Please try again.'));},
+             'expired-callback':()=>{if(recaptchaAttempt)recaptchaAttempt.reject(new Error('reCAPTCHA expired. Please submit again.'));}
+           });
+           finish();
+         }catch(renderError){
+           finish(new Error('Unable to initialize Invisible reCAPTCHA. Check the registered website hostname and key configuration.'));
+         }
+       });
+     }
+     if(window.grecaptcha&&typeof window.grecaptcha.render==='function'){
+       renderWidget();
+       return;
+     }
+     window.__kgRecaptchaV2Ready=renderWidget;
+     const script=document.createElement('script');
+     script.src='https://www.google.com/recaptcha/api.js?onload=__kgRecaptchaV2Ready&render=explicit';
+     script.async=true;
+     script.defer=true;
+     script.dataset.kgRecaptchaLoader='true';
+     script.onerror=()=>finish(new Error('Google reCAPTCHA could not be downloaded. Check your connection or browser content blocker.'));
+     document.head.appendChild(script);
+   });
+   return recaptchaLoadPromise;
+ }
+
+ function executeRecaptchaV2Invisible(){
+   return new Promise((resolve,reject)=>{
+     if(recaptchaWidgetId===null||!window.grecaptcha||typeof window.grecaptcha.execute!=='function'){
+       reject(new Error('reCAPTCHA is not initialized. Please submit again.'));
+       return;
+     }
+     let settled=false;
+     const timeoutId=window.setTimeout(()=>finish(new Error('reCAPTCHA verification did not finish. Check whether your browser is blocking Google reCAPTCHA, then try again.')),90000);
+     function finish(executionError,token){
+       if(settled)return;
+       settled=true;
+       window.clearTimeout(timeoutId);
+       recaptchaAttempt=null;
+       if(executionError)reject(executionError);
+       else if(typeof token==='string'&&token.trim())resolve(token);
+       else reject(new Error('Google reCAPTCHA did not return a verification token. Please try again.'));
+     }
+     recaptchaAttempt={resolve:token=>finish(null,token),reject:executionError=>finish(executionError)};
+     try{
+       window.grecaptcha.reset(recaptchaWidgetId);
+       window.grecaptcha.execute(recaptchaWidgetId);
+     }catch(executionError){
+       finish(new Error('Unable to start Google reCAPTCHA. Please try again.'));
+     }
+   });
+ }
+
+ form.addEventListener('submit',async event=>{
+   event.preventDefault();
+   if(bookingVerificationInProgress||bookingHandoffStarted)return;
+   error.textContent='';
+   error.classList.remove('is-pending','is-success','is-error');
+   if(!childNameInput.value.trim()){
+     error.textContent='Please enter the child’s name.';childNameInput.focus();return;
+   }
+   if(!childAgeInput.value.trim()||!Number.isFinite(Number(childAgeInput.value))||Number(childAgeInput.value)<0){
+     error.textContent='Please enter the child’s age in years.';childAgeInput.focus();return;
+   }
+   const enteredPhone=parentNameInput?parentNameInput.value.trim():'';
+   if(enteredPhone&&!/^\d{10}$/.test(enteredPhone)){
+     error.textContent='Please enter a valid 10-digit mobile number, or leave the field blank.';parentNameInput.focus();return;
+   }
+   if(!selectedDate){error.textContent='Please choose a date from the calendar or date field.';document.getElementById('calendar-previous').focus();return;}
+   if(selectedDate<todayKey||selectedDate>tomorrowKey){error.textContent='Please choose today or tomorrow only.';return;}
+   if(!timeSlotSelect.value){error.textContent='Please choose a 30-minute appointment slot.';timeSlotSelect.focus();return;}
    applySelectedSlot();
    if(timeSource==='typed'){
      const typedMatch=typedTime.value.match(/^(0?[1-9]|1[0-2]):([0-5]?\d)$/);
-     if(!typedMatch){error.textContent='Use 1–12 for the hour and 0–59 for the minutes.';typedTime.focus();return}
+     if(!typedMatch){error.textContent='Use 1–12 for the hour and 0–59 for the minutes.';typedTime.focus();return;}
      hour=Number(typedMatch[1]);minute=Number(typedMatch[2]);period=manualPeriod;
    }
    validateCurrentTime();
-   if(!timeChosen){error.textContent=opdTimeGuidance.textContent;hourButton.focus();return}
+   if(!timeChosen){error.textContent=opdTimeGuidance.textContent;hourButton.focus();return;}
    let displayHour=hour,displayMinute=minute,displayPeriod=period;
-   if(timeSource==='typed'&&typedTime.value){const typedMatch=typedTime.value.match(/^(0?[1-9]|1[0-2]):([0-5]?\d)$/);displayHour=Number(typedMatch[1]);displayMinute=Number(typedMatch[2]);displayPeriod=manualPeriod}
+   if(timeSource==='typed'&&typedTime.value){
+     const typedMatch=typedTime.value.match(/^(0?[1-9]|1[0-2]):([0-5]?\d)$/);
+     if(typedMatch){displayHour=Number(typedMatch[1]);displayMinute=Number(typedMatch[2]);displayPeriod=manualPeriod;}
+   }
    const [year,month,day]=selectedDate.split('-').map(Number);
-   const dateText=`${String(day).padStart(2,"0")}/${String(month).padStart(2,"0")}/${year}`;
-   const timeText=timeSource==='typed'&&timeSlotSelect.value?timeSlotSelect.options[timeSlotSelect.selectedIndex].text:`${String(displayHour).padStart(2,'0')}:${String(displayMinute).padStart(2,'0')} ${displayPeriod}`;
-   const childName=childNameInput.value.trim(),childAge=childAgeInput.value.trim();
-   const message=`Hello, I would like to request an appointment with Dr. Nitin Mohan.
-
-Child: ${childName}
-Age: ${childAge} years
-Preferred date: ${dateText}
-Preferred time: ${timeText}
-
-Please confirm availability.`;
+   const dateText=`${String(day).padStart(2,'0')}/${String(month).padStart(2,'0')}/${year}`;
+   const timeText=timeSlotSelect.options[timeSlotSelect.selectedIndex].text;
+   const childName=childNameInput.value.trim();
+   const childAge=childAgeInput.value.trim();
+   const message=`Hello, I would like to request an appointment with Dr. Nitin Mohan.\n\nChild: ${childName}\nAge: ${childAge} years\nParent/guardian phone: ${enteredPhone||'Not provided'}\nPreferred date: ${dateText}\nPreferred time: ${timeText}\n\nPlease confirm availability.`;
    const waUrl=`https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
-   const popup=window.open(waUrl,'_blank','noopener,noreferrer');if(!popup){window.location.href=waUrl;return}dialog.close();
+
+   bookingVerificationInProgress=true;
+   if(bookingSubmitButton){bookingSubmitButton.disabled=true;bookingSubmitButton.setAttribute('aria-busy','true');bookingSubmitButton.textContent='Verifying…';}
+   error.classList.add('is-pending');
+   error.setAttribute('aria-live','polite');
+   error.textContent='Verifying securely. Please keep this window open…';
+   try{
+     await loadRecaptchaV2Invisible();
+     const token=await executeRecaptchaV2Invisible();
+     if(typeof token!=='string'||!token.trim())throw new Error('Google reCAPTCHA did not return a verification token. Please try again.');
+     const verificationResponse=await fetch('https://drnitinmohan-backend.drnitinmohanpaedsgastro.workers.dev/api/recaptcha/verify',{
+       method:'POST',
+       headers:{'Content-Type':'application/json'},
+       body:JSON.stringify({token,action:'BOOK_APPOINTMENT'})
+     });
+     if(!verificationResponse.ok)throw new Error('The verification service is temporarily unavailable. Please try again.');
+     let verification;
+     try{verification=await verificationResponse.json();}
+     catch(parseError){throw new Error('The verification service returned an invalid response. Please try again later.');}
+     if(!verification||verification.success!==true)throw new Error('We could not verify this request. Please try again.');
+
+     bookingHandoffStarted=true;
+     if(bookingSubmitButton){bookingSubmitButton.disabled=true;bookingSubmitButton.removeAttribute('aria-busy');bookingSubmitButton.textContent='Opening WhatsApp…';}
+     error.classList.remove('is-pending','is-error');
+     error.classList.add('is-success');
+     error.textContent='Verified successfully. Opening WhatsApp…';
+     try{sessionStorage.setItem('kg_pending_appointment_confirmation',JSON.stringify({childName,date:dateText,time:timeText,savedAt:Date.now()}));}catch(storageError){}
+     if(dialog.open)dialog.close();
+     window.setTimeout(()=>window.location.assign(waUrl),650);
+   }catch(captchaError){
+     error.classList.remove('is-pending','is-success');
+     error.classList.add('is-error');
+     error.textContent=(captchaError&&captchaError.message)||'Verification failed. Please try again.';
+   }finally{
+     bookingVerificationInProgress=false;
+     if(bookingSubmitButton&&!bookingHandoffStarted){
+       bookingSubmitButton.disabled=false;
+       bookingSubmitButton.removeAttribute('aria-busy');
+       bookingSubmitButton.textContent='Continue to WhatsApp';
+     }
+   }
  });
  drawCalendar();drawClock();
 })();
@@ -1151,7 +1057,7 @@ applyZoom();
 })();
 }
 
-/* ===== MAIN: lazy clinic image loader ===== */
+/* ===== inline script 26 ===== */
 {
 (function(){function loadClinicPhoto(){var target=document.querySelector("#hospital-location .clinic-entrance-photo");if(!target||target.dataset.loadedClinicPhoto)return;var source=document.querySelector('img[data-asset-id="kgasset6"]')||document.querySelector('img[alt="Hospital entrance and location"]');if(source&&source.src){target.src=source.src;target.dataset.loadedClinicPhoto="true";}}var target=document.querySelector("#hospital-location .clinic-entrance-photo");if(!target)return;if("IntersectionObserver" in window){var observer=new IntersectionObserver(function(entries){if(entries.some(function(entry){return entry.isIntersecting;})){loadClinicPhoto();observer.disconnect();}},{rootMargin:"300px"});observer.observe(target);}else{loadClinicPhoto();}})();
 }
@@ -1337,7 +1243,7 @@ applyZoom();
 })();
 }
 
-/* ===== MAIN: back-to-top and scroll reset ===== */
+/* ===== kg-final-back-top-and-all-cosmic-hover-fix ===== */
 {
 (()=>{
   const reduced=()=>window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -1359,7 +1265,47 @@ applyZoom();
 })();
 }
 
-/* Subsite-only canvas cleanup is not part of the main-site bundle. */
+/* ===== kg-clinic-animation-exclusion-guard ===== */
+{
+(() => {
+  const selector = '#hospital-location';
+  function cleanClinic() {
+    const clinic = document.querySelector(selector);
+    if (!clinic) return;
+    clinic.classList.remove('kg-cosmos-host', 'kg-orbit-surface', 'abstract-watermark-host');
+    clinic.querySelectorAll(
+      '.kg-cosmos-background, .kg-orbit-overlay, canvas.kg-sky, .abstract-watermark'
+    ).forEach(node => node.remove());
+    // Remove only animation-related inline properties; retain layout and map styles.
+    clinic.querySelectorAll('*').forEach(node => {
+      if (node.matches('img, iframe, .clinic-photo-card, .clinic-map-card')) {
+        node.style.removeProperty('animation');
+        node.style.removeProperty('transition');
+        node.style.removeProperty('transform');
+        node.style.removeProperty('filter');
+        node.style.removeProperty('will-change');
+      }
+    });
+  }
+  const start = () => {
+    cleanClinic();
+    const clinic = document.querySelector(selector);
+    if (!clinic || !('MutationObserver' in window)) return;
+    let queued = false;
+    const observer = new MutationObserver(() => {
+      if (queued) return;
+      queued = true;
+      queueMicrotask(() => { queued = false; cleanClinic(); });
+    });
+    observer.observe(clinic, { childList: true, subtree: true });
+  };
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', start, { once: true });
+  } else {
+    start();
+  }
+})();
+}
 
 /* ===== kg-fast-section-entrance-js ===== */
 {
@@ -1451,103 +1397,15 @@ applyZoom();
   const pauseForInteraction=()=>{interacting=true;clearTimeout(resumeTimer);stopFrame();updateButton();setStatus('Paused while you interact.');};
   const resumeAfterInteraction=()=>{clearTimeout(resumeTimer);resumeTimer=setTimeout(()=>{interacting=false;updateButton();start()},2600)};
   addClones();
-  /* Lazy-load the reel previews only when they approach the viewport.
-     The HTML keeps the five WebM URLs in data-src so they do not compete with
-     the hero image and first-screen CSS/JS during the initial page load. */
-  const reelVideos=()=>Array.from(track.querySelectorAll('video.kg-watch-content-video'));
-  const markVideoUnavailable=video=>{
-    const card=video.closest('.kg-watch-content-gif-link');
-    if(card)card.classList.add('kg-video-unavailable');
-  };
-  const hydrateVideo=video=>{
-    if(!video||video.dataset.kgVideoLoaded==='true')return;
-    const source=video.querySelector('source[data-src]');
-    if(!source){
-      if(!video.querySelector('source[src]'))markVideoUnavailable(video);
-      return;
-    }
-    if(video.canPlayType&&!video.canPlayType(source.type||'video/webm')){
-      markVideoUnavailable(video);
-      return;
-    }
-    const url=source.getAttribute('data-src');
-    if(!url){markVideoUnavailable(video);return;}
-    video.dataset.kgVideoLoaded='true';
-    video.muted=true;
-    video.defaultMuted=true;
-    video.playsInline=true;
-    video.loop=true;
-    video.preload='auto';
-    source.setAttribute('src',url);
-    source.removeAttribute('data-src');
-    video.load();
-  };
-  const videoInViewport=video=>{
-    const r=video.getBoundingClientRect();
-    return r.width>0&&r.height>0&&r.right>0&&r.left<window.innerWidth&&r.bottom>0&&r.top<window.innerHeight;
-  };
-  const syncVideoPlayback=video=>{
-    if(!video)return;
-    if(document.hidden||(reduce&&reduce.matches)||!videoInViewport(video)){
-      if(!video.paused)video.pause();
-      return;
-    }
-    hydrateVideo(video);
-    if(video.dataset.kgVideoLoaded==='true'&&video.paused){
-      const result=video.play();
-      if(result&&typeof result.catch==='function')result.catch(()=>{});
-    }
-  };
-  let reelLoadObserver=null,reelPlaybackObserver=null;
-  reelVideos().forEach(video=>{
-    video.addEventListener('error',()=>markVideoUnavailable(video),{once:true});
-    video.addEventListener('loadeddata',()=>{
-      const card=video.closest('.kg-watch-content-gif-link');
-      if(card)card.classList.remove('kg-video-unavailable');
-    },{once:true});
-  });
-  const syncAllReelVideos=()=>reelVideos().forEach(syncVideoPlayback);
-  if('IntersectionObserver' in window){
-    /* Prefetch just before a card enters view; a second zero-margin observer
-       starts/stops playback on actual viewport intersection. */
-    reelLoadObserver=new IntersectionObserver(entries=>{
-      entries.forEach(entry=>{if(entry.isIntersecting)hydrateVideo(entry.target);});
-    },{root:null,rootMargin:'160px 220px',threshold:0.01});
-    reelPlaybackObserver=new IntersectionObserver(entries=>{
-      entries.forEach(entry=>{
-        if(entry.isIntersecting)syncVideoPlayback(entry.target);
-        else if(!entry.target.paused)entry.target.pause();
-      });
-    },{root:null,rootMargin:'0px',threshold:0.08});
-    reelVideos().forEach(video=>{
-      reelLoadObserver.observe(video);
-      reelPlaybackObserver.observe(video);
-    });
-  }else{
-    reelVideos().forEach(video=>{hydrateVideo(video);syncVideoPlayback(video);});
-  }
-  track.addEventListener('scroll',syncAllReelVideos,{passive:true});
-  window.addEventListener('resize',syncAllReelVideos,{passive:true});
-  document.addEventListener('visibilitychange',syncAllReelVideos);
-  window.addEventListener('pagehide',()=>reelVideos().forEach(video=>video.pause()),{once:true});
-
-  /* Keep the loop continuous in both directions when a visitor uses the arrows. */
-  const moveCarousel=direction=>{
-    pauseForInteraction();
-    if(direction<0&&track.scrollLeft<=2&&originalSpan>0)track.scrollLeft=originalSpan;
-    else if(direction>0&&originalSpan>0&&track.scrollLeft>=originalSpan)track.scrollLeft-=originalSpan;
-    track.scrollBy({left:direction*Math.max(180,track.clientWidth*.75),behavior:reduce&&reduce.matches?'auto':'smooth'});
-    resumeAfterInteraction();
-  };
   if(playButton)playButton.addEventListener('click',()=>{userPaused=!userPaused;if(!userPaused){interacting=false;hovering=false}updateButton();start()});
-  if(back)back.addEventListener('click',()=>moveCarousel(-1));
-  if(forward)forward.addEventListener('click',()=>moveCarousel(1));
+  if(back)back.addEventListener('click',()=>{pauseForInteraction();track.scrollBy({left:-Math.max(180,track.clientWidth*.75),behavior:reduce&&reduce.matches?'auto':'smooth'});resumeAfterInteraction()});
+  if(forward)forward.addEventListener('click',()=>{pauseForInteraction();track.scrollBy({left:Math.max(180,track.clientWidth*.75),behavior:reduce&&reduce.matches?'auto':'smooth'});resumeAfterInteraction()});
   ['pointerdown','touchstart','wheel','keydown','focusin'].forEach(type=>track.addEventListener(type,()=>{pauseForInteraction();resumeAfterInteraction()},{passive:type!=='keydown'}));
   ['pointerup','touchend','touchcancel','pointercancel'].forEach(type=>track.addEventListener(type,()=>{resumeAfterInteraction()},{passive:true}));
   /* Scroll events are also emitted by the automatic animation; user input events above pause it without false-triggering on programmatic scrolls. */
   track.addEventListener('pointerenter',()=>{hovering=true;stopFrame();updateButton()});track.addEventListener('pointerleave',()=>{hovering=false;start()});
   document.addEventListener('visibilitychange',start);
-  if(reduce){const onMotionChange=()=>{if(reduce.matches){userPaused=true;stopFrame();updateButton();setStatus('Automatic movement paused for reduced-motion preference.');syncAllReelVideos()}else{start();syncAllReelVideos()}};if(reduce.addEventListener)reduce.addEventListener('change',onMotionChange);else if(reduce.addListener)reduce.addListener(onMotionChange)}
+  if(reduce){const onMotionChange=()=>{if(reduce.matches){userPaused=true;stopFrame();updateButton();setStatus('Automatic movement paused for reduced-motion preference.')}else{start()}};if(reduce.addEventListener)reduce.addEventListener('change',onMotionChange);else if(reduce.addListener)reduce.addListener(onMotionChange)}
   window.addEventListener('resize',()=>{measure();if(track.scrollLeft>=originalSpan&&originalSpan)track.scrollLeft%=originalSpan;start()},{passive:true});
   updateButton();measure();start();
  }
@@ -1593,178 +1451,98 @@ applyZoom();
 })();
 }
 
-/* ===== MAIN-SITE NAVIGATION CONTROLLER ===== */
-(() => {
-  "use strict";
-  if (document.documentElement.dataset.kgSite !== "main") return;
 
-  function initMainNavigation() {
-    const header = document.querySelector("header.header");
-    const nav = header && header.querySelector("nav.nav");
-    const button = nav && nav.querySelector("button.toggle");
-    const panel = nav && nav.querySelector("#links");
-    if (!header || !nav || !button || !panel || button.dataset.kgMainNav === "1") return;
-
-    button.dataset.kgMainNav = "1";
-    button.type = "button";
-    button.setAttribute("aria-controls", "links");
-
-    const isOpen = () => panel.classList.contains("open");
-    const placePanel = () => {
-      if (!isOpen()) return;
-      const rect = header.getBoundingClientRect();
-      const top = Math.max(8, Math.min(Math.round(rect.bottom + 5), window.innerHeight - 100));
-      panel.style.setProperty("--kg-final-menu-top", top + "px");
-    };
-
-    function setOpen(open) {
-      const compact = window.matchMedia("(max-width: 1100px)").matches;
-      const effectiveOpen = compact && Boolean(open);
-      panel.classList.toggle("open", effectiveOpen);
-      panel.hidden = false;
-      panel.setAttribute("aria-hidden", String(compact ? !effectiveOpen : false));
-      button.setAttribute("aria-expanded", String(effectiveOpen));
-      button.setAttribute("aria-label", effectiveOpen ? "Close navigation" : "Open navigation");
-      button.classList.toggle("is-open", effectiveOpen);
-      document.body.classList.toggle("kg-final-menu-open", effectiveOpen);
-
-      if (effectiveOpen) {
-        placePanel();
-        window.requestAnimationFrame(placePanel);
-      } else {
-        panel.querySelectorAll("details[open]").forEach(item => { item.open = false; });
-        panel.style.removeProperty("--kg-final-menu-top");
-      }
-    }
-
-    // Capture phase ensures a single click produces a single menu state change.
-    document.addEventListener("click", event => {
-      const hit = event.target && event.target.closest
-        ? event.target.closest('header.header button.toggle[aria-controls="links"]')
-        : null;
-      if (hit !== button) return;
-      event.preventDefault();
-      event.stopImmediatePropagation();
-      setOpen(!isOpen());
-    }, true);
-
-    document.addEventListener("click", event => {
-      if (isOpen() && !panel.contains(event.target) && !button.contains(event.target)) setOpen(false);
-    });
-    panel.addEventListener("click", event => {
-      if (event.target.closest("a[href]")) setOpen(false);
-    });
-    document.addEventListener("keydown", event => {
-      if (event.key === "Escape" && isOpen()) {
-        setOpen(false);
-        button.focus();
-      }
-    });
-    window.addEventListener("resize", () => setOpen(false), { passive: true });
-    window.addEventListener("scroll", placePanel, { passive: true });
-    setOpen(false);
-  }
-
-  if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", initMainNavigation, { once: true });
-  } else {
-    initMainNavigation();
-  }
-})();
-
-/* ===== MAIN-SITE WHATSAPP VERTICAL DRAG ===== */
-(() => {
-  "use strict";
-  if (document.documentElement.dataset.kgSite !== "main" || window.KGHomepageWhatsAppDrag) return;
-  window.KGHomepageWhatsAppDrag = true;
-
-  const init = () => {
-    const button = document.querySelector(".whatsapp-float");
-    if (!button || button.dataset.kgVerticalDrag === "1") return;
-    button.dataset.kgVerticalDrag = "1";
-    button.style.touchAction = "none";
-    button.style.cursor = "grab";
-
-    let active = false;
-    let moved = false;
-    let startY = 0;
-    let startTop = 0;
-    let pointerId = null;
-    const clampTop = value => Math.max(8, Math.min(
-      window.innerHeight - button.getBoundingClientRect().height - 8, value
-    ));
-
-    button.addEventListener("pointerdown", event => {
-      if (event.pointerType === "mouse" && event.button !== 0) return;
-      const rect = button.getBoundingClientRect();
-      active = true;
-      moved = false;
-      pointerId = event.pointerId;
-      startY = event.clientY;
-      startTop = rect.top;
-      button.classList.add("is-dragging");
-      button.style.left = "auto";
-      button.style.right = "max(16px, env(safe-area-inset-right))";
-      button.style.bottom = "auto";
-      button.style.top = rect.top + "px";
-      try { button.setPointerCapture(pointerId); } catch (_) {}
-      event.preventDefault();
-    });
-    button.addEventListener("pointermove", event => {
-      if (!active || event.pointerId !== pointerId) return;
-      const delta = event.clientY - startY;
-      if (Math.abs(delta) > 3) moved = true;
-      button.style.top = clampTop(startTop + delta) + "px";
-      event.preventDefault();
-    });
-    const finish = event => {
-      if (!active || event.pointerId !== pointerId) return;
-      active = false;
-      button.classList.remove("is-dragging");
-      button.style.cursor = "grab";
-      if (moved) {
-        button.dataset.kgDragged = "1";
-        window.setTimeout(() => { delete button.dataset.kgDragged; }, 350);
-      }
-      pointerId = null;
-    };
-    button.addEventListener("pointerup", finish);
-    button.addEventListener("pointercancel", finish);
-    button.addEventListener("click", event => {
-      if (button.dataset.kgDragged === "1") {
-        event.preventDefault();
-        event.stopImmediatePropagation();
-      }
-    }, true);
-    window.addEventListener("resize", () => {
-      if (button.style.top) button.style.top = clampTop(parseFloat(button.style.top) || 0) + "px";
-    }, { passive: true });
-  };
-
-  if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", init, { once: true });
-  } else {
-    init();
-  }
-})();
-
-
-})();
-
-/* Load decorative motion after first paint so it never competes with the hero. */
+/* ===== November 10 repair: desktop + mobile hamburger controller ===== */
 (()=>{
- 'use strict';
- if(document.documentElement.dataset.kgSite!=='main'||window.KGCosmosMotionRequested)return;
- window.KGCosmosMotionRequested=true;
- const load=()=>{
-  if(window.KGCosmosSpace||document.querySelector('script[data-kg-homepage-motion]'))return;
-  const script=document.createElement('script');
-  script.src='/assets/js/kg-homepage-motion.js?v=main-home-20261109-2';
-  script.async=true;
-  script.dataset.kgHomepageMotion='true';
-  if('fetchPriority' in script)script.fetchPriority='low';
-  document.head.appendChild(script);
- };
- if('requestIdleCallback' in window)window.requestIdleCallback(load,{timeout:1200});
- else window.setTimeout(load,480);
+  const toggle=document.querySelector('.header .toggle');
+  const panel=document.getElementById('links');
+  if(!toggle||!panel||toggle.dataset.kgMenuReady==='true')return;
+  toggle.dataset.kgMenuReady='true';
+  const setOpen=open=>{
+    panel.classList.toggle('open',open);
+    panel.setAttribute('aria-hidden',String(!open));
+    toggle.setAttribute('aria-expanded',String(open));
+    toggle.setAttribute('aria-label',open?'Close navigation':'Open navigation');
+    toggle.textContent=open?'×':'☰';
+  };
+  setOpen(false);
+  toggle.addEventListener('click',event=>{
+    event.preventDefault();
+    setOpen(!panel.classList.contains('open'));
+  });
+  document.addEventListener('click',event=>{
+    if(panel.classList.contains('open')&&!panel.contains(event.target)&&!toggle.contains(event.target))setOpen(false);
+    const link=event.target.closest&&event.target.closest('#links a[href]');
+    if(link)setOpen(false);
+  });
+  document.addEventListener('keydown',event=>{
+    if(event.key==='Escape'&&panel.classList.contains('open')){setOpen(false);toggle.focus();}
+  });
+})();
+
+/* ===== November 10 repair: draggable WhatsApp button (vertical only) ===== */
+(()=>{
+  const button=document.querySelector('a.whatsapp-float');
+  if(!button||button.dataset.kgDragReady==='true')return;
+  button.dataset.kgDragReady='true';
+  const storageKey='kg-whatsapp-float-top-v1';
+  let pointerId=null,startY=0,startTop=0,dragging=false,suppressClick=false;
+  const clampTop=value=>Math.max(8,Math.min(window.innerHeight-button.getBoundingClientRect().height-8,value));
+  const setTop=value=>{
+    const top=clampTop(value);
+    button.style.top=top+'px';
+    button.style.bottom='auto';
+    return top;
+  };
+  try{
+    const saved=Number(localStorage.getItem(storageKey));
+    if(Number.isFinite(saved)&&saved>0)setTop(saved);
+  }catch(storageError){}
+  button.addEventListener('pointerdown',event=>{
+    if(pointerId!==null||(event.pointerType==='mouse'&&event.button!==0))return;
+    pointerId=event.pointerId;
+    startY=event.clientY;
+    dragging=false;
+    // Pause the gentle float before measuring so the control does not jump on drag start.
+    button.classList.add('is-dragging');
+    startTop=button.getBoundingClientRect().top;
+    try{button.setPointerCapture(pointerId);}catch(captureError){}
+  });
+  button.addEventListener('pointermove',event=>{
+    if(pointerId===null||event.pointerId!==pointerId)return;
+    const deltaY=event.clientY-startY;
+    if(!dragging&&Math.abs(deltaY)<5)return;
+    dragging=true;
+    button.classList.add('is-dragging');
+    event.preventDefault();
+    setTop(startTop+deltaY);
+  });
+  const finishDrag=event=>{
+    if(pointerId===null||(event&&event.pointerId!==pointerId))return;
+    const wasDragging=dragging;
+    if(wasDragging){
+      const top=setTop(button.getBoundingClientRect().top);
+      try{localStorage.setItem(storageKey,String(Math.round(top)));}catch(storageError){}
+      suppressClick=true;
+    }
+    button.classList.remove('is-dragging');
+    try{if(button.hasPointerCapture(pointerId))button.releasePointerCapture(pointerId);}catch(releaseError){}
+    pointerId=null;
+    dragging=false;
+  };
+  button.addEventListener('pointerup',finishDrag);
+  button.addEventListener('pointercancel',finishDrag);
+  button.addEventListener('lostpointercapture',()=>{if(pointerId!==null)finishDrag({pointerId});});
+  button.addEventListener('click',event=>{
+    if(!suppressClick)return;
+    suppressClick=false;
+    event.preventDefault();
+    event.stopImmediatePropagation();
+  },true);
+  window.addEventListener('resize',()=>{
+    if(button.style.top){
+      const top=setTop(parseFloat(button.style.top)||button.getBoundingClientRect().top);
+      try{localStorage.setItem(storageKey,String(Math.round(top)));}catch(storageError){}
+    }
+  },{passive:true});
 })();
