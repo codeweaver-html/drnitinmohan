@@ -3,7 +3,6 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-
   <title>Patient &amp; Family Testimonials | KidsGastro</title>
   <meta name="description" content="Patient and family testimonials for Dr. Nitin Mohan, paediatric gastroenterologist.">
   <meta name="robots" content="index,follow,max-image-preview:large">
@@ -11,163 +10,210 @@
   <link rel="canonical" href="https://drnitinmohan.com/testimonials/">
   <link rel="icon" href="/assets/favicon/kg-favicon.ico">
 
-  <!-- Shared KidsGastro assets: common theme, announcement, navigation and site-wide behaviour. -->
-  <link rel="stylesheet" href="/assets/kg-shared.css">
+  <!-- Shared site-wide theme, header/footer presentation, announcement and animation. -->
+  <link rel="stylesheet" href="/assets/kg-shared.css?v=20261109-testimonials1">
+  <script defer src="/assets/kg-shared.js?v=20261109-testimonials1"></script>
 
-  <!-- Only testimonials-specific layout remains in this page. -->
+  <!-- Testimonials-only layout. Shared header/footer styles remain in kg-shared.css. -->
   <style>
-    #main {
-      min-height: 55vh;
-      padding: 48px 0 64px;
-    }
-
-    .kg-testimonials-page {
-      width: min(1160px, calc(100% - 40px));
-      margin: 0 auto;
-    }
-
-    .kg-testimonials-heading {
-      margin: 0 0 28px;
-    }
-
-    .kg-testimonials-heading .eyebrow {
-      margin: 0 0 8px;
-      color: var(--kg-blue, #0759a8);
-      font-weight: 700;
-    }
-
-    .kg-testimonials-heading h1 {
+    :root { color-scheme: light; }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; scroll-padding-top: 100px; }
+    body {
       margin: 0;
-      color: var(--kg-blue-dark, #123c77);
-      font-size: clamp(2rem, 4vw, 3.1rem);
-      line-height: 1.15;
+      background: var(--kg-page, #f7f9fb);
+      color: var(--kg-ink, #18384d);
+      font: 16px/1.7 Arial, "Segoe UI", sans-serif;
     }
+    a { color: inherit; }
+    .container { width: min(1120px, calc(100% - 48px)); margin-inline: auto; }
+
+    .skip-link {
+      position: absolute; left: -9999px; top: 8px; z-index: 2147483008;
+      padding: 10px 14px; background: #fff; color: #123c77;
+      border: 2px solid #ffc400; border-radius: 4px;
+    }
+    .skip-link:focus { left: 10px; }
+    .sr-only {
+      position: absolute !important; width: 1px !important; height: 1px !important;
+      padding: 0 !important; margin: -1px !important; overflow: hidden !important;
+      clip: rect(0, 0, 0, 0) !important; white-space: nowrap !important; border: 0 !important;
+    }
+
+    #main { min-height: 55vh; padding: 48px 0 64px; }
+    .kg-testimonials-page { width: min(1160px, calc(100% - 40px)); margin: 0 auto; }
+    .kg-testimonials-heading { margin: 0 0 28px; }
+    .kg-testimonials-heading .eyebrow {
+      margin: 0 0 8px; color: var(--kg-blue, #0759a8);
+      font-size: .82rem; font-weight: 800; letter-spacing: .06em; text-transform: uppercase;
+    }
+    .kg-testimonials-heading h1 {
+      margin: 0; color: var(--kg-blue-dark, #123c77);
+      font-size: clamp(2rem, 4vw, 3.1rem); line-height: 1.15; letter-spacing: -.025em;
+    }
+    .kg-testimonials-intro { max-width: 760px; margin: 12px 0 0; color: var(--kg-muted, #596f81); }
 
     .kg-testimonial-window {
-      overflow-x: auto;
-      overscroll-behavior-x: contain;
-      scroll-snap-type: x mandatory;
-      scrollbar-width: thin;
+      overflow-x: auto; overscroll-behavior-x: contain;
+      scroll-snap-type: x mandatory; scrollbar-width: thin;
       -webkit-overflow-scrolling: touch;
     }
-
     .kg-testimonial-track {
-      display: grid;
-      grid-auto-flow: column;
+      display: grid; grid-auto-flow: column;
       grid-auto-columns: minmax(270px, 340px);
-      gap: 18px;
-      padding: 4px 2px 16px;
+      gap: 18px; padding: 4px 2px 16px;
     }
-
     .kg-testimonial-card {
-      display: flex;
-      min-width: 0;
-      min-height: 190px;
-      flex-direction: column;
-      gap: 10px;
-      padding: 22px;
-      background: var(--kg-white, #fff);
-      border: 1px solid var(--kg-line, #dce6ee);
-      border-radius: 8px;
+      display: flex; min-width: 0; min-height: 190px; flex-direction: column; gap: 10px;
+      padding: 22px; background: var(--kg-white, #fff);
+      border: 1px solid var(--kg-line, #dce6ee); border-radius: 8px;
       scroll-snap-align: start;
     }
-
-    .kg-testimonial-card p {
-      margin: 0;
-      color: var(--kg-ink, #18384d);
-      line-height: 1.7;
-    }
-
-    .kg-testimonial-stars {
-      color: #d99a00;
-      font-size: 23px;
-      letter-spacing: 2px;
-      line-height: 1.2;
-    }
-
+    .kg-testimonial-card[hidden] { display: none !important; }
+    .kg-testimonial-card p { margin: 0; color: var(--kg-ink, #18384d); line-height: 1.7; }
+    .kg-testimonial-stars { color: #d99a00; font-size: 23px; letter-spacing: 2px; line-height: 1.2; }
     .kg-testimonial-controls {
-      display: flex;
-      justify-content: center;
-      gap: 10px;
-      margin-top: 16px;
+      display: flex; justify-content: center; gap: 10px; margin-top: 16px;
     }
-
     .kg-testimonial-controls button {
-      min-height: 42px;
-      padding: 8px 16px;
-      border: 1px solid var(--kg-blue, #0759a8);
-      border-radius: 5px;
-      background: var(--kg-white, #fff);
-      color: var(--kg-blue, #0759a8);
-      font: inherit;
-      cursor: pointer;
+      min-width: 108px; min-height: 42px; padding: 8px 16px;
+      border: 1px solid var(--kg-blue, #0759a8); border-radius: 5px;
+      background: var(--kg-white, #fff); color: var(--kg-blue, #0759a8);
+      font: inherit; cursor: pointer;
     }
+    .kg-testimonial-controls button:hover:not(:disabled) { background: var(--kg-pale, #eaf2f8); }
+    .kg-testimonial-controls button:focus-visible { outline: 3px solid var(--kg-yellow, #ffc400); outline-offset: 3px; }
+    .kg-testimonial-controls button:disabled { opacity: .45; cursor: not-allowed; }
 
-    .kg-testimonial-controls button:hover {
-      background: var(--kg-pale, #eaf2f8);
-    }
-
-    .kg-testimonial-controls button:focus-visible {
-      outline: 3px solid var(--kg-yellow, #ffc400);
-      outline-offset: 3px;
-    }
+    /* The shared bundle styles the search field; this page searches its own cards. */
+    .site-search .search-status { position: absolute; left: 0; top: calc(100% + 3px); color: #fff; font-size: .72rem; }
 
     @media (max-width: 600px) {
-      #main {
-        padding: 36px 0 48px;
-      }
-
-      .kg-testimonials-page {
-        width: calc(100% - 32px);
-      }
-
-      .kg-testimonial-track {
-        grid-auto-columns: minmax(260px, 86vw);
-        gap: 12px;
-      }
-
-      .kg-testimonial-card {
-        padding: 18px;
-      }
+      #main { padding: 36px 0 48px; }
+      .container { width: calc(100% - 32px); }
+      .kg-testimonials-page { width: calc(100% - 32px); }
+      .kg-testimonial-track { grid-auto-columns: minmax(260px, 86vw); gap: 12px; }
+      .kg-testimonial-card { padding: 18px; }
+      .kg-testimonial-controls button { min-width: 96px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      .kg-testimonial-window { scroll-behavior: auto; }
     }
   </style>
 </head>
-
 <body id="top">
+  <a class="skip-link" href="#main">Skip to main content</a>
+
+  <!-- Reserve the shared announcement row before JS runs to avoid layout shift.
+       kg-shared.js fills this existing element from the shared configuration. -->
+  <div id="kg-shared-main-announcement" class="kg-shared-announcement-strip"
+       role="region" aria-label="Appointment announcement"></div>
+
+  <!-- Canonical shared header structure: required by kg-shared.js navigation controller. -->
+  <header class="header kg-cosmos-host kg-orbit-surface" data-kg-cosmos-panel="true">
+    <nav aria-label="Main navigation" class="nav container">
+      <a class="brand" href="/" aria-label="KidsGastro — home">
+        <img class="mark circular-brand-logo" src="/assets/kg%20logo.webp"
+             alt="KidsGastro logo" width="58" height="58"
+             decoding="async" fetchpriority="high">
+        <span>KidsGastro by Dr. Nitin Mohan</span>
+      </a>
+
+      <button class="toggle" type="button" aria-controls="links" aria-expanded="false"
+              aria-label="Open navigation">☰</button>
+      <div class="hamburger-panel" id="hamburger-panel" aria-hidden="true" hidden></div>
+
+      <div class="links" id="links" aria-hidden="false">
+        <a class="nav-direct-link" href="/about/">About</a>
+
+        <details class="nav-dropdown">
+          <summary>Treatments</summary>
+          <div class="nav-dropdown-menu">
+            <a href="/treatments/"><b>Paediatric Gastroenterology</b></a>
+            <a href="/treatments/"><b>Paediatric Hepatology — Liver Diseases</b></a>
+            <a href="/treatments/"><b>Paediatric Pancreatology — Pancreatic Disorders</b></a>
+            <a href="/treatments/"><b>Paediatric Biliary Tract Diseases</b></a>
+            <a href="/treatments/"><b>Paediatric Nutrition and Growth</b></a>
+          </div>
+        </details>
+
+        <details class="nav-dropdown">
+          <summary>Services</summary>
+          <div class="nav-dropdown-menu">
+            <a href="/services/"><b>Paediatric Gastrointestinal Procedures</b></a>
+            <a href="/services/"><b>Hepatology Procedures and Investigations</b></a>
+            <a href="/services/"><b>Pancreatic Investigations</b></a>
+            <a href="/services/"><b>Biliary Tract Investigations</b></a>
+            <a href="/services/"><b>Gastrointestinal Diagnostic Investigations</b></a>
+            <a href="/services/"><b>Nutrition and Growth Assessment</b></a>
+          </div>
+        </details>
+
+        <a class="nav-direct-link" href="/faqs/">FAQs</a>
+        <a class="nav-direct-link" href="/blog/">Blog</a>
+
+        <details class="nav-dropdown">
+          <summary>Testimonials</summary>
+          <div class="nav-dropdown-menu">
+            <a href="/testimonials/" aria-current="page"><b>Patient and family testimonials</b><small>Read family experiences</small></a>
+          </div>
+        </details>
+
+        <details class="nav-dropdown">
+          <summary>Gallery</summary>
+          <div class="nav-dropdown-menu">
+            <a href="/gallery/"><b>KidsGastro Photo Gallery</b><small>Photos and clinical activities</small></a>
+          </div>
+        </details>
+
+        <a class="nav-direct-link" href="/publications/">Publications</a>
+        <a class="nav-direct-link" href="/#site-footer">Contact Info</a>
+
+        <details class="nav-dropdown nav-login-dropdown">
+          <summary>Login</summary>
+          <div class="nav-dropdown-menu">
+            <a href="/admin.html" class="kg-admin-menu-link"><b>Authorised access</b></a>
+          </div>
+        </details>
+      </div>
+
+      <form class="site-search" id="site-search" role="search">
+        <label class="sr-only" for="site-search-input">Search testimonials on this page</label>
+        <input id="site-search-input" type="search" autocomplete="off" placeholder="Search testimonials">
+        <button type="submit" aria-label="Search testimonials">⌕</button>
+        <span class="search-status" id="search-status" role="status" aria-live="polite"></span>
+      </form>
+    </nav>
+  </header>
+
   <main id="main">
     <section class="kg-testimonials-page" aria-labelledby="testimonials-title">
-      <header class="kg-testimonials-heading">
+      <div class="kg-testimonials-heading">
         <p class="eyebrow">Testimonials</p>
         <h1 id="testimonials-title">Patient &amp; Family Testimonials</h1>
-      </header>
+        <p class="kg-testimonials-intro">Experiences shared by patients and families who have visited KidsGastro.</p>
+      </div>
 
-      <div
-        class="kg-testimonial-window"
-        id="kg-testimonial-window"
-        tabindex="0"
-        aria-label="Patient and family testimonials"
-      >
+      <div class="kg-testimonial-window" id="kg-testimonial-window" tabindex="0"
+           aria-label="Patient and family testimonials">
         <div class="kg-testimonial-track" id="kg-testimonial-track">
           <article class="kg-testimonial-card">
             <div class="kg-testimonial-stars" aria-label="5 out of 5 stars">★★★★★</div>
             <p>“My child had jaundice for many years, and no doctor could find the cause. Doctor Nitin Mohan reached the diagnosis in just a few days, and we are very happy with his treatment.”</p>
           </article>
-
           <article class="kg-testimonial-card">
             <div class="kg-testimonial-stars" aria-label="5 out of 5 stars">★★★★★</div>
             <p>“My child had persistent vomiting, abdominal pain, and blood in the stool, and many doctors gave no resolution. After meeting Doctor Nitin Mohan, we were confident, and now our child is healthy.”</p>
           </article>
-
           <article class="kg-testimonial-card">
             <div class="kg-testimonial-stars" aria-label="5 out of 5 stars">★★★★★</div>
             <p>“After visiting many doctors, we came to Doctor Nitin Mohan for my 18-year-old child, who looked small for his age. He worked extensively on the case, and growth hormone deficiency was diagnosed. We are now planning treatment. Thank you.”</p>
           </article>
-
           <article class="kg-testimonial-card">
             <div class="kg-testimonial-stars" aria-label="5 out of 5 stars">★★★★★</div>
             <p>“My daughter had chest pain for 2 months, and no doctor in Sirsa could help. Doctor Nitin Mohan listened really well, and she is completely fine now.”</p>
           </article>
-
           <article class="kg-testimonial-card">
             <div class="kg-testimonial-stars" aria-label="5 out of 5 stars">★★★★★</div>
             <p>“My child had abdominal pain for 3 years with no resolution until we saw Doctor Nitin Mohan. The endoscopy was smooth, done under sedation with no complications, and he was diagnosed with esophageal candidiasis and acute gastritis. He is now doing well.”</p>
@@ -176,49 +222,139 @@
       </div>
 
       <div class="kg-testimonial-controls" aria-label="Testimonial navigation">
-        <button type="button" id="kg-testimonial-prev">← Previous</button>
-        <button type="button" id="kg-testimonial-next">Next →</button>
+        <button type="button" id="kg-testimonial-prev" aria-label="Previous testimonial" aria-controls="kg-testimonial-track">← Previous</button>
+        <button type="button" id="kg-testimonial-next" aria-label="Next testimonial" aria-controls="kg-testimonial-track">Next →</button>
       </div>
+      <p class="sr-only" id="testimonial-status" aria-live="polite"></p>
     </section>
   </main>
 
-  <!-- Testimonials slider: the only page-specific JavaScript. -->
+  <!-- Shared footer structure/styles. Both logo instances use the same external asset. -->
+  <footer aria-label="KidsGastro footer" class="footer kg-cosmos-host kg-orbit-surface"
+          id="site-footer" data-kg-cosmos-panel="true">
+    <div class="footer-contact-band">
+      <div class="container footer-contact-grid">
+        <div class="footer-contact-item">
+          <svg aria-hidden="true" viewBox="0 0 48 48"><path d="M7 41V18h19v23M3 41h28M13 18V9h8v9M17 12v5m-3-2h6M12 24h4m-4 6h4m4-6h3m-3 6h3m8 11V28h9v13m-12 0h15M35.5 24s-8-8.2-8-13.2a8 8 0 1 1 16 0c0 5-8 13.2-8 13.2Z"></path></svg>
+          <div class="footer-hospital-copy">
+            <strong>Churamani Multispeciality Hospital</strong>
+            <span>Hisar, Haryana · Appointment enquiries welcome</span>
+            <a aria-label="View Churamani Multispeciality Hospital location" href="/clinic/">View location <span aria-hidden="true">↗</span></a>
+          </div>
+        </div>
+        <div class="footer-contact-item">
+          <svg aria-hidden="true" viewBox="0 0 48 48"><path d="M13 5h22a3 3 0 0 1 3 3v32a3 3 0 0 1-3 3H13a3 3 0 0 1-3-3V8a3 3 0 0 1 3-3Zm2 7h18v22H15zm7 27h4"></path><path d="M20 16c1-1 2-1 3 1l2 3c.5 1 0 2-1 2l-1 1c1 2 3 4 5 5l1-1c1-1 2-1 3 0l2 2c1 1 0 2-1 3-1 1-3 1-5 0-5-2-10-7-11-12-.5-2 0-3 1-4Z"></path></svg>
+          <div>
+            <strong>Phone</strong>
+            <a href="tel:+919821020576">+91 98210 20576</a>
+          </div>
+        </div>
+        <div class="footer-contact-item footer-share-contact">
+          <svg aria-hidden="true" viewBox="0 0 48 48"><circle cx="11" cy="24" r="5"></circle><circle cx="36" cy="10" r="5"></circle><circle cx="36" cy="38" r="5"></circle><path d="m15.5 21.5 15-8.5M15.5 26.5l15 8.5"></path></svg>
+          <div class="footer-share-copy">
+            <strong>Share this website</strong>
+            <button class="footer-share" id="footer-share-button" type="button" aria-describedby="footer-share-status">Share link <span aria-hidden="true">↗</span></button>
+            <span class="footer-share-status" id="footer-share-status" role="status" aria-live="polite"></span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="container footer-bottom">
+      <a class="footer-brand" href="/" aria-label="KidsGastro — back to home">
+        <img class="mark footer-emblem circular-brand-logo" src="/assets/kg%20logo.webp"
+             alt="KidsGastro logo" width="58" height="58" loading="lazy" decoding="async" fetchpriority="low">
+        <span class="footer-brand-copy"><strong>KidsGastro</strong><small>Paediatric Gastroenterology</small><small class="footer-doctor">Dr. Nitin Mohan</small></span>
+      </a>
+      <p class="copyright">Copyright © 2026 Dr. Nitin Mohan. All rights reserved.</p>
+      <a class="back-top" href="#top">Back to top <span aria-hidden="true">↑</span></a>
+    </div>
+  </footer>
+
   <script>
-    (function () {
+    (() => {
       'use strict';
 
-      const windowEl = document.getElementById('kg-testimonial-window');
+      const viewport = document.getElementById('kg-testimonial-window');
       const track = document.getElementById('kg-testimonial-track');
       const previous = document.getElementById('kg-testimonial-prev');
       const next = document.getElementById('kg-testimonial-next');
+      const cards = [...document.querySelectorAll('.kg-testimonial-card')];
+      const status = document.getElementById('testimonial-status');
+      const searchForm = document.getElementById('site-search');
+      const searchInput = document.getElementById('site-search-input');
+      const searchStatus = document.getElementById('search-status');
+      if (!viewport || !track || !previous || !next) return;
 
-      if (!windowEl || !track || !previous || !next) return;
+      const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const scrollDistance = () => {
+        const card = track.querySelector('.kg-testimonial-card:not([hidden])');
+        if (!card) return viewport.clientWidth;
+        const gap = parseFloat(getComputedStyle(track).columnGap || getComputedStyle(track).gap) || 0;
+        return card.getBoundingClientRect().width + gap;
+      };
+      const updateControls = () => {
+        const maxScroll = Math.max(0, viewport.scrollWidth - viewport.clientWidth - 2);
+        previous.disabled = viewport.scrollLeft <= 2;
+        next.disabled = viewport.scrollLeft >= maxScroll;
+      };
+      previous.addEventListener('click', () => {
+        viewport.scrollBy({ left: -scrollDistance(), behavior: reducedMotion ? 'auto' : 'smooth' });
+      });
+      next.addEventListener('click', () => {
+        viewport.scrollBy({ left: scrollDistance(), behavior: reducedMotion ? 'auto' : 'smooth' });
+      });
+      viewport.addEventListener('scroll', updateControls, { passive: true });
+      window.addEventListener('resize', updateControls, { passive: true });
+      updateControls();
 
-      function scrollDistance() {
-        const card = track.querySelector('.kg-testimonial-card');
-        if (!card) return windowEl.clientWidth;
-
-        const cardWidth = card.getBoundingClientRect().width;
-        const trackStyle = window.getComputedStyle(track);
-        const gap = parseFloat(trackStyle.columnGap || trackStyle.gap) || 0;
-        return cardWidth + gap;
+      if (searchForm && searchInput) {
+        searchForm.addEventListener('submit', event => {
+          event.preventDefault();
+          const query = searchInput.value.trim().toLocaleLowerCase();
+          let visible = 0;
+          cards.forEach(card => {
+            const match = !query || card.textContent.toLocaleLowerCase().includes(query);
+            card.hidden = !match;
+            if (match) visible++;
+          });
+          viewport.scrollTo({ left: 0, behavior: reducedMotion ? 'auto' : 'smooth' });
+          searchStatus.textContent = query
+            ? (visible ? `${visible} matching testimonial${visible === 1 ? '' : 's'}` : 'No matching testimonials')
+            : 'Showing all testimonials';
+          status.textContent = searchStatus.textContent;
+          updateControls();
+        });
+        searchInput.addEventListener('input', () => {
+          if (!searchInput.value.trim()) {
+            cards.forEach(card => { card.hidden = false; });
+            searchStatus.textContent = '';
+            viewport.scrollTo({ left: 0, behavior: 'auto' });
+            updateControls();
+          }
+        });
       }
 
-      previous.addEventListener('click', function () {
-        windowEl.scrollBy({ left: -scrollDistance(), behavior: 'smooth' });
-      });
-
-      next.addEventListener('click', function () {
-        windowEl.scrollBy({ left: scrollDistance(), behavior: 'smooth' });
-      });
+      const shareButton = document.getElementById('footer-share-button');
+      const shareStatus = document.getElementById('footer-share-status');
+      if (shareButton) {
+        shareButton.addEventListener('click', async () => {
+          const url = 'https://drnitinmohan.com/testimonials/';
+          try {
+            if (navigator.share) {
+              await navigator.share({ title: 'KidsGastro — Patient & Family Testimonials', url });
+              shareStatus.textContent = 'Thanks for sharing';
+            } else if (navigator.clipboard && window.isSecureContext) {
+              await navigator.clipboard.writeText(url);
+              shareStatus.textContent = 'Link copied';
+            } else {
+              shareStatus.textContent = url;
+            }
+          } catch (_) {
+            shareStatus.textContent = 'Sharing cancelled';
+          }
+        });
+      }
     })();
   </script>
-
-  <!-- Skip only the shared cosmic canvas on this subsite. The rest of kg-shared.js stays active. -->
-  <script>
-    window.KGCosmosSpace = window.KGCosmosSpace || { disabled: true };
-  </script>
-
-  <script src="/assets/kg-shared.js" defer></script>
 </body>
 </html>
