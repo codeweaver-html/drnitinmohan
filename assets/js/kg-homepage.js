@@ -1546,3 +1546,29 @@ applyZoom();
     }
   },{passive:true});
 })();
+
+
+/* ===== Main-site-only cosmic animation loader ===== */
+(()=>{
+  'use strict';
+  const root=document.documentElement;
+  if(root.dataset.kgSite!=='main'||window.KGCosmosMotionRequested)return;
+  window.KGCosmosMotionRequested=true;
+  const load=()=>{
+    if(window.KGCosmosSpace)return;
+    const existing=document.querySelector('script[data-kg-homepage-motion]');
+    if(existing)return;
+    const script=document.createElement('script');
+    script.src='/assets/js/kg-homepage-motion.js?v=main-home-20261110-2';
+    script.async=true;
+    script.dataset.kgHomepageMotion='true';
+    if('fetchPriority' in script)script.fetchPriority='low';
+    script.onerror=()=>{
+      script.remove();
+      window.KGCosmosMotionRequested=false;
+    };
+    document.head.appendChild(script);
+  };
+  if('requestIdleCallback' in window)window.requestIdleCallback(load,{timeout:1400});
+  else window.setTimeout(load,520);
+})();
