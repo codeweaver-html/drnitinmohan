@@ -1,388 +1,224 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<title>Patient &amp; Family Testimonials | KidsGastro</title>
+  <title>Patient &amp; Family Testimonials | KidsGastro</title>
+  <meta name="description" content="Patient and family testimonials for Dr. Nitin Mohan, paediatric gastroenterologist.">
+  <meta name="robots" content="index,follow,max-image-preview:large">
+  <meta name="theme-color" content="#0759a8">
+  <link rel="canonical" href="https://drnitinmohan.com/testimonials/">
+  <link rel="icon" href="/assets/favicon/kg-favicon.ico">
 
-<meta name="description" content="Patient and family testimonials for Dr. Nitin Mohan, paediatric gastroenterologist.">
-<meta name="robots" content="index,follow,max-image-preview:large">
-<meta name="theme-color" content="#0759a8">
+  <!-- Shared KidsGastro assets: common theme, announcement, navigation and site-wide behaviour. -->
+  <link rel="stylesheet" href="/assets/kg-shared.css">
 
-<link rel="canonical" href="https://drnitinmohan.com/testimonials/">
-<link rel="icon" href="/assets/favicon/kg-favicon.ico">
-
-<!-- SHARED SITE ASSETS -->
-<link rel="stylesheet" href="/assets/kg-shared.css">
-
-<!-- PAGE-SPECIFIC CSS AND GLOBAL ANIMATION REMOVAL -->
-<style>
-
-/* =========================================
-   1. DISABLE ALL CSS ANIMATIONS
-   ========================================= */
-
-*,
-*::before,
-*::after {
-    animation: none !important;
-    animation-delay: 0s !important;
-    animation-duration: 0s !important;
-    animation-iteration-count: 1 !important;
-    transition: none !important;
-    scroll-behavior: auto !important;
-}
-
-/* Disable page transition effects */
-@view-transition {
-    navigation: none;
-}
-
-::view-transition-old(*),
-::view-transition-new(*) {
-    animation: none !important;
-}
-
-/* =========================================
-   2. REMOVE COSMIC / PARTICLE EFFECTS
-   ========================================= */
-
-#kg-space,
-canvas.kg-sky,
-.kg-orbit-overlay,
-.kg-orbit-ring,
-.kg-planet,
-.kg-planet-halo,
-.kg-planet-ring,
-.kg-moon-track,
-.kg-moon,
-.kg-asteroid,
-.kg-cosmic-canvas,
-.kg-space-background,
-.kg-particle-background,
-.kg-starfield,
-.kg-mobile-touch-cursor,
-.kg-mobile-touch-cursor-ring,
-.kg-mobile-touch-cursor-ripple {
-    display: none !important;
-}
-
-/* Remove animated background layers without removing
-   the actual shared header and footer. */
-
-.header.kg-cosmos-host::before,
-.header.kg-cosmos-host::after,
-.footer.kg-cosmos-host::before,
-.footer.kg-cosmos-host::after {
-    animation: none !important;
-    background-image: none !important;
-}
-
-/* =========================================
-   3. KEEP SHARED NAVIGATION FUNCTIONAL
-   ========================================= */
-
-/* Do not hide navigation or dropdowns.
-   Shared JS continues to control their behaviour. */
-
-.header,
-.header *,
-.footer,
-.footer * {
-    animation: none !important;
-    transition: none !important;
-}
-
-/* Preserve hamburger visibility states */
-@media (max-width: 760px) {
-    .header #links:not(.open) {
-        display: none !important;
-    }
-
-    .header #links.open {
-        display: flex !important;
-        flex-direction: column !important;
-    }
-}
-
-/* Remove animated menu backgrounds and overlays */
-body.kg-menu-open::after {
-    animation: none !important;
-}
-
-/* =========================================
-   4. TESTIMONIALS PAGE ONLY
-   ========================================= */
-
-body {
-    margin: 0;
-    background: #f6f8fa;
-    color: #18384d;
-    font-family: Arial, "Segoe UI", sans-serif;
-}
-
-#main {
-    min-height: 55vh;
-    padding: 48px 0 64px;
-}
-
-.kg-testimonials-page {
-    width: min(1160px, calc(100% - 40px));
-    margin: 0 auto;
-}
-
-.kg-testimonials-heading {
-    margin: 0 0 28px;
-}
-
-.kg-testimonials-heading .eyebrow {
-    margin: 0 0 8px;
-    color: #0759a8;
-    font-weight: 700;
-}
-
-.kg-testimonials-heading h1 {
-    margin: 0;
-    color: #123c77;
-    font-size: clamp(2rem, 4vw, 3.1rem);
-    line-height: 1.15;
-}
-
-/* =========================================
-   5. TESTIMONIAL CARDS
-   ========================================= */
-
-.kg-testimonial-window {
-    overflow-x: auto;
-    overscroll-behavior-x: contain;
-    scroll-snap-type: x mandatory;
-    scrollbar-width: thin;
-}
-
-.kg-testimonial-track {
-    display: grid;
-    grid-auto-flow: column;
-    grid-auto-columns: minmax(270px, 340px);
-    gap: 18px;
-    padding: 4px 2px 16px;
-}
-
-.kg-testimonial-card {
-    min-width: 0;
-    min-height: 190px;
-    padding: 22px;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    background: #fff;
-    border: 1px solid #cbdced;
-    border-radius: 8px;
-    scroll-snap-align: start;
-}
-
-.kg-testimonial-card p {
-    margin: 0;
-    color: #203c59;
-    line-height: 1.7;
-}
-
-.kg-testimonial-stars {
-    color: #d99a00;
-    font-size: 23px;
-    letter-spacing: 2px;
-    line-height: 1.2;
-}
-
-/* =========================================
-   6. MANUAL NAVIGATION CONTROLS
-   ========================================= */
-
-.kg-testimonial-controls {
-    display: flex;
-    justify-content: center;
-    gap: 10px;
-    margin-top: 16px;
-}
-
-.kg-testimonial-controls button {
-    min-height: 42px;
-    padding: 8px 16px;
-    border: 1px solid #0759a8;
-    border-radius: 5px;
-    background: #fff;
-    color: #0759a8;
-    font: inherit;
-    cursor: pointer;
-}
-
-.kg-testimonial-controls button:hover {
-    background: #edf4fa;
-}
-
-.kg-testimonial-controls button:focus-visible {
-    outline: 3px solid #ffc400;
-    outline-offset: 3px;
-}
-
-/* =========================================
-   7. MOBILE RESPONSIVENESS
-   ========================================= */
-
-@media (max-width: 600px) {
-
+  <!-- Only testimonials-specific layout remains in this page. -->
+  <style>
     #main {
-        padding: 36px 0 48px;
+      min-height: 55vh;
+      padding: 48px 0 64px;
     }
 
     .kg-testimonials-page {
-        width: calc(100% - 32px);
+      width: min(1160px, calc(100% - 40px));
+      margin: 0 auto;
+    }
+
+    .kg-testimonials-heading {
+      margin: 0 0 28px;
+    }
+
+    .kg-testimonials-heading .eyebrow {
+      margin: 0 0 8px;
+      color: var(--kg-blue, #0759a8);
+      font-weight: 700;
+    }
+
+    .kg-testimonials-heading h1 {
+      margin: 0;
+      color: var(--kg-blue-dark, #123c77);
+      font-size: clamp(2rem, 4vw, 3.1rem);
+      line-height: 1.15;
+    }
+
+    .kg-testimonial-window {
+      overflow-x: auto;
+      overscroll-behavior-x: contain;
+      scroll-snap-type: x mandatory;
+      scrollbar-width: thin;
+      -webkit-overflow-scrolling: touch;
     }
 
     .kg-testimonial-track {
-        grid-auto-columns: minmax(260px, 86vw);
-        gap: 12px;
+      display: grid;
+      grid-auto-flow: column;
+      grid-auto-columns: minmax(270px, 340px);
+      gap: 18px;
+      padding: 4px 2px 16px;
     }
 
     .kg-testimonial-card {
-        padding: 18px;
+      display: flex;
+      min-width: 0;
+      min-height: 190px;
+      flex-direction: column;
+      gap: 10px;
+      padding: 22px;
+      background: var(--kg-white, #fff);
+      border: 1px solid var(--kg-line, #dce6ee);
+      border-radius: 8px;
+      scroll-snap-align: start;
     }
-}
 
-</style>
+    .kg-testimonial-card p {
+      margin: 0;
+      color: var(--kg-ink, #18384d);
+      line-height: 1.7;
+    }
+
+    .kg-testimonial-stars {
+      color: #d99a00;
+      font-size: 23px;
+      letter-spacing: 2px;
+      line-height: 1.2;
+    }
+
+    .kg-testimonial-controls {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 16px;
+    }
+
+    .kg-testimonial-controls button {
+      min-height: 42px;
+      padding: 8px 16px;
+      border: 1px solid var(--kg-blue, #0759a8);
+      border-radius: 5px;
+      background: var(--kg-white, #fff);
+      color: var(--kg-blue, #0759a8);
+      font: inherit;
+      cursor: pointer;
+    }
+
+    .kg-testimonial-controls button:hover {
+      background: var(--kg-pale, #eaf2f8);
+    }
+
+    .kg-testimonial-controls button:focus-visible {
+      outline: 3px solid var(--kg-yellow, #ffc400);
+      outline-offset: 3px;
+    }
+
+    @media (max-width: 600px) {
+      #main {
+        padding: 36px 0 48px;
+      }
+
+      .kg-testimonials-page {
+        width: calc(100% - 32px);
+      }
+
+      .kg-testimonial-track {
+        grid-auto-columns: minmax(260px, 86vw);
+        gap: 12px;
+      }
+
+      .kg-testimonial-card {
+        padding: 18px;
+      }
+    }
+  </style>
 </head>
 
 <body id="top">
+  <main id="main">
+    <section class="kg-testimonials-page" aria-labelledby="testimonials-title">
+      <header class="kg-testimonials-heading">
+        <p class="eyebrow">Testimonials</p>
+        <h1 id="testimonials-title">Patient &amp; Family Testimonials</h1>
+      </header>
 
-<!-- SHARED HEADER IS PROVIDED BY kg-shared.js -->
+      <div
+        class="kg-testimonial-window"
+        id="kg-testimonial-window"
+        tabindex="0"
+        aria-label="Patient and family testimonials"
+      >
+        <div class="kg-testimonial-track" id="kg-testimonial-track">
+          <article class="kg-testimonial-card">
+            <div class="kg-testimonial-stars" aria-label="5 out of 5 stars">★★★★★</div>
+            <p>“My child had jaundice for many years, and no doctor could find the cause. Doctor Nitin Mohan reached the diagnosis in just a few days, and we are very happy with his treatment.”</p>
+          </article>
 
-<main id="main">
+          <article class="kg-testimonial-card">
+            <div class="kg-testimonial-stars" aria-label="5 out of 5 stars">★★★★★</div>
+            <p>“My child had persistent vomiting, abdominal pain, and blood in the stool, and many doctors gave no resolution. After meeting Doctor Nitin Mohan, we were confident, and now our child is healthy.”</p>
+          </article>
 
-    <section class="kg-testimonials-page"
-             aria-labelledby="testimonials-title">
+          <article class="kg-testimonial-card">
+            <div class="kg-testimonial-stars" aria-label="5 out of 5 stars">★★★★★</div>
+            <p>“After visiting many doctors, we came to Doctor Nitin Mohan for my 18-year-old child, who looked small for his age. He worked extensively on the case, and growth hormone deficiency was diagnosed. We are now planning treatment. Thank you.”</p>
+          </article>
 
-        <header class="kg-testimonials-heading">
+          <article class="kg-testimonial-card">
+            <div class="kg-testimonial-stars" aria-label="5 out of 5 stars">★★★★★</div>
+            <p>“My daughter had chest pain for 2 months, and no doctor in Sirsa could help. Doctor Nitin Mohan listened really well, and she is completely fine now.”</p>
+          </article>
 
-            <p class="eyebrow">Testimonials</p>
-
-            <h1 id="testimonials-title">
-                Patient &amp; Family Testimonials
-            </h1>
-
-        </header>
-
-        <div class="kg-testimonial-window"
-             id="kg-testimonial-window"
-             tabindex="0"
-             aria-label="Patient and family testimonials">
-
-            <div class="kg-testimonial-track"
-                 id="kg-testimonial-track">
-
-                <article class="kg-testimonial-card">
-                    <div class="kg-testimonial-stars"
-                         aria-label="5 out of 5 stars">★★★★★</div>
-                    <p>“My child had jaundice for many years, and no doctor could find the cause. Doctor Nitin Mohan reached the diagnosis in just a few days, and we are very happy with his treatment.”</p>
-                </article>
-
-                <article class="kg-testimonial-card">
-                    <div class="kg-testimonial-stars"
-                         aria-label="5 out of 5 stars">★★★★★</div>
-                    <p>“My child had persistent vomiting, abdominal pain, and blood in the stool, and many doctors gave no resolution. After meeting Doctor Nitin Mohan, we were confident, and now our child is healthy.”</p>
-                </article>
-
-                <article class="kg-testimonial-card">
-                    <div class="kg-testimonial-stars"
-                         aria-label="5 out of 5 stars">★★★★★</div>
-                    <p>“After visiting many doctors, we came to Doctor Nitin Mohan for my 18-year-old child, who looked small for his age. He worked extensively on the case, and growth hormone deficiency was diagnosed. We are now planning treatment. Thank you.”</p>
-                </article>
-
-                <article class="kg-testimonial-card">
-                    <div class="kg-testimonial-stars"
-                         aria-label="5 out of 5 stars">★★★★★</div>
-                    <p>“My daughter had chest pain for 2 months, and no doctor in Sirsa could help. Doctor Nitin Mohan listened really well, and she is completely fine now.”</p>
-                </article>
-
-                <article class="kg-testimonial-card">
-                    <div class="kg-testimonial-stars"
-                         aria-label="5 out of 5 stars">★★★★★</div>
-                    <p>“My child had abdominal pain for 3 years with no resolution until we saw Doctor Nitin Mohan. The endoscopy was smooth, done under sedation with no complications, and he was diagnosed with esophageal candidiasis and acute gastritis. He is now doing well.”</p>
-                </article>
-
-            </div>
+          <article class="kg-testimonial-card">
+            <div class="kg-testimonial-stars" aria-label="5 out of 5 stars">★★★★★</div>
+            <p>“My child had abdominal pain for 3 years with no resolution until we saw Doctor Nitin Mohan. The endoscopy was smooth, done under sedation with no complications, and he was diagnosed with esophageal candidiasis and acute gastritis. He is now doing well.”</p>
+          </article>
         </div>
+      </div>
 
-        <div class="kg-testimonial-controls"
-             aria-label="Testimonial navigation">
-
-            <button type="button"
-                    id="kg-testimonial-prev">
-                ← Previous
-            </button>
-
-            <button type="button"
-                    id="kg-testimonial-next">
-                Next →
-            </button>
-
-        </div>
-
+      <div class="kg-testimonial-controls" aria-label="Testimonial navigation">
+        <button type="button" id="kg-testimonial-prev">← Previous</button>
+        <button type="button" id="kg-testimonial-next">Next →</button>
+      </div>
     </section>
+  </main>
 
-</main>
+  <!-- Testimonials slider: the only page-specific JavaScript. -->
+  <script>
+    (function () {
+      'use strict';
 
-<!-- MANUAL TESTIMONIAL NAVIGATION -->
-<script>
-(function () {
+      const windowEl = document.getElementById('kg-testimonial-window');
+      const track = document.getElementById('kg-testimonial-track');
+      const previous = document.getElementById('kg-testimonial-prev');
+      const next = document.getElementById('kg-testimonial-next');
 
-    const windowEl = document.getElementById(
-        'kg-testimonial-window'
-    );
+      if (!windowEl || !track || !previous || !next) return;
 
-    const track = document.getElementById(
-        'kg-testimonial-track'
-    );
+      function scrollDistance() {
+        const card = track.querySelector('.kg-testimonial-card');
+        if (!card) return windowEl.clientWidth;
 
-    const previous = document.getElementById(
-        'kg-testimonial-prev'
-    );
+        const cardWidth = card.getBoundingClientRect().width;
+        const trackStyle = window.getComputedStyle(track);
+        const gap = parseFloat(trackStyle.columnGap || trackStyle.gap) || 0;
+        return cardWidth + gap;
+      }
 
-    const next = document.getElementById(
-        'kg-testimonial-next'
-    );
+      previous.addEventListener('click', function () {
+        windowEl.scrollBy({ left: -scrollDistance(), behavior: 'smooth' });
+      });
 
-    if (!windowEl || !track || !previous || !next) return;
+      next.addEventListener('click', function () {
+        windowEl.scrollBy({ left: scrollDistance(), behavior: 'smooth' });
+      });
+    })();
+  </script>
 
-    function distance() {
-        const card = track.querySelector(
-            '.kg-testimonial-card'
-        );
+  <!-- Skip only the shared cosmic canvas on this subsite. The rest of kg-shared.js stays active. -->
+  <script>
+    window.KGCosmosSpace = window.KGCosmosSpace || { disabled: true };
+  </script>
 
-        return card
-            ? card.getBoundingClientRect().width + 18
-            : windowEl.clientWidth;
-    }
-
-    previous.addEventListener('click', function () {
-        windowEl.scrollBy({
-            left: -distance(),
-            behavior: 'auto'
-        });
-    });
-
-    next.addEventListener('click', function () {
-        windowEl.scrollBy({
-            left: distance(),
-            behavior: 'auto'
-        });
-    });
-
-})();
-</script>
-
-<!-- SHARED SITE JAVASCRIPT -->
-<script src="/assets/kg-shared.js" defer></script>
-
+  <script src="/assets/kg-shared.js" defer></script>
 </body>
 </html>
