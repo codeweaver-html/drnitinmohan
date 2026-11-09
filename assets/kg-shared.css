@@ -780,3 +780,24 @@ header.kg-space-panel #links.open[aria-hidden="false"]{
 @media(prefers-reduced-motion:reduce){
   #kg-space{opacity:.35!important}
 }
+
+
+/* ===== SUBSITE NAVIGATION RELIABILITY PATCH ===== */
+/* Desktop: keep the full link row interactive. Reserve the hamburger for compact layouts. */
+@media (min-width:1101px) {
+  html.kg-shared-subsite .header>nav.nav {
+    grid-template-columns:minmax(0,1fr) minmax(160px,min(36vw,390px))!important;
+    grid-template-areas:"brand search"!important;
+  }
+  html.kg-shared-subsite .header nav.nav>button.toggle {
+    display:none!important;
+  }
+  html.kg-shared-subsite .header #links {
+    display:flex!important;
+    position:static!important;
+    visibility:visible!important;
+    opacity:1!important;
+    pointer-events:auto!important;
+    flex-wrap:wrap!important;
+  }
+}

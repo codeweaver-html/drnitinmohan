@@ -1184,14 +1184,18 @@
       panel.style.setProperty("--kg-final-menu-top", top + "px");
     }
     function setOpen(open) {
-      panel.classList.toggle("open", !!open);
+      var compact = window.matchMedia("(max-width: 1100px)").matches;
+      var effectiveOpen = compact && !!open;
+      panel.classList.toggle("open", effectiveOpen);
       panel.hidden = false;
-      panel.setAttribute("aria-hidden", String(!open));
-      button.setAttribute("aria-expanded", String(!!open));
-      button.setAttribute("aria-label", open ? "Close navigation" : "Open navigation");
-      button.classList.toggle("is-open", !!open);
-      document.body.classList.toggle("kg-final-menu-open", !!open);
-      if (open) {
+      /* Only standalone subsites expose a permanent desktop link row. Keep the homepage state unchanged. */
+      var isSubsite = document.documentElement.classList.contains("kg-shared-subsite");
+      panel.setAttribute("aria-hidden", String(compact ? !effectiveOpen : !isSubsite));
+      button.setAttribute("aria-expanded", String(effectiveOpen));
+      button.setAttribute("aria-label", effectiveOpen ? "Close navigation" : "Open navigation");
+      button.classList.toggle("is-open", effectiveOpen);
+      document.body.classList.toggle("kg-final-menu-open", effectiveOpen);
+      if (effectiveOpen) {
         placePanel();
         window.requestAnimationFrame(placePanel);
       } else {
@@ -1222,7 +1226,7 @@
         button.focus();
       }
     });
-    window.addEventListener("resize", placePanel, { passive: true });
+    window.addEventListener("resize", function () { setOpen(false); placePanel(); }, { passive: true });
     window.addEventListener("scroll", placePanel, { passive: true });
     setOpen(false);
   }
