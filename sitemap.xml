@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
-        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1"
+        xmlns:video="http://www.google.com/schemas/sitemap-video/1.1">
   <url>
     <loc>https://drnitinmohan.com/</loc>
     <image:image>
@@ -20,6 +21,36 @@
     <image:image>
       <image:loc>https://drnitinmohan.com/assets/hospital%20pic.webp</image:loc>
     </image:image>
+    <video:video>
+      <video:thumbnail_loc>https://drnitinmohan.com/assets/kidsgastro-video-1-thumbnail.jpg</video:thumbnail_loc>
+      <video:title>KidsGastro video 1</video:title>
+      <video:description>Short video featured on the KidsGastro website.</video:description>
+      <video:content_loc>https://drnitinmohan.com/assets/gif%201.webm</video:content_loc>
+    </video:video>
+    <video:video>
+      <video:thumbnail_loc>https://drnitinmohan.com/assets/kidsgastro-video-2-thumbnail.jpg</video:thumbnail_loc>
+      <video:title>KidsGastro video 2</video:title>
+      <video:description>Short video featured on the KidsGastro website.</video:description>
+      <video:content_loc>https://drnitinmohan.com/assets/gif%202.webm</video:content_loc>
+    </video:video>
+    <video:video>
+      <video:thumbnail_loc>https://drnitinmohan.com/assets/kidsgastro-video-3-thumbnail.jpg</video:thumbnail_loc>
+      <video:title>KidsGastro video 3</video:title>
+      <video:description>Short video featured on the KidsGastro website.</video:description>
+      <video:content_loc>https://drnitinmohan.com/assets/gif%203.webm</video:content_loc>
+    </video:video>
+    <video:video>
+      <video:thumbnail_loc>https://drnitinmohan.com/assets/kidsgastro-video-4-thumbnail.jpg</video:thumbnail_loc>
+      <video:title>KidsGastro video 4</video:title>
+      <video:description>Short video featured on the KidsGastro website.</video:description>
+      <video:content_loc>https://drnitinmohan.com/assets/gif%204.webm</video:content_loc>
+    </video:video>
+    <video:video>
+      <video:thumbnail_loc>https://drnitinmohan.com/assets/kidsgastro-video-5-thumbnail.jpg</video:thumbnail_loc>
+      <video:title>KidsGastro video 5</video:title>
+      <video:description>Short video featured on the KidsGastro website.</video:description>
+      <video:content_loc>https://drnitinmohan.com/assets/gif%205.webm</video:content_loc>
+    </video:video>
   </url>
   <url>
     <loc>https://drnitinmohan.com/about/</loc>
