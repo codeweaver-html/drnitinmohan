@@ -2,7 +2,7 @@
    Keep this file beside the site root document and name it exactly: service-worker.js
 */
 
-const CACHE_NAME = "kidsgastro-cache-v14";
+const CACHE_NAME = "kidsgastro-cache-v15";
 const APP_ROOT = new URL(self.registration.scope);
 const APP_ORIGIN = self.location.origin;
 
@@ -17,9 +17,22 @@ const SHELL_FILES = [
   "./settings.json",
   "./robots.txt",
   "./sitemap.xml",
-  "./favicon.jpg",
+  "./assets/kg%20logo.webp",
   "./about/",
+  "./about.html",
   "./blog/",
+  "./blog.html",
+  "./clinic.html",
+  "./clinical.html",
+  "./faqs.html",
+  "./gallery.html",
+  "./latest.html",
+  "./newsletter.html",
+  "./publications.html",
+  "./services.html",
+  "./socials.html",
+  "./testimonials.html",
+  "./treatments.html",
   "./blog/hepatitis-c-in-children/",
   "./clinic/",
   "./clinical/",
@@ -133,19 +146,16 @@ async function networkFirst(request) {
       return response;
     }
 
-    /* GitHub Pages may still have other legacy flat pages. Resolve those only
-       after checking the clean directory route, keeping the URL clean. */
+    /* Resolve a clean directory route first, then try its existing flat HTML file. */
     const cleanPath = requestedUrl.pathname.replace(/\/+$/, "");
     const lastSegment = cleanPath.split("/").pop() || "";
     if (response.status === 404 && cleanPath && !lastSegment.includes(".")) {
       const cleanCandidates = [
         new URL(`${cleanPath}/index.html${requestedUrl.search}`, requestedUrl.origin)
       ];
-      /* Keep legacy resolution for older flat pages, but never fall back to
-         a .html page for the blog or any nested blog article route. */
-      if (!/^\/blog(?:\/|$)/i.test(requestedUrl.pathname)) {
-        cleanCandidates.push(new URL(`${cleanPath}.html${requestedUrl.search}`, requestedUrl.origin));
-      }
+      /* Clean public URLs may be backed by the existing root-level HTML files.
+         The browser keeps the clean URL; this is an internal response fallback. */
+      cleanCandidates.push(new URL(`${cleanPath}.html${requestedUrl.search}`, requestedUrl.origin));
       for (const candidate of cleanCandidates) {
         const cleanResponse = await fetch(candidate.href, { cache: "no-cache" });
         if (cleanResponse.ok) {
@@ -158,6 +168,19 @@ async function networkFirst(request) {
   } catch (error) {
     const cached = await cache.match(request);
     if (cached) return cached;
+
+    const cleanPath = requestedUrl.pathname.replace(/\/+$/, "");
+    const lastSegment = cleanPath.split("/").pop() || "";
+    if (cleanPath && !lastSegment.includes(".")) {
+      const fallbackUrls = [
+        new URL(`${cleanPath}/index.html${requestedUrl.search}`, requestedUrl.origin),
+        new URL(`${cleanPath}.html${requestedUrl.search}`, requestedUrl.origin)
+      ];
+      for (const fallbackUrl of fallbackUrls) {
+        const fallbackResponse = await cache.match(fallbackUrl.href);
+        if (fallbackResponse) return fallbackResponse;
+      }
+    }
 
     /* If an uncached page is requested offline, show the cached homepage. */
     const homePage = await cache.match(APP_ROOT.href);

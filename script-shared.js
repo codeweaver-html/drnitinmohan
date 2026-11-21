@@ -130,7 +130,12 @@ const SITE_CONFIG = {
   };
   const safeText = value => String(value == null ? "" : value);
   const escapeHtml = value => safeText(value).replace(/[&<>"']/g, ch => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;", "'":"&#39;"}[ch]));
-  const currentFile = String(window.location.pathname || "").split("/").pop().replace(/\.html?$/i, "").toLowerCase();
+  const pathParts = String(window.location.pathname || "/").split("/").filter(Boolean);
+  let currentRouteFile = pathParts[pathParts.length - 1] || pathParts[pathParts.length - 2] || "";
+  if (/^index\.html?$/i.test(currentRouteFile) && pathParts.length > 1) {
+    currentRouteFile = pathParts[pathParts.length - 2];
+  }
+  const currentFile = currentRouteFile.replace(/\.html?$/i, "").toLowerCase();
   let activePage = body.dataset.sitePage || (currentFile && currentFile !== "index" ? currentFile : "home");
   root.dataset.navStyle = SITE_CONFIG.features.navStyle;
 
@@ -146,19 +151,16 @@ const SITE_CONFIG = {
       link.dataset.kgSharedStyles = "true";
       document.head.append(link);
     }
-    const icons = [...document.querySelectorAll('link[rel~="icon"], link[rel="shortcut icon"]')];
-    if (icons.length) {
-      icons.forEach(icon => {
-        icon.href = asset("favicon.jpg");
-        icon.type = "image/jpeg";
-      });
-    } else {
-      const icon = document.createElement("link");
+    const favicon = asset("assets/kg%20logo.webp?v=20261122");
+    let icon = document.querySelector('link[rel="icon"]');
+    if (!icon) {
+      icon = document.createElement("link");
       icon.rel = "icon";
-      icon.href = asset("favicon.jpg");
-      icon.type = "image/jpeg";
       document.head.append(icon);
     }
+    icon.type = "image/webp";
+    icon.href = favicon;
+    document.querySelectorAll('link[rel="shortcut icon"]').forEach(link => link.remove());
   }
 
   /* ===== BLOCK: HEADER_FOOTER ===== */
@@ -174,6 +176,7 @@ const SITE_CONFIG = {
     let headerMount = document.getElementById("site-header-mount");
     let footerMount = document.getElementById("site-footer-mount");
     const main = document.getElementById("site-main") || document.querySelector("main");
+    if (main && !main.id) main.id = "site-main";
 
     if (!headerMount) {
       headerMount = document.createElement("div");
@@ -308,9 +311,12 @@ const SITE_CONFIG = {
   /* ===== BLOCK: CLEAN_URLS ===== */
   function initCanonicalUrls() {
     if (window.location.protocol === "file:") return;
-    const currentSlug = pageSlug(window.location.pathname);
-    const cleanSlug = !currentSlug || currentSlug.toLowerCase() === "index" ? "" : currentSlug;
-    const cleanPath = cleanSlug ? `/${cleanSlug}/` : "/";
+    let cleanPath = String(window.location.pathname || "/")
+      .replace(/\/index\.html?$/i, "/")
+      .replace(/\.html?$/i, "");
+    if (!cleanPath.startsWith("/")) cleanPath = `/${cleanPath}`;
+    if (cleanPath === "/index" || cleanPath === "/index/") cleanPath = "/";
+    if (cleanPath !== "/" && !cleanPath.endsWith("/")) cleanPath += "/";
     const canonicalUrl = `${window.location.origin}${cleanPath}`;
     let canonical = document.querySelector('link[rel="canonical"]');
     if (!canonical) {
@@ -321,7 +327,7 @@ const SITE_CONFIG = {
     canonical.href = canonicalUrl;
     let openGraphUrl = document.querySelector('meta[property="og:url"]');
     if (openGraphUrl) openGraphUrl.content = canonicalUrl;
-    if (window.location.pathname !== cleanPath && /(?:index|[a-z0-9-]+)\.html?$/i.test(window.location.pathname)) {
+    if (window.location.pathname !== cleanPath) {
       window.history.replaceState(window.history.state, "", cleanPath + window.location.search + window.location.hash);
     }
   }
@@ -373,32 +379,19 @@ const SITE_CONFIG = {
     if (!target) return;
     const phrases = ["for children", "in Hisar"];
     const reduceMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    target.textContent = phrases[0];
-    if (reduceMotion) return;
     let index = 0;
+    target.textContent = phrases[index];
+    if (reduceMotion) return;
     window.setInterval(() => {
-      index = (index + 1) % phrases.length;
-      target.textContent = phrases[index];
-    }, 2800);
+      target.classList.add("is-fading");
+      window.setTimeout(() => {
+        index = (index + 1) % phrases.length;
+        target.textContent = phrases[index];
+        target.classList.remove("is-fading");
+      }, 360);
+    }, 3200);
   }
   /* ===== END BLOCK: HERO_TYPING ===== */
-
-  /* ===== BLOCK: BLOG MARQUEE ===== */
-  function initBlogMarquee() {
-    const mount = document.getElementById("blog-marquee-mount");
-    if (!mount) return;
-    const blogUrl = "/blog/";
-    // Replace the image path with the final uploaded asset filename.
-    mount.innerHTML = `<div class="kg-blog-marquee-wrap"><div class="kg-blog-marquee-controls"><button type="button" data-blog-prev aria-label="Previous blog announcement">‹</button><button type="button" data-blog-pause aria-label="Pause blog announcement">Ⅱ</button><button type="button" data-blog-next aria-label="Next blog announcement">›</button></div><a class="kg-blog-marquee" href="${blogUrl}" aria-label="New Blog out — visit KidsGastro blog"><img src="/assets/new/.webp" alt=""><span>New Blog out</span></a></div>`;
-    const link = mount.querySelector(".kg-blog-marquee");
-    const pause = mount.querySelector("[data-blog-pause]");
-    let paused = false;
-    const toggle = () => { paused = !paused; link.classList.toggle("paused", paused); pause.textContent = paused ? "▶" : "Ⅱ"; pause.setAttribute("aria-label", paused ? "Resume blog announcement" : "Pause blog announcement"); };
-    pause.addEventListener("click", toggle);
-    mount.querySelector("[data-blog-prev]").addEventListener("click", () => { link.classList.remove("turn-right"); link.classList.add("turn-left"); });
-    mount.querySelector("[data-blog-next]").addEventListener("click", () => { link.classList.remove("turn-left"); link.classList.add("turn-right"); });
-  }
-  /* ===== END BLOCK: BLOG MARQUEE ===== */
 
   /* ===== BLOCK: ANNOUNCEMENT ===== */
   function initAnnouncement() {
