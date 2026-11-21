@@ -1,268 +1,54 @@
-
-<!DOCTYPE html>
-<html lang="en">
+<!doctype html>
+<html lang="en-IN" data-nav-style="hamburger">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-  <title>Page Not Found | KidsGastro</title>
-  <meta name="robots" content="noindex, follow">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#0759a8">
-
-  <link rel="icon" href="/assets/kg%20logo.webp" type="image/webp">
-
+  <meta name="robots" content="noindex,follow">
+  <meta name="description" content="The requested KidsGastro page could not be found. Return to the homepage or use the main navigation.">
+  <script>document.write('<base href="' + (location.protocol === 'file:' ? './' : '/') + '">');</script>
+  <link rel="icon" href="favicon.ico" sizes="any" type="image/x-icon">
+  <link rel="apple-touch-icon" href="assets/kg%20logo.webp">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style-shared.css">
+  <title>Page Not Found | KidsGastro</title>
   <style>
-    :root {
-      --blue: #0759a8;
-      --deep-blue: #064b8d;
-      --yellow: #ffc400;
-      --text: #183047;
-      --muted: #647589;
-      --background: #f5f8fc;
-      --white: #ffffff;
-    }
-
-    * {
-      box-sizing: border-box;
-    }
-
-    html,
-    body {
-      width: 100%;
-      min-height: 100%;
-      margin: 0;
-    }
-
-    body {
-      min-height: 100vh;
-      min-height: 100svh;
-      display: flex;
-      flex-direction: column;
-      font-family: Arial, Helvetica, sans-serif;
-      color: var(--text);
-      background: var(--background);
-    }
-
-    /* Header */
-    .site-header {
-      flex: 0 0 auto;
-      width: 100%;
-      min-height: 76px;
-      display: flex;
-      align-items: center;
-      padding: 12px 6%;
-      background: var(--blue);
-    }
-
-    .brand {
-      display: inline-flex;
-      align-items: center;
-      gap: 12px;
-      color: var(--white);
-      text-decoration: none;
-    }
-
-    .brand img {
-      display: block;
-      width: 48px;
-      height: 48px;
-      object-fit: contain;
-      border-radius: 50%;
-      background: var(--white);
-    }
-
-    .brand-name {
-      font-size: 21px;
-      font-weight: 700;
-    }
-
-    /* Precisely centred main section */
-    main {
-      flex: 1 0 auto;
-      width: 100%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 40px 20px;
-    }
-
-    .error-content {
-      width: 100%;
-      max-width: 620px;
-      margin: auto;
-      padding: 42px 28px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      background: var(--white);
-      border-radius: 18px;
-      box-shadow: 0 12px 40px rgba(16, 56, 94, 0.07);
-    }
-
-    .error-code {
-      display: block;
-      width: 100%;
-      margin: 0;
-      color: var(--blue);
-      font-size: clamp(76px, 15vw, 120px);
-      line-height: 1;
-      font-weight: 800;
-      letter-spacing: -5px;
-      text-align: center;
-    }
-
-    h1 {
-      display: block;
-      width: 100%;
-      margin: 22px 0 12px;
-      color: var(--deep-blue);
-      font-size: clamp(23px, 4vw, 31px);
-      line-height: 1.3;
-      font-weight: 700;
-      text-align: center;
-    }
-
-    .message {
-      display: block;
-      width: 100%;
-      max-width: 440px;
-      margin: 0 auto 28px;
-      color: var(--muted);
-      font-size: 16px;
-      line-height: 1.7;
-      text-align: center;
-    }
-
-    /* Button */
-    .home-button {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      min-height: 48px;
-      margin: 0 auto;
-      padding: 13px 25px;
-      border: 2px solid var(--yellow);
-      border-radius: 8px;
-      background: var(--yellow);
-      color: #172b3e;
-      font-size: 15px;
-      font-weight: 700;
-      text-align: center;
-      text-decoration: none;
-      transition: background 0.2s ease, transform 0.2s ease,
-                  box-shadow 0.2s ease;
-    }
-
-    .home-button:hover {
-      background: #ffd43b;
-      transform: translateY(-2px);
-      box-shadow: 0 5px 16px rgba(0, 0, 0, 0.12);
-    }
-
-    .home-button:focus-visible,
-    .brand:focus-visible {
-      outline: 3px solid var(--yellow);
-      outline-offset: 4px;
-    }
-
-    /* Footer */
-    .site-footer {
-      flex: 0 0 auto;
-      width: 100%;
-      padding: 20px 16px;
-      background: var(--deep-blue);
-      color: rgba(255, 255, 255, 0.9);
-      font-size: 13px;
-      text-align: center;
-    }
-
-    .site-footer p {
-      margin: 0;
-    }
-
-    /* Mobile */
-    @media (max-width: 600px) {
-      .site-header {
-        min-height: 66px;
-        padding: 10px 5%;
-      }
-
-      .brand img {
-        width: 42px;
-        height: 42px;
-      }
-
-      .brand-name {
-        font-size: 18px;
-      }
-
-      main {
-        padding: 28px 16px;
-      }
-
-      .error-content {
-        padding: 38px 20px;
-        border-radius: 14px;
-      }
-
-      .message {
-        font-size: 15px;
-      }
-    }
-
-    @media (prefers-reduced-motion: reduce) {
-      *,
-      *::before,
-      *::after {
-        scroll-behavior: auto !important;
-        transition-duration: 0.01ms !important;
-        animation-duration: 0.01ms !important;
-        animation-iteration-count: 1 !important;
-      }
-    }
+    body[data-site-page="404"] { min-height:100vh; display:flex; flex-direction:column; }
+    body[data-site-page="404"] .error-main { flex:1; display:grid; place-items:center; padding:clamp(30px,6vw,76px) 0; }
+    .error-card { width:min(100%,780px); padding:clamp(28px,5vw,58px); text-align:center; border:1px solid var(--kg-line); border-radius:24px; background:#fff; box-shadow:var(--kg-shadow); }
+    .error-mark { display:grid; width:clamp(112px,20vw,170px); aspect-ratio:1; place-items:center; margin:0 auto 22px; border-radius:36px; background:#0759a8; color:#fff; box-shadow:0 15px 36px rgba(7,89,168,.2); }
+    .error-mark strong { color:#fff; font-size:clamp(3rem,8vw,5.4rem); line-height:1; letter-spacing:-.08em; }
+    .error-kicker { margin:0 0 10px; color:var(--kg-blue); font-size:.76rem; font-weight:800; letter-spacing:.14em; text-transform:uppercase; }
+    .error-card h1 { margin:0 0 14px; color:var(--kg-navy); font-size:clamp(1.9rem,4.5vw,3.15rem); }
+    .error-card p:not(.error-kicker) { max-width:560px; margin:0 auto 26px; color:var(--kg-muted); }
+    .error-actions { display:flex; flex-wrap:wrap; justify-content:center; gap:11px; }
+    .error-home { background:var(--kg-blue); color:#fff; border-color:var(--kg-blue); }
+    .error-home:hover { background:var(--kg-blue-dark); color:#fff; }
+    .error-contact { background:#fff; color:var(--kg-blue); border-color:#b9d2e6; }
+    @media(max-width:560px) { .error-card { border-radius:18px; } .error-mark { border-radius:28px; } .error-actions { flex-direction:column; } .error-actions a { width:100%; } }
   </style>
 </head>
-
-<body>
-
-  <header class="site-header">
-    <a class="brand"
-       href="https://drnitinmohan.com/"
-       aria-label="KidsGastro home">
-
-      <img
-        src=""assets\kg logo.webp""
-        alt="Dr. Nitin Mohan KidsGastro logo">
-
-      <span class="brand-name">KidsGastro</span>
-    </a>
-  </header>
-
-  <main>
-    <section class="error-content" aria-labelledby="error-heading">
-
-      <p class="error-code" aria-label="Error 404">404</p>
-
-      <h1 id="error-heading">
-        We couldn’t find this page.
-      </h1>
-
-      <p class="message">
-        It may have moved or the link may be incorrect.
-      </p>
-
-      <a class="home-button" href="https://drnitinmohan.com/">
-        Back to drnitinmohan.com
-      </a>
-
+<body data-site-page="404">
+  <a class="site-skip" href="#error-content">Skip to content</a>
+  <div id="site-announcement-mount"></div>
+  <div id="site-header-mount"></div>
+  <main id="error-content" class="error-main">
+    <section class="site-container">
+      <div class="error-card">
+        <div class="error-mark" aria-hidden="true"><strong>404</strong></div>
+        <p class="error-kicker">Page not found</p>
+        <h1>This page isn’t here.</h1>
+        <p>The address may be incorrect, or the page may have moved. Use the main navigation to explore KidsGastro, or return to the homepage.</p>
+        <div class="error-actions">
+          <a class="site-button error-home" href="index.html">Back to homepage <span aria-hidden="true">→</span></a>
+          <a class="site-button error-contact" href="index.html#site-footer-mount">Contact the clinic</a>
+        </div>
+      </div>
     </section>
   </main>
-
-  <footer class="site-footer">
-    <p>© 2026 KidsGastro. All rights reserved.</p>
-  </footer>
-
+  <div id="site-footer-mount"></div>
+  <script src="script-shared.js" defer></script>
 </body>
 </html>
