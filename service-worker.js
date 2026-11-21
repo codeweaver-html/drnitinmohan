@@ -2,7 +2,7 @@
    Keep this file beside the site root document and name it exactly: service-worker.js
 */
 
-const CACHE_NAME = "kidsgastro-cache-v11";
+const CACHE_NAME = "kidsgastro-cache-v14";
 const APP_ROOT = new URL(self.registration.scope);
 const APP_ORIGIN = self.location.origin;
 
@@ -17,9 +17,10 @@ const SHELL_FILES = [
   "./settings.json",
   "./robots.txt",
   "./sitemap.xml",
-  "./favicon.ico",
+  "./favicon.jpg",
   "./about/",
   "./blog/",
+  "./blog/hepatitis-c-in-children/",
   "./clinic/",
   "./clinical/",
   "./faqs/",
@@ -117,6 +118,13 @@ self.addEventListener("activate", event => {
 
 async function networkFirst(request) {
   const cache = await caches.open(CACHE_NAME);
+  const requestedUrl = new URL(request.url);
+  const legacyBlogPath = new URL("blog.html", APP_ROOT).pathname;
+
+  /* Redirect the retired flat blog page before requesting it from the server. */
+  if (requestedUrl.pathname === legacyBlogPath) {
+    return Response.redirect(new URL("blog/", APP_ROOT), 301);
+  }
 
   try {
     const response = await fetch(request, { cache: "no-cache" });
@@ -125,18 +133,25 @@ async function networkFirst(request) {
       return response;
     }
 
-    /* GitHub Pages serves legacy root HTML files with .html extensions. When a
-       clean directory route is not present, resolve the matching source page
-       while keeping the visitor's clean URL in the address bar. */
-    const requestedUrl = new URL(request.url);
+    /* GitHub Pages may still have other legacy flat pages. Resolve those only
+       after checking the clean directory route, keeping the URL clean. */
     const cleanPath = requestedUrl.pathname.replace(/\/+$/, "");
     const lastSegment = cleanPath.split("/").pop() || "";
     if (response.status === 404 && cleanPath && !lastSegment.includes(".")) {
-      const legacyUrl = new URL(`${cleanPath}.html${requestedUrl.search}`, requestedUrl.origin);
-      const legacyResponse = await fetch(legacyUrl.href, { cache: "no-cache" });
-      if (legacyResponse.ok) {
-        await saveResponse(cache, request, legacyResponse);
-        return legacyResponse;
+      const cleanCandidates = [
+        new URL(`${cleanPath}/index.html${requestedUrl.search}`, requestedUrl.origin)
+      ];
+      /* Keep legacy resolution for older flat pages, but never fall back to
+         a .html page for the blog or any nested blog article route. */
+      if (!/^\/blog(?:\/|$)/i.test(requestedUrl.pathname)) {
+        cleanCandidates.push(new URL(`${cleanPath}.html${requestedUrl.search}`, requestedUrl.origin));
+      }
+      for (const candidate of cleanCandidates) {
+        const cleanResponse = await fetch(candidate.href, { cache: "no-cache" });
+        if (cleanResponse.ok) {
+          await saveResponse(cache, request, cleanResponse);
+          return cleanResponse;
+        }
       }
     }
     return response;

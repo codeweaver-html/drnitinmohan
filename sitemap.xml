@@ -47,15 +47,15 @@
       <video:content_loc>https://drnitinmohan.com/assets/gif%205.webm</video:content_loc>
     </video:video>
   </url>
-  <url><loc>https://drnitinmohan.com/about.html</loc></url>
-  <url><loc>https://drnitinmohan.com/blog.html</loc></url>
-  <url><loc>https://drnitinmohan.com/faqs.html</loc></url>
+  <url><loc>https://drnitinmohan.com/about/</loc></url>
+  <url><loc>https://drnitinmohan.com/blog/</loc><lastmod>2026-11-22</lastmod></url>
+  <url><loc>https://drnitinmohan.com/faqs/</loc></url>
   <url>
-    <loc>https://drnitinmohan.com/gallery.html</loc>
+    <loc>https://drnitinmohan.com/gallery/</loc>
     <image:image><image:loc>https://drnitinmohan.com/assets/potrait%20gallery.jpg</image:loc></image:image>
   </url>
-  <url><loc>https://drnitinmohan.com/publications.html</loc></url>
-  <url><loc>https://drnitinmohan.com/services.html</loc></url>
-  <url><loc>https://drnitinmohan.com/testimonials.html</loc></url>
-  <url><loc>https://drnitinmohan.com/treatments.html</loc></url>
+  <url><loc>https://drnitinmohan.com/publications/</loc></url>
+  <url><loc>https://drnitinmohan.com/services/</loc></url>
+  <url><loc>https://drnitinmohan.com/testimonials/</loc></url>
+  <url><loc>https://drnitinmohan.com/treatments/</loc></url>
 </urlset>
