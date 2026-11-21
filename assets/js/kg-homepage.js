@@ -525,6 +525,7 @@ timeSource='typed';const match=getManualTime();if(match&&!periodExplicit){const 
    if(!bookingMenuPanel||!bookingMenuToggle)return;
    bookingMenuPanel.hidden=!open;
    bookingMenuToggle.setAttribute('aria-expanded',String(open));
+   document.body.classList.toggle('kg-booking-menu-open',open);
    if(open){placeBookingPanel();requestAnimationFrame(placeBookingPanel);}
    else if(bookingPanelPositioned){
      ['position','width','max-width','left','right','top','z-index','display','visibility','pointer-events'].forEach(k=>bookingMenuPanel.style.removeProperty(k));
@@ -560,7 +561,7 @@ timeSource='typed';const match=getManualTime();if(match&&!periodExplicit){const 
  });
  dialog.addEventListener('click',event=>{if(event.target===dialog)dialog.close();});
  window.addEventListener('resize',()=>{if(dialog.open)updateClock()},{passive:true});
- // Google reCAPTCHA v2 Invisible: load only when the user submits a booking.
+ // Google reCAPTCHA v2 Invisible: preload when the booking dialog opens; execute only after form validation.
  const RECAPTCHA_SITE_KEY='6LfFKg4uAAAAAOxm7Evqvms6EGZHfO5AoulNITCc';
  let recaptchaLoadPromise=null;
  let recaptchaWidgetId=null;
@@ -612,6 +613,7 @@ timeSource='typed';const match=getManualTime();if(match&&!periodExplicit){const 
            recaptchaWidgetId=window.grecaptcha.render(container,{
              sitekey:RECAPTCHA_SITE_KEY,
              size:'invisible',
+             badge:'bottomleft',
              callback:token=>{if(recaptchaAttempt)recaptchaAttempt.resolve(token);},
              'error-callback':()=>{if(recaptchaAttempt)recaptchaAttempt.reject(new Error('Google reCAPTCHA encountered a network or configuration error. Please try again.'));},
              'expired-callback':()=>{if(recaptchaAttempt)recaptchaAttempt.reject(new Error('reCAPTCHA expired. Please submit again.'));}
@@ -1664,11 +1666,12 @@ applyZoom();
   button.dataset.kgDragReady='true';
   const storageKey='kg-whatsapp-float-top-v1';
   let pointerId=null,startY=0,startTop=0,dragging=false,suppressClick=false;
-  const clampTop=value=>Math.max(8,Math.min(window.innerHeight-button.getBoundingClientRect().height-8,value));
+  const getViewportHeight=()=>window.visualViewport?window.visualViewport.height:(window.innerHeight||document.documentElement.clientHeight);
+  const clampTop=value=>Math.max(8,Math.min(getViewportHeight()-button.getBoundingClientRect().height-8,value));
   const setTop=value=>{
     const top=clampTop(value);
     button.style.top=top+'px';
-    button.style.bottom='auto';
+    button.style.setProperty('bottom','auto','important');
     return top;
   };
   try{
@@ -1716,12 +1719,14 @@ applyZoom();
     event.preventDefault();
     event.stopImmediatePropagation();
   },true);
-  window.addEventListener('resize',()=>{
+  const reClampPosition=()=>{
     if(button.style.top){
       const top=setTop(parseFloat(button.style.top)||button.getBoundingClientRect().top);
       try{localStorage.setItem(storageKey,String(Math.round(top)));}catch(storageError){}
     }
-  },{passive:true});
+  };
+  window.addEventListener('resize',reClampPosition,{passive:true});
+  if(window.visualViewport)window.visualViewport.addEventListener('resize',reClampPosition,{passive:true});
 })();
 
 
@@ -1750,17 +1755,5 @@ applyZoom();
   else window.setTimeout(load,520);
 })();
 
-/* ===== interaction-loaded clinic map ===== */
-(()=>{
- const button=document.getElementById('clinic-map-load');
- const frame=document.querySelector('#hospital-location iframe[data-map-src]');
- const placeholder=document.getElementById('clinic-map-placeholder');
- if(button&&frame){
-  button.addEventListener('click',()=>{
-   if(!frame.hasAttribute('src'))frame.setAttribute('src',frame.dataset.mapSrc);
-   frame.hidden=false;
-   if(placeholder)placeholder.hidden=true;
-  },{once:true});
- }
-})();
+/* Clinic map is sourced in the HTML and auto-loads through native iframe lazy loading. */
 

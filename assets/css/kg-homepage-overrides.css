@@ -1700,8 +1700,7 @@ html body .grecaptcha-badge {
   bottom: 12px !important;
   transform: none !important;
 }
-html body .grecaptcha-badge iframe,
-html body iframe[src*="recaptcha"] {
+html body .grecaptcha-badge iframe {
   visibility: visible !important;
   opacity: 1 !important;
   pointer-events: auto !important;
@@ -2240,4 +2239,142 @@ html:not(.kg-js-ready) .kg-section-enter {
 }
 html:not(.kg-js-ready) .kg-progressive-part {
   content-visibility: visible !important;
+}
+
+
+/* ===== 2026-11-21 final: WhatsApp / reCAPTCHA / automatic map layout ===== */
+html body a.whatsapp-float {
+  position: fixed !important;
+  left: auto !important;
+  right: calc(16px + env(safe-area-inset-right, 0px)) !important;
+  bottom: calc(16px + env(safe-area-inset-bottom, 0px)) !important;
+  z-index: 10010 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  box-sizing: border-box !important;
+  max-width: calc(100vw - 32px) !important;
+  background: #087a43 !important;
+  color: #fff !important;
+  text-decoration: none !important;
+  transform-origin: center !important;
+  animation: kg-whatsapp-float-vertical 3.4s ease-in-out infinite !important;
+  will-change: transform;
+}
+@keyframes kg-whatsapp-float-vertical {
+  0%, 100% { transform: translate3d(0, 0, 0); }
+  50% { transform: translate3d(0, -7px, 0); }
+}
+html body a.whatsapp-float:hover,
+html body a.whatsapp-float:focus-visible {
+  animation-play-state: paused !important;
+  transform: translate3d(0, -2px, 0) !important;
+}
+html body a.whatsapp-float.is-dragging {
+  animation: none !important;
+  transform: none !important;
+  transition: none !important;
+  cursor: grabbing !important;
+}
+@media (max-width: 760px) {
+  html body a.whatsapp-float {
+    width: 56px !important;
+    height: 56px !important;
+    min-width: 56px !important;
+    min-height: 56px !important;
+    padding: 0 !important;
+    gap: 0 !important;
+    border-radius: 50% !important;
+    box-shadow: 0 5px 18px rgba(10, 45, 40, .32) !important;
+  }
+  html body a.whatsapp-float > span {
+    position: absolute !important;
+    width: 1px !important;
+    height: 1px !important;
+    padding: 0 !important;
+    margin: -1px !important;
+    overflow: hidden !important;
+    clip: rect(0, 0, 0, 0) !important;
+    white-space: nowrap !important;
+    border: 0 !important;
+  }
+  html body a.whatsapp-float svg {
+    width: 27px !important;
+    height: 27px !important;
+    flex: 0 0 27px !important;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  html body a.whatsapp-float { animation: none !important; transform: none !important; }
+}
+
+/* Google’s badge sits at bottom-left; the WhatsApp control remains bottom-right. */
+html body .grecaptcha-badge {
+  display: block !important;
+  position: fixed !important;
+  left: 12px !important;
+  right: auto !important;
+  bottom: calc(12px + env(safe-area-inset-bottom, 0px)) !important;
+  z-index: 10008 !important;
+  transform: none !important;
+  opacity: 1 !important;
+  pointer-events: auto !important;
+}
+/* Do not force all Google challenge iframes visible; let reCAPTCHA manage its own challenge lifecycle. */
+html body .grecaptcha-badge iframe {
+  visibility: visible !important;
+  opacity: 1 !important;
+  pointer-events: auto !important;
+}
+/* While the booking dialog is open the required Google disclosure is shown inside it. */
+html body.kg-booking-dialog-open .grecaptcha-badge,
+html body.kg-booking-menu-open .grecaptcha-badge {
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+#whatsapp-booking-dialog .booking-recaptcha-disclosure {
+  margin: 12px 0 0 !important;
+  padding: 9px 11px !important;
+  border-radius: 8px !important;
+  background: #f5f8fb !important;
+  color: #536779 !important;
+  font: 400 .72rem/1.45 Arial, 'Segoe UI', sans-serif !important;
+  text-align: left !important;
+}
+#whatsapp-booking-dialog .booking-recaptcha-disclosure a {
+  color: #0759a8 !important;
+  text-decoration: underline !important;
+  text-underline-offset: 2px !important;
+}
+#booking-menu-panel .booking-recaptcha-disclosure {
+  margin: 8px 4px 2px !important;
+  padding: 8px 9px !important;
+  border-radius: 7px !important;
+  background: #f5f8fb !important;
+  color: #536779 !important;
+  font: 400 .68rem/1.4 Arial, 'Segoe UI', sans-serif !important;
+}
+#booking-menu-panel .booking-recaptcha-disclosure a {
+  color: #0759a8 !important;
+  text-decoration: underline !important;
+  text-underline-offset: 2px !important;
+}
+@media (max-width: 760px) {
+  html body .grecaptcha-badge {
+    left: 8px !important;
+    bottom: calc(8px + env(safe-area-inset-bottom, 0px)) !important;
+    max-width: 160px;
+  }
+}
+
+/* The embedded clinic map is automatically loaded by the browser as it nears the viewport. */
+#hospital-location .clinic-map-card iframe:not([hidden]) {
+  display: block !important;
+  width: 100% !important;
+  min-height: 300px !important;
+  height: 100% !important;
+  flex: 1 1 auto !important;
+  border: 0 !important;
+  background: #eef5fb !important;
 }
