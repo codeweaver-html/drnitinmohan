@@ -2221,3 +2221,23 @@ body.kg-booking-dialog-open .whatsapp-float { visibility: hidden !important; poi
   #whatsapp-booking-dialog input, #whatsapp-booking-dialog select,
   #whatsapp-booking-dialog textarea { font-size: 16px !important; }
 }
+
+
+/* ===== Fail-open rendering safeguard (2026-11-21 repair) ===== */
+/* A missing/blocked script must never leave the homepage text or sections invisible. */
+html:not(.kg-js-ready) .reveal,
+html:not(.kg-js-ready) .scroll-cinematic,
+html:not(.kg-js-ready) .scroll-photo,
+html:not(.kg-js-ready) .kg-section-enter {
+  opacity: 1 !important;
+  visibility: visible !important;
+  transform: none !important;
+  filter: none !important;
+  clip-path: none !important;
+  transition: none !important;
+  animation: none !important;
+  will-change: auto !important;
+}
+html:not(.kg-js-ready) .kg-progressive-part {
+  content-visibility: visible !important;
+}

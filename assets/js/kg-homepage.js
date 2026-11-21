@@ -76,15 +76,211 @@ document.addEventListener('DOMContentLoaded',()=>{
 })();
 }
 
-/* ===== inline script 10 ===== */
+/* ===== repaired navigation, reveal and newsletter initialization ===== */
 {
-document.querySelectorAll('.nav-dropdown').forEach(dropdown=>{const syncUnderline=()=>dropdown.classList.toggle('dropdown-active',dropdown.open);dropdown.addEventListener('toggle',syncUnderline);dropdown.querySelector(':scope > summary')?.addEventListener('click',()=>{document.querySelectorAll('.nav-dropdown[open]').forEach(other=>{if(other!==dropdown)other.open=false})});syncUnderline()});document.addEventListener('click',event=>{if(!event.target.closest('.nav-dropdown'))document.querySelectorAll('.nav-dropdown[open]').forEach(dropdown=>dropdown.open=false)});/* Removed duplicate hamburger handlers that were immediately reversing the menu state. The primary handler controls #links. */const observer=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible','scroll-visible');observer.unobserve(e.target)}}),{threshold:.12});document.querySelectorAll('.reveal').forEach(e=>observer.observe(e));const cinematicTargets=document.querySelectorAll('.strip-grid>div,.section-heading,.credential-card,.reel-slide,.latest-card,.qr-card,.hospital-photo,.map-frame,.social-placeholder');cinematicTargets.forEach((el,index)=>{el.classList.add('scroll-cinematic');el.style.setProperty('--scroll-delay',(index%3)*90+'ms');observer.observe(el)});document.querySelectorAll('.reel-slide img,.photo-story-media img,.latest-image img,.hospital-photo img').forEach(img=>{img.classList.add('scroll-photo');observer.observe(img)});
-document.querySelector('#newsletter-form').addEventListener('submit',e=>{e.preventDefault();const f=e.currentTarget;if(!f.reportValidity())return;const email=new FormData(f).get('email');const subject=encodeURIComponent('Newsletter subscription request');const body=encodeURIComponent('Please add this email address to the clinic newsletter list: '+email);document.querySelector('#newsletter-status').textContent='Your email app will open with a subscription request for you to review and send.';location.href='mailto:drnitinmohanpaedsgastro@gmail.com?subject='+subject+'&body='+body});const siteSearch=document.querySelector('#site-search'),searchInput=document.querySelector('#site-search-input'),searchStatus=document.querySelector('#search-status'),mainContent=document.querySelector('#main'),secondaryTemplates=document.querySelector('#secondary-templates'),secondaryContent=document.querySelector('#secondary-page-content');let searchMatches=[],searchCursor=0,lastSearch='';const searchPageNames={profile:'About Dr. Nitin Mohan',treatments:'Treatments',services:'Services',publications:'Research Articles & Publications',hospital:'Hospital',clinical:'Clinical work',gallery:'KidsGastro Photo Gallery',latest:'Latest from KidsGastro',newsletter:'Newsletter',socials:'Social profiles',faqs:'FAQs',testimonials:'Patient & Family Testimonials'};function normalizedSearchText(value){return value.replace(/\s+/g,' ').trim().toLocaleLowerCase()}function buildFullSiteSearchIndex(){const entries=[],seen=new Set(),selector='h1,h2,h3,p,li,summary,dt,dd,small,strong,figcaption';function add(element,page,targetId){const text=element.textContent.replace(/\s+/g,' ').trim();if(!text)return;const key=(page||'home')+'|'+normalizedSearchText(text);if(seen.has(key))return;seen.add(key);entries.push({element,page,text,targetId})}mainContent.querySelectorAll(selector).forEach(element=>{const target=element.closest('#main [id]');add(element,'',target?target.id:'top')});secondaryTemplates.content.querySelectorAll('section[data-page]').forEach(section=>{const page=section.dataset.page;section.querySelectorAll(selector).forEach(element=>add(element,page,''))});return entries}function showSearchMatch(match){const pageRoutes={profile:'about',hospital:'clinic'};const destination=match.page?'/'+(pageRoutes[match.page]||match.page)+'/':'#'+match.targetId;if(match.page&&location.pathname!==destination){location.href=destination;return;}requestAnimationFrame(()=>requestAnimationFrame(()=>{let target=match.element;if(match.page){const candidates=secondaryContent.querySelectorAll('h1,h2,h3,p,li,summary,dt,dd,small,strong,figcaption');target=[...candidates].find(element=>normalizedSearchText(element.textContent)===normalizedSearchText(match.text))||secondaryContent.querySelector('[data-page]')}if(target){document.querySelectorAll('.search-hit').forEach(element=>element.classList.remove('search-hit'));target.classList.add('search-hit');target.scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'center'})}}))}siteSearch.addEventListener('submit',event=>{event.preventDefault();const rawQuery=searchInput.value.trim(),query=normalizedSearchText(rawQuery);document.querySelectorAll('.search-hit').forEach(element=>element.classList.remove('search-hit'));if(!query){searchStatus.textContent='Enter a word or phrase to search all pages.';return}if(query!==lastSearch){searchMatches=buildFullSiteSearchIndex().filter(entry=>normalizedSearchText(entry.text).includes(query));searchCursor=0;lastSearch=query}const count=searchMatches.length;if(!count){searchStatus.textContent='No matches';return}searchStatus.textContent=count+' '+(count===1?'match':'matches');const match=searchMatches[searchCursor];searchCursor=(searchCursor+1)%count;showSearchMatch(match)});searchInput.addEventListener('input',()=>{searchStatus.textContent='';lastSearch='';searchCursor=0})
+  const closeOtherDropdowns = current => {
+    document.querySelectorAll('.nav-dropdown[open]').forEach(dropdown => {
+      if (dropdown !== current) dropdown.open = false;
+    });
+  };
+
+  document.querySelectorAll('.nav-dropdown').forEach(dropdown => {
+    const syncUnderline = () => dropdown.classList.toggle('dropdown-active', dropdown.open);
+    dropdown.addEventListener('toggle', syncUnderline);
+    dropdown.querySelector(':scope > summary')?.addEventListener('click', () => closeOtherDropdowns(dropdown));
+    syncUnderline();
+  });
+
+  document.addEventListener('click', event => {
+    const target = event.target;
+    if (!target || typeof target.closest !== 'function' || !target.closest('.nav-dropdown')) {
+      closeOtherDropdowns(null);
+    }
+  });
+
+  const revealTargets = [
+    ...document.querySelectorAll('.reveal'),
+    ...document.querySelectorAll('.strip-grid>div,.section-heading,.credential-card,.reel-slide,.latest-card,.qr-card,.hospital-photo,.map-frame,.social-placeholder')
+  ];
+  const photoTargets = [...document.querySelectorAll('.reel-slide img,.photo-story-media img,.latest-image img,.hospital-photo img')];
+
+  // Fail open: browsers without IntersectionObserver still get all page content.
+  if ('IntersectionObserver' in window) {
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible', 'scroll-visible');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.12 });
+
+    revealTargets.forEach((element, index) => {
+      if (!element.classList.contains('reveal')) {
+        element.classList.add('scroll-cinematic');
+        element.style.setProperty('--scroll-delay', `${(index % 3) * 90}ms`);
+      }
+      observer.observe(element);
+    });
+    photoTargets.forEach(image => {
+      image.classList.add('scroll-photo');
+      observer.observe(image);
+    });
+  } else {
+    revealTargets.forEach(element => element.classList.add('visible', 'scroll-visible'));
+    photoTargets.forEach(image => image.classList.add('scroll-visible'));
+  }
+
+  // This class enables motion styling only after the reveal controller is ready.
+  document.documentElement.classList.add('kg-js-ready');
+
+  const newsletterForm = document.getElementById('newsletter-form');
+  if (newsletterForm) {
+    newsletterForm.addEventListener('submit', event => {
+      event.preventDefault();
+      const form = event.currentTarget;
+      if (!form.reportValidity()) return;
+      const email = new FormData(form).get('email');
+      const subject = encodeURIComponent('Newsletter subscription request');
+      const body = encodeURIComponent('Please add this email address to the clinic newsletter list: ' + email);
+      const status = document.getElementById('newsletter-status');
+      if (status) status.textContent = 'Your email app will open with a subscription request for you to review and send.';
+      location.href = 'mailto:drnitinmohanpaedsgastro@gmail.com?subject=' + subject + '&body=' + body;
+    });
+  }
 }
 
-/* ===== inline script 11 ===== */
+/* ===== secondary-page route controller and indexed navigation ===== */
 {
-(()=>{const main=document.querySelector('#main'),site=document.querySelector('#secondary-site'),content=document.querySelector('#secondary-page-content'),templates=document.querySelector('#secondary-templates');if(!main||!site||!content||!templates)return;const labels={profile:'About Dr. Nitin Mohan',treatments:'Treatments',services:'Services',publications:'Research Articles & Publications',hospital:'Hospital',clinical:'Clinical work',gallery:'KidsGastro Photo Gallery',latest:'Latest from KidsGastro',blog:'KidsGastro Blog',newsletter:'KidsGastro newsletter',socials:'KidsGastro social profiles',faqs:'Frequently asked questions',testimonials:'Patient & Family Testimonials'};function renderRoute(){const routeSlug=location.pathname.split('/').filter(Boolean)[0]||'';const routeToTemplate={about:'profile',clinic:'hospital'};const id=routeToTemplate[routeSlug]||routeSlug||null;if(!labels[id]){site.hidden=true;main.hidden=false;document.title='KidsGastro | Kids Gastro in Hisar · Dr. Nitin Mohan';return}const template=templates.content.querySelector('[data-page="'+id+'"]');if(!template)return;main.hidden=true;site.hidden=false;content.innerHTML=template.innerHTML;const localTop=document.createElement('a');localTop.className='secondary-page-back-top';localTop.href='/gallery/';localTop.innerHTML='Back to top of this section <span aria-hidden="true">↑</span>';localTop.setAttribute('aria-label','Back to top of this section');content.appendChild(localTop);localTop.addEventListener('click',event=>{event.preventDefault();const behavior=matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth';const activePage=site.querySelector('#secondary-page-content');if(activePage){const header=document.querySelector('.header');const offset=(header?header.getBoundingClientRect().height:0)+12;const targetY=activePage.getBoundingClientRect().top+window.scrollY-offset;window.scrollTo({top:Math.max(0,targetY),behavior});}else{content.scrollIntoView({behavior,block:'start'});}});document.title=labels[id]+' | KidsGastro';site.querySelectorAll('.secondary-nav a').forEach(a=>{if(a.dataset.secondaryPage===id)a.setAttribute('aria-current','page');else a.removeAttribute('aria-current')});window.scrollTo({top:0,behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'})}document.addEventListener('click',e=>{const a=e.target.closest('a[data-secondary-page]');if(!a)return;return;const treatmentIndex=a.hasAttribute('data-treatment-index')?Number(a.dataset.treatmentIndex):null;const serviceIndex=a.hasAttribute('data-service-index')?Number(a.dataset.serviceIndex):null;const goToIndexedSection=()=>{if(treatmentIndex!==null){const card=content.querySelectorAll('.treatment-card')[treatmentIndex];if(card){card.setAttribute('tabindex','-1');card.scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'start'});card.focus({preventScroll:true});}}if(serviceIndex!==null){const card=content.querySelectorAll('.service-card')[serviceIndex];if(card){card.setAttribute('tabindex','-1');card.scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'start'});card.focus({preventScroll:true});}}};if(treatmentIndex!==null||serviceIndex!==null)requestAnimationFrame(()=>requestAnimationFrame(goToIndexedSection));});window.addEventListener('popstate',renderRoute);renderRoute()})();
+  (() => {
+    const main = document.querySelector('#main');
+    const site = document.querySelector('#secondary-site');
+    const content = document.querySelector('#secondary-page-content');
+    const templates = document.querySelector('#secondary-templates');
+    if (!main || !site || !content || !templates) return;
+
+    const labels = {
+      profile: 'About Dr. Nitin Mohan',
+      treatments: 'Treatments',
+      services: 'Services',
+      publications: 'Research Articles & Publications',
+      hospital: 'Hospital',
+      clinical: 'Clinical work',
+      gallery: 'KidsGastro Photo Gallery',
+      latest: 'Latest from KidsGastro',
+      blog: 'KidsGastro Blog',
+      newsletter: 'KidsGastro newsletter',
+      socials: 'KidsGastro social profiles',
+      faqs: 'Frequently asked questions',
+      testimonials: 'Patient & Family Testimonials'
+    };
+    const routeToTemplate = { about: 'profile', clinic: 'hospital' };
+    const storageKey = 'kg-secondary-pending-target-v1';
+
+    function scrollToIndexedCard(kind, index) {
+      if (!Number.isInteger(index) || index < 0) return;
+      const selector = kind === 'treatment' ? '.treatment-card' : '.service-card';
+      const card = content.querySelectorAll(selector)[index];
+      if (!card) return;
+      card.setAttribute('tabindex', '-1');
+      card.scrollIntoView({
+        behavior: window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth',
+        block: 'start'
+      });
+      card.focus({ preventScroll: true });
+    }
+
+    function consumePendingTarget(pageId) {
+      try {
+        const raw = sessionStorage.getItem(storageKey);
+        if (!raw) return;
+        sessionStorage.removeItem(storageKey);
+        const pending = JSON.parse(raw);
+        if (pending && pending.page === pageId && (pending.kind === 'treatment' || pending.kind === 'service')) {
+          requestAnimationFrame(() => requestAnimationFrame(() => scrollToIndexedCard(pending.kind, pending.index)));
+        }
+      } catch (_) {
+        // Storage can be unavailable in private/restricted browser contexts.
+      }
+    }
+
+    function renderRoute() {
+      const routeSlug = location.pathname.split('/').filter(Boolean)[0] || '';
+      const id = routeToTemplate[routeSlug] || routeSlug || null;
+      if (!labels[id]) {
+        site.hidden = true;
+        main.hidden = false;
+        document.title = 'KidsGastro | Kids Gastro in Hisar · Dr. Nitin Mohan';
+        return;
+      }
+
+      const template = templates.content.querySelector('[data-page="' + id + '"]');
+      if (!template) {
+        site.hidden = true;
+        main.hidden = false;
+        return;
+      }
+
+      main.hidden = true;
+      site.hidden = false;
+      content.innerHTML = template.innerHTML;
+
+      const localTop = document.createElement('a');
+      localTop.className = 'secondary-page-back-top';
+      localTop.href = '#top';
+      localTop.innerHTML = 'Back to top of this section <span aria-hidden="true">↑</span>';
+      localTop.setAttribute('aria-label', 'Back to top of this section');
+      content.appendChild(localTop);
+      localTop.addEventListener('click', event => {
+        event.preventDefault();
+        const reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        const header = document.querySelector('.header');
+        const offset = (header ? header.getBoundingClientRect().height : 0) + 12;
+        const top = content.getBoundingClientRect().top + window.scrollY - offset;
+        window.scrollTo({ top: Math.max(0, top), behavior: reduced ? 'auto' : 'smooth' });
+      });
+
+      document.title = labels[id] + ' | KidsGastro';
+      site.querySelectorAll('.secondary-nav a').forEach(link => {
+        if (link.dataset.secondaryPage === id) link.setAttribute('aria-current', 'page');
+        else link.removeAttribute('aria-current');
+      });
+      window.scrollTo({ top: 0, behavior: window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
+      consumePendingTarget(id);
+    }
+
+    document.addEventListener('click', event => {
+      const target = event.target;
+      const link = target && typeof target.closest === 'function' ? target.closest('a[data-secondary-page]') : null;
+      if (!link) return;
+
+      const treatmentValue = link.getAttribute('data-treatment-index');
+      const serviceValue = link.getAttribute('data-service-index');
+      if (treatmentValue === null && serviceValue === null) return;
+
+      const kind = treatmentValue !== null ? 'treatment' : 'service';
+      const rawIndex = treatmentValue !== null ? treatmentValue : serviceValue;
+      const index = Number(rawIndex);
+      if (!Number.isInteger(index) || index < 0) return;
+
+      const page = link.dataset.secondaryPage;
+      const destination = new URL(link.href, location.href);
+      if (destination.pathname === location.pathname) {
+        event.preventDefault();
+        scrollToIndexedCard(kind, index);
+        return;
+      }
+
+      try {
+        sessionStorage.setItem(storageKey, JSON.stringify({ page, kind, index }));
+      } catch (_) {
+        // The destination page still loads normally if session storage is blocked.
+      }
+    });
+
+    window.addEventListener('popstate', renderRoute);
+    renderRoute();
+  })();
 }
 
 /* ===== inline script 12 ===== */
