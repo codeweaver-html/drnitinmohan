@@ -810,8 +810,9 @@
   });
  });
  // Observe structural/menu state changes only; ignore inline style churn.
- navMutationObserver.observe(document.body,{subtree:true,childList:true,attributes:true,
-  attributeFilter:['open','hidden','aria-expanded','data-kg-cosmos-panel']});
+ const navRoot=document.querySelector('.header nav')||document.querySelector('header');
+ if(navRoot)navMutationObserver.observe(navRoot,{subtree:true,childList:true,attributes:true,
+  attributeFilter:['open','hidden','aria-expanded','class','data-kg-cosmos-panel']});
  window.addEventListener('resize',()=>{resize();measure();wake();},{passive:true});window.addEventListener('scroll',()=>{if(!scrollQueued){scrollQueued=true;requestAnimationFrame(()=>{scrollQueued=false;measure();wake();});}},{passive:true});
  document.addEventListener('visibilitychange',()=>{if(document.hidden){if(raf)cancelAnimationFrame(raf);raf=0;}else wake();});
  if(!reduce)wake();

@@ -34,16 +34,22 @@ document.addEventListener('DOMContentLoaded',()=>{
 
 /* ===== embedded-kidsgastro-logo ===== */
 {
-(function(){const LOGO_DATA="/assets/kg%20logo.webp";function applyLogo(root){if(root&&root.matches&&root.matches('[data-embedded-logo]'))root.setAttribute('src',LOGO_DATA);if(root&&root.querySelectorAll)root.querySelectorAll('[data-embedded-logo]').forEach(function(img){img.setAttribute('src',LOGO_DATA)});}document.documentElement.style.setProperty('--embedded-logo-bg','url("'+LOGO_DATA+'")');const icon=document.getElementById('embedded-logo-favicon');if(icon)icon.href=LOGO_DATA;function init(){applyLogo(document);const observer=new MutationObserver(function(records){records.forEach(function(record){record.addedNodes.forEach(function(node){if(node.nodeType===1)applyLogo(node);});});});observer.observe(document.documentElement,{childList:true,subtree:true});}if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});else init();})();
+  const LOGO_DATA = "/assets/kg%20logo.webp";
+  const applyLogo = root => {
+    if (root && root.matches && root.matches('[data-embedded-logo]')) root.setAttribute('src', LOGO_DATA);
+    if (root && root.querySelectorAll) root.querySelectorAll('[data-embedded-logo]').forEach(img => img.setAttribute('src', LOGO_DATA));
+  };
+  const init = () => {
+    applyLogo(document);
+    const icon = document.getElementById('embedded-logo-favicon');
+    if (icon) icon.href = LOGO_DATA;
+    document.documentElement.style.setProperty('--embedded-logo-bg', 'url("' + LOGO_DATA + '")');
+  };
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init, { once: true });
+  else init();
 }
 
-/* ===== remove-opd-section ===== */
-{
-(function(){
-  function removeOpd(){document.querySelectorAll('.opd-hours,.opd-hours-under-booking').forEach(function(node){node.remove();});}
-  if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',removeOpd,{once:true});}else{removeOpd();}
-})();
-}
+/* OPD content is authored in HTML; no runtime removal. */
 
 /* ===== kg-seo-hash-metadata ===== */
 {
@@ -92,7 +98,7 @@ document.querySelector('#newsletter-form').addEventListener('submit',e=>{e.preve
  const datePanel=document.getElementById('date-panel');
  const childNameInput=document.getElementById('child-name');
  const childAgeInput=document.getElementById('child-age');
- const parentNameInput=document.getElementById('parent-name');
+ const parentPhoneInput=document.getElementById('parent-phone');
  const phoneStep=document.getElementById('booking-phone-step');
  const dateSummary=document.getElementById('date-summary');
  const dateError=document.getElementById('booking-date-error');
@@ -113,6 +119,7 @@ document.querySelector('#newsletter-form').addEventListener('submit',e=>{e.preve
  const error=document.getElementById('booking-dialog-error');
  const opdDateGuidance=document.getElementById('opd-date-guidance'); const opdTimeGuidance=document.getElementById('opd-time-guidance');
  let errorTimer;
+ let bookingOpener=null;
  function showTemporaryError(message){clearTimeout(errorTimer);error.textContent=message;errorTimer=setTimeout(()=>{error.textContent=''},1500)}
  let dateErrorTimer;function showTemporaryDateError(message){clearTimeout(dateErrorTimer);dateError.textContent=message;dateErrorTimer=setTimeout(()=>{dateError.textContent=''},1800)}
  const phone='919821020576';
@@ -156,12 +163,12 @@ function weekdayForKey(key){const [y,m,d]=key.split('-').map(Number);return new 
    dateSummary.textContent="";dateError.textContent="";clearTimeout(dateErrorTimer);
    viewDate=new Date(y,m-1,1);error.textContent='';drawCalendar();updateClock();populateTimeSlots(key);return true;
  }
- function openDialog(){bookingVerificationInProgress=false;bookingHandoffStarted=false;if(bookingSubmitButton){bookingSubmitButton.disabled=false;bookingSubmitButton.removeAttribute('aria-busy');bookingSubmitButton.textContent='Continue to WhatsApp'}error.textContent='';error.classList.remove('is-pending','is-success','is-error');bookingDialogTitle.textContent='Choose a preferred date and time';childNameInput.value='';childAgeInput.value='';if(parentNameInput)parentNameInput.value='';if(phoneStep)phoneStep.hidden=false;if(parentNameInput)parentNameInput.required=false;selectedDate='';dateInput.value='';manualDateInput.value='';typedTime.value='';timeSource='clock';timeChosen=false;lastValidTime='';manualPeriod='AM';periodExplicit=false;datePanel.disabled=false;timePanel.disabled=false;dateSummary.textContent="";dateError.textContent="";clearTimeout(dateErrorTimer);viewDate=new Date();viewDate.setDate(1);hour=9;minute=0;period='AM';part='hour';drawCalendar();populateTimeSlots('');document.body.classList.add('kg-booking-dialog-open');dialog.setAttribute('aria-modal','true');if(!dialog.open&&typeof dialog.show==='function')dialog.show();else if(!dialog.open)dialog.setAttribute('open','');loadRecaptchaV2Invisible().catch(()=>{});requestAnimationFrame(updateClock);childNameInput.focus()}
+ function openDialog(opener){bookingOpener=opener||document.activeElement;bookingVerificationInProgress=false;bookingHandoffStarted=false;if(bookingSubmitButton){bookingSubmitButton.disabled=false;bookingSubmitButton.removeAttribute('aria-busy');bookingSubmitButton.textContent='Continue to WhatsApp'}error.textContent='';error.classList.remove('is-pending','is-success','is-error');bookingDialogTitle.textContent='Choose a preferred date and time';childNameInput.value='';childAgeInput.value='';if(parentPhoneInput)parentPhoneInput.value='';if(phoneStep)phoneStep.hidden=false;if(parentPhoneInput)parentPhoneInput.required=true;selectedDate='';dateInput.value='';manualDateInput.value='';typedTime.value='';timeSource='clock';timeChosen=false;lastValidTime='';manualPeriod='AM';periodExplicit=false;datePanel.disabled=false;timePanel.disabled=false;dateSummary.textContent="";dateError.textContent="";clearTimeout(dateErrorTimer);viewDate=new Date();viewDate.setDate(1);hour=9;minute=0;period='AM';part='hour';drawCalendar();populateTimeSlots('');document.body.classList.add('kg-booking-dialog-open');dialog.setAttribute('aria-modal','true');if(!dialog.open){if(typeof dialog.showModal==='function')dialog.showModal();else dialog.setAttribute('open','');}loadRecaptchaV2Invisible().catch(()=>{});requestAnimationFrame(updateClock);childNameInput.focus()}
 function updateNameGate(){bookingDialogTitle.textContent=selectedDate?"Choose a preferred date and time":"Select an appointment date";if(datePanel)datePanel.disabled=false;}
   childAgeInput.addEventListener('input',()=>{const match=childAgeInput.value.match(/^\d*(?:\.\d*)?/);const clean=match?match[0]:'';if(clean!==childAgeInput.value){childAgeInput.value=clean;showTemporaryError('Enter the age as a number.')}updateNameGate()});
 childAgeInput.addEventListener('blur',()=>{let value=childAgeInput.value.trim();if(value.startsWith('.'))value='0'+value;if(value.endsWith('.'))value=value.slice(0,-1);childAgeInput.value=value});
 function sanitizeName(field){const original=field.value;const clean=Array.from(original).filter(character=>/[\p{L}\p{M}\s.'’-]/u.test(character)).join('');if(clean!==original){field.value=clean;showTemporaryError('Use letters for names.')}updateNameGate()}
-childNameInput.addEventListener('input',()=>sanitizeName(childNameInput));if(parentNameInput)parentNameInput.addEventListener('input',()=>{const clean=parentNameInput.value.replace(/\D/g,'').slice(0,10);if(clean!==parentNameInput.value){parentNameInput.value=clean;showTemporaryError('Enter numbers only for the 10-digit mobile number.')}updateNameGate()});
+childNameInput.addEventListener('input',()=>sanitizeName(childNameInput));if(parentPhoneInput)parentPhoneInput.addEventListener('input',()=>{const clean=parentPhoneInput.value.replace(/\D/g,'').slice(0,10);if(clean!==parentPhoneInput.value){parentPhoneInput.value=clean;showTemporaryError('Enter numbers only for the 10-digit mobile number.')}updateNameGate()});
  function drawCalendar(){
    const year=viewDate.getFullYear(),month=viewDate.getMonth();
    monthLabel.textContent=new Intl.DateTimeFormat('en-IN',{month:'long',year:'numeric'}).format(viewDate);
@@ -289,23 +296,74 @@ timeSource='typed';const match=getManualTime();if(match&&!periodExplicit){const 
  hand.addEventListener('pointermove',event=>{if(dragPart&&hand.hasPointerCapture(event.pointerId))setFromPointer(event)});
  hand.addEventListener('pointerup',event=>{if(!dragPart)return;hand.releasePointerCapture(event.pointerId);hand.classList.remove('is-grabbing');if(dragPart==='hour')part='minute';else timeChosen=isSelectableTime(selectedDate,hour,minute,period);dragPart=null;updateClock()});
  hand.addEventListener('pointercancel',()=>{if(dragPart==='hour')part='minute';else timeChosen=isSelectableTime(selectedDate,hour,minute,period);dragPart=null;hand.classList.remove('is-grabbing');updateClock()});
- const bookingMenu=document.querySelector('.booking-menu');
-  const bookingMenuToggle=document.getElementById('booking-menu-toggle');
-  const bookingMenuPanel=document.getElementById('booking-menu-panel');
-  const closeBookingMenu=()=>{if(bookingMenuPanel){bookingMenuPanel.hidden=true;bookingMenuToggle?.setAttribute('aria-expanded','false')}};
-  document.addEventListener('click',event=>{
-    const toggle=event.target.closest('#booking-menu-toggle');
-    if(toggle){event.preventDefault();const opening=bookingMenuPanel.hidden;bookingMenuPanel.hidden=!opening;toggle.setAttribute('aria-expanded',String(opening));return;}
-    const whatsappChoice=event.target.closest('#whatsapp-booking-option,.whatsapp-float');
-    if(whatsappChoice){event.preventDefault();closeBookingMenu();openDialog();return;}
-    if(bookingMenu&&!bookingMenu.contains(event.target))closeBookingMenu();
-  });
-  document.addEventListener('keydown',event=>{if(event.key==='Escape')closeBookingMenu()});
+ const bookingMenuToggle=document.getElementById('booking-menu-toggle');
+ const bookingMenuPanel=document.getElementById('booking-menu-panel');
+ let bookingPanelPositioned=false;
+ if(bookingMenuPanel && bookingMenuPanel.parentElement!==document.body) document.body.appendChild(bookingMenuPanel);
+ function placeBookingPanel(){
+   if(!bookingMenuToggle||!bookingMenuPanel||bookingMenuPanel.hidden)return;
+   const r=bookingMenuToggle.getBoundingClientRect();
+   const vw=document.documentElement.clientWidth||window.innerWidth;
+   const vh=window.visualViewport?window.visualViewport.height:(window.innerHeight||document.documentElement.clientHeight);
+   const margin=12;
+   const width=Math.min(Math.max(280,r.width),Math.max(0,vw-margin*2));
+   bookingMenuPanel.style.setProperty('--booking-trigger-width',r.width+'px');
+   bookingMenuPanel.style.position='fixed';
+   bookingMenuPanel.style.width=width+'px';
+   bookingMenuPanel.style.maxWidth='calc(100vw - 24px)';
+   bookingMenuPanel.style.left=Math.max(margin,Math.min(r.left,vw-width-margin))+'px';
+   bookingMenuPanel.style.right='auto';
+   bookingMenuPanel.style.zIndex='2147483000';
+   bookingMenuPanel.style.display='block';
+   bookingMenuPanel.style.visibility='visible';
+   bookingMenuPanel.style.pointerEvents='auto';
+   bookingMenuPanel.style.top='0px';
+   const panelHeight=bookingMenuPanel.getBoundingClientRect().height;
+   const below=vh-r.bottom-10-margin;
+   let top=(panelHeight<=below || below>Math.min(180,panelHeight*.45)) ? r.bottom+10 : Math.max(margin,r.top-panelHeight-10);
+   top=Math.min(top,Math.max(margin,vh-panelHeight-margin));
+   bookingMenuPanel.style.top=top+'px';
+   bookingPanelPositioned=true;
+ }
+ function setBookingMenuOpen(open){
+   if(!bookingMenuPanel||!bookingMenuToggle)return;
+   bookingMenuPanel.hidden=!open;
+   bookingMenuToggle.setAttribute('aria-expanded',String(open));
+   if(open){placeBookingPanel();requestAnimationFrame(placeBookingPanel);}
+   else if(bookingPanelPositioned){
+     ['position','width','max-width','left','right','top','z-index','display','visibility','pointer-events'].forEach(k=>bookingMenuPanel.style.removeProperty(k));
+     bookingPanelPositioned=false;
+   }
+ }
+ if(bookingMenuToggle&&bookingMenuPanel){
+   bookingMenuToggle.addEventListener('click',event=>{event.preventDefault();setBookingMenuOpen(bookingMenuPanel.hidden);});
+   bookingMenuPanel.addEventListener('click',event=>{
+     const waChoice=event.target.closest('#whatsapp-booking-option');
+     const anyChoice=event.target.closest('a[href]');
+     if(waChoice){event.preventDefault();setBookingMenuOpen(false);openDialog(bookingMenuToggle||waChoice);return;}
+     if(anyChoice)setBookingMenuOpen(false);
+   });
+   document.addEventListener('click',event=>{
+     const floatingBooking=event.target.closest('.whatsapp-float');
+     if(floatingBooking){event.preventDefault();setBookingMenuOpen(false);openDialog(floatingBooking);return;}
+     if(!bookingMenuPanel.contains(event.target)&&!bookingMenuToggle.contains(event.target))setBookingMenuOpen(false);
+   });
+   document.addEventListener('keydown',event=>{
+     if(event.key==='Escape'&&!bookingMenuPanel.hidden){setBookingMenuOpen(false);bookingMenuToggle.focus();}
+   });
+   window.addEventListener('resize',placeBookingPanel,{passive:true});
+   window.addEventListener('scroll',placeBookingPanel,{passive:true,capture:true});
+   if(window.visualViewport){window.visualViewport.addEventListener('resize',placeBookingPanel,{passive:true});window.visualViewport.addEventListener('scroll',placeBookingPanel,{passive:true});}
+ }
  dialog.querySelector('.booking-dialog-close').addEventListener('click',()=>dialog.close());
  dialog.querySelector('.booking-cancel').addEventListener('click',()=>dialog.close());
- dialog.addEventListener('close',()=>document.body.classList.remove('kg-booking-dialog-open'));
- dialog.addEventListener('click',event=>{if(event.target===dialog)dialog.close()});
- window.addEventListener('resize',()=>{if(dialog.open)updateClock()});
+ dialog.addEventListener('close',()=>{
+   document.body.classList.remove('kg-booking-dialog-open');
+   if(bookingOpener&&bookingOpener.isConnected&&typeof bookingOpener.focus==='function')bookingOpener.focus();
+   bookingOpener=null;
+ });
+ dialog.addEventListener('click',event=>{if(event.target===dialog)dialog.close();});
+ window.addEventListener('resize',()=>{if(dialog.open)updateClock()},{passive:true});
  // Google reCAPTCHA v2 Invisible: load only when the user submits a booking.
  const RECAPTCHA_SITE_KEY='6LfFKg4uAAAAAOxm7Evqvms6EGZHfO5AoulNITCc';
  let recaptchaLoadPromise=null;
@@ -422,9 +480,9 @@ timeSource='typed';const match=getManualTime();if(match&&!periodExplicit){const 
    if(!childAgeInput.value.trim()||!Number.isFinite(Number(childAgeInput.value))||Number(childAgeInput.value)<0){
      error.textContent='Please enter the child’s age in years.';childAgeInput.focus();return;
    }
-   const enteredPhone=parentNameInput?parentNameInput.value.trim():'';
-   if(enteredPhone&&!/^\d{10}$/.test(enteredPhone)){
-     error.textContent='Please enter a valid 10-digit mobile number, or leave the field blank.';parentNameInput.focus();return;
+   const enteredPhone=parentPhoneInput?parentPhoneInput.value.trim():'';
+   if(!/^[6-9]\d{9}$/.test(enteredPhone)){
+     error.textContent='Please enter a valid 10-digit Indian mobile number starting with 6, 7, 8 or 9.';parentPhoneInput.focus();return;
    }
    if(!selectedDate){error.textContent='Please choose a date from the calendar or date field.';document.getElementById('calendar-previous').focus();return;}
    if(selectedDate<todayKey||selectedDate>tomorrowKey){error.textContent='Please choose today or tomorrow only.';return;}
@@ -477,7 +535,7 @@ timeSource='typed';const match=getManualTime();if(match&&!periodExplicit){const 
      error.textContent='Verified successfully. Opening WhatsApp…';
      try{sessionStorage.setItem('kg_pending_appointment_confirmation',JSON.stringify({childName,date:dateText,time:timeText,savedAt:Date.now()}));}catch(storageError){}
      if(dialog.open)dialog.close();
-     window.setTimeout(()=>window.location.assign(waUrl),650);
+     window.location.assign(waUrl);
    }catch(captchaError){
      error.classList.remove('is-pending','is-success');
      error.classList.add('is-error');
@@ -994,8 +1052,6 @@ function show(i){const items=triggers();if(!items.length)return;index=(i+items.l
 function openFrom(t){if(isExcluded(t))return;const items=triggers();const i=items.indexOf(t);if(i<0)return;previousFocus=t;show(i);modal.classList.add('is-open');modal.setAttribute('aria-hidden','false');document.body.classList.add('gallery-lightbox-active');modal.querySelector('.gallery-lightbox-close').focus();}
 function close(){modal.classList.remove('is-open');modal.setAttribute('aria-hidden','true');view.removeAttribute('src');document.body.classList.remove('gallery-lightbox-active');if(previousFocus&&previousFocus.focus)previousFocus.focus();}
 prepareImages();
-const mutationObserver=new MutationObserver(records=>records.forEach(r=>r.addedNodes.forEach(n=>{if(n.nodeType===1)prepareImages(n)})));
-mutationObserver.observe(document.documentElement,{childList:true,subtree:true});
 document.addEventListener('click',e=>{if(e.button!==0)return;const t=e.target.closest&&e.target.closest('main#main img.gallery-lightbox-trigger');if(t&&!isExcluded(t)){openFrom(t);}});
 document.addEventListener('keydown',e=>{const t=e.target.closest&&e.target.closest('img.gallery-lightbox-trigger');if(t&&(e.key==='Enter'||e.key===' ')){e.preventDefault();openFrom(t);}});
 modal.querySelector('.gallery-lightbox-prev').addEventListener('click',()=>show(index-1));modal.querySelector('.gallery-lightbox-next').addEventListener('click',()=>show(index+1));modal.querySelector('.gallery-lightbox-close').addEventListener('click',close);zoomButtons.forEach(b=>b.addEventListener('click',()=>setZoom(b.dataset.zoom)));modal.addEventListener('click',e=>{if(e.target===modal)close()});
@@ -1192,56 +1248,7 @@ applyZoom();
 })();
 }
 
-/* ===== booking-menu-visibility-repair-js ===== */
-{
-(function(){
-  function initBookingMenu(){
-    var toggle=document.getElementById('booking-menu-toggle');
-    var panel=document.getElementById('booking-menu-panel');
-    if(!toggle||!panel||toggle.dataset.visibilityRepair==='2')return;
-    toggle.dataset.visibilityRepair='2';
-    // Move the panel to <body> so it can escape hero clipping; size it to match the appointment button.
-    if(panel.parentElement!==document.body)document.body.appendChild(panel);
-    function placePanel(){
-      if(panel.hidden)return;
-      var r=toggle.getBoundingClientRect();
-      var vw=document.documentElement.clientWidth||window.innerWidth;
-      var vh=window.innerHeight||document.documentElement.clientHeight;
-      var margin=12;
-      var width=Math.min(Math.max(280,r.width),Math.max(0,vw-margin*2));
-      panel.style.setProperty('--booking-trigger-width',r.width+'px');
-      panel.style.setProperty('position','fixed','important');
-      panel.style.setProperty('width',width+'px','important');
-      panel.style.setProperty('max-width','calc(100vw - 24px)','important');
-      panel.style.setProperty('left',Math.max(margin,Math.min(r.left,vw-width-margin))+'px','important');
-      panel.style.setProperty('right','auto','important');
-      panel.style.setProperty('z-index','2147483000','important');
-      panel.style.setProperty('display','block','important');
-      panel.style.setProperty('visibility','visible','important');
-      panel.style.setProperty('pointer-events','auto','important');
-      panel.style.setProperty('top','0px','important');
-      var panelHeight=panel.getBoundingClientRect().height;
-      var below=vh-r.bottom-10-margin;
-      var top=(panelHeight<=below || below>Math.min(180,panelHeight*.45)) ? r.bottom+10 : Math.max(margin,r.top-panelHeight-10);
-      top=Math.min(top,Math.max(margin,vh-panelHeight-margin));
-      panel.style.setProperty('top',top+'px','important');
-    }
-    function setOpen(open){
-      panel.hidden=!open;
-      toggle.setAttribute('aria-expanded',String(open));
-      if(open){placePanel();requestAnimationFrame(placePanel);}
-      else {['position','width','max-width','left','right','top','z-index','display','visibility','pointer-events'].forEach(function(k){panel.style.removeProperty(k);});}
-    }
-    toggle.addEventListener('click',function(e){e.preventDefault();e.stopPropagation();setOpen(panel.hidden);});
-    document.addEventListener('click',function(e){if(!panel.contains(e.target)&&!toggle.contains(e.target))setOpen(false);});
-    document.addEventListener('keydown',function(e){if(e.key==='Escape'&&!panel.hidden){setOpen(false);toggle.focus();}});
-    window.addEventListener('resize',placePanel,{passive:true});
-    window.addEventListener('scroll',placePanel,{passive:true,capture:true});
-    if(window.visualViewport){window.visualViewport.addEventListener('resize',placePanel,{passive:true});window.visualViewport.addEventListener('scroll',placePanel,{passive:true});}
-  }
-  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',initBookingMenu,{once:true});else initBookingMenu();
-})();
-}
+/* Booking menu positioning and interaction are handled together in the booking controller above. */
 
 /* ===== kg-final-back-top-and-all-cosmic-hover-fix ===== */
 {
@@ -1267,44 +1274,15 @@ applyZoom();
 
 /* ===== kg-clinic-animation-exclusion-guard ===== */
 {
-(() => {
-  const selector = '#hospital-location';
-  function cleanClinic() {
-    const clinic = document.querySelector(selector);
-    if (!clinic) return;
-    clinic.classList.remove('kg-cosmos-host', 'kg-orbit-surface', 'abstract-watermark-host');
-    clinic.querySelectorAll(
-      '.kg-cosmos-background, .kg-orbit-overlay, canvas.kg-sky, .abstract-watermark'
-    ).forEach(node => node.remove());
-    // Remove only animation-related inline properties; retain layout and map styles.
-    clinic.querySelectorAll('*').forEach(node => {
-      if (node.matches('img, iframe, .clinic-photo-card, .clinic-map-card')) {
-        node.style.removeProperty('animation');
-        node.style.removeProperty('transition');
-        node.style.removeProperty('transform');
-        node.style.removeProperty('filter');
-        node.style.removeProperty('will-change');
-      }
-    });
-  }
-  const start = () => {
-    cleanClinic();
-    const clinic = document.querySelector(selector);
-    if (!clinic || !('MutationObserver' in window)) return;
-    let queued = false;
-    const observer = new MutationObserver(() => {
-      if (queued) return;
-      queued = true;
-      queueMicrotask(() => { queued = false; cleanClinic(); });
-    });
-    observer.observe(clinic, { childList: true, subtree: true });
-  };
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', start, { once: true });
-  } else {
-    start();
-  }
-})();
+ (() => {
+  const clinic=document.querySelector('#hospital-location');
+  if(!clinic)return;
+  clinic.classList.remove('kg-cosmos-host','kg-orbit-surface','abstract-watermark-host');
+  clinic.querySelectorAll('.kg-cosmos-background,.kg-orbit-overlay,canvas.kg-sky,.abstract-watermark').forEach(node=>node.remove());
+  clinic.querySelectorAll('img,iframe,.clinic-photo-card,.clinic-map-card').forEach(node=>{
+   ['animation','transition','transform','filter','will-change'].forEach(property=>node.style.removeProperty(property));
+  });
+ })();
 }
 
 /* ===== kg-fast-section-entrance-js ===== */
@@ -1369,45 +1347,46 @@ applyZoom();
 })();
 }
 
-/* ===== remove-mobile-number-optional-label ===== */
-{
-(()=>{function clean(){const label=document.querySelector('label[for="parent-name"]');if(label)label.textContent=label.textContent.replace(/\s*\(optional\)/ig,'').trim();const field=document.getElementById('parent-name');if(field){field.placeholder=field.placeholder.replace(/\s*\(optional\)/ig,'').trim();field.required=false;}}if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',clean,{once:true});else clean();})();
-}
+/* Parent phone is required and validated in the booking form handler. */
 
-/* ===== outstanding-gif-carousel-and-custom-booked-slots ===== */
+/* ===== manual-scroll-carousel-and-custom-booked-slots ===== */
 {
 (()=>{
  const track=document.getElementById('kg-watch-content-track');
  if(track){
-  const playButton=document.querySelector('.kg-watch-content-play');
-  const live=document.getElementById('kg-watch-content-live');
   const back=document.querySelector('[data-gif-direction="back"]');
   const forward=document.querySelector('[data-gif-direction="forward"]');
   const reduce=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)');
-  let userPaused=!!(reduce&&reduce.matches),interacting=false,hovering=false,raf=0,last=0,resumeTimer=0,originalSpan=0,clonesMade=false;
-  const originals=()=>Array.from(track.querySelectorAll(':scope > .kg-watch-content-gif-link')).filter(a=>a.dataset.carouselClone!=='true');
-  const setStatus=()=>{if(live)live.textContent=''};
-  const updateButton=()=>{if(!playButton)return;const paused=userPaused||interacting||hovering;playButton.innerHTML=userPaused?'<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M8 4.8 19 12 8 19.2Z"/></svg>':'<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M7 5h3.6v14H7zM13.4 5H17v14h-3.6z"/></svg>';playButton.setAttribute('aria-pressed',String(userPaused));playButton.setAttribute('aria-label',userPaused?'Play automatic video carousel movement':(paused?'Automatic video carousel movement paused':'Pause automatic video carousel movement'));playButton.title=userPaused?'Play':'Pause';};
-  const paused=()=>userPaused||interacting||hovering||!!(reduce&&reduce.matches)||document.hidden;
-  const stopFrame=()=>{if(raf)cancelAnimationFrame(raf);raf=0;last=0};
-  const measure=()=>{const items=originals();if(!items.length)return;const first=items[0],lastItem=items[items.length-1];originalSpan=(lastItem.offsetLeft+lastItem.offsetWidth)-first.offsetLeft;};
-  const addClones=()=>{if(clonesMade)return;originals().forEach((item)=>{const clone=item.cloneNode(true);clone.dataset.carouselClone='true';clone.setAttribute('aria-hidden','true');clone.setAttribute('tabindex','-1');clone.querySelectorAll('a,button,input,select,textarea,[tabindex]').forEach(el=>el.setAttribute('tabindex','-1'));clone.querySelectorAll('img').forEach(img=>img.setAttribute('aria-hidden','true'));track.appendChild(clone)});clonesMade=true;measure()};
-  const tick=(time)=>{raf=0;if(paused()){last=0;updateButton();return}if(!last)last=time;const elapsed=Math.min(50,time-last);last=time;if(originalSpan>0){track.scrollLeft+=elapsed*0.018;if(track.scrollLeft>=originalSpan){track.scrollLeft-=originalSpan}}raf=requestAnimationFrame(tick)};
-  const start=()=>{stopFrame();updateButton();if(paused()){setStatus(userPaused?'Automatic movement paused.':'Automatic movement pauses while you interact.');return}setStatus();raf=requestAnimationFrame(tick)};
-  const pauseForInteraction=()=>{interacting=true;clearTimeout(resumeTimer);stopFrame();updateButton();setStatus('Paused while you interact.');};
-  const resumeAfterInteraction=()=>{clearTimeout(resumeTimer);resumeTimer=setTimeout(()=>{interacting=false;updateButton();start()},2600)};
-  addClones();
-  if(playButton)playButton.addEventListener('click',()=>{userPaused=!userPaused;if(!userPaused){interacting=false;hovering=false}updateButton();start()});
-  if(back)back.addEventListener('click',()=>{pauseForInteraction();track.scrollBy({left:-Math.max(180,track.clientWidth*.75),behavior:reduce&&reduce.matches?'auto':'smooth'});resumeAfterInteraction()});
-  if(forward)forward.addEventListener('click',()=>{pauseForInteraction();track.scrollBy({left:Math.max(180,track.clientWidth*.75),behavior:reduce&&reduce.matches?'auto':'smooth'});resumeAfterInteraction()});
-  ['pointerdown','touchstart','wheel','keydown','focusin'].forEach(type=>track.addEventListener(type,()=>{pauseForInteraction();resumeAfterInteraction()},{passive:type!=='keydown'}));
-  ['pointerup','touchend','touchcancel','pointercancel'].forEach(type=>track.addEventListener(type,()=>{resumeAfterInteraction()},{passive:true}));
-  /* Scroll events are also emitted by the automatic animation; user input events above pause it without false-triggering on programmatic scrolls. */
-  track.addEventListener('pointerenter',()=>{hovering=true;stopFrame();updateButton()});track.addEventListener('pointerleave',()=>{hovering=false;start()});
-  document.addEventListener('visibilitychange',start);
-  if(reduce){const onMotionChange=()=>{if(reduce.matches){userPaused=true;stopFrame();updateButton();setStatus('Automatic movement paused for reduced-motion preference.')}else{start()}};if(reduce.addEventListener)reduce.addEventListener('change',onMotionChange);else if(reduce.addListener)reduce.addListener(onMotionChange)}
-  window.addEventListener('resize',()=>{measure();if(track.scrollLeft>=originalSpan&&originalSpan)track.scrollLeft%=originalSpan;start()},{passive:true});
-  updateButton();measure();start();
+  const videos=Array.from(track.querySelectorAll('.kg-watch-content-video'));
+  const scrollByPage=direction=>track.scrollBy({left:direction*Math.max(180,track.clientWidth*.78),behavior:reduce&&reduce.matches?'auto':'smooth'});
+  if(back)back.addEventListener('click',()=>scrollByPage(-1));
+  if(forward)forward.addEventListener('click',()=>scrollByPage(1));
+  const pauseAll=()=>videos.forEach(video=>video.pause());
+  let videoObserver=null;
+  const observeVideos=()=>{
+   if(videoObserver)videoObserver.disconnect();
+   if(!videos.length)return;
+   if(reduce&&reduce.matches){
+    videos.forEach(video=>{video.pause();video.preload='metadata';try{video.load();}catch(_){}});
+    return;
+   }
+   if(!('IntersectionObserver' in window)){
+    videos.forEach(video=>{video.pause();video.preload='metadata';try{video.load();}catch(_){}});
+    return;
+   }
+   videoObserver=new IntersectionObserver(entries=>entries.forEach(entry=>{
+    const video=entry.target;
+    if(entry.isIntersecting&&!document.hidden){
+     const result=video.play();
+     if(result&&typeof result.catch==='function')result.catch(()=>{});
+    }else video.pause();
+   }),{root:track,rootMargin:'0px 110px 0px 110px',threshold:.2});
+   videos.forEach(video=>{video.preload='none';videoObserver.observe(video)});
+  };
+  if(reduce&&reduce.addEventListener)reduce.addEventListener('change',()=>{pauseAll();observeVideos()});
+  else if(reduce&&reduce.addListener)reduce.addListener(()=>{pauseAll();observeVideos()});
+  document.addEventListener('visibilitychange',()=>{if(document.hidden)pauseAll();else observeVideos()});
+  observeVideos();
  }
  /* Custom booked-slot display stays synchronized with the existing select and all existing booking handlers. */
  const select=document.getElementById('time-slot-select');
@@ -1437,47 +1416,49 @@ applyZoom();
 
 /* ===== kg-gallery-dropdown-recovery ===== */
 {
-(()=>{
- function init(){
-  const gallery=document.querySelector('#links>.kg-gallery-nav-dropdown');
-  if(!gallery||gallery.dataset.kgGalleryRecovery==='true')return;
-  gallery.dataset.kgGalleryRecovery='true';
+ const gallery=document.querySelector('#links>.kg-gallery-nav-dropdown');
+ if(gallery){
   const summary=gallery.querySelector(':scope > summary');
   if(summary){summary.style.cursor='pointer';summary.setAttribute('aria-label','Gallery menu');}
-  gallery.querySelectorAll(':scope > .nav-dropdown-menu a').forEach(a=>a.addEventListener('click',()=>{gallery.removeAttribute('open');}));
+  gallery.querySelectorAll(':scope > .nav-dropdown-menu a').forEach(a=>a.addEventListener('click',()=>gallery.removeAttribute('open')));
  }
- if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
- new MutationObserver(init).observe(document.documentElement,{childList:true,subtree:true});
-})();
 }
 
 
-/* ===== November 10 repair: desktop + mobile hamburger controller ===== */
+/* ===== accessible responsive navigation controller ===== */
 (()=>{
   const toggle=document.querySelector('.header .toggle');
   const panel=document.getElementById('links');
-  if(!toggle||!panel||toggle.dataset.kgMenuReady==='true')return;
-  toggle.dataset.kgMenuReady='true';
+  if(!toggle||!panel)return;
+  const breakpoint=window.matchMedia('(max-width: 1100px)');
   const setOpen=open=>{
-    panel.classList.toggle('open',open);
-    panel.setAttribute('aria-hidden',String(!open));
-    toggle.setAttribute('aria-expanded',String(open));
-    toggle.setAttribute('aria-label',open?'Close navigation':'Open navigation');
-    toggle.textContent=open?'×':'☰';
+    const mobile=breakpoint.matches;
+    const actualOpen=mobile&&open;
+    panel.classList.toggle('open',actualOpen);
+    toggle.setAttribute('aria-expanded',String(actualOpen));
+    toggle.setAttribute('aria-label',actualOpen?'Close navigation':'Open navigation');
+    toggle.textContent=actualOpen?'×':'☰';
+    if(mobile){
+      panel.setAttribute('aria-hidden',String(!actualOpen));
+      panel.toggleAttribute('inert',!actualOpen);
+    }else{
+      panel.removeAttribute('aria-hidden');
+      panel.removeAttribute('inert');
+    }
   };
   setOpen(false);
-  toggle.addEventListener('click',event=>{
-    event.preventDefault();
-    setOpen(!panel.classList.contains('open'));
-  });
+  toggle.addEventListener('click',event=>{event.preventDefault();setOpen(!panel.classList.contains('open'));});
   document.addEventListener('click',event=>{
-    if(panel.classList.contains('open')&&!panel.contains(event.target)&&!toggle.contains(event.target))setOpen(false);
+    if(breakpoint.matches&&panel.classList.contains('open')&&!panel.contains(event.target)&&!toggle.contains(event.target))setOpen(false);
     const link=event.target.closest&&event.target.closest('#links a[href]');
-    if(link)setOpen(false);
+    if(link&&breakpoint.matches)setOpen(false);
   });
   document.addEventListener('keydown',event=>{
-    if(event.key==='Escape'&&panel.classList.contains('open')){setOpen(false);toggle.focus();}
+    if(event.key==='Escape'&&breakpoint.matches&&panel.classList.contains('open')){setOpen(false);toggle.focus();}
   });
+  const onBreakpointChange=()=>setOpen(false);
+  if(breakpoint.addEventListener)breakpoint.addEventListener('change',onBreakpointChange);
+  else if(breakpoint.addListener)breakpoint.addListener(onBreakpointChange);
 })();
 
 /* ===== November 10 repair: draggable WhatsApp button (vertical only) ===== */
@@ -1559,7 +1540,7 @@ applyZoom();
     const existing=document.querySelector('script[data-kg-homepage-motion]');
     if(existing)return;
     const script=document.createElement('script');
-    script.src='/assets/js/kg-homepage-motion.js?v=main-home-20261110-2';
+    script.src='/assets/js/kg-homepage-motion.js?v=main-home-20261121-1';
     script.async=true;
     script.dataset.kgHomepageMotion='true';
     if('fetchPriority' in script)script.fetchPriority='low';
@@ -1572,3 +1553,18 @@ applyZoom();
   if('requestIdleCallback' in window)window.requestIdleCallback(load,{timeout:1400});
   else window.setTimeout(load,520);
 })();
+
+/* ===== interaction-loaded clinic map ===== */
+(()=>{
+ const button=document.getElementById('clinic-map-load');
+ const frame=document.querySelector('#hospital-location iframe[data-map-src]');
+ const placeholder=document.getElementById('clinic-map-placeholder');
+ if(button&&frame){
+  button.addEventListener('click',()=>{
+   if(!frame.hasAttribute('src'))frame.setAttribute('src',frame.dataset.mapSrc);
+   frame.hidden=false;
+   if(placeholder)placeholder.hidden=true;
+  },{once:true});
+ }
+})();
+

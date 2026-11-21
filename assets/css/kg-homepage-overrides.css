@@ -2151,3 +2151,73 @@ html body a.whatsapp-float.is-dragging{
   transition:none!important;
   cursor:grabbing!important;
 }
+
+
+/* ===== 2026-11-21 functionality and mobile stability patch ===== */
+@supports (height: 100dvh) {
+  .nav .links.open { max-height: min(75dvh, 620px); }
+  #whatsapp-booking-dialog.booking-dialog { max-height: calc(100dvh - 16px); }
+  #whatsapp-booking-dialog .booking-dialog-inner { max-height: calc(100dvh - 16px); }
+}
+@supports not (height: 100dvh) {
+  #whatsapp-booking-dialog.booking-dialog { max-height: calc(100vh - 16px); }
+  #whatsapp-booking-dialog .booking-dialog-inner { max-height: calc(100vh - 16px); }
+}
+html { scroll-padding-top: 88px; }
+html, body { overflow-x: clip; }
+.nav .links.open { overscroll-behavior: contain; }
+.nav .links[aria-hidden="true"] { visibility: hidden; }
+.nav .links.open[aria-hidden="false"] { visibility: visible; }
+.toggle, .booking-dialog-close, #calendar-previous, #calendar-next,
+.kg-watch-content-control, .gallery-lightbox-control, .gallery-zoom-btn {
+  min-width: 44px; min-height: 44px; touch-action: manipulation;
+}
+#whatsapp-booking-dialog.booking-dialog { overscroll-behavior: contain; }
+#whatsapp-booking-dialog .booking-dialog-inner { overflow-y: auto; overscroll-behavior: contain; }
+#whatsapp-booking-dialog::backdrop { background: rgba(8, 29, 48, .62); }
+body.kg-booking-dialog-open { overflow: hidden; }
+body.kg-booking-dialog-open .whatsapp-float { visibility: hidden !important; pointer-events: none !important; }
+.whatsapp-float {
+  right: calc(16px + env(safe-area-inset-right));
+  bottom: calc(16px + env(safe-area-inset-bottom));
+  touch-action: none;
+}
+@media (max-width: 760px) {
+  input, select, textarea { font-size: 16px; }
+  .footer { padding-bottom: calc(80px + env(safe-area-inset-bottom)); }
+}
+#kg-watch-content-track.kg-watch-content-grid {
+  scroll-snap-type: x mandatory !important;
+  overscroll-behavior-x: contain;
+  scroll-behavior: smooth;
+}
+#kg-watch-content-track.kg-watch-content-grid > .kg-watch-content-gif-link {
+  scroll-snap-align: start !important;
+}
+.kg-watch-content-control { min-width: 44px; min-height: 44px; }
+.clinic-map-placeholder {
+  min-height: 280px; display: grid; place-content: center; justify-items: center;
+  gap: 12px; padding: 24px; text-align: center; background: #f1f6fa;
+  border: 1px solid #d7e4ee; border-radius: 10px; color: #29475f;
+}
+.clinic-map-load {
+  min-height: 44px; padding: 10px 18px; border: 1px solid #0759a8;
+  border-radius: 8px; background: #0759a8; color: #fff; font: inherit;
+  font-weight: 700; cursor: pointer;
+}
+.clinic-map-load:hover { background: #064b8d; }
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto !important; }
+  #kg-watch-content-track.kg-watch-content-grid { scroll-behavior: auto !important; }
+  .whatsapp-float { animation: none !important; transform: none !important; }
+}
+
+.clinic-map-card iframe[hidden] { display: none !important; }
+@media (min-width: 1101px) {
+  .header .toggle { display: none !important; }
+}
+@media (max-width: 760px) {
+  #site-search-input, #newsletter-email,
+  #whatsapp-booking-dialog input, #whatsapp-booking-dialog select,
+  #whatsapp-booking-dialog textarea { font-size: 16px !important; }
+}
