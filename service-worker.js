@@ -1,8 +1,8 @@
 /* KidsGastro service worker — safe offline support and automatic asset updates.
-   Keep this file beside index.html and name it exactly: service-worker.js
+   Keep this file beside the site root document and name it exactly: service-worker.js
 */
 
-const CACHE_NAME = "kidsgastro-cache-v9";
+const CACHE_NAME = "kidsgastro-cache-v11";
 const APP_ROOT = new URL(self.registration.scope);
 const APP_ORIGIN = self.location.origin;
 
@@ -10,29 +10,27 @@ const APP_ORIGIN = self.location.origin;
    the service worker from installing or updating. */
 const SHELL_FILES = [
   "./",
-  "./index.html",
   "./404.html",
-  "./admin.html",
+  "./admin",
   "./style-shared.css",
   "./script-shared.js",
   "./settings.json",
   "./robots.txt",
   "./sitemap.xml",
   "./favicon.ico",
-  "./about",
-  "./blog",
-  "./clinic",
-  "./clinical",
-  "./faqs",
-  "./gallery",
-  "./latest",
-  "./newsletter",
-  "./publications",
-  "./services",
-  "./socials",
-  "./testimonials",
-  "./treatments",
-  "./updates",
+  "./about/",
+  "./blog/",
+  "./clinic/",
+  "./clinical/",
+  "./faqs/",
+  "./gallery/",
+  "./latest/",
+  "./newsletter/",
+  "./publications/",
+  "./services/",
+  "./socials/",
+  "./testimonials/",
+  "./treatments/",
   "./assets/baby%20pic.webp",
   "./assets/endo%20gallery%20pic.webp",
   "./assets/endo%20main%20pic.webp",
@@ -122,15 +120,32 @@ async function networkFirst(request) {
 
   try {
     const response = await fetch(request, { cache: "no-cache" });
-    await saveResponse(cache, request, response);
+    if (response.ok) {
+      await saveResponse(cache, request, response);
+      return response;
+    }
+
+    /* GitHub Pages serves legacy root HTML files with .html extensions. When a
+       clean directory route is not present, resolve the matching source page
+       while keeping the visitor's clean URL in the address bar. */
+    const requestedUrl = new URL(request.url);
+    const cleanPath = requestedUrl.pathname.replace(/\/+$/, "");
+    const lastSegment = cleanPath.split("/").pop() || "";
+    if (response.status === 404 && cleanPath && !lastSegment.includes(".")) {
+      const legacyUrl = new URL(`${cleanPath}.html${requestedUrl.search}`, requestedUrl.origin);
+      const legacyResponse = await fetch(legacyUrl.href, { cache: "no-cache" });
+      if (legacyResponse.ok) {
+        await saveResponse(cache, request, legacyResponse);
+        return legacyResponse;
+      }
+    }
     return response;
   } catch (error) {
     const cached = await cache.match(request);
     if (cached) return cached;
 
     /* If an uncached page is requested offline, show the cached homepage. */
-    const homePage = await cache.match(new URL("index.html", APP_ROOT).href)
-      || await cache.match(APP_ROOT.href);
+    const homePage = await cache.match(APP_ROOT.href);
 
     if (homePage) return homePage;
 
