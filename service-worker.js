@@ -2,7 +2,7 @@
    Keep this file beside index.html and name it exactly: service-worker.js
 */
 
-const CACHE_NAME = "kidsgastro-cache-v7";
+const CACHE_NAME = "kidsgastro-cache-v9";
 const APP_ROOT = new URL(self.registration.scope);
 const APP_ORIGIN = self.location.origin;
 
@@ -16,35 +16,40 @@ const SHELL_FILES = [
   "./style-shared.css",
   "./script-shared.js",
   "./settings.json",
+  "./robots.txt",
+  "./sitemap.xml",
   "./favicon.ico",
-  "./about.html",
-  "./blog.html",
-  "./clinic.html",
-  "./clinical.html",
-  "./faqs.html",
-  "./gallery.html",
-  "./latest.html",
-  "./newsletter.html",
-  "./publications.html",
-  "./services.html",
-  "./socials.html",
-  "./testimonials.html",
-  "./treatments.html",
-  "./updates.html",
+  "./about",
+  "./blog",
+  "./clinic",
+  "./clinical",
+  "./faqs",
+  "./gallery",
+  "./latest",
+  "./newsletter",
+  "./publications",
+  "./services",
+  "./socials",
+  "./testimonials",
+  "./treatments",
+  "./updates",
   "./assets/baby%20pic.webp",
   "./assets/endo%20gallery%20pic.webp",
   "./assets/endo%20main%20pic.webp",
   "./assets/gastro%20talk.webp",
   "./assets/hospital%20pic.webp",
   "./assets/kg%20logo.webp",
+  "./assets/instagram.svg",
+  "./assets/linkedin.svg",
+  "./assets/google-scholar.svg",
+  "./assets/whatsapp.svg",
   "./assets/kidsgastro-video-1-thumbnail.jpg",
   "./assets/kidsgastro-video-2-thumbnail.jpg",
   "./assets/kidsgastro-video-3-thumbnail.jpg",
   "./assets/kidsgastro-video-4-thumbnail.jpg",
   "./assets/kidsgastro-video-5-thumbnail.jpg",
   "./assets/main%20pic.webp",
-  "./assets/potrait%20gallery.jpg",
-  "./assets/rezept-rx-logo.png"
+  "./assets/potrait%20gallery.jpg"
 ];
 
 const STATIC_DESTINATIONS = new Set([

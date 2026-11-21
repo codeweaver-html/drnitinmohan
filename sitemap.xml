@@ -11,16 +11,11 @@
     </image:image>
     <image:image>
       <image:loc>https://drnitinmohan.com/assets/main%20pic.webp</image:loc>
+      <image:title>Dr. Nitin Mohan</image:title>
+      <image:caption>Consultant Paediatric Gastroenterologist, Hepatologist and Nutritionist in Hisar</image:caption>
     </image:image>
-    <image:image>
-      <image:loc>https://drnitinmohan.com/assets/rezept-rx-logo.png</image:loc>
-    </image:image>
-    <image:image>
-      <image:loc>https://drnitinmohan.com/assets/gastro%20talk.webp</image:loc>
-    </image:image>
-    <image:image>
-      <image:loc>https://drnitinmohan.com/assets/hospital%20pic.webp</image:loc>
-    </image:image>
+    <image:image><image:loc>https://drnitinmohan.com/assets/gastro%20talk.webp</image:loc></image:image>
+    <image:image><image:loc>https://drnitinmohan.com/assets/hospital%20pic.webp</image:loc></image:image>
     <video:video>
       <video:thumbnail_loc>https://drnitinmohan.com/assets/kidsgastro-video-1-thumbnail.jpg</video:thumbnail_loc>
       <video:title>KidsGastro video 1</video:title>
@@ -52,31 +47,15 @@
       <video:content_loc>https://drnitinmohan.com/assets/gif%205.webm</video:content_loc>
     </video:video>
   </url>
+  <url><loc>https://drnitinmohan.com/about.html</loc></url>
+  <url><loc>https://drnitinmohan.com/blog.html</loc></url>
+  <url><loc>https://drnitinmohan.com/faqs.html</loc></url>
   <url>
-    <loc>https://drnitinmohan.com/about/</loc>
+    <loc>https://drnitinmohan.com/gallery.html</loc>
+    <image:image><image:loc>https://drnitinmohan.com/assets/potrait%20gallery.jpg</image:loc></image:image>
   </url>
-  <url>
-    <loc>https://drnitinmohan.com/blog/</loc>
-  </url>
-  <url>
-    <loc>https://drnitinmohan.com/faqs/</loc>
-  </url>
-  <url>
-    <loc>https://drnitinmohan.com/gallery/</loc>
-    <image:image>
-      <image:loc>https://drnitinmohan.com/assets/potrait%20gallery.jpg</image:loc>
-    </image:image>
-  </url>
-  <url>
-    <loc>https://drnitinmohan.com/publications/</loc>
-  </url>
-  <url>
-    <loc>https://drnitinmohan.com/services/</loc>
-  </url>
-  <url>
-    <loc>https://drnitinmohan.com/testimonials/</loc>
-  </url>
-  <url>
-    <loc>https://drnitinmohan.com/treatments/</loc>
-  </url>
+  <url><loc>https://drnitinmohan.com/publications.html</loc></url>
+  <url><loc>https://drnitinmohan.com/services.html</loc></url>
+  <url><loc>https://drnitinmohan.com/testimonials.html</loc></url>
+  <url><loc>https://drnitinmohan.com/treatments.html</loc></url>
 </urlset>

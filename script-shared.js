@@ -29,27 +29,27 @@ const SITE_CONFIG = {
     recaptchaVerifyUrl: "https://drnitinmohan-backend.drnitinmohanpaedsgastro.workers.dev/api/recaptcha/verify"
   },
   nav: [
-    { label: "About", path: "about.html" },
-    { label: "Treatments", path: "treatments.html", children: [
-      { label: "Paediatric Gastroenterology", path: "treatments.html" },
-      { label: "Paediatric Hepatology — Liver Diseases", path: "treatments.html" },
-      { label: "Paediatric Pancreatology — Pancreatic Disorders", path: "treatments.html" },
-      { label: "Paediatric Biliary Tract Diseases", path: "treatments.html" },
-      { label: "Paediatric Nutrition and Growth", path: "treatments.html" }
+    { label: "Why to choose Dr. Nitin Mohan", path: "/about" },
+    { label: "Treatments", path: "/treatments", children: [
+      { label: "Paediatric Gastroenterology", path: "/treatments" },
+      { label: "Paediatric Hepatology — Liver Diseases", path: "/treatments" },
+      { label: "Paediatric Pancreatology — Pancreatic Disorders", path: "/treatments" },
+      { label: "Paediatric Biliary Tract Diseases", path: "/treatments" },
+      { label: "Paediatric Nutrition and Growth", path: "/treatments" }
     ]},
-    { label: "Services", path: "services.html", children: [
-      { label: "Paediatric Gastrointestinal Procedures", path: "services.html" },
-      { label: "Hepatology Procedures & Investigations", path: "services.html" },
-      { label: "Pancreatic Investigations", path: "services.html" },
-      { label: "Biliary Tract Investigations", path: "services.html" },
-      { label: "Gastrointestinal Diagnostic Investigations", path: "services.html" },
-      { label: "Nutrition & Growth Assessment", path: "services.html" }
+    { label: "Services", path: "/services", children: [
+      { label: "Paediatric Gastrointestinal Procedures", path: "/services" },
+      { label: "Hepatology Procedures & Investigations", path: "/services" },
+      { label: "Pancreatic Investigations", path: "/services" },
+      { label: "Biliary Tract Investigations", path: "/services" },
+      { label: "Gastrointestinal Diagnostic Investigations", path: "/services" },
+      { label: "Nutrition & Growth Assessment", path: "/services" }
     ]},
-    { label: "FAQs", path: "faqs.html" },
-    { label: "Blog", path: "blog.html" },
-    { label: "Publication", path: "publications.html" },
-    { label: "Testimonials", path: "testimonials.html" },
-    { label: "Gallery", path: "gallery.html" },
+    { label: "FAQs", path: "/faqs" },
+    { label: "Blog", path: "/blog" },
+    { label: "Publication", path: "/publications" },
+    { label: "Testimonials", path: "/testimonials" },
+    { label: "Gallery", path: "/gallery" },
     { label: "Contact Info", homeAnchor: "site-footer-mount" }
   ],
   content: {
@@ -161,7 +161,7 @@ const SITE_CONFIG = {
   }
 
   /* ===== BLOCK: HEADER_FOOTER ===== */
-  const homeUrl = () => asset("index.html");
+  const homeUrl = () => window.location.protocol === "file:" ? "./" : basePath;
   const hrefFor = item => {
     if (item.href) return item.href;
     if (item.homeAnchor) return `#${encodeURIComponent(item.homeAnchor)}`;
@@ -207,19 +207,21 @@ const SITE_CONFIG = {
       return `<a href="${escapeHtml(hrefFor(item))}" data-site-link>${label}${description}</a>`;
     };
     const links = SITE_CONFIG.nav.map(renderItem).join("");
-    const bookingAction = feature("whatsappBooking")
-      ? `<button class="site-booking-nav-trigger" type="button" data-open-booking>Book an appointment</button>`
-      : "";
     /* The public Login link is intentionally last. admin.html performs the
-       existing first-stage authentication and redirects to updates.html. */
-    const loginAction = `<a class="site-nav-login" href="${escapeHtml(asset("admin.html"))}" data-site-link><span aria-hidden="true">⌑</span> Login</a>`;
+       existing first-stage authentication and redirects to /updates. */
+    const loginAction = `<a class="site-nav-login" href="${escapeHtml(asset("admin.html"))}" data-site-link>Login</a>`;
     return `<nav class="site-navigation" aria-label="Main navigation">
       <a class="site-brand" href="${escapeHtml(homeUrl())}" aria-label="KidsGastro home">
         <img src="${asset("assets/kg%20logo.webp")}" alt="KidsGastro logo" width="54" height="54">
         <span>${escapeHtml(SITE_CONFIG.content.brand)}</span>
       </a>
-      <button class="site-nav-trigger" type="button" aria-controls="site-nav-links" aria-expanded="false" aria-label="Open navigation">☰</button>
-      <div class="site-nav-links" id="site-nav-links">${links}${bookingAction}${loginAction}</div>
+      <button class="site-nav-trigger" type="button" aria-controls="site-nav-links" aria-expanded="false" aria-label="Open navigation">
+        <span class="nav-trigger-lines" aria-hidden="true"><span></span><span></span><span></span></span>
+      </button>
+      <div class="site-nav-links" id="site-nav-links">
+        
+        ${links}${loginAction}
+      </div>
     </nav>`;
   }
 
@@ -234,7 +236,7 @@ const SITE_CONFIG = {
           <div><strong>Phone</strong><a href="tel:+${SITE_CONFIG.contact.phoneE164}">${escapeHtml(SITE_CONFIG.contact.phoneDisplay)}</a></div>
           <div id="site-footer-share-mount"></div>
         </div></div>
-        <div class="site-container site-footer-bottom"><a class="site-footer-brand" href="${escapeHtml(homeUrl())}" aria-label="KidsGastro home"><img src="${asset("assets/kg%20logo.webp")}" alt="KidsGastro logo" width="50" height="50"><span>KidsGastro<small>Paediatric Gastroenterology · Dr. Nitin Mohan</small></span></a><p>${escapeHtml(SITE_CONFIG.content.footer)}</p><a href="#site-main">Back to top ↑</a></div>
+        <div class="site-container site-footer-bottom"><a class="site-footer-brand" href="${escapeHtml(homeUrl())}" aria-label="KidsGastro home"><img src="${asset("assets/kg%20logo.webp")}" alt="KidsGastro logo" width="50" height="50"><span>KidsGastro<small>Paediatric Gastroenterology · Dr. Nitin Mohan</small></span></a><p>${escapeHtml(SITE_CONFIG.content.footer)}</p><a class="site-back-to-top" href="#site-main">Back to top ↑</a></div>
       </footer>`;
     }
   }
@@ -289,7 +291,7 @@ const SITE_CONFIG = {
         nav.querySelectorAll(".site-nav-group[open]").forEach(group => group.open = false);
         if (nav.dataset.open === "true") setNavOpen(false);
       }
-      if (event.target.closest(".site-nav-links a, .site-booking-nav-trigger")) setNavOpen(false);
+      if (event.target.closest(".site-nav-links a")) setNavOpen(false);
     });
     document.addEventListener("keydown", event => {
       if (event.key === "Escape" && nav.dataset.open === "true") {
@@ -369,7 +371,7 @@ const SITE_CONFIG = {
           <label>Child’s age<input id="booking-child-age" name="childAge" type="number" min="0" max="18" step="0.1" required><span>years</span></label>
           <label>Phone Number<input id="booking-phone" name="phone" type="tel" inputmode="numeric" maxlength="10" autocomplete="tel-national" required></label>
           <label>Preferred date<input id="booking-date" name="date" type="date" required><small>Choose today or tomorrow.</small></label>
-          <label>Preferred time (30-minute slots)<select id="booking-time" name="time" required disabled><option value="">Select a date first to see available 30-minute appointment slots.</option></select></label>
+          <label>Preferred time (30-minute slots)<select id="booking-time" name="time" required disabled><option value="">Select a date first to see available 30-minute appointment slots.</option></select><small class="booking-slot-legend"><span aria-hidden="true">●</span> Red crossed-out slots are already booked.</small></label>
         </div>
         <p class="captcha-disclosure">This site is protected by reCAPTCHA. Google <a href="https://policies.google.com/privacy" target="_blank" rel="noopener">Privacy Policy</a> and <a href="https://policies.google.com/terms" target="_blank" rel="noopener">Terms of Service</a> apply.</p>
         <p id="booking-error" class="site-status" aria-live="polite"></p>
@@ -397,7 +399,7 @@ const SITE_CONFIG = {
       floatingButton.type = "button";
       floatingButton.hidden = true;
       floatingButton.setAttribute("aria-label", "Book via WhatsApp");
-      floatingButton.textContent = "Book via WhatsApp";
+      floatingButton.title = "Book via WhatsApp";
       body.append(floatingButton);
     }
 
@@ -457,7 +459,12 @@ const SITE_CONFIG = {
           const option = document.createElement("option");
           option.value = String(mins);
           option.textContent = rangeLabel(mins, mins + 30);
-          if (isBooked(key, mins)) { option.disabled = true; option.textContent += " · Slot already booked"; }
+          if (isBooked(key, mins)) {
+            option.disabled = true;
+            option.className = "slot-booked";
+            option.textContent += " · Slot already booked";
+            option.setAttribute("aria-label", `${option.textContent}. This slot is unavailable.`);
+          }
           else if (key === todayKey && mins < currentMinutes) continue;
           timeSelect.append(option);
         }
@@ -766,27 +773,52 @@ const SITE_CONFIG = {
     let button = document.getElementById("floating-booking");
     if (!button) {
       button = document.createElement("button");
-      button.className = "floating-booking";
       button.id = "floating-booking";
-      button.type = "button";
-      button.setAttribute("aria-label", "Book via WhatsApp");
-      button.textContent = "Book via WhatsApp";
       body.append(button);
     }
+    button.className = "floating-booking";
+    button.type = "button";
+    button.setAttribute("aria-label", "Book via WhatsApp");
+    button.title = "Book via WhatsApp";
+    button.innerHTML = `<img class="whatsapp-brand-mark" src="${asset("assets/whatsapp.svg")}" alt="" width="34" height="34"><span class="floating-booking-label">Book via WhatsApp</span>`;
     if (!feature("whatsappFloat")) { button.hidden = true; return; }
     button.hidden = false;
-    if (!feature("whatsappBooking")) {
-      button.addEventListener("click", () => window.open(`https://wa.me/${SITE_CONFIG.contact.phoneE164}`, "_blank", "noopener"));
+
+    if (!feature("whatsappBooking") && !button.dataset.directBookingBound) {
+      button.addEventListener("click", () => window.open(`https://wa.me/${SITE_CONFIG.contact.phoneE164}`, "_blank", "noopener,noreferrer"));
+      button.dataset.directBookingBound = "true";
     }
+
     let dragStart = null;
-    button.addEventListener("pointerdown", event => { dragStart = { y:event.clientY, top:button.getBoundingClientRect().top }; button.setPointerCapture(event.pointerId); });
-    button.addEventListener("pointermove", event => {
-      if (!dragStart || !button.hasPointerCapture(event.pointerId)) return;
-      const top = Math.max(12, Math.min(innerHeight - button.offsetHeight - 12, dragStart.top + event.clientY - dragStart.y));
-      button.style.top = `${top}px`; button.style.bottom = "auto"; button.style.right = "18px";
+    let suppressNextClick = false;
+    button.addEventListener("click", event => {
+      if (suppressNextClick) {
+        event.preventDefault();
+        event.stopImmediatePropagation();
+        suppressNextClick = false;
+      }
+    }, true);
+    button.addEventListener("pointerdown", event => {
+      dragStart = { pointerId:event.pointerId, y:event.clientY, top:button.getBoundingClientRect().top, moved:false };
+      button.setPointerCapture(event.pointerId);
     });
-    button.addEventListener("pointerup", () => { dragStart = null; });
-    button.addEventListener("pointercancel", () => { dragStart = null; });
+    button.addEventListener("pointermove", event => {
+      if (!dragStart || dragStart.pointerId !== event.pointerId || !button.hasPointerCapture(event.pointerId)) return;
+      const deltaY = event.clientY - dragStart.y;
+      if (Math.abs(deltaY) > 5) dragStart.moved = true;
+      if (!dragStart.moved) return;
+      const top = Math.max(12, Math.min(innerHeight - button.offsetHeight - 12, dragStart.top + deltaY));
+      button.style.top = `${top}px`;
+      button.style.bottom = "auto";
+      button.style.right = "18px";
+    });
+    const finishDrag = event => {
+      if (!dragStart || dragStart.pointerId !== event.pointerId) return;
+      suppressNextClick = dragStart.moved;
+      dragStart = null;
+    };
+    button.addEventListener("pointerup", finishDrag);
+    button.addEventListener("pointercancel", finishDrag);
   }
   /* ===== END BLOCK: WHATSAPP_FLOAT ===== */
 
@@ -796,7 +828,7 @@ const SITE_CONFIG = {
     if (!feature("photoOfMonth")) { if (slot) slot.hidden = true; return; }
     if (!slot) return;
     slot.hidden = false;
-    const available = ["gastro talk.webp","rezept-rx-logo.png","endo gallery pic.webp","main pic.webp","potrait gallery.jpg","baby pic.webp","hospital pic.webp","gif 1.webm","gif 2.webm","gif 3.webm","gif 4.webm","gif 5.webm","endo main pic.webp"];
+    const available = ["gastro talk.webp","endo gallery pic.webp","main pic.webp","potrait gallery.jpg","baby pic.webp","hospital pic.webp","gif 1.webm","gif 2.webm","gif 3.webm","gif 4.webm","gif 5.webm","endo main pic.webp"];
     try {
       const response = await fetch(asset("settings.json"), { cache: "no-cache" });
       if (!response.ok) return;
@@ -814,6 +846,36 @@ const SITE_CONFIG = {
     } catch (_) { /* The searchable placeholder remains visible until a valid setting is published. */ }
   }
   /* ===== END BLOCK: PHOTO_OF_MONTH ===== */
+
+  /* ===== BLOCK: HOME_HERO_CAROUSEL ===== */
+  function initHomeHeroCarousel() {
+    const carousel = document.querySelector("[data-hero-carousel]");
+    if (!carousel) return;
+    const slides = [...carousel.querySelectorAll("[data-hero-slide-item]")];
+    const controls = [...carousel.querySelectorAll("[data-hero-slide]")];
+    const status = carousel.querySelector("[data-hero-slide-status]");
+    if (slides.length < 2) return;
+    let activeIndex = Math.max(0, slides.findIndex(slide => !slide.hidden));
+    const show = index => {
+      activeIndex = (index + slides.length) % slides.length;
+      slides.forEach((slide, i) => {
+        slide.hidden = i !== activeIndex;
+        slide.setAttribute("aria-hidden", String(i !== activeIndex));
+      });
+      if (status) status.textContent = `${activeIndex + 1} / ${slides.length}`;
+    };
+    controls.forEach(button => button.addEventListener("click", () => {
+      const direction = Number(button.dataset.heroSlide) || 1;
+      show(activeIndex + direction);
+    }));
+    carousel.addEventListener("keydown", event => {
+      if (event.key === "ArrowLeft") { event.preventDefault(); show(activeIndex - 1); }
+      if (event.key === "ArrowRight") { event.preventDefault(); show(activeIndex + 1); }
+    });
+    carousel.tabIndex = 0;
+    show(activeIndex);
+  }
+  /* ===== END BLOCK: HOME_HERO_CAROUSEL ===== */
 
   /* ===== BLOCK: VIDEO_CAROUSEL ===== */
   function initVideoCarousel() {
@@ -836,15 +898,10 @@ const SITE_CONFIG = {
       clone.querySelectorAll("video").forEach(video => {
         video.pause();
         video.removeAttribute("data-motion-video");
-        video.removeAttribute("autoplay");
+        video.muted = true;
+        video.loop = true;
+        video.playsInline = true;
         video.preload = "none";
-        /* Use a still frame in the cloned loop so only the original videos
-           consume playback resources. */
-        const posterNumber = (index % 5) + 1;
-        video.setAttribute("poster", asset(`assets/kidsgastro-video-${posterNumber}-thumbnail.jpg`));
-        video.removeAttribute("src");
-        video.querySelectorAll("source").forEach(source => source.remove());
-        video.load();
       });
       track.append(clone);
     });
@@ -868,6 +925,24 @@ const SITE_CONFIG = {
     const loopWidth = () => measuredLoopWidth || measureLoopWidth();
     measureLoopWidth();
     window.addEventListener("resize", () => requestAnimationFrame(measureLoopWidth), { passive: true });
+
+    const carouselViewport = track.parentElement;
+    if ("IntersectionObserver" in window && carouselViewport) {
+      const cloneVideoObserver = new IntersectionObserver(entries => {
+        entries.forEach(entry => {
+          const video = entry.target;
+          if (entry.isIntersecting && !document.hidden && !root.classList.contains("no-motion")) {
+            video.play().catch(() => {});
+          } else {
+            video.pause();
+          }
+        });
+      }, { root:carouselViewport, rootMargin:"0px 100px", threshold:0.05 });
+      track.querySelectorAll('[data-carousel-clone="true"] video').forEach(video => cloneVideoObserver.observe(video));
+      document.addEventListener("visibilitychange", () => {
+        if (document.hidden) track.querySelectorAll('[data-carousel-clone="true"] video').forEach(video => video.pause());
+      });
+    }
 
     document.querySelectorAll("[data-video-scroll]").forEach(button => {
       button.addEventListener("click", () => {
@@ -922,8 +997,8 @@ const SITE_CONFIG = {
       if (!reduced && !motionDisabled && !document.hidden && !pausedByPointer && !pausedByTouch && !pausedByFocus && timestamp >= pauseUntil) {
         const width = loopWidth();
         if (width > 0) {
-          track.scrollLeft += elapsed * 0.024; /* approx. 24 pixels per second */
-          if (track.scrollLeft >= width) track.scrollLeft -= width;
+          track.scrollLeft += elapsed * 0.032; /* smooth automatic movement at about 32 pixels per second */
+          if (track.scrollLeft >= width) track.scrollLeft %= width;
         }
       }
       requestAnimationFrame(animate);
@@ -942,6 +1017,10 @@ const SITE_CONFIG = {
     const closeButton = viewer.querySelector(".viewer-close");
     let zoom = 1;
     let previousFocus = null;
+    let galleryImages = [];
+    let currentImageIndex = -1;
+    const previousButton = viewer.querySelector(".viewer-prev");
+    const nextButton = viewer.querySelector(".viewer-next");
 
     const isBrandOrUiImage = target => {
       const src = target.getAttribute("src") || "";
@@ -950,7 +1029,7 @@ const SITE_CONFIG = {
         ".site-brand,.site-footer-brand,.social-icon,.image-viewer,.kg-rb-booking-dialog," +
         ".appointment-option,.kg-rb-newsletter-form,.site-navigation,.site-footer"
       )) || target.hasAttribute("data-no-viewer") ||
-        /kg(?:%20|\s)logo|rezept-rx-logo|favicon/i.test(src) ||
+        /kg(?:%20|\s)logo|favicon/i.test(src) ||
         /kids?gastro logo|rezept.?rx logo/i.test(alt);
     };
     const isViewableImage = target => target instanceof HTMLImageElement &&
@@ -965,6 +1044,21 @@ const SITE_CONFIG = {
       target.classList.add("kg-viewable-image");
     });
 
+    function updateNavigation() {
+      const hasMultiple = galleryImages.length > 1;
+      if (previousButton) previousButton.hidden = !hasMultiple;
+      if (nextButton) nextButton.hidden = !hasMultiple;
+    }
+    function showImage(index) {
+      if (!galleryImages.length) return;
+      currentImageIndex = (index + galleryImages.length) % galleryImages.length;
+      const target = galleryImages[currentImageIndex];
+      image.src = target.currentSrc || target.src;
+      image.alt = target.alt || "";
+      previousFocus = target;
+      zoom = 1;
+      updateZoom();
+    }
     function updateZoom() {
       image.style.transform = `scale(${zoom})`;
       image.style.cursor = zoom > 1 ? "zoom-out" : "zoom-in";
@@ -979,9 +1073,12 @@ const SITE_CONFIG = {
     }
     function open(target) {
       if (!isViewableImage(target)) return;
+      galleryImages = [...document.querySelectorAll("main img,.site-page-content img")].filter(isViewableImage);
+      currentImageIndex = galleryImages.indexOf(target);
       previousFocus = target;
       image.src = target.currentSrc || target.src;
       image.alt = target.alt || "";
+      updateNavigation();
       zoom = 1;
       updateZoom();
       viewer.hidden = false;
@@ -1004,6 +1101,13 @@ const SITE_CONFIG = {
       if (event.key === "Escape" && !viewer.hidden) close();
     });
     closeButton.addEventListener("click", close);
+    previousButton && previousButton.addEventListener("click", () => showImage(currentImageIndex - 1));
+    nextButton && nextButton.addEventListener("click", () => showImage(currentImageIndex + 1));
+    document.addEventListener("keydown", event => {
+      if (viewer.hidden) return;
+      if (event.key === "ArrowLeft") showImage(currentImageIndex - 1);
+      if (event.key === "ArrowRight") showImage(currentImageIndex + 1);
+    });
     viewer.querySelector(".viewer-zoom-in").addEventListener("click", () => {
       zoom = Math.min(4, +(zoom + .25).toFixed(2)); updateZoom();
     });
@@ -1153,6 +1257,7 @@ const SITE_CONFIG = {
   if (typeof initBooking === "function") initBooking();
   if (typeof initWhatsAppFloat === "function") initWhatsAppFloat();
   if (typeof initPhotoOfMonth === "function") initPhotoOfMonth();
+  if (typeof initHomeHeroCarousel === "function") initHomeHeroCarousel();
   if (typeof initVideoCarousel === "function") initVideoCarousel();
   if (typeof initGalleryLightbox === "function") initGalleryLightbox();
   if (typeof initFooterShare === "function") initFooterShare();
