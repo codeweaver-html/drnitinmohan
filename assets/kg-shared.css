@@ -852,3 +852,29 @@ html.kg-shared-excluded #kg-space {
     animation: none !important;
   }
 }
+
+/* ===== PER-SUBSITE OPT-OUTS ===== */
+/* The Blog page opts out of the cosmic canvas while other subsites keep their
+   common behavior. This also hides a stale canvas if one survives in cached DOM. */
+html[data-kg-disable-cosmos="true"] #kg-space {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+}
+html[data-kg-disable-cosmos="true"] .kg-space-panel {
+  isolation: auto !important;
+  overflow: visible !important;
+}
+html[data-kg-disable-cosmos="true"] .kg-space-panel > * {
+  z-index: auto !important;
+}
+
+/* Remove legacy nested dropdowns from this page's shared header. */
+html[data-kg-disable-legacy-dropdowns="true"] header nav details,
+html[data-kg-disable-legacy-dropdowns="true"] header .nav-dropdown,
+html[data-kg-disable-legacy-dropdowns="true"] header .nav-dropdown-menu,
+html[data-kg-disable-legacy-dropdowns="true"] header .header-quick-menu,
+html[data-kg-disable-legacy-dropdowns="true"] header .dropdown-menu,
+html[data-kg-disable-legacy-dropdowns="true"] header .submenu {
+  display: none !important;
+}

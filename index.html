@@ -153,6 +153,141 @@
 
 <link rel="preload" as="image" href="/assets/main%20pic.webp" fetchpriority="high">
 
+
+<style id="kg-whatsapp-booking-recaptcha-style">
+/* Keep Google's badge out of the way normally; show it only while the WhatsApp
+   appointment dialog is visibly open. The sync script chooses the least
+   obstructive viewport corner while the form is active. */
+.grecaptcha-badge {
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+body.kg-whatsapp-booking-active .grecaptcha-badge {
+  visibility: visible !important;
+  opacity: 1 !important;
+  pointer-events: auto !important;
+  position: fixed !important;
+  z-index: 2147483000 !important;
+  width: 256px !important;
+  max-width: calc(100vw - 24px) !important;
+  height: 60px !important;
+  margin: 0 !important;
+  transition: none !important;
+}
+body.kg-whatsapp-booking-active .grecaptcha-badge.kg-captcha-top-left {
+  top: max(12px, env(safe-area-inset-top)) !important;
+  bottom: auto !important;
+  left: max(12px, env(safe-area-inset-left)) !important;
+  right: auto !important;
+}
+body.kg-whatsapp-booking-active .grecaptcha-badge.kg-captcha-top-right {
+  top: max(12px, env(safe-area-inset-top)) !important;
+  bottom: auto !important;
+  right: max(12px, env(safe-area-inset-right)) !important;
+  left: auto !important;
+}
+body.kg-whatsapp-booking-active .grecaptcha-badge.kg-captcha-bottom-left {
+  top: auto !important;
+  bottom: max(12px, env(safe-area-inset-bottom)) !important;
+  left: max(12px, env(safe-area-inset-left)) !important;
+  right: auto !important;
+}
+body.kg-whatsapp-booking-active .grecaptcha-badge.kg-captcha-bottom-right {
+  top: auto !important;
+  bottom: max(12px, env(safe-area-inset-bottom)) !important;
+  right: max(12px, env(safe-area-inset-right)) !important;
+  left: auto !important;
+}
+@media (prefers-reduced-motion: reduce) {
+  body.kg-whatsapp-booking-active .grecaptcha-badge { transition: none !important; }
+}
+
+/* Reliable mobile navigation fallback. It is deliberately scoped to the main
+   header so it does not affect secondary-page navigation. */
+@media (max-width: 900px) {
+  .header .nav {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    align-items: center !important;
+    position: relative !important;
+  }
+  .header .nav > .brand {
+    flex: 1 1 auto !important;
+    min-width: 0 !important;
+  }
+  .header .nav > .toggle {
+    display: inline-flex !important;
+    flex: 0 0 auto !important;
+    align-items: center !important;
+    justify-content: center !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    cursor: pointer !important;
+    position: relative !important;
+    z-index: 1002 !important;
+  }
+  .header .nav > .links#links {
+    display: none !important;
+    flex: 0 0 100% !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    height: auto !important;
+    max-height: none !important;
+    min-width: 0 !important;
+    position: static !important;
+    inset: auto !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+    justify-content: flex-start !important;
+    gap: .35rem !important;
+    overflow: visible !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    transform: none !important;
+    padding: .75rem 0 !important;
+    margin: .5rem 0 0 !important;
+    border-top: 1px solid rgba(7, 89, 168, .16) !important;
+    z-index: 1001 !important;
+  }
+  .header .nav.kg-nav-open > .links#links {
+    display: flex !important;
+  }
+  .header .nav > .links#links > a,
+  .header .nav > .links#links > details {
+    display: block !important;
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+  .header .nav > .links#links > a,
+  .header .nav > .links#links > details > summary {
+    min-height: 42px !important;
+    box-sizing: border-box !important;
+    padding: .65rem .8rem !important;
+  }
+  .header .nav > .links#links .nav-dropdown-menu {
+    position: static !important;
+    inset: auto !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    box-shadow: none !important;
+    transform: none !important;
+    margin: .2rem 0 .35rem !important;
+  }
+  .header .nav > .links#links details[open] > .nav-dropdown-menu {
+    display: flex !important;
+    flex-direction: column !important;
+  }
+  .header .nav > .site-search {
+    flex: 0 0 100% !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin-top: .45rem !important;
+  }
+}
+</style>
+
 </head><body>
 <!-- Main-site presentation uses its own page assets; no subsite canvas is loaded. -->
 <div aria-label="Appointment announcement" class="offline-appointment-marquee" role="region"><div class="offline-appointment-marquee__track"><span class="offline-appointment-marquee__text">OFFLINE APPOINTMENTS AVAILABLE RIGHT NOW. <span aria-hidden="true" class="marquee-inline-gap">      </span>CLICK THE APPOINTMENT BUTTON BELOW TO PROCEED.</span><span aria-hidden="true" class="offline-appointment-marquee__text">OFFLINE APPOINTMENTS AVAILABLE RIGHT NOW. <span aria-hidden="true" class="marquee-inline-gap">      </span>CLICK THE APPOINTMENT BUTTON BELOW TO PROCEED.</span></div></div><a class="skip-link" href="#main" data-kg-scroll-target="main">Skip to content</a>
@@ -385,6 +520,244 @@
 
 <!-- Main-site JS only. Subsite pages must use kg-shared.js instead. -->
 
+
+
+<script id="kg-whatsapp-booking-recaptcha-sync">
+(function () {
+  'use strict';
+
+  var dialog = document.getElementById('whatsapp-booking-dialog');
+  var form = document.getElementById('whatsapp-booking-form');
+  if (!dialog || !form || !document.body) return;
+
+  var activeClass = 'kg-whatsapp-booking-active';
+  var slotClasses = [
+    'kg-captcha-top-left',
+    'kg-captcha-top-right',
+    'kg-captcha-bottom-left',
+    'kg-captcha-bottom-right'
+  ];
+  var framePending = false;
+  var pageIsHidden = false;
+
+  function isRendered(element) {
+    if (!element || !element.isConnected || element.hidden) return false;
+    var style = window.getComputedStyle(element);
+    var rect = element.getBoundingClientRect();
+    return style.display !== 'none' && style.visibility !== 'hidden' &&
+      Number(style.opacity) !== 0 && rect.width > 0 && rect.height > 0;
+  }
+
+  function dialogIsActive() {
+    return !!(!pageIsHidden && dialog.isConnected && dialog.open &&
+      document.visibilityState !== 'hidden' &&
+      isRendered(dialog) && isRendered(form));
+  }
+
+  function intersectionArea(a, b) {
+    var width = Math.max(0, Math.min(a.right, b.right) - Math.max(a.left, b.left));
+    var height = Math.max(0, Math.min(a.bottom, b.bottom) - Math.max(a.top, b.top));
+    return width * height;
+  }
+
+  function chooseLeastObstructiveSlot() {
+    var viewportWidth = window.innerWidth || document.documentElement.clientWidth;
+    var viewportHeight = window.innerHeight || document.documentElement.clientHeight;
+    var badgeWidth = Math.min(256, Math.max(70, viewportWidth - 24));
+    var badgeHeight = 60;
+    var pad = 12;
+    var rightX = Math.max(pad, viewportWidth - badgeWidth - pad);
+    var bottomY = Math.max(pad, viewportHeight - badgeHeight - pad);
+
+    var candidates = [
+      { name: 'kg-captcha-top-left', x: pad, y: pad },
+      { name: 'kg-captcha-top-right', x: rightX, y: pad },
+      { name: 'kg-captcha-bottom-left', x: pad, y: bottomY },
+      { name: 'kg-captcha-bottom-right', x: rightX, y: bottomY }
+    ];
+
+    var nodes = dialog.querySelectorAll(
+      'input:not([type="hidden"]), select, textarea, button, a, label, legend, .calendar-grid, .clock-face'
+    );
+    var controls = [];
+    nodes.forEach(function (node) {
+      var style = window.getComputedStyle(node);
+      var rect = node.getBoundingClientRect();
+      if (style.display === 'none' || style.visibility === 'hidden' ||
+          Number(style.opacity) === 0 || !rect.width || !rect.height) return;
+      controls.push({
+        rect: { left: rect.left, right: rect.right, top: rect.top, bottom: rect.bottom },
+        weight: node.matches('input, select, textarea, button, a') ? 4 : 1
+      });
+    });
+
+    candidates.forEach(function (candidate) {
+      var badgeRect = {
+        left: candidate.x,
+        right: candidate.x + badgeWidth,
+        top: candidate.y,
+        bottom: candidate.y + badgeHeight
+      };
+      candidate.score = 0;
+      controls.forEach(function (control) {
+        var area = Math.max(1,
+          (control.rect.right - control.rect.left) *
+          (control.rect.bottom - control.rect.top));
+        candidate.score += control.weight * intersectionArea(badgeRect, control.rect) / area;
+      });
+    });
+
+    candidates.sort(function (a, b) { return a.score - b.score; });
+    return candidates[0].name;
+  }
+
+  function clearBadgePlacement() {
+    document.querySelectorAll('.grecaptcha-badge').forEach(function (badge) {
+      slotClasses.forEach(function (name) { badge.classList.remove(name); });
+    });
+  }
+
+  function placeBadges() {
+    if (!dialogIsActive()) {
+      syncVisibility();
+      return;
+    }
+    var selectedSlot = chooseLeastObstructiveSlot();
+    document.querySelectorAll('.grecaptcha-badge').forEach(function (badge) {
+      slotClasses.forEach(function (name) {
+        if (name !== selectedSlot) badge.classList.remove(name);
+      });
+      if (!badge.classList.contains(selectedSlot)) badge.classList.add(selectedSlot);
+    });
+  }
+
+  function schedulePlacement() {
+    if (framePending) return;
+    framePending = true;
+    window.requestAnimationFrame(function () {
+      framePending = false;
+      placeBadges();
+    });
+  }
+
+  function syncVisibility() {
+    var active = dialogIsActive();
+    document.body.classList.toggle(activeClass, active);
+    if (active) schedulePlacement();
+    else clearBadgePlacement();
+  }
+
+  dialog.addEventListener('close', syncVisibility);
+  dialog.addEventListener('cancel', function () { window.setTimeout(syncVisibility, 0); });
+  dialog.addEventListener('scroll', schedulePlacement, true);
+  form.addEventListener('submit', function () { window.requestAnimationFrame(syncVisibility); });
+
+  window.addEventListener('resize', syncVisibility, { passive: true });
+  window.addEventListener('orientationchange', syncVisibility, { passive: true });
+  window.addEventListener('pagehide', function () {
+    pageIsHidden = true;
+    document.body.classList.remove(activeClass);
+    clearBadgePlacement();
+  });
+  window.addEventListener('pageshow', function () {
+    pageIsHidden = false;
+    syncVisibility();
+  });
+  document.addEventListener('visibilitychange', syncVisibility);
+
+  if ('ResizeObserver' in window) {
+    var resizeObserver = new ResizeObserver(syncVisibility);
+    resizeObserver.observe(dialog);
+    resizeObserver.observe(form);
+  }
+
+  if ('IntersectionObserver' in window) {
+    var visibilityObserver = new IntersectionObserver(syncVisibility, { threshold: [0, 0.01] });
+    visibilityObserver.observe(dialog);
+    visibilityObserver.observe(form);
+  }
+
+  /* Catch close/removal/hide operations from any of the site's booking scripts,
+     including changes applied to a parent element rather than the dialog. */
+  var stateObserver = new MutationObserver(syncVisibility);
+  stateObserver.observe(document.body, {
+    attributes: true,
+    attributeFilter: ['open', 'hidden', 'style', 'class'],
+    childList: true,
+    subtree: true
+  });
+
+  /* Google can inject or recreate the badge after the dialog has opened. */
+  var badgeObserver = new MutationObserver(function () {
+    syncVisibility();
+  });
+  badgeObserver.observe(document.body, { childList: true, subtree: true });
+
+  syncVisibility();
+})();
+</script>
+
+<script id="kg-main-hamburger-fallback">
+(function () {
+  'use strict';
+
+  var nav = document.querySelector('.header .nav');
+  var toggle = nav && nav.querySelector('.toggle[aria-controls="links"]');
+  var links = document.getElementById('links');
+  if (!nav || !toggle || !links) return;
+
+  function setOpen(open) {
+    nav.classList.toggle('kg-nav-open', !!open);
+    nav.setAttribute('data-kg-nav-open', open ? 'true' : 'false');
+    toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+    toggle.setAttribute('aria-label', open ? 'Close navigation' : 'Open navigation');
+    if (!open) {
+      links.querySelectorAll('details[open]').forEach(function (item) {
+        item.open = false;
+      });
+    }
+  }
+
+  setOpen(false);
+
+  /* Capture and own hamburger clicks so legacy handlers from older site
+     versions cannot cancel each other out or toggle the menu twice. */
+  document.addEventListener('click', function (event) {
+    var clickedToggle = event.target && event.target.closest
+      ? event.target.closest('.header .nav .toggle[aria-controls="links"]')
+      : null;
+    if (clickedToggle === toggle) {
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      setOpen(toggle.getAttribute('aria-expanded') !== 'true');
+      return;
+    }
+
+    if (nav.getAttribute('data-kg-nav-open') !== 'true') return;
+
+    var clickedLink = event.target && event.target.closest
+      ? event.target.closest('#links a')
+      : null;
+    if (clickedLink) {
+      setOpen(false);
+      return;
+    }
+
+    if (!nav.contains(event.target)) setOpen(false);
+  }, true);
+
+  document.addEventListener('keydown', function (event) {
+    if (event.key === 'Escape' && nav.getAttribute('data-kg-nav-open') === 'true') {
+      setOpen(false);
+      toggle.focus();
+    }
+  });
+
+  window.addEventListener('resize', function () {
+    if (window.innerWidth > 900) setOpen(false);
+  }, { passive: true });
+})();
+</script>
 
 <script defer src="/assets/js/kg-homepage.js?v=main-home-20261121-fix2"></script>
 </body></html>
