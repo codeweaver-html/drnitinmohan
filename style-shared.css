@@ -156,7 +156,7 @@ html[data-nav-style="dropdown"] .site-nav-links .site-nav-login:focus-visible { 
 
 /* ===== BLOCK: ANNOUNCEMENT ===== */
 .site-announcement { display:block; width:100%; min-height:38px; overflow:hidden; background:var(--kg-yellow); color:var(--kg-blue); font-size:.72rem; font-weight:800; letter-spacing:.055em; white-space:nowrap; }
-.site-announcement-track { display:flex; width:max-content; min-width:max-content; align-items:center; animation:kg-announcement-marquee var(--kg-marquee-duration,30s) linear infinite; will-change:transform; }
+.site-announcement-track { display:flex; width:max-content; min-width:max-content; align-items:center; animation:kg-announcement-marquee var(--kg-marquee-duration,30s) ease-in-out infinite reverse; will-change:transform; }
 .site-announcement span { display:block; flex:0 0 auto; padding:9px clamp(22px,3vw,44px); color:var(--kg-blue); line-height:1.4; white-space:pre; }
 .site-announcement:focus-within .site-announcement-track { animation-play-state:paused; }
 .site-announcement.is-paused .site-announcement-track { animation-play-state:paused; }
