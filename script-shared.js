@@ -107,6 +107,7 @@ const SITE_CONFIG = {
   "use strict";
   const root = document.documentElement;
   const body = document.body;
+  const SITE_CONTROLS_API = "https://kidsgastro-site-controls.drnitinmohanpaedsgastro.workers.dev";
   const feature = name => SITE_CONFIG.features[name] !== false;
   const EXISTING_HTML_PAGES = new Set([
     "404", "about", "admin", "blog", "faqs", "gallery", "index",
@@ -953,6 +954,58 @@ const SITE_CONFIG = {
   }
   /* ===== END BLOCK: WHATSAPP_FLOAT ===== */
 
+  /* ===== BLOCK: PERSISTENT_SITE_CONTROLS ===== */
+  async function initPersistentSiteControls() {
+    let settings = null;
+    try {
+      const response = await fetch(`${SITE_CONTROLS_API}/settings?t=${Date.now()}`, {
+        method: "GET",
+        cache: "no-store",
+        credentials: "omit",
+        headers: { "Accept": "application/json" }
+      });
+      if (!response.ok) return null;
+      const received = await response.json();
+      if (
+        !received || received.schemaVersion !== 1 ||
+        !received.announcement ||
+        !["default", "custom"].includes(received.announcement.mode) ||
+        typeof received.bookingEnabled !== "boolean"
+      ) return null;
+      settings = received;
+    } catch (_) {
+      /* Settings service unavailable: retain the original website defaults. */
+      return null;
+    }
+
+    const announcementText = settings.announcement.mode === "custom" &&
+      typeof settings.announcement.text === "string" &&
+      settings.announcement.text.trim()
+        ? settings.announcement.text.trim()
+        : SITE_CONFIG.content.announcement;
+
+    const tickerTrack = document.querySelector("#site-announcement-mount .site-announcement-track");
+    if (tickerTrack) {
+      tickerTrack.querySelectorAll("span").forEach(segment => {
+        segment.textContent = announcementText;
+      });
+    }
+
+    const bookingEnabled = settings.bookingEnabled;
+    const appointmentPicker = document.getElementById("booking") || document.querySelector(".appointment-picker");
+    if (appointmentPicker) {
+      appointmentPicker.hidden = !bookingEnabled;
+      /* The existing .appointment-picker display rule can override the generic [hidden] rule. */
+      appointmentPicker.style.display = bookingEnabled ? "" : "none";
+    }
+
+    const floatingBooking = document.getElementById("floating-booking");
+    if (floatingBooking) floatingBooking.hidden = !bookingEnabled;
+
+    return settings;
+  }
+  /* ===== END BLOCK: PERSISTENT_SITE_CONTROLS ===== */
+
   /* ===== BLOCK: PHOTO_OF_MONTH ===== */
   async function initPhotoOfMonth() {
     const slot = document.getElementById("photo-month-slot");
@@ -1395,5 +1448,9 @@ const SITE_CONFIG = {
   if (typeof initScrollProgress === "function") initScrollProgress();
   if (typeof initMotion === "function") initMotion();
   if (typeof initServiceWorker === "function") initServiceWorker();
+  /* Homepage scheduled rules await this promise so temporary rules override persistent settings. */
+  window.__kgSiteControlsReady = typeof initPersistentSiteControls === "function"
+    ? initPersistentSiteControls()
+    : Promise.resolve(null);
   /* ===== END BLOCK: BOOTSTRAP ===== */
 })();
