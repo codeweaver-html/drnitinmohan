@@ -134,6 +134,8 @@
     #publish-dialog p { margin:0 0 14px; color:#667b8d; font-size:.8rem; }
     #publish-password { width:100%; min-height:45px; padding:10px 12px; border:1px solid #cbd9e5; border-radius:9px; color:#18384d; font:inherit; }
     #publish-password:focus { outline:3px solid rgba(7,89,168,.13); border-color:#0759a8; }
+    .password-visibility { display:inline-flex; align-items:center; gap:8px; margin-top:8px; color:#536d80; font-size:.76rem; font-weight:600; cursor:pointer; }
+    .password-visibility input { width:16px; height:16px; margin:0; accent-color:#0759a8; cursor:pointer; }
     .dialog-actions { display:flex; justify-content:flex-end; gap:9px; margin-top:16px; }
     @media(max-width:600px) {
       .updates-shell { width:calc(100% - 24px); }
@@ -254,6 +256,10 @@
       <label class="field" for="publish-password">2nd password
         <input id="publish-password" type="password" autocomplete="current-password" required>
       </label>
+      <label class="password-visibility" for="show-publish-password">
+        <input id="show-publish-password" type="checkbox" autocomplete="off">
+        <span>Show 2nd password</span>
+      </label>
       <p id="publish-status" class="status" role="status" aria-live="polite"></p>
       <div class="dialog-actions">
         <button class="secondary-button" id="cancel-publish" type="button">Cancel</button>
@@ -287,6 +293,7 @@
       const status = $("settings-status");
       const dialog = $("publish-dialog");
       const passwordInput = $("publish-password");
+      const showPasswordToggle = $("show-publish-password");
       const publishStatus = $("publish-status");
       const confirmButton = $("confirm-publish");
       let settingsLoaded = false;
@@ -332,6 +339,15 @@
         const shineDescription = shineToggle.checked ? " and double-sweep shine on" : " and double-sweep shine off";
         preview.setAttribute("aria-label", "Preview of the " + (customToggle.checked ? "custom" : "default") + " announcement, " + duration + " seconds per loop" + fastFlickerDescription + shineDescription);
       }
+
+      function resetPasswordVisibility() {
+        showPasswordToggle.checked = false;
+        passwordInput.type = "password";
+      }
+
+      showPasswordToggle.addEventListener("change", () => {
+        passwordInput.type = showPasswordToggle.checked ? "text" : "password";
+      });
 
       function updateStateLabel(node, enabled) {
         node.textContent = enabled ? "ON" : "OFF";
@@ -517,6 +533,7 @@
         try { validateSettings(); }
         catch (error) { setStatus(status, error.message, "error"); return; }
         passwordInput.value = "";
+        resetPasswordVisibility();
         setStatus(publishStatus, "", "");
         if (typeof dialog.showModal === "function") dialog.showModal();
         else setStatus(status, "This browser does not support the secure publish prompt.", "error");
@@ -537,6 +554,7 @@
           return;
         }
         passwordInput.value = "";
+        resetPasswordVisibility();
         const payload = currentPayload();
         publishing = true;
         confirmButton.disabled = true;
@@ -574,7 +592,13 @@
 
       $("cancel-publish").addEventListener("click", () => {
         passwordInput.value = "";
+        resetPasswordVisibility();
         dialog.close();
+      });
+
+      dialog.addEventListener("close", () => {
+        passwordInput.value = "";
+        resetPasswordVisibility();
       });
 
       function markDraftChanged() {
