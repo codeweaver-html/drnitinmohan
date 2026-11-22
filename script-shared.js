@@ -955,7 +955,34 @@ const SITE_CONFIG = {
   /* ===== END BLOCK: WHATSAPP_FLOAT ===== */
 
   /* ===== BLOCK: PERSISTENT_SITE_CONTROLS ===== */
+  function setAnnouncementPulseEnabled(enabled) {
+    const announcementBars = document.querySelectorAll(
+      "#site-announcement-mount .site-announcement"
+    );
+
+    announcementBars.forEach(bar => {
+      bar.classList.remove("has-flicker");
+      if (enabled === true) bar.classList.add("has-flicker");
+    });
+  }
+
+  function setAnnouncementShineEnabled(enabled) {
+    const announcementBars = document.querySelectorAll(
+      "#site-announcement-mount .site-announcement"
+    );
+
+    announcementBars.forEach(bar => {
+      bar.classList.remove("has-double-shine");
+      if (enabled === true) bar.classList.add("has-double-shine");
+    });
+  }
+
   async function initPersistentSiteControls() {
+    /* Visual effects fail closed: they stay off unless saved settings
+       explicitly enable them. Clear any classes left by older scripts. */
+    setAnnouncementPulseEnabled(false);
+    setAnnouncementShineEnabled(false);
+
     let settings = null;
     try {
       const response = await fetch(`${SITE_CONTROLS_API}/settings?t=${Date.now()}`, {
@@ -999,8 +1026,9 @@ const SITE_CONFIG = {
     const ticker = document.querySelector("#site-announcement-mount .site-announcement");
     if (ticker) {
       ticker.style.setProperty("--kg-marquee-duration", safeMarqueeDuration + "s");
-      ticker.classList.toggle("has-flicker", settings.marqueeFlicker === true);
     }
+    setAnnouncementPulseEnabled(settings.marqueeFlicker === true);
+    setAnnouncementShineEnabled(settings.marqueeShine === true);
 
     const bookingEnabled = settings.bookingEnabled;
     document.body.classList.toggle("kg-booking-disabled", !bookingEnabled);

@@ -39,6 +39,7 @@ const DEFAULT_SETTINGS = Object.freeze({
   bookingEnabled: true,
   marqueeDuration: DEFAULT_MARQUEE_DURATION,
   marqueeFlicker: false,
+  marqueeShine: false,
   updatedAt: null
 });
 
@@ -316,6 +317,7 @@ async function handleSettings(request, env) {
 
       const marqueeDuration = normalizeStoredMarqueeDuration(savedDuration);
       const marqueeFlicker = value.marqueeFlicker === true;
+      const marqueeShine = value.marqueeShine === true;
 
       return jsonResponse({
         schemaVersion: 1,
@@ -330,6 +332,7 @@ async function handleSettings(request, env) {
 
         marqueeDuration,
         marqueeFlicker,
+        marqueeShine,
 
         updatedAt:
           typeof value.updatedAt === "string"
@@ -431,6 +434,14 @@ async function handleSettings(request, env) {
       return errorResponse("marqueeFlicker must be true or false.");
     }
 
+    let marqueeShine = data.marqueeShine;
+    if (marqueeShine == null) {
+      marqueeShine = previous ? previous.marqueeShine === true : false;
+    }
+    if (typeof marqueeShine !== "boolean") {
+      return errorResponse("marqueeShine must be true or false.");
+    }
+
     if (typeof data.bookingEnabled !== "boolean") {
       return errorResponse(
         "bookingEnabled must be true or false."
@@ -454,6 +465,7 @@ async function handleSettings(request, env) {
 
       marqueeDuration,
       marqueeFlicker,
+      marqueeShine,
 
       updatedAt: new Date().toISOString()
     };

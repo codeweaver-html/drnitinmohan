@@ -78,6 +78,8 @@
     .preference-toggle input:checked { background:linear-gradient(90deg,#16834a,#0759a8); }
     .flicker-toggle input { background:#829bb3; }
     .flicker-toggle input:checked { background:linear-gradient(90deg,#16834a,#0759a8); }
+    .shine-toggle input { background:#829bb3; }
+    .shine-toggle input:checked { background:linear-gradient(90deg,#16834a,#0759a8); }
     .preference-toggle input:checked::before { transform:translateX(19px); }
     .preference-toggle input:focus-visible { outline:3px solid rgba(7,89,168,.22); outline-offset:3px; }
     .preference-toggle input:disabled { opacity:.55; cursor:not-allowed; }
@@ -93,7 +95,7 @@
     .marquee-speed-control { display:grid; gap:7px; padding:13px 14px; border:1px solid #dce6ef; border-radius:11px; background:#fbfdff; }
     .marquee-speed-control > label { display:flex; justify-content:space-between; align-items:center; gap:12px; color:#29485f; font-size:.81rem; }
     .marquee-speed-control output { color:#0759a8; font-size:.76rem; font-weight:800; }
-    #marquee-speed { width:100%; accent-color:#0759a8; cursor:pointer; }
+    #marquee-speed { width:100%; direction:rtl; accent-color:#0759a8; cursor:pointer; }
     #marquee-speed:disabled { opacity:.55; cursor:not-allowed; }
     .marquee-speed-ends { display:flex; justify-content:space-between; color:#667b8d; font-size:.68rem; }
     .authorization-confirm { display:flex; align-items:flex-start; gap:10px; margin-top:18px; padding:13px 14px; border:1px dashed #d2a54a; border-radius:11px; background:#fffaf0; cursor:pointer; }
@@ -188,13 +190,19 @@
           <div class="marquee-speed-control">
             <label for="marquee-speed"><strong>Marquee speed</strong><output id="marquee-speed-label" for="marquee-speed">30 sec/loop</output></label>
             <input id="marquee-speed" type="range" min="3" max="30" step="1" value="30" disabled>
-            <div class="marquee-speed-ends"><span>3 sec/loop · Fastest</span><span>30 sec/loop · Slowest</span></div>
+            <div class="marquee-speed-ends"><span>30 sec/loop · Slowest</span><span>3 sec/loop · Fastest</span></div>
           </div>
 
           <label class="preference-toggle flicker-toggle" for="marquee-flicker-enabled">
             <input id="marquee-flicker-enabled" type="checkbox" disabled>
             <span class="preference-copy"><strong>Subtle announcement pulse</strong></span>
             <span class="preference-state" id="flicker-state">OFF</span>
+          </label>
+
+          <label class="preference-toggle shine-toggle" for="marquee-shine-enabled">
+            <input id="marquee-shine-enabled" type="checkbox" disabled>
+            <span class="preference-copy"><strong>Double-sweep marquee shine</strong></span>
+            <span class="preference-state" id="shine-state">OFF</span>
           </label>
 
           <div class="marquee-preview-block">
@@ -261,6 +269,7 @@
       const previewTrack = $("marquee-preview-track");
       const bookingToggle = $("booking-enabled");
       const flickerToggle = $("marquee-flicker-enabled");
+      const shineToggle = $("marquee-shine-enabled");
       const authorizationAcknowledged = $("authorization-acknowledged");
       const sourceRadios = Array.from(document.querySelectorAll('input[name="settings-source"]'));
       const loadButton = $("load-selected-setting");
@@ -307,9 +316,11 @@
         });
         previewTrack.style.setProperty("--kg-marquee-duration", duration + "s");
         preview.classList.toggle("has-flicker", flickerToggle.checked);
+        preview.classList.toggle("has-double-shine", shineToggle.checked);
         marqueeSpeedLabel.textContent = duration + " sec/loop";
-        const flickerDescription = flickerToggle.checked ? " with flicker on" : " with flicker off";
-        preview.setAttribute("aria-label", "Preview of the " + (customToggle.checked ? "custom" : "default") + " announcement, " + duration + " seconds per loop" + flickerDescription);
+        const flickerDescription = flickerToggle.checked ? " with pulse on" : " with pulse off";
+        const shineDescription = shineToggle.checked ? " and double-sweep shine on" : " and double-sweep shine off";
+        preview.setAttribute("aria-label", "Preview of the " + (customToggle.checked ? "custom" : "default") + " announcement, " + duration + " seconds per loop" + flickerDescription + shineDescription);
       }
 
       function updateStateLabel(node, enabled) {
@@ -324,11 +335,13 @@
         updateStateLabel($("announcement-state"), customToggle.checked);
         updateStateLabel($("booking-state"), bookingToggle.checked);
         updateStateLabel($("flicker-state"), flickerToggle.checked);
+        updateStateLabel($("shine-state"), shineToggle.checked);
         customToggle.disabled = disabled;
         bookingToggle.disabled = disabled;
         customText.disabled = disabled;
         marqueeSpeed.disabled = disabled;
         flickerToggle.disabled = disabled;
+        shineToggle.disabled = disabled;
         authorizationAcknowledged.disabled = disabled;
         sourceRadios.forEach(radio => { radio.disabled = loading || publishing; });
         loadButton.disabled = loading || publishing || !selectedSource();
@@ -343,6 +356,7 @@
         const savedDuration = Number(settings.marqueeDuration ?? (settings.announcement && settings.announcement.marqueeDuration));
         marqueeSpeed.value = String(Number.isFinite(savedDuration) ? Math.max(3, Math.min(30, Math.round(savedDuration))) : DEFAULT_MARQUEE_DURATION);
         flickerToggle.checked = settings.marqueeFlicker === true;
+        shineToggle.checked = settings.marqueeShine === true;
         authorizationAcknowledged.checked = false;
         settingsDirty = false;
         settingsLoaded = true;
@@ -355,7 +369,8 @@
           announcement: { mode:"default", text:"", marqueeDuration:DEFAULT_MARQUEE_DURATION },
           bookingEnabled: true,
           marqueeDuration: DEFAULT_MARQUEE_DURATION,
-          marqueeFlicker: false
+          marqueeFlicker: false,
+          marqueeShine: false
         });
         setStatus(status, "Settings loaded.", "success");
       }
@@ -422,7 +437,8 @@
           },
           bookingEnabled: bookingToggle.checked,
           marqueeDuration,
-          marqueeFlicker: flickerToggle.checked
+          marqueeFlicker: flickerToggle.checked,
+          marqueeShine: shineToggle.checked
         };
       }
 
@@ -438,7 +454,10 @@
           throw new Error("The settings service did not retain the selected marquee speed. Check that the updated Cloudflare Worker is deployed.");
         }
         if ((saved.marqueeFlicker === true) !== expected.marqueeFlicker) {
-          throw new Error("The settings service did not retain the flicker preference. Check that the updated Cloudflare Worker is deployed.");
+          throw new Error("The settings service did not retain the pulse preference. Check that the updated Cloudflare Worker is deployed.");
+        }
+        if ((saved.marqueeShine === true) !== expected.marqueeShine) {
+          throw new Error("The settings service did not retain the double-sweep shine preference. Deploy the updated Cloudflare Worker and try again.");
         }
       }
 
@@ -544,6 +563,7 @@
       marqueeSpeed.addEventListener("input", () => { settingsDirty = true; updatePreview(); });
       bookingToggle.addEventListener("change", markDraftChanged);
       flickerToggle.addEventListener("change", markDraftChanged);
+      shineToggle.addEventListener("change", markDraftChanged);
       authorizationAcknowledged.addEventListener("change", updateControls);
 
       $("lock-session").addEventListener("click", () => {
