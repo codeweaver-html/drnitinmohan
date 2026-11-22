@@ -77,7 +77,7 @@ const SITE_CONFIG = {
       educationStoryDescription: "Dr. Nitin Mohan speaking at a health education event.",
       photoImageLabel: "From KidsGastro",
       photoKicker: "KidsGastro moments",
-      photoHeading: "Photo of the day",
+      photoHeading: "Photo of the month",
       photoDescription: "A recent moment from KidsGastro.",
       socialHeading: "Stay connected with KidsGastro",
       instagramLabel: "Instagram",
@@ -108,6 +108,11 @@ const SITE_CONFIG = {
   const root = document.documentElement;
   const body = document.body;
   const SITE_CONTROLS_API = "https://kidsgastro-site-controls.drnitinmohanpaedsgastro.workers.dev";
+  const SITE_CONTROLS_CACHE_KEY = "kg_site_controls_cache_v1";
+  let siteControlsResolved = false;
+  let siteBookingEnabled = false;
+  const cachedSiteControls = readCachedSiteControls();
+  const siteControlsRequest = startSiteControlsRequest();
   const feature = name => SITE_CONFIG.features[name] !== false;
   const EXISTING_HTML_PAGES = new Set([
     "404", "about", "admin", "blog", "faqs", "gallery", "index",
@@ -393,6 +398,7 @@ const SITE_CONFIG = {
     mount.innerHTML = `<div class="site-announcement" role="region" aria-label="KidsGastro announcement"><div class="site-announcement-track"><span>${text}</span><span aria-hidden="true">${text}</span><span aria-hidden="true">${text}</span><span aria-hidden="true">${text}</span></div></div>`;
 
     const ticker = mount.querySelector(".site-announcement");
+    applyAnnouncementSettings(cachedSiteControls, ticker);
     let resumeTimer = 0;
     const pauseTicker = event => {
       if (event.pointerType === "mouse") return;
@@ -427,6 +433,11 @@ const SITE_CONFIG = {
       return;
     }
     if (picker) picker.hidden = false;
+    const initialTrigger = document.getElementById("appointment-trigger");
+    if (initialTrigger && !siteControlsResolved) {
+      initialTrigger.disabled = true;
+      initialTrigger.setAttribute("aria-disabled", "true");
+    }
 
     const bookingMarkup = `
       <form id="booking-form" class="booking-form" novalidate>
@@ -648,7 +659,7 @@ const SITE_CONFIG = {
     }
 
     function openBooking(opener) {
-      if (isDialogOpen()) return;
+      if (!siteControlsResolved || !siteBookingEnabled || isDialogOpen()) return;
       lastOpener = opener || null;
       form.reset();
       refreshDateBounds();
@@ -911,6 +922,8 @@ const SITE_CONFIG = {
     button.type = "button";
     button.setAttribute("aria-label", "Book via WhatsApp");
     button.title = "Book via WhatsApp";
+    button.disabled = !siteControlsResolved || !siteBookingEnabled;
+    button.setAttribute("aria-disabled", String(button.disabled));
     button.innerHTML = `<img class="whatsapp-brand-mark" src="${asset("assets/whatsapp.svg")}" alt="" width="38" height="38"><span class="floating-booking-label"><strong>Book via WhatsApp</strong></span>`;
     if (!feature("whatsappFloat")) { button.hidden = true; return; }
     button.hidden = false;
@@ -955,14 +968,14 @@ const SITE_CONFIG = {
   /* ===== END BLOCK: WHATSAPP_FLOAT ===== */
 
   /* ===== BLOCK: PERSISTENT_SITE_CONTROLS ===== */
-  function setAnnouncementPulseEnabled(enabled) {
+  function setAnnouncementFastFlickerEnabled(enabled) {
     const announcementBars = document.querySelectorAll(
       "#site-announcement-mount .site-announcement"
     );
 
     announcementBars.forEach(bar => {
-      bar.classList.remove("has-flicker");
-      if (enabled === true) bar.classList.add("has-flicker");
+      bar.classList.remove("has-fast-flicker");
+      if (enabled === true) bar.classList.add("has-fast-flicker");
     });
   }
 
@@ -977,33 +990,53 @@ const SITE_CONFIG = {
     });
   }
 
-  async function initPersistentSiteControls() {
-    /* Visual effects fail closed: they stay off unless saved settings
-       explicitly enable them. Clear any classes left by older scripts. */
-    setAnnouncementPulseEnabled(false);
-    setAnnouncementShineEnabled(false);
-
-    let settings = null;
+  function readCachedSiteControls() {
     try {
-      const response = await fetch(`${SITE_CONTROLS_API}/settings?t=${Date.now()}`, {
+      const value = JSON.parse(window.localStorage.getItem(SITE_CONTROLS_CACHE_KEY) || "null");
+      if (
+        !value || value.schemaVersion !== 1 || !value.announcement ||
+        !["default", "custom"].includes(value.announcement.mode) ||
+        typeof value.bookingEnabled !== "boolean"
+      ) return null;
+      return value;
+    } catch (_) {
+      return null;
+    }
+  }
+
+  function hasRecentVerifiedPublish(settings) {
+    if (!settings || settings.verifiedByPublish !== true) return false;
+    const verifiedAt = Number(settings.verifiedAt);
+    return Number.isFinite(verifiedAt) && verifiedAt <= Date.now() && Date.now() - verifiedAt <= 30000;
+  }
+
+  function startSiteControlsRequest() {
+    if (!window.__kgSiteControlsRequest) {
+      const preconnect = document.createElement("link");
+      preconnect.rel = "preconnect";
+      preconnect.href = SITE_CONTROLS_API;
+      preconnect.crossOrigin = "anonymous";
+      document.head.append(preconnect);
+      window.__kgSiteControlsRequest = fetch(`${SITE_CONTROLS_API}/settings?t=${Date.now()}`, {
         method: "GET",
         cache: "no-store",
         credentials: "omit",
         headers: { "Accept": "application/json" }
-      });
-      if (!response.ok) return null;
-      const received = await response.json();
-      if (
-        !received || received.schemaVersion !== 1 ||
-        !received.announcement ||
-        !["default", "custom"].includes(received.announcement.mode) ||
-        typeof received.bookingEnabled !== "boolean"
-      ) return null;
-      settings = received;
-    } catch (_) {
-      /* Settings service unavailable: retain the original website defaults. */
-      return null;
+      }).then(response => response.ok ? response.json() : null).catch(() => null);
     }
+    return window.__kgSiteControlsRequest;
+  }
+
+  function cacheSiteControls(settings) {
+    try {
+      window.localStorage.setItem(SITE_CONTROLS_CACHE_KEY, JSON.stringify(settings));
+    } catch (_) {
+      /* Storage may be unavailable; live settings still apply normally. */
+    }
+  }
+
+  function applyAnnouncementSettings(settings, ticker) {
+    if (!settings || !settings.announcement || !ticker) return;
 
     const announcementText = settings.announcement.mode === "custom" &&
       typeof settings.announcement.text === "string" &&
@@ -1011,29 +1044,26 @@ const SITE_CONFIG = {
         ? settings.announcement.text
         : SITE_CONFIG.content.announcement;
 
-    const tickerTrack = document.querySelector("#site-announcement-mount .site-announcement-track");
-    if (tickerTrack) {
-      tickerTrack.querySelectorAll("span").forEach(segment => {
+    const track = ticker.querySelector(".site-announcement-track");
+    if (track) {
+      track.querySelectorAll("span").forEach(segment => {
         segment.textContent = announcementText;
       });
     }
 
-    const rawMarqueeDuration = settings.marqueeDuration ?? (settings.announcement && settings.announcement.marqueeDuration);
-    const marqueeDuration = Number(rawMarqueeDuration);
-    const safeMarqueeDuration = Number.isFinite(marqueeDuration) && marqueeDuration >= 3 && marqueeDuration <= 30
-      ? marqueeDuration
-      : 30;
-    const ticker = document.querySelector("#site-announcement-mount .site-announcement");
-    if (ticker) {
-      ticker.style.setProperty("--kg-marquee-duration", safeMarqueeDuration + "s");
-    }
-    setAnnouncementPulseEnabled(settings.marqueeFlicker === true);
-    setAnnouncementShineEnabled(settings.marqueeShine === true);
+    const rawDuration = settings.marqueeDuration ?? settings.announcement.marqueeDuration;
+    const duration = Number(rawDuration);
+    const safeDuration = Number.isFinite(duration) && duration >= 3 && duration <= 30 ? duration : 30;
+    ticker.style.setProperty("--kg-marquee-duration", safeDuration + "s");
+    ticker.classList.toggle("has-fast-flicker", settings.marqueeFastFlicker === true);
+    ticker.classList.toggle("has-double-shine", settings.marqueeShine === true);
+  }
 
-    const bookingEnabled = settings.bookingEnabled;
-    document.body.classList.toggle("kg-booking-disabled", !bookingEnabled);
+  function applyBookingAvailability(enabled) {
+    siteControlsResolved = true;
+    siteBookingEnabled = enabled === true;
+    body.classList.toggle("kg-booking-disabled", !siteBookingEnabled);
 
-    /* Keep both booking entry points visible. Off means monochrome and non-interactive. */
     const appointmentPicker = document.getElementById("booking") || document.querySelector(".appointment-picker");
     if (appointmentPicker) {
       appointmentPicker.hidden = false;
@@ -1042,43 +1072,73 @@ const SITE_CONFIG = {
 
     const appointmentTrigger = document.getElementById("appointment-trigger");
     if (appointmentTrigger) {
-      appointmentTrigger.disabled = !bookingEnabled;
-      appointmentTrigger.setAttribute("aria-disabled", String(!bookingEnabled));
+      appointmentTrigger.disabled = !siteBookingEnabled;
+      appointmentTrigger.setAttribute("aria-disabled", String(!siteBookingEnabled));
     }
 
     const floatingBooking = document.getElementById("floating-booking");
     if (floatingBooking) {
-      floatingBooking.hidden = false;
-      floatingBooking.disabled = !bookingEnabled;
-      floatingBooking.setAttribute("aria-disabled", String(!bookingEnabled));
+      floatingBooking.hidden = !feature("whatsappFloat");
+      floatingBooking.disabled = !siteBookingEnabled;
+      floatingBooking.setAttribute("aria-disabled", String(!siteBookingEnabled));
     }
+  }
+
+  async function initPersistentSiteControls() {
+    /* A just-published snapshot was verified against the Worker moments ago.
+       It can take effect immediately on the publisher's redirect back home. */
+    setAnnouncementFastFlickerEnabled(false);
+    setAnnouncementShineEnabled(false);
+    if (hasRecentVerifiedPublish(cachedSiteControls)) {
+      applyBookingAvailability(cachedSiteControls.bookingEnabled);
+    } else {
+      siteControlsResolved = false;
+      siteBookingEnabled = false;
+      const appointmentTrigger = document.getElementById("appointment-trigger");
+      if (appointmentTrigger) {
+        appointmentTrigger.disabled = true;
+        appointmentTrigger.setAttribute("aria-disabled", "true");
+      }
+      const floatingBooking = document.getElementById("floating-booking");
+      if (floatingBooking) {
+        floatingBooking.disabled = true;
+        floatingBooking.setAttribute("aria-disabled", "true");
+      }
+    }
+
+    let settings = null;
+    try {
+      const received = await siteControlsRequest;
+      if (
+        !received || received.schemaVersion !== 1 || !received.announcement ||
+        !["default", "custom"].includes(received.announcement.mode) ||
+        typeof received.bookingEnabled !== "boolean"
+      ) {
+        applyBookingAvailability(false);
+        return null;
+      }
+      settings = received;
+    } catch (_) {
+      applyBookingAvailability(false);
+      return null;
+    }
+
+    cacheSiteControls(settings);
+    const ticker = document.querySelector("#site-announcement-mount .site-announcement");
+    applyAnnouncementSettings(settings, ticker);
+    setAnnouncementFastFlickerEnabled(settings.marqueeFastFlicker === true);
+    setAnnouncementShineEnabled(settings.marqueeShine === true);
+    applyBookingAvailability(settings.bookingEnabled);
 
     return settings;
   }
   /* ===== END BLOCK: PERSISTENT_SITE_CONTROLS ===== */
 
   /* ===== BLOCK: PHOTO_OF_MONTH ===== */
-  async function initPhotoOfMonth() {
+  function initPhotoOfMonth() {
     const slot = document.getElementById("photo-month-slot");
     if (!feature("photoOfMonth")) { if (slot) slot.hidden = true; return; }
-    if (!slot) return;
-    slot.hidden = false;
-    const available = ["gastro talk.webp","endo gallery pic.webp","main pic.webp","potrait gallery.jpg","baby pic.webp","hospital pic.webp","gif 1.webm","gif 2.webm","gif 3.webm","gif 4.webm","gif 5.webm","endo main pic.webp"];
-    try {
-      const response = await fetch(asset("settings.json"), { cache: "no-cache" });
-      if (!response.ok) return;
-      const settings = await response.json();
-      const candidate = typeof settings.photoOfDay === "string" ? settings.photoOfDay.trim().split("/").pop() : "";
-      if (!available.includes(candidate)) return;
-      const image = document.createElement("img");
-      image.src = asset("assets/" + encodeURIComponent(candidate).replace(/%2F/gi,"/"));
-      image.alt = "Latest photo from KidsGastro";
-      image.loading = "lazy";
-      const frame = slot.querySelector(".photo-month-placeholder");
-      if (frame) frame.replaceWith(image);
-      const title = slot.querySelector("h3");
-      if (title && settings.photoCaption) title.textContent = settings.photoCaption;
-    } catch (_) { /* The searchable placeholder remains visible until a valid setting is published. */ }
+    if (slot) slot.hidden = false;
   }
   /* ===== END BLOCK: PHOTO_OF_MONTH ===== */
 
@@ -1481,6 +1541,10 @@ const SITE_CONFIG = {
   ensureSharedAssets();
   ensureSharedShell();
   initHeaderFooter();
+  /* Start the settings request before page widgets are initialized. */
+  window.__kgSiteControlsReady = typeof initPersistentSiteControls === "function"
+    ? initPersistentSiteControls()
+    : Promise.resolve(null);
   initPage();
   initCanonicalUrls();
   initBrandLogoLinks();
@@ -1499,9 +1563,6 @@ const SITE_CONFIG = {
   if (typeof initScrollProgress === "function") initScrollProgress();
   if (typeof initMotion === "function") initMotion();
   if (typeof initServiceWorker === "function") initServiceWorker();
-  /* Homepage scheduled rules await this promise so temporary rules override persistent settings. */
-  window.__kgSiteControlsReady = typeof initPersistentSiteControls === "function"
-    ? initPersistentSiteControls()
-    : Promise.resolve(null);
+  /* Homepage scheduled rules await the early settings request above. */
   /* ===== END BLOCK: BOOTSTRAP ===== */
 })();

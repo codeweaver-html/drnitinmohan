@@ -4,6 +4,16 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#005EB8">
+  <link rel="preconnect" href="https://kidsgastro-site-controls.drnitinmohanpaedsgastro.workers.dev" crossorigin>
+  <script>
+    (() => {
+      const endpoint = "https://kidsgastro-site-controls.drnitinmohanpaedsgastro.workers.dev/settings?t=" + Date.now();
+      window.__kgSiteControlsRequest = fetch(endpoint, {
+        method: "GET", cache: "no-store", credentials: "omit",
+        headers: { "Accept": "application/json" }
+      }).then(response => response.ok ? response.json() : null).catch(() => null);
+    })();
+  </script>
   <meta name="description" content="Dr. Nitin Mohan is a Consultant Paediatric Gastroenterologist, Hepatologist and Nutritionist in Hisar, Haryana, providing specialist care for children’s digestive, liver, pancreatic and nutrition concerns.">
   <meta name="robots" content="index,follow,max-image-preview:large">
   <link rel="canonical" href="https://drnitinmohan.com/">
@@ -150,7 +160,7 @@
           <h1><span data-site-copy="heroTitle">Specialist gastro care</span> <span class="hero-typing-group" aria-hidden="true"><span class="hero-typed-phrase" data-typed-phrase>for children</span></span><span class="visually-hidden">for children in Hisar</span></h1>
           <div id="appointment-banner" class="kg-scheduled-appointment-banner" role="status" aria-live="polite"></div>
           <div class="appointment-picker" id="booking" hidden>
-            <span class="book-halo" style="display:inline-flex;border-radius:999px"><button class="site-button site-button-primary" id="appointment-trigger" type="button" aria-expanded="false" aria-controls="appointment-options"><span class="appointment-button-label">Book an appointment</span></button></span>
+            <span class="book-halo" style="display:inline-flex;border-radius:999px"><button class="site-button site-button-primary" id="appointment-trigger" type="button" disabled aria-disabled="true" aria-expanded="false" aria-controls="appointment-options"><span class="appointment-button-label">Book an appointment</span></button></span>
             <div class="appointment-options" id="appointment-options" hidden>
               <p class="appointment-options-title">Choose booking method</p>
               <button type="button" class="appointment-option" data-open-booking>
@@ -198,7 +208,7 @@
         <div class="story-grid">
           <article class="story-card"><img src="/assets/endo%20main%20pic.webp" alt="Clinical work at KidsGastro" loading="lazy"><p class="story-image-label" data-site-copy="clinicalImageLabel">Clinical work</p><div><p class="site-eyebrow" data-site-copy="clinicalStoryKicker">01 · Clinical practice</p><h3 data-site-copy="clinicalStoryHeading">Care centred on children and families</h3><p data-site-copy="clinicalStoryDescription">A glimpse of the clinical setting and the work that supports paediatric digestive health.</p></div></article>
           <article class="story-card"><img src="/assets/gastro%20talk.webp" alt="Dr. Nitin Mohan speaking at a professional medical conference" loading="lazy"><p class="story-image-label" data-site-copy="educationImageLabel">Community education</p><div><p class="site-eyebrow" data-site-copy="educationStoryKicker">02 · Community education</p><h3 data-site-copy="educationStoryHeading">Health education session</h3><p data-site-copy="educationStoryDescription">Dr. Nitin Mohan speaking at a health education event.</p></div></article>
-          <article class="story-card story-photo-month" id="photo-month-slot" hidden><img id="daily-image" class="photo-month-default-image" src="/assets/gastro%20talk.webp" alt="Latest photo from KidsGastro" loading="lazy"><p class="story-image-label" data-site-copy="photoImageLabel">From KidsGastro</p><div><p class="site-eyebrow" data-site-copy="photoKicker">KidsGastro moments</p><h3 data-site-copy="photoHeading">Photo of the day</h3><p data-site-copy="photoDescription">A recent moment from KidsGastro.</p></div></article>
+          <article class="story-card story-photo-month" id="photo-month-slot" hidden><img id="photo-month-image" class="photo-month-default-image" src="/assets/photo%20nov.webp" alt="Photo of the month from KidsGastro" loading="lazy"><p class="story-image-label" data-site-copy="photoImageLabel">From KidsGastro</p><div><p class="site-eyebrow" data-site-copy="photoKicker">KidsGastro moments</p><h3 data-site-copy="photoHeading">Photo of the month</h3><p data-site-copy="photoDescription">A featured moment from KidsGastro this month.</p></div></article>
         </div>
       </div>
     </section>

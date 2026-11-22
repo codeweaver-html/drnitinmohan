@@ -38,7 +38,7 @@ const DEFAULT_SETTINGS = Object.freeze({
   },
   bookingEnabled: true,
   marqueeDuration: DEFAULT_MARQUEE_DURATION,
-  marqueeFlicker: false,
+  marqueeFastFlicker: false,
   marqueeShine: false,
   updatedAt: null
 });
@@ -316,7 +316,7 @@ async function handleSettings(request, env) {
         value.announcement.marqueeDuration;
 
       const marqueeDuration = normalizeStoredMarqueeDuration(savedDuration);
-      const marqueeFlicker = value.marqueeFlicker === true;
+      const marqueeFastFlicker = value.marqueeFastFlicker === true;
       const marqueeShine = value.marqueeShine === true;
 
       return jsonResponse({
@@ -331,7 +331,7 @@ async function handleSettings(request, env) {
         bookingEnabled: value.bookingEnabled,
 
         marqueeDuration,
-        marqueeFlicker,
+        marqueeFastFlicker,
         marqueeShine,
 
         updatedAt:
@@ -426,12 +426,12 @@ async function handleSettings(request, env) {
       );
     }
 
-    let marqueeFlicker = data.marqueeFlicker;
-    if (marqueeFlicker == null) {
-      marqueeFlicker = previous ? previous.marqueeFlicker === true : false;
+    let marqueeFastFlicker = data.marqueeFastFlicker;
+    if (marqueeFastFlicker == null) {
+      marqueeFastFlicker = previous ? previous.marqueeFastFlicker === true : false;
     }
-    if (typeof marqueeFlicker !== "boolean") {
-      return errorResponse("marqueeFlicker must be true or false.");
+    if (typeof marqueeFastFlicker !== "boolean") {
+      return errorResponse("marqueeFastFlicker must be true or false.");
     }
 
     let marqueeShine = data.marqueeShine;
@@ -464,7 +464,7 @@ async function handleSettings(request, env) {
       bookingEnabled: data.bookingEnabled,
 
       marqueeDuration,
-      marqueeFlicker,
+      marqueeFastFlicker,
       marqueeShine,
 
       updatedAt: new Date().toISOString()

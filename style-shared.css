@@ -161,12 +161,12 @@ html[data-nav-style="dropdown"] .site-nav-links .site-nav-login:focus-visible { 
 .site-announcement:focus-within .site-announcement-track { animation-play-state:paused; }
 .site-announcement.is-paused .site-announcement-track { animation-play-state:paused; }
 @media (hover:hover) { .site-announcement:hover .site-announcement-track { animation-play-state:paused; } }
-.site-announcement.has-flicker span { animation:kg-announcement-flicker 3.6s ease-in-out infinite; }
+.site-announcement.has-fast-flicker span { animation:kg-announcement-fast-flicker 600ms steps(2, end) infinite; }
 .site-announcement.has-double-shine::after { position:absolute; z-index:1; top:-55%; bottom:-55%; left:-40%; width:19%; content:""; background:linear-gradient(105deg,transparent 0%,rgba(255,255,255,.06) 24%,rgba(255,255,255,.82) 50%,rgba(255,255,255,.08) 76%,transparent 100%); transform:translateX(-220%) skewX(-18deg); animation:kg-announcement-double-shine 9s ease-in-out infinite; pointer-events:none; }
 @keyframes kg-announcement-marquee { from { transform:translateX(0); } to { transform:translateX(-25%); } }
-@keyframes kg-announcement-flicker {
+@keyframes kg-announcement-fast-flicker {
   0%, 100% { opacity:1; text-shadow:none; }
-  50% { opacity:.94; text-shadow:0 0 6px rgba(0,94,184,.18); }
+  50% { opacity:.22; text-shadow:0 0 8px rgba(0,94,184,.32); }
 }
 @keyframes kg-announcement-double-shine {
   0%, 3% { transform:translateX(-220%) skewX(-18deg); opacity:0; }
@@ -455,7 +455,7 @@ html.no-motion *, html.no-motion *::before, html.no-motion *::after { scroll-beh
 @media (prefers-reduced-motion:reduce) {
   html { --motion-duration:0s; scroll-behavior:auto; }
   .site-announcement-track { animation:none; transform:none; }
-  .site-announcement.has-flicker span,
+  .site-announcement.has-fast-flicker span,
   .site-announcement.has-double-shine::after { animation:none; }
   .site-nav-trigger, .site-nav-links a, .video-track, .image-viewer .viewer-stage img, .floating-booking-label { transition:none; }
   .video-track { scroll-behavior:auto; }
