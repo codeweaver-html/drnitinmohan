@@ -2,14 +2,13 @@
    Keep this file beside the site root document and name it exactly: service-worker.js
 */
 
-const CACHE_NAME = "kidsgastro-cache-v18";
+const CACHE_NAME = "kidsgastro-cache-v19";
 const APP_ROOT = new URL(self.registration.scope);
 const APP_ORIGIN = self.location.origin;
 
 const ROOT_PAGE_SLUGS = new Set([
-  "about", "admin", "blog", "clinic", "clinical", "faqs", "gallery",
-  "latest", "newsletter", "publications", "services", "socials",
-  "testimonials", "treatments", "updates"
+  "about", "admin", "blog", "faqs", "gallery", "publications",
+  "services", "testimonials", "treatments", "updates"
 ]);
 
 /* Optional shell files are cached one by one. A missing page will not stop
@@ -25,21 +24,12 @@ const SHELL_FILES = [
   "./faqs/",
   "./publications/",
   "./testimonials/",
-  "./clinic/",
-  "./clinical/",
-  "./latest/",
   "./updates/",
-  "./newsletter/",
-  "./socials/",
   "./gallery/",
   "./about.html",
-  "./clinic.html",
-  "./clinical.html",
-  "./latest.html",
-  "./newsletter.html",
+  "./faqs.html",
   "./publications.html",
   "./services.html",
-  "./socials.html",
   "./testimonials.html",
   "./treatments.html",
   "./style-shared.css",

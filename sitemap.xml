@@ -1,7 +1,5 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
-        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1"
-        xmlns:video="http://www.google.com/schemas/sitemap-video/1.1">
+<?xml version='1.0' encoding='UTF-8'?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1" xmlns:video="http://www.google.com/schemas/sitemap-video/1.1">
   <url>
     <loc>https://drnitinmohan.com/</loc>
     <image:image>
@@ -14,8 +12,12 @@
       <image:title>Dr. Nitin Mohan</image:title>
       <image:caption>Consultant Paediatric Gastroenterologist, Hepatologist and Nutritionist in Hisar</image:caption>
     </image:image>
-    <image:image><image:loc>https://drnitinmohan.com/assets/gastro%20talk.webp</image:loc></image:image>
-    <image:image><image:loc>https://drnitinmohan.com/assets/hospital%20pic.webp</image:loc></image:image>
+    <image:image>
+      <image:loc>https://drnitinmohan.com/assets/gastro%20talk.webp</image:loc>
+    </image:image>
+    <image:image>
+      <image:loc>https://drnitinmohan.com/assets/hospital%20pic.webp</image:loc>
+    </image:image>
     <video:video>
       <video:thumbnail_loc>https://drnitinmohan.com/assets/kidsgastro-video-1-thumbnail.jpg</video:thumbnail_loc>
       <video:title>KidsGastro video 1</video:title>
@@ -46,16 +48,43 @@
       <video:description>Short video featured on the KidsGastro website.</video:description>
       <video:content_loc>https://drnitinmohan.com/assets/gif%205.webm</video:content_loc>
     </video:video>
+    <lastmod>2026-11-22</lastmod>
   </url>
-  <url><loc>https://drnitinmohan.com/about/</loc></url>
-  <url><loc>https://drnitinmohan.com/blog/</loc><lastmod>2026-11-22</lastmod></url>
-  <url><loc>https://drnitinmohan.com/faqs/</loc></url>
+  <url>
+    <loc>https://drnitinmohan.com/about/</loc>
+    <lastmod>2026-11-22</lastmod>
+  </url>
+  <url>
+    <loc>https://drnitinmohan.com/blog/</loc>
+    <lastmod>2026-11-22</lastmod>
+    <image:image>
+      <image:loc>https://drnitinmohan.com/assets/new.webp</image:loc>
+      <image:title>Latest KidsGastro article image</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://drnitinmohan.com/faqs/</loc>
+    <lastmod>2026-11-22</lastmod>
+  </url>
   <url>
     <loc>https://drnitinmohan.com/gallery/</loc>
-    <image:image><image:loc>https://drnitinmohan.com/assets/potrait%20gallery.jpg</image:loc></image:image>
+    <image:image>
+      <image:loc>https://drnitinmohan.com/assets/potrait%20gallery.jpg</image:loc>
+    </image:image>
   </url>
-  <url><loc>https://drnitinmohan.com/publications/</loc></url>
-  <url><loc>https://drnitinmohan.com/services/</loc></url>
-  <url><loc>https://drnitinmohan.com/testimonials/</loc></url>
-  <url><loc>https://drnitinmohan.com/treatments/</loc></url>
+  <url>
+    <loc>https://drnitinmohan.com/publications/</loc>
+  </url>
+  <url>
+    <loc>https://drnitinmohan.com/services/</loc>
+    <lastmod>2026-11-22</lastmod>
+  </url>
+  <url>
+    <loc>https://drnitinmohan.com/testimonials/</loc>
+    <lastmod>2026-11-22</lastmod>
+  </url>
+  <url>
+    <loc>https://drnitinmohan.com/treatments/</loc>
+    <lastmod>2026-11-22</lastmod>
+  </url>
 </urlset>
