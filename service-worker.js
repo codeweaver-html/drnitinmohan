@@ -1,8 +1,8 @@
-/* KidsGastro service worker — safe offline support and automatic asset updates.
-   Keep this file beside the site root document and name it exactly: service-worker.js
+/* KidsGastro service worker — lightweight offline support and efficient asset caching.
+   Keep this file beside the site root document and name it exactly: service-worker.js.
 */
 
-const CACHE_NAME = "kidsgastro-cache-v28";
+const CACHE_NAME = "kidsgastro-cache-v29";
 const APP_ROOT = new URL(self.registration.scope);
 const APP_ORIGIN = self.location.origin;
 
@@ -11,46 +11,16 @@ const ROOT_PAGE_SLUGS = new Set([
   "services", "testimonials", "treatments", "updates"
 ]);
 
-/* Optional shell files are cached one by one. A missing page will not stop
-   the service worker from installing or updating. */
+/* Cache only the homepage shell at install. Other pages and media enter the
+   cache naturally as visitors open them, avoiding a large first-visit download. */
 const SHELL_FILES = [
   "./",
-  "./404.html",
-  "./admin/",
-  "./about/",
-  "./blog/",
-  "./faqs/",
-  "./gallery/",
-  "./publications/",
-  "./services/",
-  "./testimonials/",
-  "./treatments/",
-  "./updates/",
   "./style-shared.css",
   "./script-shared.js",
   "./service-worker.js",
-  "./settings.json",
-  "./robots.txt",
-  "./sitemap.xml",
   "./assets/kg%20logo.webp",
-  "./assets/baby%20pic.webp",
-  "./assets/endo%20gallery%20pic.webp",
-  "./assets/endo%20main%20pic.webp",
-  "./assets/gastro%20talk.webp",
-  "./assets/hospital%20pic.webp",
-  "./assets/instagram.svg",
-  "./assets/linkedin.svg",
-  "./assets/google-scholar.svg",
-  "./assets/whatsapp.svg",
-  "./assets/kidsgastro-video-1-thumbnail.jpg",
-  "./assets/kidsgastro-video-2-thumbnail.jpg",
-  "./assets/kidsgastro-video-3-thumbnail.jpg",
-  "./assets/kidsgastro-video-4-thumbnail.jpg",
-  "./assets/kidsgastro-video-5-thumbnail.jpg",
   "./assets/main%20pic.webp",
-  "./assets/potrait%20gallery.jpg",
-  "./assets/new.webp",
-  "./assets/photo%20nov.webp"
+  "./assets/whatsapp.svg"
 ];
 
 const STATIC_DESTINATIONS = new Set([
@@ -61,8 +31,18 @@ const STATIC_DESTINATIONS = new Set([
   "manifest"
 ]);
 
+const MAX_CACHEABLE_BYTES = 12 * 1024 * 1024;
+const MAX_IMAGE_CACHE_BYTES = 8 * 1024 * 1024;
+const CODE_REFRESH_INTERVAL_MS = 60 * 1000;
+const IMAGE_REFRESH_INTERVAL_MS = 5 * 60 * 1000;
+const OTHER_ASSET_REFRESH_INTERVAL_MS = 60 * 60 * 1000;
+const NAVIGATION_CACHE_FALLBACK_MS = 1200;
+
+const lastRefreshByUrl = new Map();
+const inFlightRefreshes = new Map();
+
 function isInsideAppScope(url) {
-  return url.origin === APP_ORIGIN && url.href.startsWith(APP_ROOT.href);
+  return url.origin === APP_ORIGIN && url.pathname.startsWith(APP_ROOT.pathname);
 }
 
 function isCacheableResponse(response) {
@@ -74,11 +54,17 @@ function isCacheableResponse(response) {
 async function saveResponse(cache, request, response) {
   if (!isCacheableResponse(response)) return;
 
-  /* Avoid filling the offline cache with very large media files. */
   const contentLength = Number(response.headers.get("Content-Length") || 0);
-  if (contentLength > 12 * 1024 * 1024) return;
+  const destination = request instanceof Request ? request.destination : "";
+  if (contentLength > MAX_CACHEABLE_BYTES) return;
+  if (destination === "image" && contentLength > MAX_IMAGE_CACHE_BYTES) return;
 
-  await cache.put(request, response.clone());
+  /* A full cache must never turn a successful network response into a page failure. */
+  try {
+    await cache.put(request, response.clone());
+  } catch (_) {
+    /* Storage quota, opaque cache-key, or browser storage errors are non-fatal. */
+  }
 }
 
 async function precacheShell() {
@@ -87,38 +73,31 @@ async function precacheShell() {
   await Promise.all(SHELL_FILES.map(async file => {
     const url = new URL(file, APP_ROOT);
     try {
-      const response = await fetch(url.href, { cache: "reload" });
-      if (isCacheableResponse(response)) {
-        await saveResponse(cache, url.href, response);
-      }
-    } catch (error) {
-      /* Offline at install time or an optional file is absent: continue. */
+      /* Use the normal HTTP cache where possible; don't force duplicate downloads. */
+      const response = await fetch(url.href, { cache: "default", credentials: "same-origin" });
+      if (isCacheableResponse(response)) await saveResponse(cache, url.href, response);
+    } catch (_) {
+      /* Offline at install time or an optional shell file is absent: continue. */
     }
   }));
 }
 
 self.addEventListener("install", event => {
-  event.waitUntil(
-    precacheShell().then(() => self.skipWaiting())
-  );
+  event.waitUntil(precacheShell().then(() => self.skipWaiting()));
 });
 
 self.addEventListener("activate", event => {
   event.waitUntil((async () => {
     const keys = await caches.keys();
-
-    /* Remove only caches created by previous KidsGastro service-worker
-       versions. Leave unrelated caches on the same domain untouched. */
     const oldKidsGastroCaches = keys.filter(key =>
       /^kidsgastro-(?:shell|runtime|cache)-v\d+$/.test(key) && key !== CACHE_NAME
     );
-
     await Promise.all(oldKidsGastroCaches.map(key => caches.delete(key)));
     await self.clients.claim();
   })());
 });
 
-async function networkFirst(request) {
+async function networkFirst(request, event) {
   const cache = await caches.open(CACHE_NAME);
   const requestedUrl = new URL(request.url);
   const cleanSlug = requestedUrl.pathname.replace(/^\/+|\/+$/g, "").toLowerCase();
@@ -129,17 +108,14 @@ async function networkFirst(request) {
     return Response.redirect(new URL(`/${legacyMatch[1].toLowerCase()}/`, APP_ROOT), 301);
   }
 
-  try {
-    /* Prefer a Jekyll-generated clean route. This keeps root-level source pages
-       and lets GitHub Pages serve /slug/ as a normal 200 response. */
+  const networkPromise = (async () => {
+    /* Always check the network for HTML so published page edits appear promptly. */
     const response = await fetch(request, { cache: "no-cache" });
     if (response.ok) {
       await saveResponse(cache, request, response);
       return response;
     }
 
-    /* Clean URLs are primary. For older deployed copies, resolve either a
-       root-level source page or a directory index without changing the URL. */
     if (response.status === 404 && ROOT_PAGE_SLUGS.has(cleanSlug)) {
       const candidates = [
         new URL(`${cleanSlug}/index.html${requestedUrl.search}`, APP_ROOT),
@@ -154,7 +130,29 @@ async function networkFirst(request) {
       }
     }
     return response;
-  } catch (error) {
+  })();
+
+  /* Keep a slow network refresh alive if a cached page wins the timeout race. */
+  event.waitUntil(networkPromise.then(() => undefined).catch(() => undefined));
+
+  let timeoutId;
+  const timeoutToken = Symbol("navigation-timeout");
+  try {
+    const result = await Promise.race([
+      networkPromise,
+      new Promise(resolve => {
+        timeoutId = setTimeout(() => resolve(timeoutToken), NAVIGATION_CACHE_FALLBACK_MS);
+      })
+    ]);
+    if (timeoutId) clearTimeout(timeoutId);
+
+    if (result !== timeoutToken) return result;
+
+    const cached = await cache.match(request);
+    if (cached) return cached;
+    return await networkPromise;
+  } catch (_) {
+    if (timeoutId) clearTimeout(timeoutId);
     const cached = await cache.match(request);
     if (cached) return cached;
     const homePage = await cache.match(APP_ROOT.href);
@@ -170,19 +168,34 @@ async function networkFirst(request) {
   }
 }
 
-async function refreshStaticAsset(request) {
-  const response = await fetch(request, { cache: "no-cache" });
-  if (response.ok) {
-    const cache = await caches.open(CACHE_NAME);
-    await saveResponse(cache, request, response);
-  }
-  return response;
+function refreshIntervalFor(request) {
+  if (request.destination === "script" || request.destination === "style") return CODE_REFRESH_INTERVAL_MS;
+  if (request.destination === "image") return IMAGE_REFRESH_INTERVAL_MS;
+  return OTHER_ASSET_REFRESH_INTERVAL_MS;
 }
 
-/* Keep CSS and JavaScript fresh without sending a network request on every
-   repeat asset hit. The cache is returned immediately while a refresh runs. */
-const lastCodeRefresh = new Map();
-const CODE_REFRESH_INTERVAL_MS = 60 * 1000;
+function startAssetRefresh(request) {
+  const key = request.url;
+  const inFlight = inFlightRefreshes.get(key);
+  if (inFlight) return inFlight;
+
+  const work = (async () => {
+    const response = await fetch(request, { cache: "no-cache" });
+    if (response.ok) {
+      const cache = await caches.open(CACHE_NAME);
+      await saveResponse(cache, request, response);
+    }
+    return response;
+  })().catch(() => {
+    lastRefreshByUrl.delete(key);
+    return null;
+  }).finally(() => {
+    inFlightRefreshes.delete(key);
+  });
+
+  inFlightRefreshes.set(key, work);
+  return work;
+}
 
 self.addEventListener("fetch", event => {
   const request = event.request;
@@ -191,26 +204,24 @@ self.addEventListener("fetch", event => {
   const url = new URL(request.url);
   if (!isInsideAppScope(url)) return;
 
-  /* HTML pages use network-first so published page changes appear promptly. */
   if (request.mode === "navigate" || request.destination === "document") {
-    event.respondWith(networkFirst(request));
+    event.respondWith(networkFirst(request, event));
     return;
   }
 
-  /* Ignore API, form, and other dynamic fetches; cache only browser static assets. */
+  /* Do not cache video streams or API/form requests. WebM files use browser/HTTP
+     caching and are only requested when their carousel card approaches view. */
   if (!STATIC_DESTINATIONS.has(request.destination)) return;
 
-  let codeUpdatePromise = null;
-  if (request.destination === "script" || request.destination === "style") {
-    const lastRefresh = lastCodeRefresh.get(request.url) || 0;
-    if (Date.now() - lastRefresh >= CODE_REFRESH_INTERVAL_MS) {
-      lastCodeRefresh.set(request.url, Date.now());
-      codeUpdatePromise = refreshStaticAsset(request).catch(() => {
-        lastCodeRefresh.delete(request.url);
-        return null;
-      });
-      event.waitUntil(codeUpdatePromise.then(() => undefined));
-    }
+  const cacheKey = request.url;
+  const refreshInterval = refreshIntervalFor(request);
+  const lastRefresh = lastRefreshByUrl.get(cacheKey) || 0;
+  let refreshPromise = null;
+
+  if (Date.now() - lastRefresh >= refreshInterval) {
+    lastRefreshByUrl.set(cacheKey, Date.now());
+    refreshPromise = startAssetRefresh(request);
+    event.waitUntil(refreshPromise.then(() => undefined));
   }
 
   event.respondWith((async () => {
@@ -219,17 +230,17 @@ self.addEventListener("fetch", event => {
     if (cached) return cached;
 
     try {
-      if (codeUpdatePromise) {
-        const refreshed = await codeUpdatePromise;
-        if (refreshed && refreshed.ok) return refreshed;
-      }
-      return await refreshStaticAsset(request);
-    } catch (error) {
-      return new Response("This resource is unavailable while offline.", {
-        status: 504,
-        statusText: "Gateway Timeout",
-        headers: { "Content-Type": "text/plain; charset=utf-8" }
-      });
+      const response = refreshPromise || startAssetRefresh(request);
+      const received = await response;
+      if (received) return received;
+    } catch (_) {
+      /* Fall through to the offline response below. */
     }
+
+    return new Response("This resource is unavailable while offline.", {
+      status: 504,
+      statusText: "Gateway Timeout",
+      headers: { "Content-Type": "text/plain; charset=utf-8" }
+    });
   })());
 });

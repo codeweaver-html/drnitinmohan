@@ -286,7 +286,7 @@ html[data-nav-style="dropdown"] .site-nav-links .site-nav-login:focus-visible { 
 .video-track { display:flex; width:100%; gap:16px; overflow-x:auto; overflow-y:hidden; padding:4px 2px 14px; scroll-snap-type:none; scrollbar-width:none; -ms-overflow-style:none; scroll-behavior:auto; }
 .video-track::-webkit-scrollbar { display:none; }
 .video-card { flex:0 0 clamp(220px,27vw,310px); overflow:hidden; aspect-ratio:9/16; border-radius:18px; background:#123c77; scroll-snap-align:none; }
-.video-card video { width:100%; height:100%; object-fit:cover; }
+.video-card video { display:block; width:100%; height:100%; object-fit:cover; background:#123c77; }
 
 
 @media (max-width:560px) { .video-heading-marquee { padding-inline:0; padding-bottom:52px; } .video-controls { top:auto; right:50%; bottom:0; transform:translateX(50%); } .video-card { flex-basis:76vw; } }

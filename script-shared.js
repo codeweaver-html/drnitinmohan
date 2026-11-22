@@ -1147,19 +1147,20 @@ const SITE_CONFIG = {
     const section = document.querySelector(".home-videos");
     if (!feature("videoCarousel")) { if (section) section.hidden = true; return; }
     if (section) section.hidden = false;
+
     const track = document.getElementById("video-track");
     if (!track) return;
 
     const originalCards = [...track.querySelectorAll(":scope > .video-card")];
     if (originalCards.length < 2) return;
 
-    /* Duplicate the cards once so the scroll can wrap without a visible jump. */
-    originalCards.forEach((card, index) => {
+    /* Duplicate cards for a seamless loop; cloned videos stay unloaded until visible. */
+    originalCards.forEach(card => {
       const clone = card.cloneNode(true);
       clone.setAttribute("aria-hidden", "true");
       clone.tabIndex = -1;
       clone.dataset.carouselClone = "true";
-      clone.querySelectorAll("a,button").forEach(control => control.tabIndex = -1);
+      clone.querySelectorAll("a,button").forEach(control => { control.tabIndex = -1; });
       clone.querySelectorAll("video").forEach(video => {
         video.pause();
         video.removeAttribute("data-motion-video");
@@ -1171,12 +1172,24 @@ const SITE_CONFIG = {
       track.append(clone);
     });
 
+    const carouselViewport = track.parentElement;
+    const carouselVideos = [...track.querySelectorAll("video")];
+    carouselVideos.forEach(video => { video.preload = "none"; });
+
     let pausedByPointer = false;
     let pausedByTouch = false;
     let pausedByFocus = false;
     let pauseUntil = 0;
     let previousFrame = 0;
+    let animationFrameId = 0;
+    let carouselInView = false;
+    let pageIsVisible = !document.hidden;
+
     const prefersReducedMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)");
+    const motionAllowed = () =>
+      SITE_CONFIG.features.animations !== false &&
+      !(prefersReducedMotion && prefersReducedMotion.matches) &&
+      !root.classList.contains("no-motion");
 
     let measuredLoopWidth = 0;
     const measureLoopWidth = () => {
@@ -1191,22 +1204,63 @@ const SITE_CONFIG = {
     measureLoopWidth();
     window.addEventListener("resize", () => requestAnimationFrame(measureLoopWidth), { passive: true });
 
-    const carouselViewport = track.parentElement;
-    if ("IntersectionObserver" in window && carouselViewport) {
-      const cloneVideoObserver = new IntersectionObserver(entries => {
-        entries.forEach(entry => {
-          const video = entry.target;
-          if (entry.isIntersecting && !document.hidden && !root.classList.contains("no-motion")) {
-            video.play().catch(() => {});
-          } else {
-            video.pause();
-          }
-        });
-      }, { root:carouselViewport, rootMargin:"0px 100px", threshold:0.05 });
-      track.querySelectorAll('[data-carousel-clone="true"] video').forEach(video => cloneVideoObserver.observe(video));
-      document.addEventListener("visibilitychange", () => {
-        if (document.hidden) track.querySelectorAll('[data-carousel-clone="true"] video').forEach(video => video.pause());
+    const startTicker = () => {
+      if (!carouselInView || !pageIsVisible || !motionAllowed() || animationFrameId) return;
+      previousFrame = 0;
+      animationFrameId = requestAnimationFrame(animate);
+    };
+    const stopTicker = () => {
+      if (animationFrameId) cancelAnimationFrame(animationFrameId);
+      animationFrameId = 0;
+      previousFrame = 0;
+    };
+
+    const activateVideo = video => {
+      /* Keep the thumbnail off the critical path until this card approaches view. */
+      if (!video.poster && video.dataset.poster) video.poster = video.dataset.poster;
+      if (!motionAllowed() || !pageIsVisible) return;
+      video.preload = "metadata";
+      video.play().catch(() => {
+        video.pause();
+        video.preload = "none";
       });
+    };
+
+    const pauseVideo = video => {
+      video.pause();
+      video.preload = "none";
+    };
+
+    if ("IntersectionObserver" in window && carouselViewport) {
+      /* Root is the page viewport: videos below the fold do not fetch posters or WebM. */
+      const videoObserver = new IntersectionObserver(entries => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) activateVideo(entry.target);
+          else pauseVideo(entry.target);
+        });
+      }, { rootMargin: "140px 48px", threshold: 0.08 });
+      carouselVideos.forEach(video => videoObserver.observe(video));
+
+      const carouselObserver = new IntersectionObserver(entries => {
+        carouselInView = entries.some(entry => entry.isIntersecting);
+        if (carouselInView) startTicker();
+        else stopTicker();
+      }, { rootMargin: "120px 0px", threshold: 0.01 });
+      carouselObserver.observe(carouselViewport);
+    } else {
+      /* Fallback browsers still show a poster only for cards actually in view. */
+      if (carouselViewport) {
+        const viewportRect = carouselViewport.getBoundingClientRect();
+        const pageIntersects = viewportRect.bottom > 0 && viewportRect.top < window.innerHeight;
+        if (pageIntersects) {
+          carouselVideos.forEach(video => {
+            const rect = video.getBoundingClientRect();
+            if (rect.right > viewportRect.left && rect.left < viewportRect.right) activateVideo(video);
+          });
+          carouselInView = true;
+        }
+      }
+      startTicker();
     }
 
     document.querySelectorAll("[data-video-scroll]").forEach(button => {
@@ -1214,7 +1268,7 @@ const SITE_CONFIG = {
         const width = loopWidth();
         if (!width) return;
         const direction = Number(button.dataset.videoScroll) || 1;
-        const step = Math.max(180, track.clientWidth * .78);
+        const step = Math.max(180, track.clientWidth * 0.78);
         const current = ((track.scrollLeft % width) + width) % width;
         const next = current + direction * step;
         track.scrollLeft = next < 0 ? width + (next % width) : next % width;
@@ -1237,7 +1291,6 @@ const SITE_CONFIG = {
     const finishTouch = () => {
       if (!pausedByTouch) return;
       pausedByTouch = false;
-      /* A tap or swipe pauses the ticker briefly, then it resumes by itself. */
       pauseUntil = performance.now() + 1200;
     };
     track.addEventListener("pointerup", finishTouch, { passive: true });
@@ -1253,22 +1306,43 @@ const SITE_CONFIG = {
       });
     });
 
-    const animate = timestamp => {
+    function animate(timestamp) {
+      animationFrameId = 0;
+      if (!carouselInView || !pageIsVisible || !motionAllowed()) return;
       if (!previousFrame) previousFrame = timestamp;
       const elapsed = Math.min(50, timestamp - previousFrame);
       previousFrame = timestamp;
-      const reduced = prefersReducedMotion && prefersReducedMotion.matches;
-      const motionDisabled = root.classList.contains("no-motion");
-      if (!reduced && !motionDisabled && !document.hidden && !pausedByPointer && !pausedByTouch && !pausedByFocus && timestamp >= pauseUntil) {
+
+      if (!pausedByPointer && !pausedByTouch && !pausedByFocus && timestamp >= pauseUntil) {
         const width = loopWidth();
         if (width > 0) {
-          track.scrollLeft += elapsed * 0.048; /* smooth automatic movement at about 48 pixels per second */
+          track.scrollLeft += elapsed * 0.048;
           if (track.scrollLeft >= width) track.scrollLeft %= width;
         }
       }
-      requestAnimationFrame(animate);
-    };
-    requestAnimationFrame(animate);
+      animationFrameId = requestAnimationFrame(animate);
+    }
+
+    document.addEventListener("visibilitychange", () => {
+      pageIsVisible = !document.hidden;
+      if (!pageIsVisible) {
+        stopTicker();
+        carouselVideos.forEach(pauseVideo);
+      } else {
+        startTicker();
+      }
+    });
+
+    if (prefersReducedMotion && prefersReducedMotion.addEventListener) {
+      prefersReducedMotion.addEventListener("change", event => {
+        if (event.matches) {
+          stopTicker();
+          carouselVideos.forEach(pauseVideo);
+        } else {
+          startTicker();
+        }
+      });
+    }
   }
   /* ===== END BLOCK: VIDEO_CAROUSEL ===== */
 
@@ -1488,9 +1562,11 @@ const SITE_CONFIG = {
     const disabled = SITE_CONFIG.features.animations === false || reduced;
     root.classList.toggle("no-motion", disabled);
     root.classList.toggle("kg-motion-enabled", !disabled);
+    const standaloneVideos = [...document.querySelectorAll("[data-motion-video]")]
+      .filter(video => !video.closest(".home-videos"));
     if (disabled) {
       document.querySelectorAll("[data-motion]").forEach(element => element.classList.add("motion-complete"));
-      document.querySelectorAll("[data-motion-video]").forEach(video => { video.pause(); video.preload = "metadata"; video.load(); });
+      standaloneVideos.forEach(video => { video.pause(); video.preload = "none"; });
       return;
     }
     const targets = [...document.querySelectorAll("[data-motion]")];
@@ -1504,25 +1580,27 @@ const SITE_CONFIG = {
         });
       }, { threshold:0.08 });
       targets.forEach(element => observer.observe(element));
-      const videos = [...document.querySelectorAll("[data-motion-video]")];
-      const videoObserver = new IntersectionObserver(entries => {
-        entries.forEach(entry => {
-          const video = entry.target;
-          if (entry.isIntersecting && !document.hidden) video.play().catch(() => {});
-          else video.pause();
-        });
-      }, { rootMargin:"0px 90px", threshold:0.15 });
-      videos.forEach(video => videoObserver.observe(video));
-      document.addEventListener("visibilitychange", () => { if (document.hidden) videos.forEach(video => video.pause()); });
+      const videos = standaloneVideos;
+      if (videos.length) {
+        const videoObserver = new IntersectionObserver(entries => {
+          entries.forEach(entry => {
+            const video = entry.target;
+            if (entry.isIntersecting && !document.hidden) video.play().catch(() => {});
+            else video.pause();
+          });
+        }, { rootMargin:"0px 90px", threshold:0.15 });
+        videos.forEach(video => videoObserver.observe(video));
+        document.addEventListener("visibilitychange", () => { if (document.hidden) videos.forEach(video => video.pause()); });
+      }
     } else {
       targets.forEach(element => element.classList.add("motion-complete"));
-      document.querySelectorAll("[data-motion-video]").forEach(video => { video.pause(); video.preload = "metadata"; video.load(); });
+      standaloneVideos.forEach(video => { video.pause(); video.preload = "none"; });
     }
     const preference = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)");
     if (preference && preference.addEventListener) preference.addEventListener("change", event => {
       if (event.matches) {
         root.classList.add("no-motion");
-        document.querySelectorAll("[data-motion-video]").forEach(video => { video.pause(); video.preload = "metadata"; video.load(); });
+        standaloneVideos.forEach(video => { video.pause(); video.preload = "none"; });
         targets.forEach(element => element.classList.add("motion-complete"));
       }
     });
