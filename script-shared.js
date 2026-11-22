@@ -164,8 +164,8 @@ const SITE_CONFIG = {
 
   /* ===== BLOCK: HEADER_FOOTER ===== */
   const homeUrl = () => window.location.protocol === "file:" ? "./" : basePath;
-  /* The shared footer's Back to top action consistently returns to the site root. */
-  const pageTopUrl = () => homeUrl();
+  /* Back to top returns to the current page, not the homepage or an in-page content anchor. */
+  const pageTopUrl = () => `${window.location.pathname}${window.location.search}`;
   const hrefFor = item => {
     if (item.href) return item.href;
     if (item.homeAnchor) return `${homeUrl()}#${encodeURIComponent(item.homeAnchor)}`;
@@ -433,8 +433,8 @@ const SITE_CONFIG = {
         <div class="booking-fields">
           <label>Child’s name<input id="booking-child-name" name="childName" type="text" autocomplete="name" required></label>
           <label>Child’s age<input id="booking-child-age" name="childAge" type="number" min="0" step="0.1" required><span>years</span></label>
-          <label>Phone number (optional)<input id="booking-phone" name="phone" type="tel" inputmode="tel" autocomplete="tel" placeholder="Optional"></label>
-          <label class="booking-date-label">Preferred date<input id="booking-date" name="date" type="date" required></label>
+          <label>Phone number<input id="booking-phone" name="phone" type="tel" inputmode="numeric" autocomplete="tel" minlength="10" maxlength="10" pattern="[0-9]{10}" placeholder="10-digit phone number" required></label>
+          <label class="booking-date-label">Preferred date<input id="booking-date" name="date" type="date" required><small class="booking-date-hint">Choose from today and tomorrow.</small></label>
           <label class="booking-time-field">Preferred time (30-minute slots)
             <input id="booking-time" name="time" type="hidden" required>
             <div id="booking-slot-grid" class="booking-slot-grid" role="group" tabindex="-1" aria-label="Available 30-minute appointment slots"></div>
@@ -588,12 +588,14 @@ const SITE_CONFIG = {
       const childName = dialog.querySelector("#booking-child-name").value.trim();
       const childAge = dialog.querySelector("#booking-child-age").value.trim();
       const date = dateInput.value;
+      const phone = dialog.querySelector("#booking-phone").value.trim();
       const issues = [];
       if (!childName) issues.push({ message: "Enter the child’s name.", id: "booking-child-name" });
       if (!childAge || !Number.isFinite(Number(childAge)) || Number(childAge) < 0) {
         issues.push({ message: "Enter a valid age.", id: "booking-child-age" });
       }
-      if (!date || date < todayKey || date > tomorrowKey) issues.push({ message: "Enter a date.", id: "booking-date" });
+      if (!/^\d{10}$/.test(phone)) issues.push({ message: "Enter a valid 10-digit phone number.", id: "booking-phone" });
+      if (!date || date < todayKey || date > tomorrowKey) issues.push({ message: "Choose a date from today or tomorrow.", id: "booking-date" });
       const selectedMinutes = Number(timeInput.value);
       if (!timeInput.value || !Number.isFinite(selectedMinutes) || isBooked(date, selectedMinutes)) {
         issues.push({ message: "Choose an available time.", id: "booking-slot-grid" });
@@ -843,7 +845,7 @@ const SITE_CONFIG = {
         "",
         `Child: ${childName}`,
         `Age: ${childAge} years`,
-        ...(phone ? [`Parent/guardian phone: ${phone}`] : []),
+        `Parent/guardian phone: ${phone}`,
         `Preferred date: ${dateText}`,
         `Preferred time: ${timeText}`,
         "",
@@ -908,7 +910,7 @@ const SITE_CONFIG = {
     button.type = "button";
     button.setAttribute("aria-label", "Book via WhatsApp");
     button.title = "Book via WhatsApp";
-    button.innerHTML = `<img class="whatsapp-brand-mark" src="${asset("assets/whatsapp.svg")}" alt="" width="38" height="38"><span class="floating-booking-label">Book via WhatsApp</span>`;
+    button.innerHTML = `<img class="whatsapp-brand-mark" src="${asset("assets/whatsapp.svg")}" alt="" width="38" height="38"><span class="floating-booking-label"><strong>Book via WhatsApp</strong></span>`;
     if (!feature("whatsappFloat")) { button.hidden = true; return; }
     button.hidden = false;
 
@@ -1052,7 +1054,7 @@ const SITE_CONFIG = {
         const current = ((track.scrollLeft % width) + width) % width;
         const next = current + direction * step;
         track.scrollLeft = next < 0 ? width + (next % width) : next % width;
-        pauseUntil = performance.now() + 2200;
+        pauseUntil = performance.now() + 1100;
       });
     });
 
@@ -1072,7 +1074,7 @@ const SITE_CONFIG = {
       if (!pausedByTouch) return;
       pausedByTouch = false;
       /* A tap or swipe pauses the ticker briefly, then it resumes by itself. */
-      pauseUntil = performance.now() + 2800;
+      pauseUntil = performance.now() + 1200;
     };
     track.addEventListener("pointerup", finishTouch, { passive: true });
     track.addEventListener("pointercancel", finishTouch, { passive: true });
@@ -1083,7 +1085,7 @@ const SITE_CONFIG = {
     track.addEventListener("focusout", () => {
       requestAnimationFrame(() => {
         pausedByFocus = track.contains(document.activeElement);
-        if (!pausedByFocus) pauseUntil = performance.now() + 900;
+        if (!pausedByFocus) pauseUntil = performance.now() + 500;
       });
     });
 
@@ -1096,7 +1098,7 @@ const SITE_CONFIG = {
       if (!reduced && !motionDisabled && !document.hidden && !pausedByPointer && !pausedByTouch && !pausedByFocus && timestamp >= pauseUntil) {
         const width = loopWidth();
         if (width > 0) {
-          track.scrollLeft += elapsed * 0.032; /* smooth automatic movement at about 32 pixels per second */
+          track.scrollLeft += elapsed * 0.048; /* smooth automatic movement at about 48 pixels per second */
           if (track.scrollLeft >= width) track.scrollLeft %= width;
         }
       }

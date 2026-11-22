@@ -151,12 +151,12 @@
           <h1><span data-site-copy="heroTitle">Specialist gastro care</span> <span class="hero-typing-group" aria-hidden="true"><span class="hero-typed-phrase" data-typed-phrase>for children</span></span><span class="visually-hidden">for children in Hisar</span></h1>
           <div id="appointment-banner" class="kg-scheduled-appointment-banner" role="status" aria-live="polite"></div>
           <div class="appointment-picker" id="booking" hidden>
-            <button class="site-button site-button-primary" id="appointment-trigger" type="button" aria-expanded="false" aria-controls="appointment-options"><span class="appointment-button-label">Book an appointment</span></button>
+            <span class="book-halo" style="display:inline-flex;border-radius:999px"><button class="site-button site-button-primary" id="appointment-trigger" type="button" aria-expanded="false" aria-controls="appointment-options"><span class="appointment-button-label">Book an appointment</span></button></span>
             <div class="appointment-options" id="appointment-options" hidden>
               <p class="appointment-options-title">Choose booking method</p>
               <button type="button" class="appointment-option" data-open-booking>
                 <span class="booking-method-copy">
-                  <span>Book via WhatsApp</span>
+                  <strong>Book via WhatsApp</strong>
                 </span>
               </button>
               <a class="appointment-option appointment-option-rezeptrx" href="https://rezeptrx.com/dr/dr-nitin-mohan-pediatrician-hisar" target="_blank" rel="noopener noreferrer">
@@ -273,8 +273,8 @@
       <div class="booking-fields">
         <label>Child’s name<input id="booking-child-name" name="childName" type="text" autocomplete="name" required></label>
         <label>Child’s age<input id="booking-child-age" name="childAge" type="number" min="0" step="0.1" required><span>years</span></label>
-        <label>Phone number (optional)<input id="booking-phone" name="phone" type="tel" inputmode="tel" autocomplete="tel" placeholder="Optional"></label>
-        <label class="booking-date-label">Preferred date<input id="booking-date" name="date" type="date" required></label>
+        <label>Phone number<input id="booking-phone" name="phone" type="tel" inputmode="numeric" autocomplete="tel" minlength="10" maxlength="10" pattern="[0-9]{10}" placeholder="10-digit phone number" required></label>
+        <label class="booking-date-label">Preferred date<input id="booking-date" name="date" type="date" required><small class="booking-date-hint">Choose from today and tomorrow.</small></label>
         <label class="booking-time-field">Preferred time (30-minute slots)
           <input id="booking-time" name="time" type="hidden" required>
           <div id="booking-slot-grid" class="booking-slot-grid" role="group" tabindex="-1" aria-label="Available 30-minute appointment slots"></div>

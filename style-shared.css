@@ -477,3 +477,37 @@ html.no-motion *, html.no-motion *::before, html.no-motion *::after { scroll-beh
   .hero-typed-phrase, .hero-typed-phrase::after, #appointment-trigger, #appointment-trigger::before { animation:none; transition:none; }
 }
 
+/* === Book button echo-ring halo (index.html only). Remove this block + class "book-halo" to undo === */
+.book-halo{
+  position:relative;
+  isolation:isolate;
+}
+.book-halo::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  border-radius:inherit;
+  z-index:-1;
+  pointer-events:none;
+  opacity:0;
+  transform:scale(.94);
+  box-shadow:
+    0 0 0 5px rgba(255,255,255,.85),
+    0 0 0 11px rgba(255,255,255,.5),
+    0 0 0 18px rgba(255,255,255,.22);
+  animation:book-halo-echo 3s ease-out 2s 5;   /* starts after 2s, plays 5 times, then stops */
+  will-change:transform,opacity;
+}
+@keyframes book-halo-echo{
+  0%{transform:scale(.94);opacity:0}
+  25%{opacity:1}
+  80%,100%{transform:scale(1.12);opacity:0}
+}
+@media (hover:hover){
+  .book-halo:hover::before{animation-play-state:paused}
+}
+@media (prefers-reduced-motion:reduce){
+  .book-halo::before{animation:none}
+}
+/* === end halo === */
+
