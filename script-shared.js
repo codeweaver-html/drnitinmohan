@@ -991,6 +991,14 @@ const SITE_CONFIG = {
       });
     }
 
+    const rawMarqueeDuration = settings.marqueeDuration ?? (settings.announcement && settings.announcement.marqueeDuration);
+    const marqueeDuration = Number(rawMarqueeDuration);
+    const safeMarqueeDuration = Number.isFinite(marqueeDuration) && marqueeDuration >= 8 && marqueeDuration <= 90
+      ? marqueeDuration
+      : 30;
+    const ticker = document.querySelector("#site-announcement-mount .site-announcement");
+    if (ticker) ticker.style.setProperty("--kg-marquee-duration", safeMarqueeDuration + "s");
+
     const bookingEnabled = settings.bookingEnabled;
     document.body.classList.toggle("kg-booking-disabled", !bookingEnabled);
 

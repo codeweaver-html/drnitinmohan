@@ -65,9 +65,9 @@
     .settings-intro { margin:6px 0 18px; color:#667b8d; font-size:.8rem; }
     .preference-list { display:grid; gap:12px; }
     .preference-toggle { display:flex; align-items:center; gap:13px; padding:14px; border:1px solid #dce6ef; border-radius:12px; background:#fbfdff; cursor:pointer; }
-    .preference-toggle input { appearance:none; position:relative; width:44px; height:25px; flex:0 0 44px; margin:0; border-radius:99px; background:#bac7d2; cursor:pointer; transition:background-color 150ms ease; }
+    .preference-toggle input { appearance:none; position:relative; width:44px; height:25px; flex:0 0 44px; margin:0; border-radius:99px; background:#d92d20; cursor:pointer; transition:background-color 150ms ease; }
     .preference-toggle input::before { position:absolute; top:3px; left:3px; width:19px; height:19px; border-radius:50%; background:#fff; content:""; transition:transform 150ms ease; box-shadow:0 1px 3px rgba(0,0,0,.18); }
-    .preference-toggle input:checked { background:#0872c5; }
+    .preference-toggle input:checked { background:#16834a; }
     .preference-toggle input:checked::before { transform:translateX(19px); }
     .preference-toggle input:focus-visible { outline:3px solid rgba(7,89,168,.22); outline-offset:3px; }
     .preference-toggle input:disabled { opacity:.55; cursor:not-allowed; }
@@ -81,6 +81,18 @@
     .field textarea:focus { outline:3px solid rgba(7,89,168,.13); border-color:#0759a8; }
     .field small { color:#667b8d; font-size:.73rem; line-height:1.5; }
     #custom-announcement-wrap[hidden] { display:none; }
+    .marquee-speed-control { display:grid; gap:7px; padding:13px 14px; border:1px solid #dce6ef; border-radius:11px; background:#fbfdff; }
+    .marquee-speed-control > label { display:flex; justify-content:space-between; align-items:center; gap:12px; color:#29485f; font-size:.81rem; }
+    .marquee-speed-control output { color:#0759a8; font-size:.76rem; font-weight:800; }
+    #marquee-speed { width:100%; accent-color:#0759a8; cursor:pointer; }
+    #marquee-speed:disabled { opacity:.55; cursor:not-allowed; }
+    .marquee-speed-ends { display:flex; justify-content:space-between; color:#667b8d; font-size:.68rem; }
+    .marquee-speed-control > small { color:#667b8d; font-size:.72rem; }
+    .marquee-preview-block { display:grid; gap:8px; }
+    .marquee-preview-title { color:#29485f; font-size:.78rem; }
+    .marquee-preview { min-height:38px; border:1px solid #e3c95f; border-radius:8px; }
+    .marquee-preview .site-announcement-track { animation-play-state:running; }
+    .marquee-preview span { font-size:.72rem; }
     .restore-toggle { border-style:dashed; background:#fff; }
     .restore-toggle .preference-copy strong { color:#8b3434; }
     .restore-toggle input:checked { background:#a52a2a; }
@@ -128,7 +140,7 @@
 
       <div class="updates-toolbar">
         <a class="updates-back" href="/">← Return to website</a>
-        <button class="lock-button" id="lock-session" type="button">Lock / log out</button>
+        <button class="lock-button" id="lock-session" type="button">Log out</button>
       </div>
 
       <section class="settings-panel" aria-labelledby="settings-title">
@@ -145,7 +157,23 @@
           <div class="field" id="custom-announcement-wrap" hidden>
             <label for="custom-announcement-text">Custom marquee message</label>
             <textarea id="custom-announcement-text" rows="4" maxlength="500" placeholder="Type the announcement here..."></textarea>
-            <small>Line breaks and blank lines are kept as entered.</small>
+            <small>Line breaks, blank lines and repeated spaces are preserved on the website.</small>
+          </div>
+
+          <div class="marquee-speed-control">
+            <label for="marquee-speed"><strong>Marquee speed</strong><output id="marquee-speed-label" for="marquee-speed">Normal</output></label>
+            <input id="marquee-speed" type="range" min="1" max="5" step="1" value="3" disabled>
+            <div class="marquee-speed-ends"><span>Slower</span><span>Faster</span></div>
+            <small>Applies to both the default and custom announcement.</small>
+          </div>
+
+          <div class="marquee-preview-block">
+            <strong class="marquee-preview-title">Preview · Selected announcement</strong>
+            <div class="site-announcement marquee-preview" id="marquee-preview" role="img" aria-label="Preview of the selected announcement">
+              <div class="site-announcement-track" id="marquee-preview-track">
+                <span id="marquee-preview-text"></span><span id="marquee-preview-copy-1" aria-hidden="true"></span><span id="marquee-preview-copy-2" aria-hidden="true"></span><span id="marquee-preview-copy-3" aria-hidden="true"></span>
+              </div>
+            </div>
           </div>
 
           <label class="preference-toggle" for="booking-enabled">
@@ -196,6 +224,10 @@
       const customToggle = $("custom-announcement-enabled");
       const customText = $("custom-announcement-text");
       const customWrap = $("custom-announcement-wrap");
+      const marqueeSpeed = $("marquee-speed");
+      const marqueeSpeedLabel = $("marquee-speed-label");
+      const preview = $("marquee-preview");
+      const previewTrack = $("marquee-preview-track");
       const bookingToggle = $("booking-enabled");
       const restoreToggle = $("restore-defaults");
       const publishButton = $("publish-changes");
@@ -206,6 +238,14 @@
       const confirmButton = $("confirm-publish");
       let settingsLoaded = false;
       let publishing = false;
+      const DEFAULT_ANNOUNCEMENT = "OFFLINE APPOINTMENTS AVAILABLE RIGHT NOW. CLICK THE APPOINTMENT BUTTON BELOW TO PROCEED.";
+      const SPEEDS = [
+        { duration:60, label:"Slowest" },
+        { duration:45, label:"Slower" },
+        { duration:30, label:"Normal" },
+        { duration:20, label:"Faster" },
+        { duration:12, label:"Fastest" }
+      ];
 
       function setStatus(node, message, type) {
         node.textContent = message || "";
@@ -217,15 +257,48 @@
         return fetch(WORKER + path, Object.assign({ cache:"no-store", credentials:"omit" }, options || {}));
       }
 
+      function selectedSpeed() {
+        return SPEEDS[Math.max(0, Math.min(SPEEDS.length - 1, Number(marqueeSpeed.value) - 1))];
+      }
+
+      function speedIndexForDuration(value) {
+        const duration = Number(value);
+        if (!Number.isFinite(duration) || duration <= 0) return 3;
+        let nearest = 0;
+        SPEEDS.forEach((speed, index) => {
+          if (Math.abs(speed.duration - duration) < Math.abs(SPEEDS[nearest].duration - duration)) nearest = index;
+        });
+        return nearest + 1;
+      }
+
+      function updatePreview() {
+        const message = customToggle.checked ? customText.value : DEFAULT_ANNOUNCEMENT;
+        const speed = selectedSpeed();
+        ["marquee-preview-text", "marquee-preview-copy-1", "marquee-preview-copy-2", "marquee-preview-copy-3"].forEach(id => {
+          $(id).textContent = message || "Type a custom announcement to preview it here.";
+        });
+        previewTrack.style.setProperty("--kg-marquee-duration", speed.duration + "s");
+        marqueeSpeedLabel.textContent = speed.label + " · " + speed.duration + " sec/loop";
+        preview.setAttribute("aria-label", "Preview of the " + (customToggle.checked ? "custom" : "default") + " announcement at " + speed.label.toLowerCase() + " speed");
+      }
+
+      function updateStateLabel(node, enabled) {
+        node.textContent = enabled ? "ON" : "OFF";
+        node.classList.toggle("is-on", enabled);
+        node.classList.toggle("is-off", !enabled);
+      }
+
       function updateControls() {
         customWrap.hidden = !customToggle.checked;
-        $("announcement-state").textContent = customToggle.checked ? "ON" : "OFF";
-        $("booking-state").textContent = bookingToggle.checked ? "ON" : "OFF";
+        updateStateLabel($("announcement-state"), customToggle.checked);
+        updateStateLabel($("booking-state"), bookingToggle.checked);
         const restoring = restoreToggle.checked;
         customToggle.disabled = !settingsLoaded || restoring;
         bookingToggle.disabled = !settingsLoaded || restoring;
         customText.disabled = !settingsLoaded || restoring;
+        marqueeSpeed.disabled = !settingsLoaded || restoring;
         restoreToggle.disabled = !settingsLoaded;
+        updatePreview();
       }
 
       async function loadSettings() {
@@ -251,6 +324,9 @@
           customToggle.checked = saved.announcement.mode === "custom";
           customText.value = typeof saved.announcement.text === "string" ? saved.announcement.text : "";
           bookingToggle.checked = saved.bookingEnabled;
+          marqueeSpeed.value = String(speedIndexForDuration(
+            saved.marqueeDuration ?? (saved.announcement && saved.announcement.marqueeDuration)
+          ));
           restoreToggle.checked = false;
           settingsLoaded = true;
           updateControls();
@@ -269,6 +345,7 @@
           customToggle.checked = false;
           customText.value = "";
           bookingToggle.checked = true;
+          marqueeSpeed.value = "3";
         }
         updateControls();
       }
@@ -280,13 +357,24 @@
       }
 
       function currentPayload() {
-        if (restoreToggle.checked) {
-          return { announcement:{ mode:"default", text:"" }, bookingEnabled:true };
+        const marqueeDuration = restoreToggle.checked ? 30 : selectedSpeed().duration;
+        const announcement = restoreToggle.checked
+          ? { mode:"default", text:"", marqueeDuration }
+          : { mode:customToggle.checked ? "custom" : "default", text:customToggle.checked ? customText.value : "", marqueeDuration };
+        return { announcement, bookingEnabled:restoreToggle.checked ? true : bookingToggle.checked, marqueeDuration };
+      }
+
+      async function verifySavedSpeed(expectedDuration) {
+        const response = await workerRequest("/settings?t=" + Date.now(), {
+          method:"GET",
+          headers:{ "Accept":"application/json" }
+        });
+        if (!response.ok) throw new Error("Settings were published, but the saved marquee speed could not be verified. Please check the settings service.");
+        const saved = await response.json();
+        const savedDuration = Number(saved && (saved.marqueeDuration ?? (saved.announcement && saved.announcement.marqueeDuration)));
+        if (!Number.isFinite(savedDuration) || savedDuration !== expectedDuration) {
+          throw new Error("The settings service did not retain the marquee speed. Its Cloudflare Worker must store and return the marqueeDuration setting before this speed can be published.");
         }
-        return {
-          announcement:{ mode:customToggle.checked ? "custom" : "default", text:customToggle.checked ? customText.value : "" },
-          bookingEnabled:bookingToggle.checked
-        };
       }
 
       async function publishSettings(passcode) {
@@ -340,10 +428,13 @@
         publishButton.disabled = true;
         setStatus(publishStatus, "Verifying and publishing…", "");
         try {
+          const expectedDuration = currentPayload().marqueeDuration;
           await publishSettings(passcode);
+          await verifySavedSpeed(expectedDuration);
+          try { sessionStorage.removeItem("kg_admin_authenticated_until"); } catch (_) {}
           dialog.close();
-          await loadSettings();
-          setStatus(status, "Settings published and saved permanently.", "success");
+          location.replace("https://drnitinmohan.com/");
+          return;
         } catch (error) {
           setStatus(publishStatus, error.message || "Could not publish settings.", "error");
           passwordInput.focus();
@@ -359,6 +450,8 @@
         dialog.close();
       });
       customToggle.addEventListener("change", updateControls);
+      customText.addEventListener("input", updatePreview);
+      marqueeSpeed.addEventListener("input", updatePreview);
       bookingToggle.addEventListener("change", updateControls);
       restoreToggle.addEventListener("change", prepareDefaults);
       $("lock-session").addEventListener("click", () => {
