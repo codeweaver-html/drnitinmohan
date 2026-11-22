@@ -63,11 +63,25 @@
     .settings-panel { margin-top:16px; padding:clamp(18px,3.5vw,28px); border:1px solid #dce7f0; border-radius:18px; background:#fff; box-shadow:0 12px 34px rgba(9,52,91,.06); }
     .settings-panel h2 { margin:0; color:#0b347e; font-size:1.18rem; }
     .settings-intro { margin:6px 0 18px; color:#667b8d; font-size:.8rem; }
+    .settings-load-panel { display:grid; gap:11px; margin:0 0 18px; padding:15px; border:1px solid #cbddea; border-radius:12px; background:#f5faff; }
+    .settings-load-panel > strong { color:#17466f; font-size:.85rem; }
+    .settings-load-panel > small { color:#667b8d; font-size:.72rem; line-height:1.5; }
+    .settings-source-options { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; }
+    .settings-source-option { display:flex; min-width:0; align-items:flex-start; gap:10px; padding:12px; border:1px solid #d3e0eb; border-radius:10px; background:#fff; cursor:pointer; }
+    .settings-source-option:has(input:checked) { border-color:#0759a8; background:#edf6ff; box-shadow:0 0 0 2px rgba(7,89,168,.08); }
+    .settings-source-option input { width:17px; height:17px; flex:0 0 17px; margin:2px 0 0; accent-color:#0759a8; }
+    .settings-source-option span { display:grid; gap:4px; min-width:0; }
+    .settings-source-option strong { color:#29485f; font-size:.78rem; line-height:1.35; }
+    .settings-source-option small { color:#667b8d; font-size:.68rem; line-height:1.45; }
+    .load-settings-button { justify-self:start; min-height:39px; padding:8px 13px; border:1px solid #0759a8; border-radius:9px; background:#fff; color:#0759a8; font-size:.76rem; font-weight:800; cursor:pointer; }
+    .load-settings-button:disabled { opacity:.5; cursor:not-allowed; }
     .preference-list { display:grid; gap:12px; }
     .preference-toggle { display:flex; align-items:center; gap:13px; padding:14px; border:1px solid #dce6ef; border-radius:12px; background:#fbfdff; cursor:pointer; }
     .preference-toggle input { appearance:none; position:relative; width:44px; height:25px; flex:0 0 44px; margin:0; border-radius:99px; background:#d92d20; cursor:pointer; transition:background-color 150ms ease; }
     .preference-toggle input::before { position:absolute; top:3px; left:3px; width:19px; height:19px; border-radius:50%; background:#fff; content:""; transition:transform 150ms ease; box-shadow:0 1px 3px rgba(0,0,0,.18); }
-    .preference-toggle input:checked { background:#16834a; }
+    .preference-toggle input:checked { background:linear-gradient(90deg,#16834a,#0759a8); }
+    .flicker-toggle input { background:#829bb3; }
+    .flicker-toggle input:checked { background:linear-gradient(90deg,#16834a,#0759a8); }
     .preference-toggle input:checked::before { transform:translateX(19px); }
     .preference-toggle input:focus-visible { outline:3px solid rgba(7,89,168,.22); outline-offset:3px; }
     .preference-toggle input:disabled { opacity:.55; cursor:not-allowed; }
@@ -88,14 +102,16 @@
     #marquee-speed:disabled { opacity:.55; cursor:not-allowed; }
     .marquee-speed-ends { display:flex; justify-content:space-between; color:#667b8d; font-size:.68rem; }
     .marquee-speed-control > small { color:#667b8d; font-size:.72rem; }
+    .authorization-confirm { display:flex; align-items:flex-start; gap:10px; margin-top:18px; padding:13px 14px; border:1px dashed #d2a54a; border-radius:11px; background:#fffaf0; cursor:pointer; }
+    .authorization-confirm input { width:18px; height:18px; flex:0 0 18px; margin:2px 0 0; accent-color:#0759a8; }
+    .authorization-confirm span { display:grid; gap:3px; }
+    .authorization-confirm strong { color:#674c16; font-size:.79rem; }
+    .authorization-confirm small { color:#806c42; font-size:.69rem; line-height:1.45; }
     .marquee-preview-block { display:grid; gap:8px; }
     .marquee-preview-title { color:#29485f; font-size:.78rem; }
     .marquee-preview { min-height:38px; border:1px solid #e3c95f; border-radius:8px; }
     .marquee-preview .site-announcement-track { animation-play-state:running; }
     .marquee-preview span { font-size:.72rem; }
-    .restore-toggle { border-style:dashed; background:#fff; }
-    .restore-toggle .preference-copy strong { color:#8b3434; }
-    .restore-toggle input:checked { background:#a52a2a; }
     .settings-actions { display:flex; flex-wrap:wrap; align-items:center; gap:12px; margin-top:18px; }
     .primary-button,.secondary-button { display:inline-flex; min-height:44px; align-items:center; justify-content:center; padding:10px 17px; border:0; border-radius:10px; font:inherit; font-size:.82rem; font-weight:800; cursor:pointer; }
     .primary-button { background:#0759a8; color:#fff; box-shadow:0 6px 15px rgba(7,89,168,.16); }
@@ -118,6 +134,8 @@
       .updates-hero { border-radius:16px; }
       .updates-toolbar { align-items:flex-start; }
       .settings-actions .primary-button { width:100%; }
+      .settings-source-options { grid-template-columns:1fr; }
+      .load-settings-button { width:100%; }
     }
     @media(prefers-reduced-motion:reduce) { .preference-toggle input,.preference-toggle input::before { transition:none; } }
   </style>
@@ -135,7 +153,7 @@
         </div>
         <p class="updates-kicker">Website settings</p>
         <h1>Updates</h1>
-        <p>Change the announcement and booking buttons. Your saved settings load automatically and stay active until you change them or restore the defaults.</p>
+        <p>Change the announcement and booking buttons. Load either the default setup or your previously published settings, then publish your updated choices.</p>
       </header>
 
       <div class="updates-toolbar">
@@ -145,7 +163,23 @@
 
       <section class="settings-panel" aria-labelledby="settings-title">
         <h2 id="settings-title">Current website settings</h2>
-        <p class="settings-intro">The switches show the latest saved preferences.</p>
+        <p class="settings-intro">Choose which settings to load before making changes.</p>
+
+        <div class="settings-load-panel" aria-labelledby="settings-load-title">
+          <strong id="settings-load-title">Choose one starting setting</strong>
+          <div class="settings-source-options">
+            <label class="settings-source-option" for="source-default">
+              <input id="source-default" type="radio" name="settings-source" value="default">
+              <span><strong>Load default settings</strong><small>Default KidsGastro message, booking buttons ON, 30 sec/loop and flicker OFF.</small></span>
+            </label>
+            <label class="settings-source-option" for="source-previous">
+              <input id="source-previous" type="radio" name="settings-source" value="previous">
+              <span><strong>Load previous edited settings</strong><small>Fetch the last settings published to the website.</small></span>
+            </label>
+          </div>
+          <small>Loading a starting setting replaces any unsaved edits below.</small>
+          <button class="load-settings-button" id="load-selected-setting" type="button" disabled>Load selected settings</button>
+        </div>
 
         <div class="preference-list">
           <label class="preference-toggle" for="custom-announcement-enabled">
@@ -161,11 +195,17 @@
           </div>
 
           <div class="marquee-speed-control">
-            <label for="marquee-speed"><strong>Marquee speed</strong><output id="marquee-speed-label" for="marquee-speed">Normal</output></label>
-            <input id="marquee-speed" type="range" min="1" max="5" step="1" value="3" disabled>
-            <div class="marquee-speed-ends"><span>Slower</span><span>Faster</span></div>
-            <small>Applies to both the default and custom announcement.</small>
+            <label for="marquee-speed"><strong>Marquee speed</strong><output id="marquee-speed-label" for="marquee-speed">30 sec/loop</output></label>
+            <input id="marquee-speed" type="range" min="3" max="30" step="1" value="30" disabled>
+            <div class="marquee-speed-ends"><span>3 sec/loop · Fastest</span><span>30 sec/loop · Slowest</span></div>
+            <small>Choose any whole-second loop duration from 3 to 30 seconds. Applies to both the default and custom announcement.</small>
           </div>
+
+          <label class="preference-toggle flicker-toggle" for="marquee-flicker-enabled">
+            <input id="marquee-flicker-enabled" type="checkbox" disabled>
+            <span class="preference-copy"><strong>Marquee flicker animation</strong><small>Off by default. Turn on for a subtle flicker effect on the live announcement and in this preview.</small></span>
+            <span class="preference-state" id="flicker-state">OFF</span>
+          </label>
 
           <div class="marquee-preview-block">
             <strong class="marquee-preview-title">Preview · Selected announcement</strong>
@@ -182,15 +222,16 @@
             <span class="preference-state" id="booking-state">—</span>
           </label>
 
-          <label class="preference-toggle restore-toggle" for="restore-defaults">
-            <input id="restore-defaults" type="checkbox" disabled>
-            <span class="preference-copy"><strong>Restore all default settings</strong><small>Tick this and publish to restore the default announcement and turn booking buttons on.</small></span>
-          </label>
         </div>
+
+        <label class="authorization-confirm" for="authorization-acknowledged">
+          <input id="authorization-acknowledged" type="checkbox" disabled>
+          <span><strong>I am authorised to make and publish these changes.</strong><small>This acknowledgement is a visible deterrent only. Actual publishing remains protected by the admin sign-in and 2nd password.</small></span>
+        </label>
 
         <div class="settings-actions">
           <button class="primary-button" id="publish-changes" type="button" disabled>Publish changes</button>
-          <p id="settings-status" class="status" role="status" aria-live="polite">Loading saved settings…</p>
+          <p id="settings-status" class="status" role="status" aria-live="polite">Choose a starting option above, then load it to begin.</p>
         </div>
         <p class="settings-note">Changes are permanent. There are no start times, end times or automatic expiry.</p>
       </section>
@@ -201,8 +242,8 @@
   <dialog id="publish-dialog" aria-labelledby="publish-title">
     <form id="publish-form">
       <h2 id="publish-title">Confirm publishing</h2>
-      <p>Enter the second password to publish these settings.</p>
-      <label class="field" for="publish-password">Second password
+      <p>Enter 2nd password.</p>
+      <label class="field" for="publish-password">2nd password
         <input id="publish-password" type="password" autocomplete="current-password" required>
       </label>
       <p id="publish-status" class="status" role="status" aria-live="polite"></p>
@@ -229,7 +270,10 @@
       const preview = $("marquee-preview");
       const previewTrack = $("marquee-preview-track");
       const bookingToggle = $("booking-enabled");
-      const restoreToggle = $("restore-defaults");
+      const flickerToggle = $("marquee-flicker-enabled");
+      const authorizationAcknowledged = $("authorization-acknowledged");
+      const sourceRadios = Array.from(document.querySelectorAll('input[name="settings-source"]'));
+      const loadButton = $("load-selected-setting");
       const publishButton = $("publish-changes");
       const status = $("settings-status");
       const dialog = $("publish-dialog");
@@ -237,15 +281,12 @@
       const publishStatus = $("publish-status");
       const confirmButton = $("confirm-publish");
       let settingsLoaded = false;
+      let loadedSource = "";
+      let settingsDirty = false;
+      let loading = false;
       let publishing = false;
       const DEFAULT_ANNOUNCEMENT = "OFFLINE APPOINTMENTS AVAILABLE RIGHT NOW. CLICK THE APPOINTMENT BUTTON BELOW TO PROCEED.";
-      const SPEEDS = [
-        { duration:60, label:"Slowest" },
-        { duration:45, label:"Slower" },
-        { duration:30, label:"Normal" },
-        { duration:20, label:"Faster" },
-        { duration:12, label:"Fastest" }
-      ];
+      const DEFAULT_MARQUEE_DURATION = 30;
 
       function setStatus(node, message, type) {
         node.textContent = message || "";
@@ -257,29 +298,28 @@
         return fetch(WORKER + path, Object.assign({ cache:"no-store", credentials:"omit" }, options || {}));
       }
 
-      function selectedSpeed() {
-        return SPEEDS[Math.max(0, Math.min(SPEEDS.length - 1, Number(marqueeSpeed.value) - 1))];
+      function selectedSource() {
+        const selected = sourceRadios.find(radio => radio.checked);
+        return selected ? selected.value : "";
       }
 
-      function speedIndexForDuration(value) {
-        const duration = Number(value);
-        if (!Number.isFinite(duration) || duration <= 0) return 3;
-        let nearest = 0;
-        SPEEDS.forEach((speed, index) => {
-          if (Math.abs(speed.duration - duration) < Math.abs(SPEEDS[nearest].duration - duration)) nearest = index;
-        });
-        return nearest + 1;
+      function selectedDuration() {
+        const value = Number(marqueeSpeed.value);
+        if (!Number.isFinite(value)) return DEFAULT_MARQUEE_DURATION;
+        return Math.max(3, Math.min(30, Math.round(value)));
       }
 
       function updatePreview() {
         const message = customToggle.checked ? customText.value : DEFAULT_ANNOUNCEMENT;
-        const speed = selectedSpeed();
+        const duration = selectedDuration();
         ["marquee-preview-text", "marquee-preview-copy-1", "marquee-preview-copy-2", "marquee-preview-copy-3"].forEach(id => {
           $(id).textContent = message || "Type a custom announcement to preview it here.";
         });
-        previewTrack.style.setProperty("--kg-marquee-duration", speed.duration + "s");
-        marqueeSpeedLabel.textContent = speed.label + " · " + speed.duration + " sec/loop";
-        preview.setAttribute("aria-label", "Preview of the " + (customToggle.checked ? "custom" : "default") + " announcement at " + speed.label.toLowerCase() + " speed");
+        previewTrack.style.setProperty("--kg-marquee-duration", duration + "s");
+        preview.classList.toggle("has-flicker", flickerToggle.checked);
+        marqueeSpeedLabel.textContent = duration + " sec/loop";
+        const flickerDescription = flickerToggle.checked ? " with flicker on" : " with flicker off";
+        preview.setAttribute("aria-label", "Preview of the " + (customToggle.checked ? "custom" : "default") + " announcement, " + duration + " seconds per loop" + flickerDescription);
       }
 
       function updateStateLabel(node, enabled) {
@@ -289,31 +329,67 @@
       }
 
       function updateControls() {
+        const disabled = !settingsLoaded || loading || publishing;
         customWrap.hidden = !customToggle.checked;
         updateStateLabel($("announcement-state"), customToggle.checked);
         updateStateLabel($("booking-state"), bookingToggle.checked);
-        const restoring = restoreToggle.checked;
-        customToggle.disabled = !settingsLoaded || restoring;
-        bookingToggle.disabled = !settingsLoaded || restoring;
-        customText.disabled = !settingsLoaded || restoring;
-        marqueeSpeed.disabled = !settingsLoaded || restoring;
-        restoreToggle.disabled = !settingsLoaded;
+        updateStateLabel($("flicker-state"), flickerToggle.checked);
+        customToggle.disabled = disabled;
+        bookingToggle.disabled = disabled;
+        customText.disabled = disabled;
+        marqueeSpeed.disabled = disabled;
+        flickerToggle.disabled = disabled;
+        authorizationAcknowledged.disabled = disabled;
+        sourceRadios.forEach(radio => { radio.disabled = loading || publishing; });
+        loadButton.disabled = loading || publishing || !selectedSource();
+        publishButton.disabled = !settingsLoaded || !authorizationAcknowledged.checked || publishing || selectedSource() !== loadedSource;
         updatePreview();
       }
 
-      async function loadSettings() {
+      function applySettings(settings) {
+        customToggle.checked = settings.announcement.mode === "custom";
+        customText.value = typeof settings.announcement.text === "string" ? settings.announcement.text : "";
+        bookingToggle.checked = settings.bookingEnabled;
+        const savedDuration = Number(settings.marqueeDuration ?? (settings.announcement && settings.announcement.marqueeDuration));
+        marqueeSpeed.value = String(Number.isFinite(savedDuration) ? Math.max(3, Math.min(30, Math.round(savedDuration))) : DEFAULT_MARQUEE_DURATION);
+        flickerToggle.checked = settings.marqueeFlicker === true;
+        authorizationAcknowledged.checked = false;
+        settingsDirty = false;
+        settingsLoaded = true;
+        updateControls();
+      }
+
+      function loadDefaultSettings() {
+        loadedSource = "default";
+        applySettings({
+          announcement: { mode:"default", text:"", marqueeDuration:DEFAULT_MARQUEE_DURATION },
+          bookingEnabled: true,
+          marqueeDuration: DEFAULT_MARQUEE_DURATION,
+          marqueeFlicker: false
+        });
+        setStatus(status, "Default settings loaded. Review your choices before publishing.", "success");
+      }
+
+      async function loadPreviousSettings() {
         if (!workerConfigured) {
+          settingsLoaded = false;
+          updateControls();
           setStatus(status, "The website settings service URL is not configured.", "error");
           return;
         }
-        publishButton.disabled = true;
-        setStatus(status, "Loading the latest saved settings…", "");
+
+        loading = true;
+        loadedSource = "";
+        settingsLoaded = false;
+        authorizationAcknowledged.checked = false;
+        updateControls();
+        setStatus(status, "Loading the previous published settings…", "");
         try {
           const response = await workerRequest("/settings?t=" + Date.now(), {
             method:"GET",
             headers:{ "Accept":"application/json" }
           });
-          if (!response.ok) throw new Error("Could not load saved website settings.");
+          if (!response.ok) throw new Error("Could not load the previous published settings.");
           const saved = await response.json();
           if (
             !saved || saved.schemaVersion !== 1 || !saved.announcement ||
@@ -321,71 +397,70 @@
             typeof saved.bookingEnabled !== "boolean"
           ) throw new Error("The settings service returned an unsupported format. No settings were changed.");
 
-          customToggle.checked = saved.announcement.mode === "custom";
-          customText.value = typeof saved.announcement.text === "string" ? saved.announcement.text : "";
-          bookingToggle.checked = saved.bookingEnabled;
-          marqueeSpeed.value = String(speedIndexForDuration(
-            saved.marqueeDuration ?? (saved.announcement && saved.announcement.marqueeDuration)
-          ));
-          restoreToggle.checked = false;
-          settingsLoaded = true;
-          updateControls();
-          publishButton.disabled = false;
-          setStatus(status, "Latest saved settings loaded.", "success");
+          loadedSource = "previous";
+          applySettings(saved);
+          const message = saved.updatedAt
+            ? "Previous edited settings loaded."
+            : "No earlier publication was found; the service defaults have been loaded.";
+          setStatus(status, message, "success");
         } catch (error) {
           settingsLoaded = false;
+          loadedSource = "";
+          settingsDirty = false;
           updateControls();
-          publishButton.disabled = true;
-          setStatus(status, error.message || "Could not load saved settings.", "error");
+          setStatus(status, error.message || "Could not load the previous published settings.", "error");
+        } finally {
+          loading = false;
+          updateControls();
         }
-      }
-
-      function prepareDefaults() {
-        if (restoreToggle.checked) {
-          customToggle.checked = false;
-          customText.value = "";
-          bookingToggle.checked = true;
-          marqueeSpeed.value = "3";
-        }
-        updateControls();
       }
 
       function validateSettings() {
-        if (!settingsLoaded) throw new Error("Saved settings have not loaded yet.");
+        if (!settingsLoaded) throw new Error("Choose and load a starting setting first.");
+        if (!authorizationAcknowledged.checked) throw new Error("Confirm that you are authorised to make these changes.");
         if (customToggle.checked && !customText.value.trim()) throw new Error("Enter a custom announcement or switch it off.");
         if (customText.value.length > 500) throw new Error("The custom announcement must be 500 characters or fewer.");
       }
 
       function currentPayload() {
-        const marqueeDuration = restoreToggle.checked ? 30 : selectedSpeed().duration;
-        const announcement = restoreToggle.checked
-          ? { mode:"default", text:"", marqueeDuration }
-          : { mode:customToggle.checked ? "custom" : "default", text:customToggle.checked ? customText.value : "", marqueeDuration };
-        return { announcement, bookingEnabled:restoreToggle.checked ? true : bookingToggle.checked, marqueeDuration };
+        const marqueeDuration = selectedDuration();
+        return {
+          announcement: {
+            mode: customToggle.checked ? "custom" : "default",
+            text: customToggle.checked ? customText.value : "",
+            marqueeDuration
+          },
+          bookingEnabled: bookingToggle.checked,
+          marqueeDuration,
+          marqueeFlicker: flickerToggle.checked
+        };
       }
 
-      async function verifySavedSpeed(expectedDuration) {
+      async function verifySavedSettings(expected) {
         const response = await workerRequest("/settings?t=" + Date.now(), {
           method:"GET",
           headers:{ "Accept":"application/json" }
         });
-        if (!response.ok) throw new Error("Settings were published, but the saved marquee speed could not be verified. Please check the settings service.");
+        if (!response.ok) throw new Error("Settings were published, but the saved marquee settings could not be verified.");
         const saved = await response.json();
         const savedDuration = Number(saved && (saved.marqueeDuration ?? (saved.announcement && saved.announcement.marqueeDuration)));
-        if (!Number.isFinite(savedDuration) || savedDuration !== expectedDuration) {
-          throw new Error("The settings service did not retain the marquee speed. Its Cloudflare Worker must store and return the marqueeDuration setting before this speed can be published.");
+        if (!Number.isFinite(savedDuration) || savedDuration !== expected.marqueeDuration) {
+          throw new Error("The settings service did not retain the selected marquee speed. Check that the updated Cloudflare Worker is deployed.");
+        }
+        if ((saved.marqueeFlicker === true) !== expected.marqueeFlicker) {
+          throw new Error("The settings service did not retain the flicker preference. Check that the updated Cloudflare Worker is deployed.");
         }
       }
 
-      async function publishSettings(passcode) {
+      async function publishSettings(passcode, payload) {
         const loginResponse = await workerRequest("/login", {
           method:"POST",
           headers:{ "Content-Type":"application/json" },
           body:JSON.stringify({ passcode })
         });
         if (!loginResponse.ok) {
-          if (loginResponse.status === 401) throw new Error("The second password was not accepted.");
-          throw new Error("Could not verify the second password. Please try again.");
+          if (loginResponse.status === 401) throw new Error("The 2nd password was not accepted.");
+          throw new Error("Could not verify the 2nd password. Please try again.");
         }
         const auth = await loginResponse.json();
         if (!auth || typeof auth.token !== "string" || !auth.token) throw new Error("The settings service did not return a valid publishing session.");
@@ -393,7 +468,7 @@
         const response = await workerRequest("/settings", {
           method:"PUT",
           headers:{ "Content-Type":"application/json", "X-Token":auth.token },
-          body:JSON.stringify(currentPayload())
+          body:JSON.stringify(payload)
         });
         if (response.status === 401) throw new Error("The publishing session was not accepted. Please try again.");
         if (!response.ok) {
@@ -403,6 +478,21 @@
         const result = await response.json();
         if (!result || result.success !== true) throw new Error("The service did not confirm that settings were saved.");
       }
+
+      loadButton.addEventListener("click", async () => {
+        const source = selectedSource();
+        if (!source || loading || publishing) return;
+        if (settingsDirty && !window.confirm("Loading this starting point will replace your unsaved edits. Continue?")) return;
+        if (source === "default") loadDefaultSettings();
+        else if (source === "previous") await loadPreviousSettings();
+      });
+
+      sourceRadios.forEach(radio => radio.addEventListener("change", () => {
+        updateControls();
+        if (settingsLoaded && selectedSource() !== loadedSource) {
+          setStatus(status, "Load the newly selected starting setting before publishing.", "");
+        }
+      }));
 
       publishButton.addEventListener("click", () => {
         try { validateSettings(); }
@@ -418,19 +508,24 @@
         if (publishing) return;
         const passcode = passwordInput.value;
         if (!passcode.trim()) {
-          setStatus(publishStatus, "Enter the second password.", "error");
+          setStatus(publishStatus, "Enter 2nd password.", "error");
           passwordInput.focus();
           return;
         }
+        try { validateSettings(); }
+        catch (error) {
+          setStatus(publishStatus, error.message, "error");
+          return;
+        }
         passwordInput.value = "";
+        const payload = currentPayload();
         publishing = true;
         confirmButton.disabled = true;
-        publishButton.disabled = true;
+        updateControls();
         setStatus(publishStatus, "Verifying and publishing…", "");
         try {
-          const expectedDuration = currentPayload().marqueeDuration;
-          await publishSettings(passcode);
-          await verifySavedSpeed(expectedDuration);
+          await publishSettings(passcode, payload);
+          await verifySavedSettings(payload);
           try { sessionStorage.removeItem("kg_admin_authenticated_until"); } catch (_) {}
           dialog.close();
           location.replace("https://drnitinmohan.com/");
@@ -441,7 +536,7 @@
         } finally {
           publishing = false;
           confirmButton.disabled = false;
-          publishButton.disabled = !settingsLoaded;
+          updateControls();
         }
       });
 
@@ -449,11 +544,18 @@
         passwordInput.value = "";
         dialog.close();
       });
-      customToggle.addEventListener("change", updateControls);
-      customText.addEventListener("input", updatePreview);
-      marqueeSpeed.addEventListener("input", updatePreview);
-      bookingToggle.addEventListener("change", updateControls);
-      restoreToggle.addEventListener("change", prepareDefaults);
+
+      function markDraftChanged() {
+        settingsDirty = true;
+        updateControls();
+      }
+      customToggle.addEventListener("change", markDraftChanged);
+      customText.addEventListener("input", () => { settingsDirty = true; updatePreview(); });
+      marqueeSpeed.addEventListener("input", () => { settingsDirty = true; updatePreview(); });
+      bookingToggle.addEventListener("change", markDraftChanged);
+      flickerToggle.addEventListener("change", markDraftChanged);
+      authorizationAcknowledged.addEventListener("change", updateControls);
+
       $("lock-session").addEventListener("click", () => {
         try { sessionStorage.removeItem("kg_admin_authenticated_until"); } catch (_) {}
         const target = new URL("/admin/", location.origin);
@@ -462,7 +564,7 @@
       });
 
       updateControls();
-      loadSettings();
+      setStatus(status, "Choose a starting option above, then load it to begin.", "");
     })();
   </script>
 </body>

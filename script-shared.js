@@ -993,11 +993,14 @@ const SITE_CONFIG = {
 
     const rawMarqueeDuration = settings.marqueeDuration ?? (settings.announcement && settings.announcement.marqueeDuration);
     const marqueeDuration = Number(rawMarqueeDuration);
-    const safeMarqueeDuration = Number.isFinite(marqueeDuration) && marqueeDuration >= 8 && marqueeDuration <= 90
+    const safeMarqueeDuration = Number.isFinite(marqueeDuration) && marqueeDuration >= 3 && marqueeDuration <= 30
       ? marqueeDuration
       : 30;
     const ticker = document.querySelector("#site-announcement-mount .site-announcement");
-    if (ticker) ticker.style.setProperty("--kg-marquee-duration", safeMarqueeDuration + "s");
+    if (ticker) {
+      ticker.style.setProperty("--kg-marquee-duration", safeMarqueeDuration + "s");
+      ticker.classList.toggle("has-flicker", settings.marqueeFlicker === true);
+    }
 
     const bookingEnabled = settings.bookingEnabled;
     document.body.classList.toggle("kg-booking-disabled", !bookingEnabled);
