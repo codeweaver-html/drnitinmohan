@@ -2,30 +2,28 @@
    Keep this file beside the site root document and name it exactly: service-worker.js
 */
 
-const CACHE_NAME = "kidsgastro-cache-v15";
+const CACHE_NAME = "kidsgastro-cache-v16";
 const APP_ROOT = new URL(self.registration.scope);
 const APP_ORIGIN = self.location.origin;
+
+const ROOT_PAGE_SLUGS = new Set([
+  "about", "admin", "blog", "clinic", "clinical", "faqs", "gallery",
+  "latest", "newsletter", "publications", "services", "socials",
+  "testimonials", "treatments", "updates"
+]);
 
 /* Optional shell files are cached one by one. A missing page will not stop
    the service worker from installing or updating. */
 const SHELL_FILES = [
   "./",
   "./404.html",
-  "./admin",
-  "./style-shared.css",
-  "./script-shared.js",
-  "./settings.json",
-  "./robots.txt",
-  "./sitemap.xml",
-  "./assets/kg%20logo.webp",
-  "./about/",
-  "./about.html",
+  "./index.html",
   "./blog/",
-  "./blog.html",
+  "./faqs/",
+  "./gallery/",
+  "./about.html",
   "./clinic.html",
   "./clinical.html",
-  "./faqs.html",
-  "./gallery.html",
   "./latest.html",
   "./newsletter.html",
   "./publications.html",
@@ -33,24 +31,17 @@ const SHELL_FILES = [
   "./socials.html",
   "./testimonials.html",
   "./treatments.html",
-  "./blog/hepatitis-c-in-children/",
-  "./clinic/",
-  "./clinical/",
-  "./faqs/",
-  "./gallery/",
-  "./latest/",
-  "./newsletter/",
-  "./publications/",
-  "./services/",
-  "./socials/",
-  "./testimonials/",
-  "./treatments/",
+  "./style-shared.css",
+  "./script-shared.js",
+  "./settings.json",
+  "./robots.txt",
+  "./sitemap.xml",
+  "./assets/kg%20logo.webp",
   "./assets/baby%20pic.webp",
   "./assets/endo%20gallery%20pic.webp",
   "./assets/endo%20main%20pic.webp",
   "./assets/gastro%20talk.webp",
   "./assets/hospital%20pic.webp",
-  "./assets/kg%20logo.webp",
   "./assets/instagram.svg",
   "./assets/linkedin.svg",
   "./assets/google-scholar.svg",
@@ -132,61 +123,38 @@ self.addEventListener("activate", event => {
 async function networkFirst(request) {
   const cache = await caches.open(CACHE_NAME);
   const requestedUrl = new URL(request.url);
-  const legacyBlogPath = new URL("blog.html", APP_ROOT).pathname;
+  const cleanSlug = requestedUrl.pathname.replace(/^\/+|\/+$/g, "").toLowerCase();
 
-  /* Redirect the retired flat blog page before requesting it from the server. */
-  if (requestedUrl.pathname === legacyBlogPath) {
-    return Response.redirect(new URL("blog/", APP_ROOT), 301);
+  /* Legacy flat URLs move to their clean route. */
+  const legacyMatch = requestedUrl.pathname.match(/^\/([a-z0-9-]+)\.html$/i);
+  if (legacyMatch && legacyMatch[1].toLowerCase() !== "index" && ROOT_PAGE_SLUGS.has(legacyMatch[1].toLowerCase())) {
+    return Response.redirect(new URL(`/${legacyMatch[1].toLowerCase()}/`, APP_ROOT), 301);
   }
 
   try {
+    /* Prefer a Jekyll-generated clean route. This keeps root-level source pages
+       and lets GitHub Pages serve /slug/ as a normal 200 response. */
     const response = await fetch(request, { cache: "no-cache" });
     if (response.ok) {
       await saveResponse(cache, request, response);
       return response;
     }
 
-    /* Resolve a clean directory route first, then try its existing flat HTML file. */
-    const cleanPath = requestedUrl.pathname.replace(/\/+$/, "");
-    const lastSegment = cleanPath.split("/").pop() || "";
-    if (response.status === 404 && cleanPath && !lastSegment.includes(".")) {
-      const cleanCandidates = [
-        new URL(`${cleanPath}/index.html${requestedUrl.search}`, requestedUrl.origin)
-      ];
-      /* Clean public URLs may be backed by the existing root-level HTML files.
-         The browser keeps the clean URL; this is an internal response fallback. */
-      cleanCandidates.push(new URL(`${cleanPath}.html${requestedUrl.search}`, requestedUrl.origin));
-      for (const candidate of cleanCandidates) {
-        const cleanResponse = await fetch(candidate.href, { cache: "no-cache" });
-        if (cleanResponse.ok) {
-          await saveResponse(cache, request, cleanResponse);
-          return cleanResponse;
-        }
+    /* Legacy root-level .html pages remain supported without moving them. */
+    if (response.status === 404 && ROOT_PAGE_SLUGS.has(cleanSlug)) {
+      const pageFile = new URL(`${cleanSlug}.html${requestedUrl.search}`, APP_ROOT);
+      const pageResponse = await fetch(pageFile.href, { cache: "no-cache" });
+      if (pageResponse.ok) {
+        await saveResponse(cache, request, pageResponse);
+        return pageResponse;
       }
     }
     return response;
   } catch (error) {
     const cached = await cache.match(request);
     if (cached) return cached;
-
-    const cleanPath = requestedUrl.pathname.replace(/\/+$/, "");
-    const lastSegment = cleanPath.split("/").pop() || "";
-    if (cleanPath && !lastSegment.includes(".")) {
-      const fallbackUrls = [
-        new URL(`${cleanPath}/index.html${requestedUrl.search}`, requestedUrl.origin),
-        new URL(`${cleanPath}.html${requestedUrl.search}`, requestedUrl.origin)
-      ];
-      for (const fallbackUrl of fallbackUrls) {
-        const fallbackResponse = await cache.match(fallbackUrl.href);
-        if (fallbackResponse) return fallbackResponse;
-      }
-    }
-
-    /* If an uncached page is requested offline, show the cached homepage. */
     const homePage = await cache.match(APP_ROOT.href);
-
     if (homePage) return homePage;
-
     return new Response(
       "You are offline. Please reconnect and reload the KidsGastro website.",
       {

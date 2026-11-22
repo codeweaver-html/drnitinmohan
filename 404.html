@@ -1,53 +1,49 @@
 <!doctype html>
-<html lang="en-IN" data-nav-style="hamburger">
+<html lang="en-IN">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#0759a8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="robots" content="noindex,follow">
-  <meta name="description" content="The requested KidsGastro page could not be found. Return to the homepage or use the main navigation.">
-  <script>document.write('<base href="' + (location.protocol === 'file:' ? './' : '/') + '">');</script>
-  <link rel="icon" href="favicon.ico" sizes="any" type="image/x-icon">
-  <link rel="apple-touch-icon" href="assets/kg%20logo.webp">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style-shared.css">
-  <title>Page Not Found | KidsGastro</title>
+  <meta name="theme-color" content="#005EB8">
+  <title>Opening KidsGastro page…</title>
   <style>
-    body[data-site-page="404"] { min-height:100vh; display:flex; flex-direction:column; }
-    body[data-site-page="404"] .error-main { flex:1; display:grid; place-items:center; padding:clamp(30px,6vw,76px) 0; }
-    .error-card { width:min(100%,780px); padding:clamp(28px,5vw,58px); text-align:center; border:1px solid var(--kg-line); border-radius:24px; background:#fff; box-shadow:var(--kg-shadow); }
-    .error-mark { display:grid; width:clamp(112px,20vw,170px); aspect-ratio:1; place-items:center; margin:0 auto 22px; border-radius:36px; background:#0759a8; color:#fff; box-shadow:0 15px 36px rgba(7,89,168,.2); }
-    .error-mark strong { color:#fff; font-size:clamp(3rem,8vw,5.4rem); line-height:1; letter-spacing:-.08em; }
-    .error-kicker { margin:0 0 10px; color:var(--kg-blue); font-size:.76rem; font-weight:800; letter-spacing:.14em; text-transform:uppercase; }
-    .error-card h1 { margin:0 0 14px; color:var(--kg-navy); font-size:clamp(1.9rem,4.5vw,3.15rem); }
-    .error-card p:not(.error-kicker) { max-width:560px; margin:0 auto 26px; color:var(--kg-muted); }
-    .error-actions { display:flex; flex-wrap:wrap; justify-content:center; gap:11px; }
-    .error-home { background:var(--kg-blue); color:#fff; border-color:var(--kg-blue); }
-    .error-home:hover { background:var(--kg-blue-dark); color:#fff; }
-    .error-contact { background:#fff; color:var(--kg-blue); border-color:#b9d2e6; }
-    @media(max-width:560px) { .error-card { border-radius:18px; } .error-mark { border-radius:28px; } .error-actions { flex-direction:column; } .error-actions a { width:100%; } }
+    body { margin:0; min-height:100vh; display:grid; place-items:center; padding:24px; box-sizing:border-box; background:#f6f9fc; color:#18384d; font:16px/1.6 Arial,sans-serif; text-align:center; }
+    main { width:min(560px,100%); padding:30px; border-radius:18px; background:#fff; box-shadow:0 12px 36px rgba(9,52,91,.1); }
+    a { color:#005EB8; font-weight:700; }
   </style>
 </head>
-<body data-site-page="404">
-  <a class="site-skip" href="#error-content">Skip to content</a>
-  <div id="site-announcement-mount"></div>
-  <div id="site-header-mount"></div>
-  <main id="error-content" class="error-main">
-    <section class="site-container">
-      <div class="error-card">
-        <div class="error-mark" aria-hidden="true"><strong>404</strong></div>
-        <p class="error-kicker">404 · Page not found</p>
-        <h1>This page isn’t here.</h1>
-        <p>The address may be incorrect, or the page may have moved. Use the main navigation to explore KidsGastro, or return to the homepage.</p>
-        <div class="error-actions">
-          <a class="site-button error-home" href="index.html">Back to homepage <span aria-hidden="true">→</span></a>
-        </div>
-      </div>
-    </section>
-  </main>
-  <div id="site-footer-mount"></div>
-  <script src="script-shared.js" defer></script>
+<body>
+  <main><h1>Opening this KidsGastro page…</h1><p id="route-status">Please wait while the page loads.</p><p><a href="/">Return to KidsGastro home</a></p></main>
+  <script>
+    (async function () {
+      const allowed = new Set(["about", "admin", "blog", "clinic", "clinical", "faqs", "gallery", "latest", "newsletter", "publications", "services", "socials", "testimonials", "treatments", "updates"]);
+      const status = document.getElementById("route-status");
+      let slug = "";
+      try { slug = decodeURIComponent(location.pathname).replace(/^\/+|\/+$/g, "").toLowerCase(); }
+      catch (_) { slug = ""; }
+      const legacyMatch = location.pathname.match(/^\/([a-z0-9-]+)\.html$/i);
+      if (legacyMatch && allowed.has(legacyMatch[1].toLowerCase())) {
+        location.replace("/" + legacyMatch[1].toLowerCase() + "/" + location.search + location.hash);
+        return;
+      }
+      if (!allowed.has(slug)) {
+        status.textContent = "This page could not be found.";
+        return;
+      }
+      try {
+        const response = await fetch("/" + encodeURIComponent(slug) + ".html", { cache: "no-store" });
+        if (!response.ok) throw new Error("The root page file was not found.");
+        let markup = await response.text();
+        if (!/<base\s/i.test(markup)) {
+          markup = markup.replace(/<head([^>]*)>/i, '<head$1><base href="/">');
+        }
+        document.open();
+        document.write(markup);
+        document.close();
+      } catch (_) {
+        status.textContent = "The page file is not available yet. Please use the main navigation or return home.";
+      }
+    })();
+  </script>
 </body>
 </html>

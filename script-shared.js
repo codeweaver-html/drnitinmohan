@@ -29,27 +29,27 @@ const SITE_CONFIG = {
     recaptchaVerifyUrl: "https://drnitinmohan-backend.drnitinmohanpaedsgastro.workers.dev/api/recaptcha/verify"
   },
   nav: [
-    { label: "Why Dr. Nitin", path: "/about" },
-    { label: "Treatments", path: "/treatments", children: [
-      { label: "Paediatric Gastroenterology", path: "/treatments" },
-      { label: "Paediatric Hepatology — Liver Diseases", path: "/treatments" },
-      { label: "Paediatric Pancreatology — Pancreatic Disorders", path: "/treatments" },
-      { label: "Paediatric Biliary Tract Diseases", path: "/treatments" },
-      { label: "Paediatric Nutrition and Growth", path: "/treatments" }
+    { label: "Why Dr. Nitin Mohan", path: "/about/" },
+    { label: "Treatments", path: "/treatments/", children: [
+      { label: "Paediatric Gastroenterology", path: "/treatments/" },
+      { label: "Paediatric Hepatology — Liver Diseases", path: "/treatments/" },
+      { label: "Paediatric Pancreatology — Pancreatic Disorders", path: "/treatments/" },
+      { label: "Paediatric Biliary Tract Diseases", path: "/treatments/" },
+      { label: "Paediatric Nutrition and Growth", path: "/treatments/" }
     ]},
-    { label: "Services", path: "/services", children: [
-      { label: "Paediatric Gastrointestinal Procedures", path: "/services" },
-      { label: "Hepatology Procedures & Investigations", path: "/services" },
-      { label: "Pancreatic Investigations", path: "/services" },
-      { label: "Biliary Tract Investigations", path: "/services" },
-      { label: "Gastrointestinal Diagnostic Investigations", path: "/services" },
-      { label: "Nutrition & Growth Assessment", path: "/services" }
+    { label: "Services", path: "/services/", children: [
+      { label: "Paediatric Gastrointestinal Procedures", path: "/services/" },
+      { label: "Hepatology Procedures & Investigations", path: "/services/" },
+      { label: "Pancreatic Investigations", path: "/services/" },
+      { label: "Biliary Tract Investigations", path: "/services/" },
+      { label: "Gastrointestinal Diagnostic Investigations", path: "/services/" },
+      { label: "Nutrition & Growth Assessment", path: "/services/" }
     ]},
-    { label: "FAQs", path: "/faqs" },
-    { label: "Blog", path: "/blog" },
-    { label: "Publication", path: "/publications" },
-    { label: "Testimonials", path: "/testimonials" },
-    { label: "Gallery", path: "/gallery" },
+    { label: "FAQs", path: "/faqs/" },
+    { label: "Blog", path: "/blog/" },
+    { label: "Publication", path: "/publications/" },
+    { label: "Testimonials", path: "/testimonials/" },
+    { label: "Gallery", path: "/gallery/" },
     { label: "Contact Us", homeAnchor: "site-footer-mount" }
   ],
   content: {
@@ -130,12 +130,7 @@ const SITE_CONFIG = {
   };
   const safeText = value => String(value == null ? "" : value);
   const escapeHtml = value => safeText(value).replace(/[&<>"']/g, ch => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;", "'":"&#39;"}[ch]));
-  const pathParts = String(window.location.pathname || "/").split("/").filter(Boolean);
-  let currentRouteFile = pathParts[pathParts.length - 1] || pathParts[pathParts.length - 2] || "";
-  if (/^index\.html?$/i.test(currentRouteFile) && pathParts.length > 1) {
-    currentRouteFile = pathParts[pathParts.length - 2];
-  }
-  const currentFile = currentRouteFile.replace(/\.html?$/i, "").toLowerCase();
+  const currentFile = String(window.location.pathname || "").split("/").pop().replace(/\.html?$/i, "").toLowerCase();
   let activePage = body.dataset.sitePage || (currentFile && currentFile !== "index" ? currentFile : "home");
   root.dataset.navStyle = SITE_CONFIG.features.navStyle;
 
@@ -151,16 +146,22 @@ const SITE_CONFIG = {
       link.dataset.kgSharedStyles = "true";
       document.head.append(link);
     }
-    const favicon = asset("assets/kg%20logo.webp?v=20261122");
-    let icon = document.querySelector('link[rel="icon"]');
-    if (!icon) {
-      icon = document.createElement("link");
+    const faviconUrl = `${asset("assets/kg%20logo.webp")}?v=20261122`;
+    const icons = [...document.querySelectorAll('link[rel~="icon"], link[rel="shortcut icon"]')];
+    if (icons.length) {
+      icons.forEach(icon => {
+        icon.href = faviconUrl;
+        icon.type = "image/webp";
+      });
+    } else {
+      const icon = document.createElement("link");
       icon.rel = "icon";
+      icon.href = faviconUrl;
+      icon.type = "image/webp";
       document.head.append(icon);
     }
-    icon.type = "image/webp";
-    icon.href = favicon;
-    document.querySelectorAll('link[rel="shortcut icon"]').forEach(link => link.remove());
+    const appleIcon = document.querySelector('link[rel="apple-touch-icon"]');
+    if (appleIcon) appleIcon.href = faviconUrl;
   }
 
   /* ===== BLOCK: HEADER_FOOTER ===== */
@@ -176,7 +177,6 @@ const SITE_CONFIG = {
     let headerMount = document.getElementById("site-header-mount");
     let footerMount = document.getElementById("site-footer-mount");
     const main = document.getElementById("site-main") || document.querySelector("main");
-    if (main && !main.id) main.id = "site-main";
 
     if (!headerMount) {
       headerMount = document.createElement("div");
@@ -311,12 +311,9 @@ const SITE_CONFIG = {
   /* ===== BLOCK: CLEAN_URLS ===== */
   function initCanonicalUrls() {
     if (window.location.protocol === "file:") return;
-    let cleanPath = String(window.location.pathname || "/")
-      .replace(/\/index\.html?$/i, "/")
-      .replace(/\.html?$/i, "");
-    if (!cleanPath.startsWith("/")) cleanPath = `/${cleanPath}`;
-    if (cleanPath === "/index" || cleanPath === "/index/") cleanPath = "/";
-    if (cleanPath !== "/" && !cleanPath.endsWith("/")) cleanPath += "/";
+    const currentSlug = pageSlug(window.location.pathname);
+    const cleanSlug = !currentSlug || currentSlug.toLowerCase() === "index" ? "" : currentSlug;
+    const cleanPath = cleanSlug ? `/${cleanSlug}/` : "/";
     const canonicalUrl = `${window.location.origin}${cleanPath}`;
     let canonical = document.querySelector('link[rel="canonical"]');
     if (!canonical) {
@@ -327,7 +324,7 @@ const SITE_CONFIG = {
     canonical.href = canonicalUrl;
     let openGraphUrl = document.querySelector('meta[property="og:url"]');
     if (openGraphUrl) openGraphUrl.content = canonicalUrl;
-    if (window.location.pathname !== cleanPath) {
+    if (window.location.pathname !== cleanPath && /(?:index|[a-z0-9-]+)\.html?$/i.test(window.location.pathname)) {
       window.history.replaceState(window.history.state, "", cleanPath + window.location.search + window.location.hash);
     }
   }
@@ -379,17 +376,13 @@ const SITE_CONFIG = {
     if (!target) return;
     const phrases = ["for children", "in Hisar"];
     const reduceMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    let index = 0;
-    target.textContent = phrases[index];
+    target.textContent = phrases[0];
     if (reduceMotion) return;
+    let index = 0;
     window.setInterval(() => {
-      target.classList.add("is-fading");
-      window.setTimeout(() => {
-        index = (index + 1) % phrases.length;
-        target.textContent = phrases[index];
-        target.classList.remove("is-fading");
-      }, 360);
-    }, 3200);
+      index = (index + 1) % phrases.length;
+      target.textContent = phrases[index];
+    }, 2800);
   }
   /* ===== END BLOCK: HERO_TYPING ===== */
 
@@ -471,6 +464,8 @@ const SITE_CONFIG = {
 
     let recaptchaWidget = null;
     let recaptchaLoading = null;
+    let recaptchaToken = "";
+    let recaptchaPending = null;
     let requestInProgress = false;
     let attemptId = 0;
     let activeVerifyController = null;
@@ -634,13 +629,7 @@ const SITE_CONFIG = {
       submit.textContent = "Continue to WhatsApp";
       dateInput.min = todayKey;
       dateInput.max = tomorrowKey;
-    const dateLabel = dateInput.closest(".booking-date-label");
-    if (dateLabel) dateLabel.addEventListener("click", event => {
-      if (event.target !== dateInput && typeof dateInput.showPicker === "function") {
-        event.preventDefault();
-        try { dateInput.showPicker(); } catch (_) { dateInput.focus(); }
-      }
-    });
+      resetRecaptcha();
       renderSlots("");
       if (options) options.hidden = true;
       if (trigger) trigger.setAttribute("aria-expanded", "false");
@@ -694,6 +683,22 @@ const SITE_CONFIG = {
       if (event.key === "Escape" && isDialogOpen()) closeBooking();
     });
 
+    function settlePendingCaptcha(errorValue, tokenValue) {
+      if (!recaptchaPending) return;
+      const pending = recaptchaPending;
+      recaptchaPending = null;
+      window.clearTimeout(pending.timeoutId);
+      if (errorValue) pending.reject(errorValue);
+      else pending.resolve(tokenValue);
+    }
+
+    function resetRecaptcha() {
+      recaptchaToken = "";
+      if (recaptchaWidget !== null && window.grecaptcha) {
+        try { window.grecaptcha.reset(recaptchaWidget); } catch (_) {}
+      }
+    }
+
     function ensureRecaptcha() {
       if (recaptchaWidget !== null) return Promise.resolve(recaptchaWidget);
       if (recaptchaLoading) return recaptchaLoading;
@@ -708,23 +713,36 @@ const SITE_CONFIG = {
               const slot = dialog.querySelector("#recaptcha-slot");
               recaptchaWidget = window.grecaptcha.render(slot, {
                 sitekey: SITE_CONFIG.contact.recaptchaSiteKey,
-                size: "normal",
+                size: "invisible",
+                badge: "inline",
                 theme: "light",
-                callback: () => { error.textContent = ""; },
+                callback: token => {
+                  recaptchaToken = token || "";
+                  error.textContent = "";
+                  if (recaptchaToken) settlePendingCaptcha(null, recaptchaToken);
+                },
                 "error-callback": () => {
-                  if (isDialogOpen()) error.textContent = "Google reCAPTCHA encountered a network or configuration error. Please try again.";
+                  const problem = new Error("Google reCAPTCHA encountered a network or configuration error. Please try again.");
+                  if (isDialogOpen()) error.textContent = problem.message;
+                  settlePendingCaptcha(problem);
                 },
                 "expired-callback": () => {
-                  if (isDialogOpen()) error.textContent = "reCAPTCHA expired. Please tick the checkbox again.";
+                  recaptchaToken = "";
+                  const problem = new Error("reCAPTCHA verification expired. Please submit again.");
+                  if (isDialogOpen()) error.textContent = problem.message;
+                  settlePendingCaptcha(problem);
                 }
               });
               resolve(recaptchaWidget);
             } catch (_) {
-              reject(new Error("Unable to initialize the reCAPTCHA checkbox. Confirm that this is a reCAPTCHA v2 Checkbox key registered for drnitinmohan.com."));
+              reject(new Error("Unable to initialize invisible reCAPTCHA. Confirm that the site key is registered as Invisible reCAPTCHA v2 for drnitinmohan.com."));
             }
           });
         };
-        if (window.grecaptcha && typeof window.grecaptcha.render === "function") { render(); return; }
+        if (window.grecaptcha && typeof window.grecaptcha.render === "function") {
+          render();
+          return;
+        }
         window.__kidsGastroCaptchaReady = render;
         const script = document.createElement("script");
         script.src = "https://www.google.com/recaptcha/api.js?onload=__kidsGastroCaptchaReady&render=explicit";
@@ -736,13 +754,28 @@ const SITE_CONFIG = {
       return recaptchaLoading;
     }
 
-    function getRecaptchaToken() {
-      if (recaptchaWidget === null || !window.grecaptcha || typeof window.grecaptcha.getResponse !== "function") {
-        throw new Error("reCAPTCHA is not initialized. Please close and reopen the appointment form.");
+    async function executeRecaptcha() {
+      await ensureRecaptcha();
+      if (recaptchaToken) return recaptchaToken;
+      if (!window.grecaptcha || recaptchaWidget === null || typeof window.grecaptcha.execute !== "function") {
+        throw new Error("Invisible reCAPTCHA is not ready. Close and reopen the appointment form.");
       }
-      const token = window.grecaptcha.getResponse(recaptchaWidget);
-      if (!token) throw new Error("Please complete the reCAPTCHA checkbox before continuing.");
-      return token;
+      return new Promise((resolve, reject) => {
+        const pending = {
+          resolve,
+          reject,
+          timeoutId: window.setTimeout(() => {
+            recaptchaPending = null;
+            reject(new Error("reCAPTCHA verification timed out. Please try again."));
+          }, 20000)
+        };
+        recaptchaPending = pending;
+        try {
+          window.grecaptcha.execute(recaptchaWidget);
+        } catch (_) {
+          settlePendingCaptcha(new Error("Unable to start invisible reCAPTCHA. Please try again."));
+        }
+      });
     }
 
     form.addEventListener("submit", async event => {
@@ -783,9 +816,7 @@ const SITE_CONFIG = {
       submit.textContent = "Verifying…";
       error.textContent = "Verifying securely. You can still close this window at any time…";
       try {
-        await ensureRecaptcha();
-        if (thisAttempt !== attemptId || !isDialogOpen()) return;
-        const token = getRecaptchaToken();
+        const token = await executeRecaptcha();
         if (thisAttempt !== attemptId || !isDialogOpen()) return;
         if (!token) throw new Error("Google reCAPTCHA did not return a verification token. Please try again.");
         activeVerifyController = new AbortController();
@@ -810,9 +841,7 @@ const SITE_CONFIG = {
       } catch (reason) {
         if (thisAttempt === attemptId && isDialogOpen() && (!reason || reason.name !== "AbortError")) {
           error.textContent = reason && reason.message ? reason.message : "Verification failed. Please try again.";
-          if (recaptchaWidget !== null && window.grecaptcha) {
-            try { window.grecaptcha.reset(recaptchaWidget); } catch (_) {}
-          }
+          resetRecaptcha();
         }
       } finally {
         if (thisAttempt === attemptId) {
