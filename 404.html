@@ -1,49 +1,47 @@
+---
+layout: null
+permalink: /404.html
+---
 <!doctype html>
-<html lang="en-IN">
+<html lang="en-IN" data-nav-style="hamburger">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="robots" content="noindex,follow">
   <meta name="theme-color" content="#005EB8">
-  <title>Opening KidsGastro page…</title>
-  <style>
-    body { margin:0; min-height:100vh; display:grid; place-items:center; padding:24px; box-sizing:border-box; background:#f6f9fc; color:#18384d; font:16px/1.6 Arial,sans-serif; text-align:center; }
-    main { width:min(560px,100%); padding:30px; border-radius:18px; background:#fff; box-shadow:0 12px 36px rgba(9,52,91,.1); }
-    a { color:#005EB8; font-weight:700; }
-  </style>
+  <meta name="description" content="The page you requested could not be found. Visit the KidsGastro homepage or use the site navigation.">
+  <link rel="icon" href="/assets/kg%20logo.webp" type="image/webp">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/style-shared.css">
+  <title>Page Not Found | KidsGastro</title>
 </head>
-<body>
-  <main><h1>Opening this KidsGastro page…</h1><p id="route-status">Please wait while the page loads.</p><p><a href="/">Return to KidsGastro home</a></p></main>
-  <script>
-    (async function () {
-      const allowed = new Set(["about", "admin", "blog", "clinic", "clinical", "faqs", "gallery", "latest", "newsletter", "publications", "services", "socials", "testimonials", "treatments", "updates"]);
-      const status = document.getElementById("route-status");
-      let slug = "";
-      try { slug = decodeURIComponent(location.pathname).replace(/^\/+|\/+$/g, "").toLowerCase(); }
-      catch (_) { slug = ""; }
-      const legacyMatch = location.pathname.match(/^\/([a-z0-9-]+)\.html$/i);
-      if (legacyMatch && allowed.has(legacyMatch[1].toLowerCase())) {
-        location.replace("/" + legacyMatch[1].toLowerCase() + "/" + location.search + location.hash);
-        return;
-      }
-      if (!allowed.has(slug)) {
-        status.textContent = "This page could not be found.";
-        return;
-      }
-      try {
-        const response = await fetch("/" + encodeURIComponent(slug) + ".html", { cache: "no-store" });
-        if (!response.ok) throw new Error("The root page file was not found.");
-        let markup = await response.text();
-        if (!/<base\s/i.test(markup)) {
-          markup = markup.replace(/<head([^>]*)>/i, '<head$1><base href="/">');
-        }
-        document.open();
-        document.write(markup);
-        document.close();
-      } catch (_) {
-        status.textContent = "The page file is not available yet. Please use the main navigation or return home.";
-      }
-    })();
-  </script>
+<body data-site-page="not-found">
+  <a class="site-skip" href="#site-main">Skip to content</a>
+  <div id="site-header-mount"></div>
+  <div id="site-announcement-mount"></div>
+  <noscript>
+    <nav class="site-noscript-nav" aria-label="Main navigation">
+      <a href="/">Home</a><a href="/treatments/">Treatments</a><a href="/services/">Services</a>
+      <a href="/faqs/">FAQs</a><a href="/blog/">Blog</a><a href="/publications/">Publication</a>
+      <a href="/testimonials/">Testimonials</a><a href="/gallery/">Gallery</a>
+    </nav>
+  </noscript>
+  <main id="site-main" class="site-main site-page-main">
+    <div class="site-container">
+      <section class="site-page-content" id="site-page-content" data-searchable aria-labelledby="not-found-title">
+        <div class="site-section-heading">
+          <p class="site-eyebrow">Error 404</p>
+          <h1 id="not-found-title">We couldn’t find this page.</h1>
+          <p>The page may have moved, or the address may be incorrect. Use the main navigation or return to the KidsGastro homepage.</p>
+          <a class="site-button site-button-primary" href="/">Back to KidsGastro home</a>
+        </div>
+      </section>
+    </div>
+  </main>
+  <div id="site-footer-mount"></div>
+  <div class="scroll-progress" id="scroll-progress" aria-hidden="true" hidden></div>
+  <script src="/script-shared.js" defer></script>
 </body>
 </html>

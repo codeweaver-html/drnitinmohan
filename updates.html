@@ -1,16 +1,21 @@
+---
+layout: null
+permalink: /updates/
+---
 <!doctype html>
 <html lang="en-IN">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="robots" content="noindex,nofollow,noarchive">
-  <meta name="theme-color" content="#0759a8">
+  <meta name="theme-color" content="#005EB8">
   <meta name="kg-schedule-api" content="https://YOUR-SCHEDULE-API.workers.dev">
-  <link rel="icon" href="./favicon.ico" sizes="any" type="image/x-icon">
+  <link rel="icon" href="/assets/kg%20logo.webp" type="image/webp">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="./style-shared.css">
+  <link rel="stylesheet" href="/style-shared.css">
+  <link rel="canonical" href="https://drnitinmohan.com/updates/">
   <title>Schedule Updates | KidsGastro</title>
   <script>
   /* First gate: admin.html sets this tab-scoped 15-minute session. */
@@ -20,7 +25,7 @@
     let initialExpiry = 0;
     function lock() {
       try { sessionStorage.removeItem(key); } catch (_) {}
-      const target = new URL("./admin.html", location.href);
+      const target = new URL("/admin.html", location.href);
       target.searchParams.set("return", location.pathname + location.search + location.hash);
       location.replace(target.href);
     }
@@ -40,15 +45,15 @@
   })();
   </script>
   <style>
-    html:not(.kg-admin-ok) body { visibility:hidden !important; }
+    html:not(.kg-admin-ok) body { visibility:hidden; }
     body[data-site-page="updates"] { background:#f4f8fc; }
     body[data-site-page="updates"] .floating-booking,
     body[data-site-page="updates"] .back-to-top,
     body[data-site-page="updates"] .scroll-progress,
-    body[data-site-page="updates"] .site-booking-nav-trigger { display:none !important; }
+    body[data-site-page="updates"] .site-booking-nav-trigger { display:none; }
     .updates-main { padding:clamp(22px,4vw,44px) 0 70px; }
     .updates-shell { width:min(960px,calc(100% - 2 * var(--kg-gutter, 22px))); margin:0 auto; }
-    .updates-hero { position:relative; overflow:hidden; padding:clamp(24px,4.5vw,42px); border-radius:22px; background:linear-gradient(118deg,#0759a8,#0b347e); color:#fff; box-shadow:0 18px 45px rgba(11,52,126,.16); }
+    .updates-hero { position:relative; overflow:hidden; padding:clamp(24px,4.5vw,42px); border-radius:22px; background:linear-gradient(118deg,var(--kg-header-blue),var(--kg-footer-blue)); color:#fff; box-shadow:0 18px 45px rgba(11,52,126,.16); }
     .updates-hero::after { content:""; position:absolute; right:-58px; top:-125px; width:270px; height:270px; border:35px solid rgba(255,255,255,.11); border-radius:50%; pointer-events:none; }
     .updates-brand { position:relative; z-index:1; display:flex; align-items:center; gap:12px; margin-bottom:20px; }
     .updates-brand img { width:50px; height:50px; object-fit:contain; }
@@ -81,7 +86,7 @@
     .status { min-height:1.5em; margin:12px 0 0; color:#536d80; font-size:.8rem; }
     .status.error { padding:10px 12px; border:1px solid #f0c5c2; border-radius:9px; background:#fff4f3; color:#a52a2a; }
     .status.success { padding:10px 12px; border:1px solid #c1e2cb; border-radius:9px; background:#f0faf3; color:#176b3a; }
-    #editor[hidden],#login-panel[hidden] { display:none !important; }
+    #editor[hidden],#login-panel[hidden] { display:none; }
     .editor-intro { margin:0 0 18px; color:#64798b; font-size:.82rem; line-height:1.6; }
     .schedule-list { display:grid; gap:14px; }
     .schedule-card { position:relative; padding:17px; border:1px solid #dce6ef; border-radius:14px; background:#fbfdff; }
@@ -117,18 +122,18 @@
       .schedule-content .field.full { grid-column:auto; }
       .saved-summary { grid-template-columns:1fr 1fr; }
     }
-    @media(prefers-reduced-motion:reduce) { *,*::before,*::after { scroll-behavior:auto!important; animation:none!important; transition:none!important; } }
+    @media(prefers-reduced-motion:reduce) { *,*::before,*::after { scroll-behavior:auto; animation:none; transition:none; } }
   </style>
 </head>
 <body data-site-page="updates">
-  <a class="site-skip" href="#updates-content">Skip to updates</a>
-  <div id="site-announcement-mount"></div>
+  <a class="site-skip" href="#site-main">Skip to updates</a>
   <div id="site-header-mount"></div>
-  <main id="updates-content" class="updates-main">
+  <div id="site-announcement-mount"></div>
+  <main id="site-main" class="site-main updates-main">
     <div class="updates-shell">
       <header class="updates-hero">
         <div class="updates-brand">
-          <img src="./assets/kg%20logo.webp" alt="KidsGastro logo" width="50" height="50">
+          <img src="/assets/kg%20logo.webp" alt="KidsGastro logo" width="50" height="50">
           <div><strong>KidsGastro</strong><small>Website administration</small></div>
         </div>
         <p class="updates-kicker">Scheduled website changes</p>
@@ -137,7 +142,7 @@
       </header>
 
       <div class="updates-toolbar">
-        <a class="updates-back" href="./index.html">← Return to website</a>
+        <a class="updates-back" href="/">← Return to website</a>
         <button class="lock-button" id="lock-session" type="button"><span aria-hidden="true">⌑</span> Lock / log out</button>
       </div>
 
@@ -184,7 +189,7 @@
   </main>
   <div id="site-footer-mount"></div>
 
-  <script src="./script-shared.js" defer></script>
+  <script src="/script-shared.js" defer></script>
   <script>
   (function () {
     "use strict";
@@ -227,7 +232,7 @@
       TOKEN = "";
       window.clearTimeout(tokenTimer);
       try { sessionStorage.removeItem(SESSION_KEY); } catch (_) {}
-      const target = new URL("./admin.html", location.href);
+      const target = new URL("/admin.html", location.href);
       target.searchParams.set("return", "/updates.html");
       location.replace(target.href);
     }

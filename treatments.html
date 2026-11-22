@@ -2,61 +2,452 @@
 layout: null
 permalink: /treatments/
 ---
-<!doctype html>
-<html lang="en-IN" data-nav-style="hamburger">
+<!DOCTYPE html>
+
+<html data-nav-style="hamburger" lang="en-IN">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#005EB8">
-  <meta name="description" content="Information about children’s digestive and liver health concerns and consultation options at KidsGastro, Hisar.">
-  <meta name="robots" content="index,follow,max-image-preview:large">
-  <link rel="canonical" href="https://drnitinmohan.com/treatments/">
-  <meta property="og:site_name" content="KidsGastro | Dr. Nitin Mohan">
-  <meta property="og:type" content="website">
-  <meta property="og:title" content="Paediatric Digestive Health &amp; Treatments | KidsGastro, Hisar">
-  <meta property="og:description" content="Information about children’s digestive and liver health concerns and consultation options at KidsGastro, Hisar.">
-  <meta property="og:url" content="https://drnitinmohan.com/treatments/">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
-  <link rel="icon" href="/assets/kg%20logo.webp" type="image/webp">
-  <link rel="apple-touch-icon" href="/assets/kg%20logo.webp">
-  <link rel="stylesheet" href="/style-shared.css">
-  <title>Paediatric Digestive Health & Treatments | KidsGastro, Hisar</title>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1, viewport-fit=cover" name="viewport"/>
+<meta content="#005EB8" name="theme-color"/>
+<meta content="Information about children’s digestive and liver health concerns and consultation options at KidsGastro, Hisar." name="description"/>
+<meta content="index,follow,max-image-preview:large" name="robots"/>
+<link href="https://drnitinmohan.com/treatments/" rel="canonical"/>
+<meta content="KidsGastro | Dr. Nitin Mohan" property="og:site_name"/>
+<meta content="website" property="og:type"/>
+<meta content="Paediatric Digestive Health &amp; Treatments | KidsGastro, Hisar" property="og:title"/>
+<meta content="Information about children’s digestive and liver health concerns and consultation options at KidsGastro, Hisar." property="og:description"/>
+<meta content="https://drnitinmohan.com/treatments/" property="og:url"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="/assets/kg%20logo.webp" rel="icon" type="image/webp"/>
+<link href="/assets/kg%20logo.webp" rel="apple-touch-icon"/>
+<link href="/style-shared.css" rel="stylesheet"/>
+<title>Paediatric Digestive Health &amp; Treatments | KidsGastro, Hisar</title>
+<style>
+/* ===== BLOCK: TREATMENTS_PAGE ===== */
+body[data-site-page="treatments"] .site-page-content {
+  max-width: 1120px;
+  padding: clamp(16px, 3.2vw, 38px);
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+}
+.treatments-page { color: var(--kg-ink); }
+.treatments-hero {
+  position: relative;
+  overflow: hidden;
+  padding: clamp(28px, 5vw, 58px);
+  border-radius: 24px;
+  background: var(--kg-header-blue);
+  color: #fff;
+  box-shadow: 0 22px 48px rgba(7, 59, 105, .16);
+}
+.treatments-hero::after {
+  position: absolute;
+  top: -150px;
+  right: -105px;
+  width: 390px;
+  aspect-ratio: 1;
+  border: 1px solid rgba(255,255,255,.16);
+  border-radius: 50%;
+  box-shadow: 0 0 0 38px rgba(255,255,255,.035), 0 0 0 78px rgba(255,255,255,.025);
+  content: "";
+  pointer-events: none;
+}
+.treatments-eyebrow, .treatment-kicker {
+  margin: 0 0 10px;
+  color: #d8ebff;
+  font-size: .72rem;
+  font-weight: 800;
+  letter-spacing: .13em;
+  line-height: 1.45;
+  text-transform: uppercase;
+}
+.treatments-hero h1 {
+  position: relative;
+  z-index: 1;
+  max-width: 780px;
+  margin: 0 0 16px;
+  color: #fff;
+  font-size: clamp(2rem, 5.2vw, 4.1rem);
+  letter-spacing: -.045em;
+}
+.treatments-lead {
+  position: relative;
+  z-index: 1;
+  max-width: 760px;
+  margin: 0;
+  color: #e7f2fc;
+  font-size: clamp(.98rem, 1.5vw, 1.1rem);
+}
+.treatments-jump {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 9px;
+  margin-top: 28px;
+}
+.treatments-jump a {
+  display: inline-flex;
+  min-height: 38px;
+  align-items: center;
+  padding: 7px 13px;
+  border: 1px solid rgba(255,255,255,.3);
+  border-radius: 999px;
+  background: rgba(255,255,255,.1);
+  color: #fff;
+  font-size: .76rem;
+  font-weight: 700;
+  transition: background-color var(--motion-duration), transform var(--motion-duration);
+}
+.treatments-jump a:hover, .treatments-jump a:focus-visible {
+  background: rgba(255,255,255,.2);
+  transform: translateY(-1px);
+}
+.treatment-section {
+  margin-top: 22px;
+  padding: clamp(22px, 3.5vw, 38px);
+  border: 1px solid var(--kg-line);
+  border-radius: 21px;
+  background: #fff;
+  box-shadow: 0 10px 30px rgba(9,52,91,.045);
+  scroll-margin-top: 105px;
+}
+.treatment-section-heading {
+  display: grid;
+  grid-template-columns: 54px minmax(0,1fr);
+  align-items: start;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+.treatment-number {
+  display: grid;
+  width: 52px;
+  height: 52px;
+  place-items: center;
+  border: 1px solid #cfe2f2;
+  border-radius: 15px;
+  background: #eef6fc;
+  color: var(--kg-blue);
+  font-size: .88rem;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+.treatment-section .treatment-kicker, .treatment-when-to-seek .treatment-kicker {
+  margin-bottom: 7px;
+  color: var(--kg-blue);
+}
+.treatment-section-heading h2 {
+  margin: 0 0 8px;
+  color: var(--kg-navy);
+  font-size: clamp(1.45rem, 3vw, 2.1rem);
+  letter-spacing: -.035em;
+}
+.treatment-section-heading p:last-child {
+  max-width: 790px;
+  margin: 0;
+  color: var(--kg-muted);
+}
+.treatment-topic-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+.treatment-topic {
+  min-width: 0;
+  padding: 20px;
+  border: 1px solid var(--kg-header-blue);
+  border-radius: 15px;
+  background: var(--kg-header-blue);
+  color: #fff;
+}
+.treatment-topic h3 {
+  margin: 0 0 13px;
+  color: #fff;
+  font-size: 1rem;
+  letter-spacing: -.015em;
+}
+.treatment-topic ul {
+  margin: 0;
+  padding-left: 1.15rem;
+}
+.treatment-topic li {
+  margin: 7px 0;
+  color: #fff;
+  font-size: .88rem;
+  line-height: 1.6;
+}
+.treatment-topic li::marker { color: #d8ebff; }
+.treatment-topic-wide { width: 100%; }
+.treatment-topic .treatment-list-columns {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: 30px;
+}
+.treatment-when-to-seek {
+  margin-top: 22px;
+  padding: clamp(24px, 4vw, 38px);
+  border: 1px solid #cfe1f0;
+  border-radius: 20px;
+  background: #edf6fc;
+}
+.treatment-when-to-seek h2 {
+  margin: 0 0 13px;
+  color: var(--kg-navy);
+  font-size: clamp(1.45rem, 3vw, 2rem);
+}
+.treatment-when-to-seek > p:not(.treatment-kicker) {
+  max-width: 900px;
+  color: #455e70;
+}
+.treatment-urgent-note {
+  margin-top: 18px;
+  padding: 17px 19px;
+  border-left: 4px solid #c35a4c;
+  border-radius: 10px;
+  background: #fff;
+}
+.treatment-urgent-note strong {
+  display: block;
+  margin-bottom: 5px;
+  color: #8f352d;
+}
+.treatment-urgent-note p { margin: 0; color: #455e70; }
+.treatments-footnote {
+  max-width: 900px;
+  margin: 18px auto 0;
+  color: var(--kg-muted);
+  font-size: .78rem;
+  text-align: center;
+}
+@media (max-width: 700px) {
+  body[data-site-page="treatments"] .site-page-content { padding: 8px 0; }
+  .treatments-hero { padding: 27px 21px; border-radius: 18px; }
+  .treatments-hero::after { right: -230px; }
+  .treatments-jump { gap: 7px; margin-top: 22px; }
+  .treatments-jump a { min-height: 35px; padding: 6px 10px; font-size: .7rem; }
+  .treatment-section { padding: 21px 17px; border-radius: 17px; }
+  .treatment-section-heading { grid-template-columns: 42px minmax(0,1fr); gap: 12px; }
+  .treatment-number { width: 40px; height: 40px; border-radius: 12px; font-size: .78rem; }
+  .treatment-topic-grid, .treatment-topic .treatment-list-columns { grid-template-columns: 1fr; }
+  .treatment-topic { padding: 17px 16px; }
+}
+/* ===== END BLOCK: TREATMENTS_PAGE ===== */
+
+
+</style>
 </head>
 <body data-site-page="treatments">
-  <a class="site-skip" href="#site-main">Skip to content</a>
-  <div id="site-header-mount"></div>
-  <div id="site-announcement-mount"></div>
-  <noscript>
-    <nav class="site-noscript-nav" aria-label="Main navigation">
-      <a href="/">Home</a>
-      <a href="/about/">Why Dr. Nitin Mohan</a>
-      <a href="/treatments/">Treatments</a>
-      <a href="/services/">Services</a>
-      <a href="/faqs/">FAQs</a>
-      <a href="/blog/">Blog</a>
-      <a href="/publications/">Publication</a>
-      <a href="/testimonials/">Testimonials</a>
-      <a href="/gallery/">Gallery</a>
-      <a href="/#site-footer-mount">Contact Us</a>
-    </nav>
-  </noscript>
-  <main id="site-main" class="site-main site-page-main">
-    <div class="site-container">
-      <div class="site-page-content" id="site-page-content" data-searchable></div>
-    </div>
-  </main>
-  <div id="site-footer-mount"></div>
-  <button class="floating-booking" id="floating-booking" type="button" hidden aria-label="Book via WhatsApp">Book via WhatsApp</button>
-  <div class="scroll-progress" id="scroll-progress" aria-hidden="true" hidden></div>
-  <div class="image-viewer" id="image-viewer" hidden role="dialog" aria-modal="true" aria-label="Image viewer">
-    <button class="viewer-close" type="button" aria-label="Close image viewer">×</button>
-    <button class="viewer-zoom-out" type="button" aria-label="Zoom out">−</button>
-    <button class="viewer-reset" type="button">Reset</button>
-    <button class="viewer-zoom-in" type="button" aria-label="Zoom in">+</button>
-    <img alt="" src="">
-  </div>
-  <script src="/script-shared.js" defer></script>
+<a class="site-skip" href="#site-main">Skip to content</a>
+<div id="site-header-mount"></div>
+<div id="site-announcement-mount"></div>
+<noscript>
+<nav aria-label="Main navigation" class="site-noscript-nav">
+<a href="/">Home</a>
+<a href="/about/">Why Dr. Nitin Mohan</a>
+<a href="/treatments/">Treatments</a>
+<a href="/services/">Services</a>
+<a href="/faqs/">FAQs</a>
+<a href="/blog/">Blog</a>
+<a href="/publications/">Publication</a>
+<a href="/testimonials/">Testimonials</a>
+<a href="/gallery/">Gallery</a>
+<a href="/#site-footer-mount">Contact Us</a>
+</nav>
+</noscript>
+<main class="site-main site-page-main" id="site-main">
+<div class="site-container">
+<div class="site-page-content" data-searchable="" id="site-page-content"><div class="treatments-page">
+<header class="treatments-hero">
+<p class="treatments-eyebrow">KidsGastro · Specialist paediatric care</p>
+<h1>Paediatric digestive, liver and nutrition care</h1>
+<p class="treatments-lead">Dr. Nitin Mohan provides specialist care for children with digestive, liver, pancreatic, biliary and nutritional disorders at Churamani Multispeciality Hospital, Hisar.</p>
+<nav aria-label="On this page" class="treatments-jump">
+<a href="#treatment-gastro">Gastroenterology</a>
+<a href="#treatment-liver">Liver diseases</a>
+<a href="#treatment-pancreas">Pancreatic disorders</a>
+<a href="#treatment-biliary">Biliary diseases</a>
+<a href="#treatment-nutrition">Nutrition and growth</a>
+</nav>
+</header>
+<section class="treatment-section" id="treatment-gastro">
+<div class="treatment-section-heading">
+<span class="treatment-number">01</span>
+<div>
+<p class="treatment-kicker">Digestive system</p>
+<h2>Paediatric Gastroenterology</h2>
+<p>Conditions affecting the oesophagus, stomach and intestines.</p>
+</div>
+</div>
+<div class="treatment-topic-grid">
+<article class="treatment-topic">
+<h3>Digestive symptoms and common conditions</h3>
+<ul>
+<li>Recurrent abdominal pain</li>
+<li>Chronic constipation and faecal soiling</li>
+<li>Acute and chronic diarrhoea</li>
+<li>Recurrent vomiting and nausea</li>
+<li>Gastro-oesophageal reflux disease (GERD/GORD)</li>
+<li>Abdominal bloating and excessive gas</li>
+<li>Poor appetite and feeding difficulties</li>
+<li>Gastrointestinal infections and worm infestations</li>
+</ul>
+</article>
+<article class="treatment-topic">
+<h3>Specific gastrointestinal disorders</h3>
+<ul>
+<li>Coeliac disease</li>
+<li>Irritable bowel syndrome (IBS)</li>
+<li>Cow’s milk protein allergy and other food allergies</li>
+<li>Gastritis and peptic ulcer disease</li>
+<li>Crohn’s disease and ulcerative colitis (IBD)</li>
+<li>Very-early-onset IBD (VEO-IBD)</li>
+<li>Eosinophilic oesophagitis and other eosinophilic gastrointestinal disorders</li>
+<li>Gastrointestinal bleeding</li>
+<li>Malabsorption and protein-losing enteropathy</li>
+<li>Gastrointestinal motility disorders</li>
+<li>Congenital gastrointestinal abnormalities</li>
+</ul>
+</article>
+</div>
+</section>
+<section class="treatment-section" id="treatment-liver">
+<div class="treatment-section-heading">
+<span class="treatment-number">02</span>
+<div>
+<p class="treatment-kicker">Liver and bile processing</p>
+<h2>Paediatric Hepatology — Liver Diseases</h2>
+<p>Conditions affecting liver function, liver tissue and the body’s ability to process nutrients and waste products.</p>
+</div>
+</div>
+<div class="treatment-topic-grid">
+<article class="treatment-topic">
+<h3>Jaundice, hepatitis and liver function</h3>
+<ul>
+<li>Jaundice and abnormal liver function tests</li>
+<li>Hepatitis A, B, C, D and E</li>
+<li>Drug-induced liver injury</li>
+<li>Autoimmune hepatitis</li>
+<li>Chronic hepatitis and chronic liver disease</li>
+<li>Fatty liver disease (MASLD)</li>
+<li>Neonatal hepatitis and neonatal cholestasis</li>
+</ul>
+</article>
+<article class="treatment-topic">
+<h3>Other liver conditions</h3>
+<ul>
+<li>Wilson disease</li>
+<li>Portal hypertension and oesophageal or gastric varices</li>
+<li>Liver fibrosis and cirrhosis</li>
+<li>Acute liver failure</li>
+<li>Enlarged liver or spleen associated with liver disease</li>
+<li>Glycogen storage diseases</li>
+<li>Alpha-1 antitrypsin deficiency</li>
+<li>Progressive familial intrahepatic cholestasis (PFIC)</li>
+<li>Alagille syndrome</li>
+<li>Autoimmune sclerosing cholangitis</li>
+<li>Other genetic, metabolic and inherited liver diseases</li>
+<li>Unexplained liver inflammation</li>
+<li>Assessment and referral for liver transplantation when indicated</li>
+</ul>
+</article>
+</div>
+</section>
+<section class="treatment-section" id="treatment-pancreas">
+<div class="treatment-section-heading">
+<span class="treatment-number">03</span>
+<div>
+<p class="treatment-kicker">Pancreas and digestion</p>
+<h2>Paediatric Pancreatology — Pancreatic Disorders</h2>
+<p>Conditions affecting the pancreas, digestion and nutrient absorption.</p>
+</div>
+</div>
+<article class="treatment-topic treatment-topic-wide">
+<ul class="treatment-list-columns">
+<li>Acute pancreatitis</li>
+<li>Recurrent pancreatitis</li>
+<li>Chronic pancreatitis</li>
+<li>Pancreatic insufficiency and digestive enzyme deficiency</li>
+<li>Pancreatic disorders causing malabsorption and poor growth</li>
+<li>Pancreatic cysts</li>
+<li>Hereditary and genetic pancreatitis</li>
+<li>Congenital pancreatic abnormalities</li>
+<li>Pancreaticobiliary disorders</li>
+</ul>
+</article>
+</section>
+<section class="treatment-section" id="treatment-biliary">
+<div class="treatment-section-heading">
+<span class="treatment-number">04</span>
+<div>
+<p class="treatment-kicker">Gallbladder and bile ducts</p>
+<h2>Paediatric Biliary Tract Diseases</h2>
+<p>Conditions affecting the gallbladder, bile ducts and the flow of bile from the liver to the intestine.</p>
+</div>
+</div>
+<article class="treatment-topic treatment-topic-wide">
+<ul class="treatment-list-columns">
+<li>Gallstones and biliary sludge</li>
+<li>Bile duct obstruction and dilatation</li>
+<li>Cholangitis and biliary infections</li>
+<li>Congenital biliary tract abnormalities</li>
+<li>Choledochal cysts</li>
+<li>Neonatal cholestasis and impaired bile flow</li>
+<li>Biliary atresia</li>
+<li>Progressive familial intrahepatic cholestasis (PFIC)</li>
+<li>Alagille syndrome</li>
+<li>Other inherited bile duct disorders</li>
+<li>Biliary complications associated with pancreatic and liver diseases</li>
+</ul>
+</article>
+</section>
+<section class="treatment-section" id="treatment-nutrition">
+<div class="treatment-section-heading">
+<span class="treatment-number">05</span>
+<div>
+<p class="treatment-kicker">Healthy development</p>
+<h2>Paediatric Nutrition and Growth</h2>
+<p>Conditions affecting a child’s growth, feeding and nutritional health.</p>
+</div>
+</div>
+<article class="treatment-topic treatment-topic-wide">
+<ul class="treatment-list-columns">
+<li>Poor weight gain and growth faltering</li>
+<li>Undernutrition and malnutrition</li>
+<li>Iron, vitamin and other nutritional deficiencies</li>
+<li>Feeding difficulties and restricted food intake</li>
+<li>Nutritional problems associated with chronic diarrhoea or malabsorption</li>
+<li>Dietary management of coeliac disease and selected food allergies</li>
+<li>Nutritional support in chronic liver and pancreatic diseases</li>
+<li>Growth monitoring and individualised nutrition planning</li>
+</ul>
+</article>
+</section>
+<aside aria-labelledby="treatment-when-heading" class="treatment-when-to-seek">
+<p class="treatment-kicker">Guidance for parents</p>
+<h2 id="treatment-when-heading">When should parents seek specialist consultation?</h2>
+<p>Consider a specialist consultation for persistent abdominal pain, recurrent vomiting, chronic diarrhoea, blood in stools, poor weight gain, prolonged jaundice, pale stools or unexplained abnormal liver function tests.</p>
+<div class="treatment-urgent-note">
+<strong>Seek urgent medical assessment</strong>
+<p>Urgent assessment is important for green vomiting, significant gastrointestinal bleeding, severe abdominal pain, marked dehydration, unusual drowsiness or jaundice accompanied by concerning symptoms. Jaundice with pale stools or dark urine in a young infant requires prompt evaluation.</p>
+</div>
+</aside>
+<p class="treatments-footnote">The conditions listed are areas for clinical assessment. The need for consultation, investigations or treatment depends on each child’s symptoms and clinical findings.</p>
+</div></div>
+</div>
+</main>
+<div id="site-footer-mount"></div>
+<button aria-label="Book via WhatsApp" class="floating-booking" hidden="" id="floating-booking" type="button">Book via WhatsApp</button>
+<div aria-hidden="true" class="scroll-progress" hidden="" id="scroll-progress"></div>
+<div aria-label="Image viewer" aria-modal="true" class="image-viewer" hidden="" id="image-viewer" role="dialog">
+<button aria-label="Close image viewer" class="viewer-close" type="button">×</button>
+<button aria-label="Zoom out" class="viewer-zoom-out" type="button">−</button>
+<button class="viewer-reset" type="button">Reset</button>
+<button aria-label="Zoom in" class="viewer-zoom-in" type="button">+</button>
+<img alt="" src=""/>
+</div>
+<script defer="" src="/script-shared.js"></script>
 </body>
 </html>
