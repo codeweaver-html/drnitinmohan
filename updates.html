@@ -132,10 +132,13 @@
     #publish-dialog::backdrop { background:rgba(4,24,48,.62); }
     #publish-dialog h2 { margin:0 0 7px; color:#0b347e; font-size:1.12rem; }
     #publish-dialog p { margin:0 0 14px; color:#667b8d; font-size:.8rem; }
-    #publish-password { width:100%; min-height:45px; padding:10px 12px; border:1px solid #cbd9e5; border-radius:9px; color:#18384d; font:inherit; }
+    .password-input-wrap { position:relative; width:100%; }
+    #publish-password { width:100%; min-height:45px; padding:10px 46px 10px 12px; border:1px solid #cbd9e5; border-radius:9px; color:#18384d; font:inherit; }
     #publish-password:focus { outline:3px solid rgba(7,89,168,.13); border-color:#0759a8; }
-    .password-visibility { display:inline-flex; align-items:center; gap:8px; margin-top:8px; color:#536d80; font-size:.76rem; font-weight:600; cursor:pointer; }
-    .password-visibility input { width:16px; height:16px; margin:0; accent-color:#0759a8; cursor:pointer; }
+    .password-visibility-toggle { position:absolute; top:50%; right:7px; display:grid; width:34px; height:34px; place-items:center; padding:0; transform:translateY(-50%); border:0; border-radius:7px; background:transparent; color:#536d80; cursor:pointer; }
+    .password-visibility-toggle:hover { background:#edf5fc; color:#0759a8; }
+    .password-visibility-toggle:focus-visible { outline:3px solid rgba(7,89,168,.22); outline-offset:1px; }
+    .password-visibility-toggle svg { width:20px; height:20px; fill:none; stroke:currentColor; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round; }
     .dialog-actions { display:flex; justify-content:flex-end; gap:9px; margin-top:16px; }
     @media(max-width:600px) {
       .updates-shell { width:calc(100% - 24px); }
@@ -253,13 +256,15 @@
     <form id="publish-form">
       <h2 id="publish-title">Confirm publishing</h2>
       <p>Enter 2nd password.</p>
-      <label class="field" for="publish-password">2nd password
-        <input id="publish-password" type="password" autocomplete="current-password" required>
-      </label>
-      <label class="password-visibility" for="show-publish-password">
-        <input id="show-publish-password" type="checkbox" autocomplete="off">
-        <span>Show 2nd password</span>
-      </label>
+      <div class="field">
+        <label for="publish-password">2nd password</label>
+        <div class="password-input-wrap">
+          <input id="publish-password" type="password" autocomplete="current-password" required>
+          <button class="password-visibility-toggle" id="toggle-publish-password" type="button" aria-label="Show password" title="Show password">
+            <svg class="password-eye-open" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/></svg>
+          </button>
+        </div>
+      </div>
       <p id="publish-status" class="status" role="status" aria-live="polite"></p>
       <div class="dialog-actions">
         <button class="secondary-button" id="cancel-publish" type="button">Cancel</button>
@@ -293,7 +298,7 @@
       const status = $("settings-status");
       const dialog = $("publish-dialog");
       const passwordInput = $("publish-password");
-      const showPasswordToggle = $("show-publish-password");
+      const passwordVisibilityButton = $("toggle-publish-password");
       const publishStatus = $("publish-status");
       const confirmButton = $("confirm-publish");
       let settingsLoaded = false;
@@ -340,13 +345,21 @@
         preview.setAttribute("aria-label", "Preview of the " + (customToggle.checked ? "custom" : "default") + " announcement, " + duration + " seconds per loop" + fastFlickerDescription + shineDescription);
       }
 
-      function resetPasswordVisibility() {
-        showPasswordToggle.checked = false;
-        passwordInput.type = "password";
+      function setPasswordVisibility(visible) {
+        passwordInput.type = visible ? "text" : "password";
+        passwordVisibilityButton.setAttribute("aria-label", visible ? "Hide password" : "Show password");
+        passwordVisibilityButton.title = visible ? "Hide password" : "Show password";
+        passwordVisibilityButton.innerHTML = visible
+          ? '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 3l18 18M10.6 10.6a2 2 0 0 0 2.8 2.8"/><path d="M9.9 5.2A10.8 10.8 0 0 1 12 5c6.4 0 10 7 10 7a16 16 0 0 1-3.1 3.8M6.2 6.2C3.5 8 2 12 2 12s3.6 7 10 7c1.2 0 2.3-.2 3.3-.6"/></svg>'
+          : '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/></svg>';
       }
 
-      showPasswordToggle.addEventListener("change", () => {
-        passwordInput.type = showPasswordToggle.checked ? "text" : "password";
+      function resetPasswordVisibility() {
+        setPasswordVisibility(false);
+      }
+
+      passwordVisibilityButton.addEventListener("click", () => {
+        setPasswordVisibility(passwordInput.type === "password");
       });
 
       function updateStateLabel(node, enabled) {
