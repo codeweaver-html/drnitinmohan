@@ -1,7 +1,3 @@
----
-layout: null
-permalink: /updates/
----
 <!doctype html>
 <html lang="en-IN">
 <head>
@@ -16,33 +12,33 @@ permalink: /updates/
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/style-shared.css">
   <link rel="canonical" href="https://drnitinmohan.com/updates/">
-  <title>Schedule Updates | KidsGastro</title>
+  <title>Website Settings | KidsGastro</title>
   <script>
-  /* First gate: admin.html sets this tab-scoped 15-minute session. */
-  (function () {
-    "use strict";
-    const key = "kg_admin_authenticated_until";
-    let initialExpiry = 0;
-    function lock() {
-      try { sessionStorage.removeItem(key); } catch (_) {}
-      const target = new URL("/admin/", location.origin);
-      target.searchParams.set("return", location.pathname + location.search + location.hash);
-      location.replace(target.href);
-    }
-    function check() {
-      let expiry = 0;
-      try { expiry = Number(sessionStorage.getItem(key)) || 0; } catch (_) {}
-      if (!expiry || Date.now() >= expiry) { lock(); return false; }
-      initialExpiry = expiry;
-      document.documentElement.classList.add("kg-admin-ok");
-      return true;
-    }
-    if (!check()) return;
-    document.addEventListener("visibilitychange", () => { if (!document.hidden) check(); });
-    window.addEventListener("focus", check);
-    window.addEventListener("pageshow", check);
-    window.setTimeout(lock, Math.max(0, initialExpiry - Date.now()));
-  })();
+    /* First-stage admin access is still checked before the page is shown. */
+    (function () {
+      "use strict";
+      const key = "kg_admin_authenticated_until";
+      let expiryAt = 0;
+      function lock() {
+        try { sessionStorage.removeItem(key); } catch (_) {}
+        const target = new URL("/admin/", location.origin);
+        target.searchParams.set("return", location.pathname + location.search + location.hash);
+        location.replace(target.href);
+      }
+      function check() {
+        let expiry = 0;
+        try { expiry = Number(sessionStorage.getItem(key)) || 0; } catch (_) {}
+        if (!expiry || Date.now() >= expiry) { lock(); return false; }
+        expiryAt = expiry;
+        document.documentElement.classList.add("kg-admin-ok");
+        return true;
+      }
+      if (!check()) return;
+      document.addEventListener("visibilitychange", () => { if (!document.hidden) check(); });
+      window.addEventListener("focus", check);
+      window.addEventListener("pageshow", check);
+      window.setTimeout(lock, Math.max(0, expiryAt - Date.now()));
+    })();
   </script>
   <style>
     html:not(.kg-admin-ok) body { visibility:hidden; }
@@ -52,670 +48,329 @@ permalink: /updates/
     body[data-site-page="updates"] .scroll-progress,
     body[data-site-page="updates"] .site-booking-nav-trigger { display:none; }
     .updates-main { padding:clamp(22px,4vw,44px) 0 70px; }
-    .updates-shell { width:min(960px,calc(100% - 2 * var(--kg-gutter, 22px))); margin:0 auto; }
-    .updates-hero { position:relative; overflow:hidden; padding:clamp(24px,4.5vw,42px); border-radius:22px; background:linear-gradient(118deg,var(--kg-header-blue),var(--kg-footer-blue)); color:#fff; box-shadow:0 18px 45px rgba(11,52,126,.16); }
-    .updates-hero::after { content:""; position:absolute; right:-58px; top:-125px; width:270px; height:270px; border:35px solid rgba(255,255,255,.11); border-radius:50%; pointer-events:none; }
-    .updates-brand { position:relative; z-index:1; display:flex; align-items:center; gap:12px; margin-bottom:20px; }
-    .updates-brand img { width:50px; height:50px; object-fit:contain; }
+    .updates-shell { width:min(760px,calc(100% - 2 * var(--kg-gutter, 22px))); margin:0 auto; }
+    .updates-hero { padding:clamp(24px,4.5vw,38px); border-radius:20px; background:linear-gradient(118deg,var(--kg-header-blue),var(--kg-footer-blue)); color:#fff; box-shadow:0 18px 45px rgba(11,52,126,.16); }
+    .updates-brand { display:flex; align-items:center; gap:12px; margin-bottom:18px; }
+    .updates-brand img { width:48px; height:48px; object-fit:contain; }
     .updates-brand strong { display:block; font-size:.96rem; }
     .updates-brand small { display:block; color:#dbeaff; font-size:.68rem; font-weight:700; letter-spacing:.12em; text-transform:uppercase; }
-    .updates-kicker { position:relative; z-index:1; margin:0 0 8px; color:#ffdf70; font-size:.71rem; font-weight:800; letter-spacing:.13em; text-transform:uppercase; }
-    .updates-hero h1 { position:relative; z-index:1; margin:0; color:#fff; font-size:clamp(1.7rem,4.5vw,2.55rem); line-height:1.13; letter-spacing:-.04em; }
-    .updates-hero p:last-of-type { position:relative; z-index:1; max-width:680px; margin:12px 0 0; color:#e4f0ff; font-size:.9rem; }
-    .updates-toolbar { display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap; margin:18px 0 14px; }
+    .updates-kicker { margin:0 0 8px; color:#ffdf70; font-size:.71rem; font-weight:800; letter-spacing:.13em; text-transform:uppercase; }
+    .updates-hero h1 { margin:0; color:#fff; font-size:clamp(1.7rem,4.5vw,2.4rem); line-height:1.15; }
+    .updates-hero p:last-child { max-width:620px; margin:12px 0 0; color:#e4f0ff; font-size:.88rem; }
+    .updates-toolbar { display:flex; justify-content:space-between; align-items:center; gap:12px; margin:17px 0 14px; }
     .updates-back { color:#0759a8; font-size:.82rem; font-weight:800; text-decoration:underline; text-underline-offset:4px; }
-    .lock-button { display:inline-flex; min-height:40px; align-items:center; gap:8px; padding:8px 13px; border:1px solid #cbd9e6; border-radius:10px; background:#fff; color:#17466f; font-size:.78rem; font-weight:800; cursor:pointer; }
-    .updates-panel { margin-top:18px; padding:clamp(18px,3.5vw,30px); border:1px solid #dce7f0; border-radius:18px; background:#fff; box-shadow:0 12px 34px rgba(9,52,91,.06); }
-    .panel-heading { display:flex; align-items:flex-start; gap:12px; margin-bottom:18px; }
-    .panel-icon { display:grid; width:38px; height:38px; flex:0 0 38px; place-items:center; border-radius:12px; background:#eaf3fb; color:#0759a8; font-size:1.05rem; font-weight:800; }
-    .panel-heading h2 { margin:0; color:#0b347e; font-size:1.15rem; letter-spacing:-.02em; }
-    .panel-heading p { margin:5px 0 0; color:#667b8d; font-size:.8rem; }
-    .setup-warning { margin:14px 0 0; padding:14px 16px; border:1px solid #f0d98c; border-left:4px solid #e0ad16; border-radius:10px; background:#fff9e7; color:#71591c; font-size:.82rem; line-height:1.55; }
-    .login-grid { display:grid; grid-template-columns:minmax(0,1fr) auto; align-items:end; gap:12px; }
-    .field { display:grid; gap:7px; min-width:0; }
+    .lock-button { min-height:40px; padding:8px 13px; border:1px solid #cbd9e6; border-radius:10px; background:#fff; color:#17466f; font-size:.78rem; font-weight:800; cursor:pointer; }
+    .settings-panel { margin-top:16px; padding:clamp(18px,3.5vw,28px); border:1px solid #dce7f0; border-radius:18px; background:#fff; box-shadow:0 12px 34px rgba(9,52,91,.06); }
+    .settings-panel h2 { margin:0; color:#0b347e; font-size:1.18rem; }
+    .settings-intro { margin:6px 0 18px; color:#667b8d; font-size:.8rem; }
+    .preference-list { display:grid; gap:12px; }
+    .preference-toggle { display:flex; align-items:center; gap:13px; padding:14px; border:1px solid #dce6ef; border-radius:12px; background:#fbfdff; cursor:pointer; }
+    .preference-toggle input { appearance:none; position:relative; width:44px; height:25px; flex:0 0 44px; margin:0; border-radius:99px; background:#bac7d2; cursor:pointer; transition:background-color 150ms ease; }
+    .preference-toggle input::before { position:absolute; top:3px; left:3px; width:19px; height:19px; border-radius:50%; background:#fff; content:""; transition:transform 150ms ease; box-shadow:0 1px 3px rgba(0,0,0,.18); }
+    .preference-toggle input:checked { background:#0872c5; }
+    .preference-toggle input:checked::before { transform:translateX(19px); }
+    .preference-toggle input:focus-visible { outline:3px solid rgba(7,89,168,.22); outline-offset:3px; }
+    .preference-toggle input:disabled { opacity:.55; cursor:not-allowed; }
+    .preference-copy { display:grid; gap:3px; min-width:0; }
+    .preference-copy strong { color:#29485f; font-size:.84rem; }
+    .preference-copy small { color:#667b8d; font-size:.74rem; line-height:1.5; }
+    .preference-state { margin-left:auto; color:#536d80; font-size:.72rem; font-weight:800; }
+    .field { display:grid; gap:7px; margin-top:12px; }
     .field label { color:#29485f; font-size:.81rem; font-weight:800; }
-    .field input,.field select,.field textarea { width:100%; min-height:44px; padding:10px 12px; border:1px solid #cbd9e5; border-radius:9px; background:#fff; color:#18384d; font:inherit; font-size:.86rem; }
-    .field textarea { min-height:100px; resize:vertical; }
-    .field input:focus,.field select:focus,.field textarea:focus { outline:3px solid rgba(7,89,168,.13); border-color:#0759a8; }
-    .primary-button,.secondary-button,.danger-button { display:inline-flex; min-height:44px; align-items:center; justify-content:center; gap:8px; padding:10px 16px; border:0; border-radius:10px; font:inherit; font-size:.82rem; font-weight:800; cursor:pointer; }
+    .field textarea { width:100%; min-height:112px; padding:11px 12px; border:1px solid #cbd9e5; border-radius:9px; background:#fff; color:#18384d; font:inherit; font-size:.86rem; line-height:1.55; resize:vertical; }
+    .field textarea:focus { outline:3px solid rgba(7,89,168,.13); border-color:#0759a8; }
+    .field small { color:#667b8d; font-size:.73rem; line-height:1.5; }
+    #custom-announcement-wrap[hidden] { display:none; }
+    .restore-toggle { border-style:dashed; background:#fff; }
+    .restore-toggle .preference-copy strong { color:#8b3434; }
+    .restore-toggle input:checked { background:#a52a2a; }
+    .settings-actions { display:flex; flex-wrap:wrap; align-items:center; gap:12px; margin-top:18px; }
+    .primary-button,.secondary-button { display:inline-flex; min-height:44px; align-items:center; justify-content:center; padding:10px 17px; border:0; border-radius:10px; font:inherit; font-size:.82rem; font-weight:800; cursor:pointer; }
     .primary-button { background:#0759a8; color:#fff; box-shadow:0 6px 15px rgba(7,89,168,.16); }
     .primary-button:hover { background:#064b8d; }
     .secondary-button { border:1px solid #d5e1eb; background:#f7fafd; color:#17466f; }
-    .danger-button { border:1px solid #f0c6c4; background:#fff7f6; color:#a52a2a; }
     button:disabled { opacity:.58; cursor:not-allowed; }
     .status { min-height:1.5em; margin:12px 0 0; color:#536d80; font-size:.8rem; }
     .status.error { padding:10px 12px; border:1px solid #f0c5c2; border-radius:9px; background:#fff4f3; color:#a52a2a; }
-    .status.success { padding:10px 12px; border:1px solid #c1e2cb; border-radius:9px; background:#f0faf3; color:#176b3a; }
-    #editor[hidden],#login-panel[hidden] { display:none; }
-    .editor-intro { margin:0 0 18px; color:#64798b; font-size:.82rem; line-height:1.6; }
-    .schedule-list { display:grid; gap:14px; }
-    .schedule-card { position:relative; padding:17px; border:1px solid #dce6ef; border-radius:14px; background:#fbfdff; }
-    .schedule-card-head { display:flex; justify-content:space-between; align-items:center; gap:10px; margin-bottom:14px; }
-    .schedule-card-head strong { color:#0b347e; font-size:.9rem; }
-    .schedule-type { width:100%; min-height:43px; padding:9px 11px; border:1px solid #cbd9e5; border-radius:9px; background:#fff; color:#18384d; font:inherit; font-size:.84rem; }
-    .schedule-content { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:12px; }
-    .schedule-content .field.full { grid-column:1/-1; }
-    .image-preview { display:flex; align-items:center; gap:12px; min-width:0; margin-top:9px; padding:9px; border:1px dashed #c5d6e4; border-radius:9px; background:#fff; }
-    .image-preview img { width:86px; height:64px; flex:0 0 86px; border-radius:7px; object-fit:cover; background:#eaf3fa; }
-    .image-preview img[hidden] { display:none; }
-    .image-preview span { overflow-wrap:anywhere; color:#667b8d; font-size:.72rem; }
-    .schedule-times { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:14px; padding-top:14px; border-top:1px solid #e7eef4; }
-    .time-zone-note { margin:10px 0 0; color:#738698; font-size:.72rem; }
-    .editor-actions { display:flex; flex-wrap:wrap; gap:10px; margin-top:18px; }
-    .editor-actions .primary-button { min-width:160px; }
-    .empty-state { padding:19px; border:1px dashed #c3d4e2; border-radius:12px; background:#f8fbfe; color:#63798c; font-size:.83rem; text-align:center; }
-    .saved-summary { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:10px; margin:0 0 16px; }
-    .summary-chip { padding:11px 12px; border:1px solid #e0eaf2; border-radius:10px; background:#f8fbfe; }
-    .summary-chip strong { display:block; color:#0759a8; font-size:1.12rem; line-height:1.25; }
-    .summary-chip span { color:#667b8d; font-size:.69rem; font-weight:700; }
-    .schedule-help { margin-top:18px; padding:14px 16px; border-radius:11px; background:#eef5fb; color:#486276; font-size:.78rem; line-height:1.6; }
-    .schedule-help strong { color:#0b347e; }
-    .site-controls-grid { display:grid; gap:13px; }
-    .site-controls-toggle { display:flex; align-items:flex-start; gap:11px; padding:13px 14px; border:1px solid #dce6ef; border-radius:11px; background:#fbfdff; cursor:pointer; }
-    .site-controls-toggle input { width:18px; height:18px; min-height:18px; flex:0 0 18px; margin:3px 0 0; accent-color:#0759a8; }
-    .site-controls-toggle span { display:grid; gap:3px; }
-    .site-controls-toggle strong { color:#29485f; font-size:.82rem; }
-    .site-controls-toggle small { color:#667b8d; font-size:.74rem; line-height:1.5; }
-    .site-controls-actions { display:flex; flex-wrap:wrap; align-items:center; gap:12px; margin-top:14px; }
-    #custom-announcement-wrap[hidden] { display:none; }
-    .site-footer { margin-top:0; }
-    @media(max-width:650px) {
-      .updates-main { padding-top:20px; }
+    .status.success { color:#176b3a; }
+    .settings-note { margin:16px 0 0; color:#738698; font-size:.73rem; line-height:1.55; }
+    #publish-dialog { width:min(420px,calc(100vw - 28px)); padding:22px; border:1px solid #dce7f0; border-radius:16px; background:#fff; color:#18384d; box-shadow:0 25px 75px rgba(0,20,48,.3); }
+    #publish-dialog::backdrop { background:rgba(4,24,48,.62); }
+    #publish-dialog h2 { margin:0 0 7px; color:#0b347e; font-size:1.12rem; }
+    #publish-dialog p { margin:0 0 14px; color:#667b8d; font-size:.8rem; }
+    #publish-password { width:100%; min-height:45px; padding:10px 12px; border:1px solid #cbd9e5; border-radius:9px; color:#18384d; font:inherit; }
+    #publish-password:focus { outline:3px solid rgba(7,89,168,.13); border-color:#0759a8; }
+    .dialog-actions { display:flex; justify-content:flex-end; gap:9px; margin-top:16px; }
+    @media(max-width:600px) {
       .updates-shell { width:calc(100% - 24px); }
       .updates-hero { border-radius:16px; }
-      .login-grid { grid-template-columns:1fr; }
-      .login-grid .primary-button { width:100%; }
-      .schedule-content,.schedule-times { grid-template-columns:1fr; }
-      .schedule-content .field.full { grid-column:auto; }
-      .saved-summary { grid-template-columns:1fr 1fr; }
+      .updates-toolbar { align-items:flex-start; }
+      .settings-actions .primary-button { width:100%; }
     }
-    @media(prefers-reduced-motion:reduce) { *,*::before,*::after { scroll-behavior:auto; animation:none; transition:none; } }
+    @media(prefers-reduced-motion:reduce) { .preference-toggle input,.preference-toggle input::before { transition:none; } }
   </style>
 </head>
 <body data-site-page="updates">
-  <a class="site-skip" href="#site-main">Skip to updates</a>
+  <a class="site-skip" href="#site-main">Skip to settings</a>
   <div id="site-header-mount"></div>
   <div id="site-announcement-mount"></div>
   <main id="site-main" class="site-main updates-main">
     <div class="updates-shell">
       <header class="updates-hero">
         <div class="updates-brand">
-          <img src="/assets/kg%20logo.webp" alt="KidsGastro logo" width="50" height="50">
+          <img src="/assets/kg%20logo.webp" alt="KidsGastro logo" width="48" height="48">
           <div><strong>KidsGastro</strong><small>Website administration</small></div>
         </div>
-        <p class="updates-kicker">Scheduled website changes</p>
-        <h1>Updates &amp; schedule manager</h1>
-        <p>Manage permanent website settings and schedule temporary announcements, featured images and clinic-closed notices. Permanent choices remain active until you change them.</p>
+        <p class="updates-kicker">Website settings</p>
+        <h1>Updates</h1>
+        <p>Change the announcement and booking buttons. Your saved settings load automatically and stay active until you change them or restore the defaults.</p>
       </header>
 
       <div class="updates-toolbar">
         <a class="updates-back" href="/">← Return to website</a>
-        <button class="lock-button" id="lock-session" type="button"><span aria-hidden="true">⌑</span> Lock / log out</button>
+        <button class="lock-button" id="lock-session" type="button">Lock / log out</button>
       </div>
 
-      <section class="updates-panel" id="login-panel" aria-labelledby="connect-title">
-        <div class="panel-heading">
-          <span class="panel-icon" aria-hidden="true">↗</span>
-          <div><h2 id="connect-title">Connect to the website updates service</h2><p>Enter the second password. It is checked by the schedule server and is never saved in this page.</p></div>
-        </div>
-        <div id="worker-warning" class="setup-warning" hidden>
-          The website controls service address has not been configured. A site administrator must set the deployed Cloudflare Worker URL in the <code>kg-schedule-api</code> meta tag. This is a one-time setup step.
-        </div>
-        <form id="worker-login-form" class="login-grid">
-          <div class="field"><label for="worker-passcode">Website updates password</label><input id="worker-passcode" type="password" autocomplete="current-password" placeholder="Enter the schedule password" required></div>
-          <button class="primary-button" id="worker-login-button" type="submit">Unlock editor <span aria-hidden="true">→</span></button>
-        </form>
-        <p id="login-status" class="status" role="status" aria-live="polite"></p>
-      </section>
+      <section class="settings-panel" aria-labelledby="settings-title">
+        <h2 id="settings-title">Current website settings</h2>
+        <p class="settings-intro">The switches show the latest saved preferences.</p>
 
-      <section class="updates-panel" id="editor" aria-labelledby="editor-title" hidden>
-        <section class="updates-panel" id="site-controls-panel" aria-labelledby="site-controls-title">
-          <div class="panel-heading">
-            <span class="panel-icon" aria-hidden="true">⚙</span>
-            <div><h2 id="site-controls-title">Permanent website settings</h2><p>These choices remain active until you change and publish them. They do not use dates or expiry timers.</p></div>
-          </div>
-          <div class="site-controls-grid">
-            <div class="field">
-              <label for="announcement-mode">Announcement marquee</label>
-              <select id="announcement-mode" class="schedule-type">
-                <option value="default">Use the default KidsGastro message</option>
-                <option value="custom">Show my custom message until I change it</option>
-              </select>
-            </div>
-            <div class="field" id="custom-announcement-wrap" hidden>
-              <label for="custom-announcement-text">Custom marquee text</label>
-              <textarea id="custom-announcement-text" rows="3" maxlength="500" placeholder="Enter the message exactly as it should appear in the announcement marquee."></textarea>
-              <small>It will use the existing yellow background, blue text, size and scrolling animation.</small>
-            </div>
-            <label class="site-controls-toggle" for="booking-enabled">
-              <input id="booking-enabled" type="checkbox" checked>
-              <span><strong>Enable appointment button and floating WhatsApp button together</strong><small>When switched off, both booking entry points are hidden across the website. The setting remains off until you turn it back on.</small></span>
-            </label>
-          </div>
-          <div class="site-controls-actions">
-            <button class="primary-button" id="save-site-controls" type="button">Publish permanent settings</button>
-            <p id="site-controls-status" class="status" role="status" aria-live="polite"></p>
-          </div>
-        </section>
+        <div class="preference-list">
+          <label class="preference-toggle" for="custom-announcement-enabled">
+            <input id="custom-announcement-enabled" type="checkbox" disabled>
+            <span class="preference-copy"><strong>Use a custom announcement</strong><small>On: show your message. Off: use the default KidsGastro message.</small></span>
+            <span class="preference-state" id="announcement-state">—</span>
+          </label>
 
-        <div class="panel-heading">
-          <span class="panel-icon" aria-hidden="true">⌁</span>
-          <div><h2 id="editor-title">Scheduled website changes</h2><p>Your saved entries are loaded first. Changes apply only within the start and end times below.</p></div>
+          <div class="field" id="custom-announcement-wrap" hidden>
+            <label for="custom-announcement-text">Custom marquee message</label>
+            <textarea id="custom-announcement-text" rows="4" maxlength="500" placeholder="Type the announcement here..."></textarea>
+            <small>Line breaks and blank lines are kept as entered.</small>
+          </div>
+
+          <label class="preference-toggle" for="booking-enabled">
+            <input id="booking-enabled" type="checkbox" disabled>
+            <span class="preference-copy"><strong>Appointment and floating WhatsApp buttons</strong><small>On: normal colours and animation. Off: both remain visible in black and white, with the appointment animation stopped and booking disabled.</small></span>
+            <span class="preference-state" id="booking-state">—</span>
+          </label>
+
+          <label class="preference-toggle restore-toggle" for="restore-defaults">
+            <input id="restore-defaults" type="checkbox" disabled>
+            <span class="preference-copy"><strong>Restore all default settings</strong><small>Tick this and publish to restore the default announcement and turn booking buttons on.</small></span>
+          </label>
         </div>
-        <div class="saved-summary" aria-label="Schedule summary">
-          <div class="summary-chip"><strong id="total-count">0</strong><span>Saved entries</span></div>
-          <div class="summary-chip"><strong id="upcoming-count">0</strong><span>Upcoming</span></div>
-          <div class="summary-chip"><strong id="active-count">0</strong><span>Active now</span></div>
+
+        <div class="settings-actions">
+          <button class="primary-button" id="publish-changes" type="button" disabled>Publish changes</button>
+          <p id="settings-status" class="status" role="status" aria-live="polite">Loading saved settings…</p>
         </div>
-        <p class="editor-intro">Add as many scheduled changes as needed. You can keep future entries alongside active ones. Expired entries are left out when you next save.</p>
-        <div id="schedule-list" class="schedule-list">
-          <div class="empty-state">Loading saved schedule…</div>
-        </div>
-        <div class="editor-actions">
-          <button class="secondary-button" id="add-schedule" type="button">＋ Add scheduled change</button>
-          <button class="primary-button" id="save-schedule" type="button">Save changes</button>
-        </div>
-        <p class="time-zone-note">All times use India Standard Time (IST, UTC +05:30).</p>
-        <div id="save-status" class="status" role="status" aria-live="polite"></div>
-        <div class="schedule-help">
-          <strong>How this works:</strong> Scheduled ticker text temporarily overrides the permanent marquee message. A featured image must use a public HTTPS URL; add new image files to the website assets folder before scheduling them. A closed notice temporarily hides booking controls. When a schedule ends, permanent settings resume.
-        </div>
+        <p class="settings-note">Changes are permanent. There are no start times, end times or automatic expiry.</p>
       </section>
     </div>
   </main>
   <div id="site-footer-mount"></div>
 
+  <dialog id="publish-dialog" aria-labelledby="publish-title">
+    <form id="publish-form">
+      <h2 id="publish-title">Confirm publishing</h2>
+      <p>Enter the second password to publish these settings.</p>
+      <label class="field" for="publish-password">Second password
+        <input id="publish-password" type="password" autocomplete="current-password" required>
+      </label>
+      <p id="publish-status" class="status" role="status" aria-live="polite"></p>
+      <div class="dialog-actions">
+        <button class="secondary-button" id="cancel-publish" type="button">Cancel</button>
+        <button class="primary-button" id="confirm-publish" type="submit">Confirm &amp; publish</button>
+      </div>
+    </form>
+  </dialog>
+
   <script src="/script-shared.js" defer></script>
   <script>
-  (function () {
-    "use strict";
-    const SESSION_KEY = "kg_admin_authenticated_until";
-    const SESSION_MS = 15 * 60 * 1000;
-    const meta = document.querySelector('meta[name="kg-schedule-api"]');
-    const WORKER = (meta && meta.content || "").trim().replace(/\/+$/, "");
-    const workerConfigured = /^https:\/\//i.test(WORKER) && !/YOUR-SCHEDULE-API|yourname\.workers\.dev/i.test(WORKER);
-    const TZ = "+05:30";
-    let TOKEN = "";
-    let tokenTimer = 0;
-    let unknownRules = [];
-    let cardSequence = 0;
+    (function () {
+      "use strict";
+      const meta = document.querySelector('meta[name="kg-schedule-api"]');
+      const WORKER = (meta && meta.content || "").trim().replace(/\/+$/, "");
+      const workerConfigured = /^https:\/\//i.test(WORKER) && !/YOUR-SCHEDULE-API|yourname\.workers\.dev/i.test(WORKER);
+      const $ = id => document.getElementById(id);
+      const customToggle = $("custom-announcement-enabled");
+      const customText = $("custom-announcement-text");
+      const customWrap = $("custom-announcement-wrap");
+      const bookingToggle = $("booking-enabled");
+      const restoreToggle = $("restore-defaults");
+      const publishButton = $("publish-changes");
+      const status = $("settings-status");
+      const dialog = $("publish-dialog");
+      const passwordInput = $("publish-password");
+      const publishStatus = $("publish-status");
+      const confirmButton = $("confirm-publish");
+      let settingsLoaded = false;
+      let publishing = false;
 
-    const $ = id => document.getElementById(id);
-    const loginPanel = $("login-panel");
-    const editor = $("editor");
-    const loginForm = $("worker-login-form");
-    const loginButton = $("worker-login-button");
-    const passcodeInput = $("worker-passcode");
-    const scheduleList = $("schedule-list");
-    const saveButton = $("save-schedule");
-    const addButton = $("add-schedule");
-    const loginStatus = $("login-status");
-    const saveStatus = $("save-status");
-    const announcementMode = $("announcement-mode");
-    const customAnnouncementWrap = $("custom-announcement-wrap");
-    const customAnnouncementText = $("custom-announcement-text");
-    const bookingEnabledInput = $("booking-enabled");
-    const saveSiteControlsButton = $("save-site-controls");
-    const siteControlsStatus = $("site-controls-status");
-
-    if (!workerConfigured) {
-      $("worker-warning").hidden = false;
-      loginButton.disabled = true;
-      passcodeInput.disabled = true;
-    }
-
-    function setStatus(node, message, type) {
-      node.textContent = message || "";
-      node.classList.remove("error", "success");
-      if (type) node.classList.add(type);
-    }
-
-    function expireSession(message) {
-      TOKEN = "";
-      window.clearTimeout(tokenTimer);
-      try { sessionStorage.removeItem(SESSION_KEY); } catch (_) {}
-      const target = new URL("/admin/", location.origin);
-      target.searchParams.set("return", "/updates/");
-      location.replace(target.href);
-    }
-
-    function workerRequest(path, options) {
-      return fetch(WORKER + path, Object.assign({ cache:"no-store", credentials:"omit" }, options || {}));
-    }
-
-    function dateForInput(value) {
-      const date = new Date(value);
-      if (!Number.isFinite(date.getTime())) return "";
-      const parts = new Intl.DateTimeFormat("en-CA", {
-        timeZone:"Asia/Kolkata", year:"numeric", month:"2-digit", day:"2-digit",
-        hour:"2-digit", minute:"2-digit", hourCycle:"h23"
-      }).formatToParts(date).reduce((out, part) => { out[part.type] = part.value; return out; }, {});
-      return `${parts.year}-${parts.month}-${parts.day}T${parts.hour}:${parts.minute}`;
-    }
-
-    function dateFromInput(value) {
-      if (!value) return "";
-      return `${value}:00${TZ}`;
-    }
-
-    function nowInputValue() {
-      const now = new Date();
-      now.setMinutes(Math.ceil(now.getMinutes() / 5) * 5, 0, 0);
-      return dateForInput(now.toISOString());
-    }
-
-    function addHoursToInput(value, hours) {
-      const date = new Date(dateFromInput(value));
-      date.setTime(date.getTime() + hours * 60 * 60 * 1000);
-      return dateForInput(date.toISOString());
-    }
-
-    function escapeHtml(value) {
-      return String(value == null ? "" : value).replace(/[&<>"']/g, char => ({
-        "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;"
-      })[char]);
-    }
-
-    function typeLabel(item) {
-      return item === "Ticker" ? "Website announcement" : item === "Image" ? "Featured photo" : "Clinic closed notice";
-    }
-
-    function extractClosedText(value) {
-      const doc = new DOMParser().parseFromString(String(value || ""), "text/html");
-      return (doc.body.textContent || "").trim();
-    }
-
-    function supportedItem(rule) {
-      if (!rule || typeof rule !== "object") return "";
-      if (rule.item === "Ticker" || rule.target === "#ticker") return "Ticker";
-      if (rule.item === "Image" || rule.target === "#daily-image") return "Image";
-      if (rule.item === "Closed notice" || rule.target === "#appointment-banner" || rule.target === "#booking") return "Closed notice";
-      return "";
-    }
-
-    function updateSummary() {
-      const now = Date.now();
-      const cards = [...scheduleList.querySelectorAll(".schedule-card")];
-      $("total-count").textContent = String(cards.length + unknownRules.length);
-      $("active-count").textContent = String(cards.filter(card => {
-        const start = Date.parse(dateFromInput(card.querySelector("[data-start]").value));
-        const end = Date.parse(dateFromInput(card.querySelector("[data-end]").value));
-        return Number.isFinite(start) && Number.isFinite(end) && start <= now && end >= now;
-      }).length);
-      $("upcoming-count").textContent = String(cards.filter(card => {
-        const start = Date.parse(dateFromInput(card.querySelector("[data-start]").value));
-        const end = Date.parse(dateFromInput(card.querySelector("[data-end]").value));
-        return Number.isFinite(start) && Number.isFinite(end) && start > now && end >= now;
-      }).length);
-    }
-
-    function makeField(labelText, control, full) {
-      const wrap = document.createElement("div");
-      wrap.className = "field" + (full ? " full" : "");
-      const label = document.createElement("label");
-      label.textContent = labelText;
-      label.htmlFor = control.id;
-      wrap.append(label, control);
-      return wrap;
-    }
-
-    function makeInput(type, id, value, placeholder) {
-      const input = document.createElement("input");
-      input.type = type;
-      input.id = id;
-      input.value = value || "";
-      if (placeholder) input.placeholder = placeholder;
-      if (type === "datetime-local") input.step = "300";
-      return input;
-    }
-
-    function createCard(rule) {
-      cardSequence += 1;
-      const sequence = cardSequence;
-      const item = rule && rule.item ? rule.item : "Ticker";
-      const card = document.createElement("article");
-      card.className = "schedule-card";
-      card.dataset.sequence = String(sequence);
-
-      const cardHead = document.createElement("div");
-      cardHead.className = "schedule-card-head";
-      const title = document.createElement("strong");
-      title.textContent = typeLabel(item);
-      const remove = document.createElement("button");
-      remove.type = "button";
-      remove.className = "danger-button";
-      remove.textContent = "Remove";
-      remove.setAttribute("aria-label", "Remove " + typeLabel(item));
-      remove.addEventListener("click", () => { card.remove(); updateEmptyState(); updateSummary(); });
-      cardHead.append(title, remove);
-
-      const typeSelect = document.createElement("select");
-      typeSelect.className = "schedule-type";
-      typeSelect.setAttribute("aria-label", "Scheduled change type");
-      [["Ticker","Website announcement"],["Image","Featured photo"],["Closed notice","Clinic closed notice"]].forEach(([value,label]) => {
-        const option = document.createElement("option"); option.value = value; option.textContent = label; typeSelect.append(option);
-      });
-      typeSelect.value = item;
-
-      const content = document.createElement("div");
-      content.className = "schedule-content";
-      let valueControl = null;
-      let imagePreview = null;
-
-      function renderValue(initialValue) {
-        content.replaceChildren();
-        imagePreview = null;
-        const currentType = typeSelect.value;
-        const suppliedValue = initialValue !== undefined ? initialValue : (valueControl ? valueControl.value : "");
-        if (currentType === "Ticker") {
-          valueControl = document.createElement("textarea");
-          valueControl.id = `ticker-value-${sequence}`;
-          valueControl.rows = 3;
-          valueControl.placeholder = "Write the announcement exactly as it should appear in the yellow ticker";
-          valueControl.value = suppliedValue || "";
-          content.append(makeField("Announcement text", valueControl, true));
-        } else if (currentType === "Image") {
-          valueControl = makeInput("url", `image-url-${sequence}`, suppliedValue, "https://…");
-          content.append(makeField("Public image URL", valueControl, true));
-          imagePreview = document.createElement("div");
-          imagePreview.className = "image-preview";
-          const previewImage = document.createElement("img");
-          previewImage.alt = "Preview of scheduled image";
-          previewImage.hidden = !suppliedValue;
-          if (suppliedValue) previewImage.src = suppliedValue;
-          const previewText = document.createElement("span");
-          previewText.textContent = suppliedValue
-            ? "Currently saved image URL. Enter another public HTTPS image URL to replace it."
-            : "Paste a public HTTPS image URL. New files must first be added to the website assets folder.";
-          imagePreview.append(previewImage, previewText);
-          content.append(imagePreview);
-          valueControl.addEventListener("change", () => {
-            const nextUrl = valueControl.value.trim();
-            previewImage.hidden = !nextUrl;
-            if (nextUrl) previewImage.src = nextUrl;
-            previewText.textContent = nextUrl
-              ? "Image URL entered. The image will be used during the selected schedule."
-              : "Paste a public HTTPS image URL. New files must first be added to the website assets folder.";
-          });
-        } else {
-          valueControl = document.createElement("textarea");
-          valueControl.id = `closure-value-${sequence}`;
-          valueControl.rows = 3;
-          valueControl.placeholder = "For example: Online and in-person appointments are temporarily unavailable. Please contact the hospital for urgent enquiries.";
-          valueControl.value = currentType === "Closed notice" ? (rule && rule.value ? extractClosedText(suppliedValue) : suppliedValue || "") : suppliedValue || "";
-          content.append(makeField("Message shown to visitors", valueControl, true));
-        }
-        title.textContent = typeLabel(currentType);
+      function setStatus(node, message, type) {
+        node.textContent = message || "";
+        node.classList.remove("error", "success");
+        if (type) node.classList.add(type);
       }
 
-      typeSelect.addEventListener("change", () => renderValue(""));
-      const now = nowInputValue();
-      const defaultEnd = addHoursToInput(now, 24);
-      const startInput = makeInput("datetime-local", `start-${sequence}`, rule && rule.start ? dateForInput(rule.start) : now);
-      const endInput = makeInput("datetime-local", `end-${sequence}`, rule && rule.end ? dateForInput(rule.end) : defaultEnd);
-      startInput.dataset.start = "true";
-      endInput.dataset.end = "true";
-      const times = document.createElement("div");
-      times.className = "schedule-times";
-      times.append(makeField("Start date and time (IST)", startInput), makeField("End date and time (IST)", endInput));
-
-      renderValue(rule && rule.value ? rule.value : "");
-      card.append(cardHead, typeSelect, content, times);
-      card.addEventListener("input", updateSummary);
-      card.addEventListener("change", updateSummary);
-      scheduleList.append(card);
-      return card;
-    }
-
-    function updateEmptyState() {
-      const cards = scheduleList.querySelectorAll(".schedule-card");
-      const empty = scheduleList.querySelector(".empty-state");
-      if (!cards.length && !empty) {
-        const state = document.createElement("div");
-        state.className = "empty-state";
-        state.textContent = "No scheduled changes yet. Use “Add scheduled change” to create one.";
-        scheduleList.append(state);
-      } else if (cards.length && empty) empty.remove();
-    }
-
-    function renderRules(rules) {
-      scheduleList.replaceChildren();
-      unknownRules = [];
-      const now = Date.now();
-      (Array.isArray(rules) ? rules : []).forEach(rule => {
-        const end = Date.parse(rule && rule.end);
-        if (!Number.isFinite(end) || end < now) return;
-        const item = supportedItem(rule);
-        if (item) {
-          /* The closed-notice hide rule is a companion generated from its main row. */
-          if (rule.main === false) return;
-          const normalized = Object.assign({}, rule, { item });
-          createCard(normalized);
-        } else {
-          /* Preserve rules created by future/other site tools rather than deleting them. */
-          unknownRules.push(rule);
-        }
-      });
-      updateEmptyState();
-      updateSummary();
-    }
-
-    function rulesFromCard(card) {
-      const item = card.querySelector(".schedule-type").value;
-      const startValue = card.querySelector("[data-start]").value;
-      const endValue = card.querySelector("[data-end]").value;
-      if (!startValue || !endValue) throw new Error(`Please choose both start and end times for ${typeLabel(item).toLowerCase()}.`);
-      const start = dateFromInput(startValue);
-      const end = dateFromInput(endValue);
-      const startMs = Date.parse(start);
-      const endMs = Date.parse(end);
-      if (!Number.isFinite(startMs) || !Number.isFinite(endMs) || endMs <= startMs) throw new Error(`The end time must be after the start time for ${typeLabel(item).toLowerCase()}.`);
-      if (endMs <= Date.now()) throw new Error(`The end time for ${typeLabel(item).toLowerCase()} must still be in the future.`);
-      const main = { item, main:true, start, end };
-      const valueControl = card.querySelector(".schedule-content textarea, .schedule-content input[type=url]");
-      let value = valueControl ? valueControl.value.trim() : "";
-
-      if (item === "Ticker") {
-        if (!value) throw new Error("Please enter the announcement text.");
-        return [{ ...main, target:"#ticker", action:"text", value }];
-      }
-      if (item === "Image") {
-        if (!value) throw new Error("Please enter a public HTTPS image URL.");
-        let imageUrl;
-        try { imageUrl = new URL(value); }
-        catch (_) { throw new Error("Enter a valid public HTTPS image URL."); }
-        if (imageUrl.protocol !== "https:") throw new Error("Use an HTTPS image URL so it can display safely on the website.");
-        return [{ ...main, target:"#daily-image", action:"src", value:imageUrl.href }];
-      }
-      if (!value) throw new Error("Please enter the clinic-closed message.");
-      const safeMessage = escapeHtml(value).replace(/\r?\n/g, "<br>");
-      const html = `<div class="kg-scheduled-closure"><p>${safeMessage}</p></div>`;
-      return [
-        { ...main, target:"#appointment-banner", action:"html", value:html },
-        { item, main:false, target:"#booking", action:"hide", value:html, start, end }
-      ];
-    }
-
-    async function saveSchedule() {
-      if (!TOKEN) { expireSession(); return; }
-      setStatus(saveStatus, "Checking entries…", "");
-      saveButton.disabled = true;
-      addButton.disabled = true;
-      try {
-        const rules = [...unknownRules];
-        const cards = [...scheduleList.querySelectorAll(".schedule-card")];
-        for (const card of cards) {
-          const expanded = rulesFromCard(card);
-          rules.push(...expanded);
-        }
-        setStatus(saveStatus, "Saving changes…", "");
-        const response = await workerRequest("/", {
-          method:"POST",
-          headers:{ "Content-Type":"application/json", "X-Token":TOKEN },
-          body:JSON.stringify({ rules })
-        });
-        if (response.status === 401) { expireSession("Your schedule session has expired. Please sign in again."); return; }
-        if (!response.ok) {
-          const detail = await response.text().catch(() => "");
-          throw new Error(detail || "The schedule could not be saved. Please try again.");
-        }
-        setStatus(saveStatus, "Changes saved. The website will apply them automatically during the selected time windows. Refresh the homepage to preview active changes.", "success");
-        await loadSavedSchedule();
-      } catch (error) {
-        if (error && error.message !== "session expired") setStatus(saveStatus, error.message || "Could not save the schedule.", "error");
-      } finally {
-        saveButton.disabled = false;
-        addButton.disabled = false;
-      }
-    }
-
-    async function loadSavedSchedule() {
-      setStatus(saveStatus, "Loading the latest saved schedule…", "");
-      const response = await workerRequest("/?t=" + Date.now(), { method:"GET", headers:{ "Accept":"application/json" } });
-      if (response.status === 401) { expireSession("Your schedule session has expired. Please sign in again."); throw new Error("session expired"); }
-      if (!response.ok) throw new Error("Could not load the saved schedule.");
-      const rules = await response.json();
-      if (!Array.isArray(rules)) throw new Error("The schedule service returned an unexpected format. No changes have been made.");
-      renderRules(rules);
-      setStatus(saveStatus, "Saved schedule loaded.", "");
-    }
-
-    function updateAnnouncementEditor() {
-      customAnnouncementWrap.hidden = announcementMode.value !== "custom";
-    }
-
-    async function loadSiteControls() {
-      setStatus(siteControlsStatus, "Loading permanent settings…", "");
-      const response = await workerRequest("/settings?t=" + Date.now(), {
-        method:"GET",
-        headers:{ "Accept":"application/json" }
-      });
-      if (!response.ok) throw new Error("Could not load permanent website settings.");
-      const settings = await response.json();
-      if (
-        !settings || settings.schemaVersion !== 1 ||
-        !settings.announcement ||
-        !["default", "custom"].includes(settings.announcement.mode) ||
-        typeof settings.bookingEnabled !== "boolean"
-      ) {
-        throw new Error("The settings service returned an unsupported format. No settings were changed.");
-      }
-      announcementMode.value = settings.announcement.mode;
-      customAnnouncementText.value = typeof settings.announcement.text === "string" ? settings.announcement.text : "";
-      bookingEnabledInput.checked = settings.bookingEnabled;
-      updateAnnouncementEditor();
-      setStatus(siteControlsStatus, "Current permanent settings loaded.", "success");
-    }
-
-    async function saveSiteControls() {
-      if (!TOKEN) { expireSession(); return; }
-      const mode = announcementMode.value;
-      const text = customAnnouncementText.value.trim();
-      if (mode === "custom" && !text) {
-        setStatus(siteControlsStatus, "Enter custom marquee text or choose the default message.", "error");
-        customAnnouncementText.focus();
-        return;
-      }
-      if (text.length > 500) {
-        setStatus(siteControlsStatus, "Custom marquee text must be 500 characters or fewer.", "error");
-        return;
+      function workerRequest(path, options) {
+        return fetch(WORKER + path, Object.assign({ cache:"no-store", credentials:"omit" }, options || {}));
       }
 
-      saveSiteControlsButton.disabled = true;
-      setStatus(siteControlsStatus, "Publishing permanent settings…", "");
-      try {
-        const response = await workerRequest("/settings", {
-          method:"PUT",
-          headers:{ "Content-Type":"application/json", "X-Token":TOKEN },
-          body:JSON.stringify({
-            announcement:{ mode, text: mode === "custom" ? text : "" },
-            bookingEnabled:bookingEnabledInput.checked
-          })
-        });
-        if (response.status === 401) {
-          expireSession("Your settings session has expired. Sign in again.");
+      function updateControls() {
+        customWrap.hidden = !customToggle.checked;
+        $("announcement-state").textContent = customToggle.checked ? "ON" : "OFF";
+        $("booking-state").textContent = bookingToggle.checked ? "ON" : "OFF";
+        const restoring = restoreToggle.checked;
+        customToggle.disabled = !settingsLoaded || restoring;
+        bookingToggle.disabled = !settingsLoaded || restoring;
+        customText.disabled = !settingsLoaded || restoring;
+        restoreToggle.disabled = !settingsLoaded;
+      }
+
+      async function loadSettings() {
+        if (!workerConfigured) {
+          setStatus(status, "The website settings service URL is not configured.", "error");
           return;
         }
+        publishButton.disabled = true;
+        setStatus(status, "Loading the latest saved settings…", "");
+        try {
+          const response = await workerRequest("/settings?t=" + Date.now(), {
+            method:"GET",
+            headers:{ "Accept":"application/json" }
+          });
+          if (!response.ok) throw new Error("Could not load saved website settings.");
+          const saved = await response.json();
+          if (
+            !saved || saved.schemaVersion !== 1 || !saved.announcement ||
+            !["default", "custom"].includes(saved.announcement.mode) ||
+            typeof saved.bookingEnabled !== "boolean"
+          ) throw new Error("The settings service returned an unsupported format. No settings were changed.");
+
+          customToggle.checked = saved.announcement.mode === "custom";
+          customText.value = typeof saved.announcement.text === "string" ? saved.announcement.text : "";
+          bookingToggle.checked = saved.bookingEnabled;
+          restoreToggle.checked = false;
+          settingsLoaded = true;
+          updateControls();
+          publishButton.disabled = false;
+          setStatus(status, "Latest saved settings loaded.", "success");
+        } catch (error) {
+          settingsLoaded = false;
+          updateControls();
+          publishButton.disabled = true;
+          setStatus(status, error.message || "Could not load saved settings.", "error");
+        }
+      }
+
+      function prepareDefaults() {
+        if (restoreToggle.checked) {
+          customToggle.checked = false;
+          customText.value = "";
+          bookingToggle.checked = true;
+        }
+        updateControls();
+      }
+
+      function validateSettings() {
+        if (!settingsLoaded) throw new Error("Saved settings have not loaded yet.");
+        if (customToggle.checked && !customText.value.trim()) throw new Error("Enter a custom announcement or switch it off.");
+        if (customText.value.length > 500) throw new Error("The custom announcement must be 500 characters or fewer.");
+      }
+
+      function currentPayload() {
+        if (restoreToggle.checked) {
+          return { announcement:{ mode:"default", text:"" }, bookingEnabled:true };
+        }
+        return {
+          announcement:{ mode:customToggle.checked ? "custom" : "default", text:customToggle.checked ? customText.value : "" },
+          bookingEnabled:bookingToggle.checked
+        };
+      }
+
+      async function publishSettings(passcode) {
+        const loginResponse = await workerRequest("/login", {
+          method:"POST",
+          headers:{ "Content-Type":"application/json" },
+          body:JSON.stringify({ passcode })
+        });
+        if (!loginResponse.ok) {
+          if (loginResponse.status === 401) throw new Error("The second password was not accepted.");
+          throw new Error("Could not verify the second password. Please try again.");
+        }
+        const auth = await loginResponse.json();
+        if (!auth || typeof auth.token !== "string" || !auth.token) throw new Error("The settings service did not return a valid publishing session.");
+
+        const response = await workerRequest("/settings", {
+          method:"PUT",
+          headers:{ "Content-Type":"application/json", "X-Token":auth.token },
+          body:JSON.stringify(currentPayload())
+        });
+        if (response.status === 401) throw new Error("The publishing session was not accepted. Please try again.");
         if (!response.ok) {
           const detail = await response.text().catch(() => "");
-          throw new Error(detail || "Permanent settings could not be saved.");
+          throw new Error(detail || "The settings could not be published.");
         }
         const result = await response.json();
         if (!result || result.success !== true) throw new Error("The service did not confirm that settings were saved.");
-        setStatus(siteControlsStatus, "Permanent settings published. They will apply on the next page load across the website.", "success");
-      } catch (error) {
-        if (error && error.message !== "session expired") {
-          setStatus(siteControlsStatus, error.message || "Could not publish permanent settings.", "error");
-        }
-      } finally {
-        saveSiteControlsButton.disabled = false;
       }
-    }
 
-    loginForm.addEventListener("submit", async event => {
-      event.preventDefault();
-      if (!workerConfigured) return;
-      if (!passcodeInput.value.trim()) { setStatus(loginStatus, "Enter the schedule password.", "error"); return; }
-      loginButton.disabled = true;
-      loginButton.textContent = "Verifying…";
-      setStatus(loginStatus, "Connecting securely to the website updates service…", "");
-      try {
-        const response = await workerRequest("/login", {
-          method:"POST", headers:{ "Content-Type":"application/json" },
-          body:JSON.stringify({ passcode:passcodeInput.value })
-        });
-        passcodeInput.value = "";
-        if (!response.ok) {
-          if (response.status === 401) throw new Error("The schedule password was not accepted.");
-          throw new Error("Could not connect to the schedule service. Check its URL and deployment.");
+      publishButton.addEventListener("click", () => {
+        try { validateSettings(); }
+        catch (error) { setStatus(status, error.message, "error"); return; }
+        passwordInput.value = "";
+        setStatus(publishStatus, "", "");
+        if (typeof dialog.showModal === "function") dialog.showModal();
+        else setStatus(status, "This browser does not support the secure publish prompt.", "error");
+      });
+
+      $("publish-form").addEventListener("submit", async event => {
+        event.preventDefault();
+        if (publishing) return;
+        const passcode = passwordInput.value;
+        if (!passcode.trim()) {
+          setStatus(publishStatus, "Enter the second password.", "error");
+          passwordInput.focus();
+          return;
         }
-        const data = await response.json();
-        if (!data || typeof data.token !== "string" || !data.token) throw new Error("The schedule service did not return a valid session.");
-        TOKEN = data.token;
-        tokenTimer = window.setTimeout(() => expireSession("Your 15-minute schedule session has expired. Sign in again."), SESSION_MS);
-        loginPanel.hidden = true;
-        editor.hidden = false;
+        passwordInput.value = "";
+        publishing = true;
+        confirmButton.disabled = true;
+        publishButton.disabled = true;
+        setStatus(publishStatus, "Verifying and publishing…", "");
         try {
-          await loadSavedSchedule();
-          try { await loadSiteControls(); }
-          catch (settingsError) {
-            setStatus(siteControlsStatus, settingsError.message || "Could not load permanent settings.", "error");
-          }
+          await publishSettings(passcode);
+          dialog.close();
+          await loadSettings();
+          setStatus(status, "Settings published and saved permanently.", "success");
+        } catch (error) {
+          setStatus(publishStatus, error.message || "Could not publish settings.", "error");
+          passwordInput.focus();
+        } finally {
+          publishing = false;
+          confirmButton.disabled = false;
+          publishButton.disabled = !settingsLoaded;
         }
-        catch (error) {
-          editor.hidden = true;
-          loginPanel.hidden = false;
-          TOKEN = "";
-          window.clearTimeout(tokenTimer);
-          if (error && error.message !== "session expired") setStatus(loginStatus, error.message, "error");
-        }
-      } catch (error) {
-        setStatus(loginStatus, error.message || "Sign-in failed. Please try again.", "error");
-      } finally {
-        passcodeInput.value = "";
-        loginButton.disabled = !workerConfigured;
-        loginButton.innerHTML = 'Unlock editor <span aria-hidden="true">→</span>';
-      }
-    });
+      });
 
-    addButton.addEventListener("click", () => {
-      const empty = scheduleList.querySelector(".empty-state");
-      if (empty) empty.remove();
-      createCard({ item:"Ticker" });
-      updateSummary();
-    });
-    saveButton.addEventListener("click", saveSchedule);
-    announcementMode.addEventListener("change", updateAnnouncementEditor);
-    saveSiteControlsButton.addEventListener("click", saveSiteControls);
-    $("lock-session").addEventListener("click", () => expireSession("You have been logged out."));
+      $("cancel-publish").addEventListener("click", () => {
+        passwordInput.value = "";
+        dialog.close();
+      });
+      customToggle.addEventListener("change", updateControls);
+      bookingToggle.addEventListener("change", updateControls);
+      restoreToggle.addEventListener("change", prepareDefaults);
+      $("lock-session").addEventListener("click", () => {
+        try { sessionStorage.removeItem("kg_admin_authenticated_until"); } catch (_) {}
+        const target = new URL("/admin/", location.origin);
+        target.searchParams.set("return", "/updates/");
+        location.replace(target.href);
+      });
 
-    /* Ensure the first-stage session stays within the same 15-minute window. */
-    try {
-      const remaining = Number(sessionStorage.getItem(SESSION_KEY)) - Date.now();
-      if (remaining <= 0) expireSession();
-      else window.setTimeout(() => expireSession("Your access session has expired."), remaining);
-    } catch (_) { expireSession(); }
-  })();
+      updateControls();
+      loadSettings();
+    })();
   </script>
 </body>
 </html>

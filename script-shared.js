@@ -980,8 +980,8 @@ const SITE_CONFIG = {
 
     const announcementText = settings.announcement.mode === "custom" &&
       typeof settings.announcement.text === "string" &&
-      settings.announcement.text.trim()
-        ? settings.announcement.text.trim()
+      settings.announcement.text.trim().length > 0
+        ? settings.announcement.text
         : SITE_CONFIG.content.announcement;
 
     const tickerTrack = document.querySelector("#site-announcement-mount .site-announcement-track");
@@ -992,15 +992,27 @@ const SITE_CONFIG = {
     }
 
     const bookingEnabled = settings.bookingEnabled;
+    document.body.classList.toggle("kg-booking-disabled", !bookingEnabled);
+
+    /* Keep both booking entry points visible. Off means monochrome and non-interactive. */
     const appointmentPicker = document.getElementById("booking") || document.querySelector(".appointment-picker");
     if (appointmentPicker) {
-      appointmentPicker.hidden = !bookingEnabled;
-      /* The existing .appointment-picker display rule can override the generic [hidden] rule. */
-      appointmentPicker.style.display = bookingEnabled ? "" : "none";
+      appointmentPicker.hidden = false;
+      appointmentPicker.style.display = "";
+    }
+
+    const appointmentTrigger = document.getElementById("appointment-trigger");
+    if (appointmentTrigger) {
+      appointmentTrigger.disabled = !bookingEnabled;
+      appointmentTrigger.setAttribute("aria-disabled", String(!bookingEnabled));
     }
 
     const floatingBooking = document.getElementById("floating-booking");
-    if (floatingBooking) floatingBooking.hidden = !bookingEnabled;
+    if (floatingBooking) {
+      floatingBooking.hidden = false;
+      floatingBooking.disabled = !bookingEnabled;
+      floatingBooking.setAttribute("aria-disabled", String(!bookingEnabled));
+    }
 
     return settings;
   }

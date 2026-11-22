@@ -157,7 +157,7 @@ html[data-nav-style="dropdown"] .site-nav-links .site-nav-login:focus-visible { 
 /* ===== BLOCK: ANNOUNCEMENT ===== */
 .site-announcement { display:block; width:100%; min-height:38px; overflow:hidden; background:var(--kg-yellow); color:var(--kg-blue); font-size:.72rem; font-weight:800; letter-spacing:.055em; white-space:nowrap; }
 .site-announcement-track { display:flex; width:max-content; min-width:max-content; align-items:center; animation:kg-announcement-marquee 30s linear infinite; will-change:transform; }
-.site-announcement span { display:block; flex:0 0 auto; padding:9px clamp(22px,3vw,44px); color:var(--kg-blue); }
+.site-announcement span { display:block; flex:0 0 auto; padding:9px clamp(22px,3vw,44px); color:var(--kg-blue); white-space:pre-line; }
 .site-announcement:focus-within .site-announcement-track { animation-play-state:paused; }
 .site-announcement.is-paused .site-announcement-track { animation-play-state:paused; }
 @media (hover:hover) { .site-announcement:hover .site-announcement-track { animation-play-state:paused; } }
@@ -340,6 +340,15 @@ html[data-nav-style="dropdown"] .site-nav-links .site-nav-login:focus-visible { 
 #appointment-trigger { animation:kg-booking-wobble 4.8s ease-in-out infinite; }
 #appointment-trigger::before { position:absolute; top:50%; left:14px; z-index:2; width:8px; height:8px; border-radius:50%; background:#d92d20; box-shadow:0 0 0 0 rgba(217,45,32,.55); content:""; transform:translateY(-50%); animation:kg-booking-dot 1.6s ease-out infinite; }
 #appointment-trigger .appointment-button-label { padding-left:13px; }
+body.kg-booking-disabled #appointment-trigger,
+body.kg-booking-disabled #floating-booking { filter:grayscale(1); cursor:not-allowed; }
+body.kg-booking-disabled #appointment-trigger { animation:none; }
+body.kg-booking-disabled #appointment-trigger::before,
+body.kg-booking-disabled #appointment-trigger::after,
+body.kg-booking-disabled .book-halo::before { animation:none; }
+body.kg-booking-disabled #appointment-trigger::before { box-shadow:none; }
+body.kg-booking-disabled #appointment-trigger::after { display:none; }
+body.kg-booking-disabled #floating-booking .whatsapp-brand-mark { filter:grayscale(1); }
 @keyframes kg-booking-wobble { 0%,90%,100% { transform:rotate(0); } 92% { transform:rotate(-1.4deg); } 94% { transform:rotate(1.4deg); } 96% { transform:rotate(-.8deg); } 98% { transform:rotate(.8deg); } }
 @keyframes kg-booking-dot { 0% { box-shadow:0 0 0 0 rgba(217,45,32,.6); } 70%,100% { box-shadow:0 0 0 7px rgba(217,45,32,0); } }
 .appointment-options { position:static; width:min(340px, calc(100vw - 42px)); margin-top:10px; padding:16px; border:1px solid var(--kg-line); border-radius:16px; background:#fff; color:var(--kg-ink); box-shadow:var(--kg-shadow); }

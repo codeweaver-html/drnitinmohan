@@ -4,7 +4,6 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#005EB8">
-  <meta name="kg-schedule-api" content="https://kidsgastro-site-controls.drnitinmohanpaedsgastro.workers.dev">
   <meta name="description" content="Dr. Nitin Mohan is a Consultant Paediatric Gastroenterologist, Hepatologist and Nutritionist in Hisar, Haryana, providing specialist care for children’s digestive, liver, pancreatic and nutrition concerns.">
   <meta name="robots" content="index,follow,max-image-preview:large">
   <link rel="canonical" href="https://drnitinmohan.com/">
@@ -301,130 +300,6 @@
     <div class="viewer-stage"><img alt="" src=""></div>
   </div>
   <script src="/script-shared.js" defer></script>
-
-  <script>
-  /* Public schedule reader. The Worker URL is configured in the meta tag above.
-     Reads are public; no visitor token or browser storage is used. */
-  (function () {
-    "use strict";
-    const meta = document.querySelector('meta[name="kg-schedule-api"]');
-    const api = (meta && meta.content || "").trim().replace(/\/+$/, "");
-    const placeholder = !api || /YOUR-SCHEDULE-API|yourname\.workers\.dev/i.test(api);
-    if (placeholder) return;
-
-    function escapeText(value) {
-      return String(value == null ? "" : value);
-    }
-
-    function safeHtml(markup) {
-      const parsed = new DOMParser().parseFromString(String(markup || ""), "text/html");
-      const allowed = new Set(["DIV", "P", "STRONG", "EM", "B", "I", "BR", "UL", "OL", "LI", "A"]);
-      const walker = parsed.createTreeWalker(parsed.body, NodeFilter.SHOW_ELEMENT);
-      const elements = [];
-      while (walker.nextNode()) elements.push(walker.currentNode);
-      elements.forEach(el => {
-        if (!allowed.has(el.tagName)) {
-          if (["SCRIPT", "STYLE", "IFRAME", "OBJECT", "EMBED", "FORM", "INPUT", "BUTTON", "SVG", "MATH"].includes(el.tagName)) {
-            el.remove();
-          } else {
-            el.replaceWith(parsed.createTextNode(el.textContent || ""));
-          }
-          return;
-        }
-        [...el.attributes].forEach(attr => {
-          if (el.tagName !== "A" || attr.name !== "href") el.removeAttribute(attr.name);
-        });
-        if (el.tagName === "A") {
-          const href = el.getAttribute("href") || "";
-          try {
-            const parsedUrl = new URL(href, location.href);
-            if (!/^https?:$/.test(parsedUrl.protocol)) el.removeAttribute("href");
-            else {
-              el.setAttribute("href", parsedUrl.href);
-              el.setAttribute("target", "_blank");
-              el.setAttribute("rel", "noopener noreferrer");
-            }
-          } catch (_) { el.removeAttribute("href"); }
-        }
-      });
-      return parsed.body.innerHTML;
-    }
-
-    function resolveTarget(target) {
-      try { return document.querySelector(target); }
-      catch (_) { return null; }
-    }
-
-    function applyRule(rule, now) {
-      if (!rule || typeof rule !== "object") return;
-      const start = Date.parse(rule.start);
-      const end = Date.parse(rule.end);
-      if (!Number.isFinite(start) || !Number.isFinite(end)) return;
-      if (now < start || now > end) return;
-      const el = resolveTarget(rule.target);
-      if (!el) return;
-
-      if (rule.action === "text") {
-        /* Preserve the shared announcement marquee and update each repeated segment. */
-        if (rule.target === "#ticker" && el.classList.contains("site-announcement-track")) {
-          el.querySelectorAll("span").forEach(span => { span.textContent = escapeText(rule.value); });
-        } else {
-          el.textContent = escapeText(rule.value);
-        }
-        el.hidden = false;
-      } else if (rule.action === "html") {
-        el.innerHTML = safeHtml(rule.value);
-        el.hidden = false;
-      } else if (rule.action === "src") {
-        if (el.tagName !== "IMG") return;
-        try {
-          const imageUrl = new URL(String(rule.value || ""), location.href);
-          if (!/^https?:$/.test(imageUrl.protocol)) return;
-          el.src = imageUrl.href;
-          el.hidden = false;
-        } catch (_) { /* Leave the default image unchanged. */ }
-      } else if (rule.action === "hide") {
-        el.hidden = true;
-        if (rule.target === "#booking") {
-          /* Enforce hidden even against the existing inline-block appointment-picker rule. */
-          el.style.display = "none";
-          /* A clinic-closed rule also disables the floating booking entry point. */
-          document.querySelectorAll("#floating-booking").forEach(control => { control.hidden = true; });
-        }
-      }
-    }
-
-    async function loadSchedule() {
-      /* Persistent settings load first; temporary schedule rules then take priority. */
-      try {
-        if (window.__kgSiteControlsReady) await window.__kgSiteControlsReady;
-      } catch (_) { /* Keep existing defaults if persistent settings are unavailable. */ }
-      /* script-shared.js renders the marquee before DOMContentLoaded. */
-      const ticker = document.querySelector("#site-announcement-mount .site-announcement-track");
-      if (ticker) ticker.id = "ticker";
-      try {
-        const response = await fetch(api + "/?t=" + Date.now(), {
-          method: "GET", cache: "no-store", credentials: "omit",
-          headers: { "Accept": "application/json" }
-        });
-        if (!response.ok) return;
-        const serverDate = response.headers.get("Date");
-        const serverNow = serverDate && Number.isFinite(Date.parse(serverDate)) ? Date.parse(serverDate) : Date.now();
-        const rules = await response.json();
-        if (!Array.isArray(rules)) return;
-        rules.forEach(rule => applyRule(rule, serverNow));
-      } catch (_) {
-        /* If the schedule service is unavailable, keep the normal homepage. */
-      }
-    }
-
-    if (document.readyState === "loading") {
-      document.addEventListener("DOMContentLoaded", loadSchedule, { once: true });
-    } else {
-      loadSchedule();
-    }
-  })();
-  </script>
 
 </body>
 </html>
