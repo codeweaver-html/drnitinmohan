@@ -4,5 +4,6 @@ Disallow: /admin.html
 Disallow: /admin/
 Disallow: /private/
 Disallow: /updates.html
+Disallow: /updates/
 
 Sitemap: https://drnitinmohan.com/sitemap.xml
