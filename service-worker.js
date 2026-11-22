@@ -2,7 +2,7 @@
    Keep this file beside the site root document and name it exactly: service-worker.js
 */
 
-const CACHE_NAME = "kidsgastro-cache-v19";
+const CACHE_NAME = "kidsgastro-cache-v20";
 const APP_ROOT = new URL(self.registration.scope);
 const APP_ORIGIN = self.location.origin;
 
@@ -16,24 +16,19 @@ const ROOT_PAGE_SLUGS = new Set([
 const SHELL_FILES = [
   "./",
   "./404.html",
-  "./index.html",
-  "./blog/",
+  "./admin/",
   "./about/",
-  "./treatments/",
-  "./services/",
+  "./blog/",
   "./faqs/",
-  "./publications/",
-  "./testimonials/",
-  "./updates/",
   "./gallery/",
-  "./about.html",
-  "./faqs.html",
-  "./publications.html",
-  "./services.html",
-  "./testimonials.html",
-  "./treatments.html",
+  "./publications/",
+  "./services/",
+  "./testimonials/",
+  "./treatments/",
+  "./updates/",
   "./style-shared.css",
   "./script-shared.js",
+  "./service-worker.js",
   "./settings.json",
   "./robots.txt",
   "./sitemap.xml",
@@ -175,11 +170,18 @@ async function networkFirst(request) {
 }
 
 async function refreshStaticAsset(request) {
-  const cache = await caches.open(CACHE_NAME);
   const response = await fetch(request, { cache: "no-cache" });
-  await saveResponse(cache, request, response);
+  if (response.ok) {
+    const cache = await caches.open(CACHE_NAME);
+    await saveResponse(cache, request, response);
+  }
   return response;
 }
+
+/* Keep CSS and JavaScript fresh without sending a network request on every
+   repeat asset hit. The cache is returned immediately while a refresh runs. */
+const lastCodeRefresh = new Map();
+const CODE_REFRESH_INTERVAL_MS = 60 * 1000;
 
 self.addEventListener("fetch", event => {
   const request = event.request;
@@ -194,20 +196,33 @@ self.addEventListener("fetch", event => {
     return;
   }
 
-  /* Only cache actual static assets. This avoids caching API/fetch responses. */
+  /* Ignore API, form, and other dynamic fetches; cache only browser static assets. */
   if (!STATIC_DESTINATIONS.has(request.destination)) return;
 
-  const cachePromise = caches.open(CACHE_NAME);
-  const updatePromise = refreshStaticAsset(request);
-  event.waitUntil(updatePromise.then(() => undefined).catch(() => undefined));
+  let codeUpdatePromise = null;
+  if (request.destination === "script" || request.destination === "style") {
+    const lastRefresh = lastCodeRefresh.get(request.url) || 0;
+    if (Date.now() - lastRefresh >= CODE_REFRESH_INTERVAL_MS) {
+      lastCodeRefresh.set(request.url, Date.now());
+      codeUpdatePromise = refreshStaticAsset(request).catch(() => {
+        lastCodeRefresh.delete(request.url);
+        return null;
+      });
+      event.waitUntil(codeUpdatePromise.then(() => undefined));
+    }
+  }
 
   event.respondWith((async () => {
-    const cache = await cachePromise;
+    const cache = await caches.open(CACHE_NAME);
     const cached = await cache.match(request);
     if (cached) return cached;
 
     try {
-      return await updatePromise;
+      if (codeUpdatePromise) {
+        const refreshed = await codeUpdatePromise;
+        if (refreshed && refreshed.ok) return refreshed;
+      }
+      return await refreshStaticAsset(request);
     } catch (error) {
       return new Response("This resource is unavailable while offline.", {
         status: 504,

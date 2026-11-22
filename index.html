@@ -269,11 +269,11 @@
 
   <dialog class="kg-rb-booking-dialog" id="kg-rb-booking-dialog" aria-labelledby="kg-rb-booking-heading">
     <form id="booking-form" class="booking-form" novalidate>
-      <div class="booking-head"><div><p class="site-eyebrow">WhatsApp appointment</p><h2 id="kg-rb-booking-heading">Appointment details</h2></div><button type="button" class="dialog-close" data-close-booking aria-label="Close appointment form">×</button></div>
+      <div class="booking-head"><h2 id="kg-rb-booking-heading">Enter details</h2><button type="button" class="dialog-close" data-close-booking aria-label="Close appointment form">×</button></div>
       <div class="booking-fields">
         <label>Child’s name<input id="booking-child-name" name="childName" type="text" autocomplete="name" required></label>
-        <label>Child’s age<input id="booking-child-age" name="childAge" type="number" min="0" max="18" step="0.1" required><span>years</span></label>
-        <label>Phone Number<input id="booking-phone" name="phone" type="tel" inputmode="numeric" maxlength="10" autocomplete="tel-national" required></label>
+        <label>Child’s age<input id="booking-child-age" name="childAge" type="number" min="0" step="0.1" required><span>years</span></label>
+        <label>Phone number (optional)<input id="booking-phone" name="phone" type="tel" inputmode="tel" autocomplete="tel" placeholder="Optional"></label>
         <label class="booking-date-label">Preferred date<input id="booking-date" name="date" type="date" required></label>
         <label class="booking-time-field">Preferred time (30-minute slots)
           <input id="booking-time" name="time" type="hidden" required>
@@ -300,7 +300,7 @@
     </div>
     <div class="viewer-stage"><img alt="" src=""></div>
   </div>
-  <script src="./script-shared.js" defer></script>
+  <script src="/script-shared.js" defer></script>
 
   <script>
   /* Public schedule reader. The Worker URL is configured in the meta tag above.

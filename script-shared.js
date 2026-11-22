@@ -164,11 +164,8 @@ const SITE_CONFIG = {
 
   /* ===== BLOCK: HEADER_FOOTER ===== */
   const homeUrl = () => window.location.protocol === "file:" ? "./" : basePath;
-  const pageTopUrl = () => {
-    if (window.location.protocol === "file:") return "#site-main";
-    const currentPath = window.location.pathname || "/";
-    return `${currentPath}${window.location.search}#site-main`;
-  };
+  /* The shared footer's Back to top action consistently returns to the site root. */
+  const pageTopUrl = () => homeUrl();
   const hrefFor = item => {
     if (item.href) return item.href;
     if (item.homeAnchor) return `${homeUrl()}#${encodeURIComponent(item.homeAnchor)}`;
@@ -432,12 +429,12 @@ const SITE_CONFIG = {
 
     const bookingMarkup = `
       <form id="booking-form" class="booking-form" novalidate>
-        <div class="booking-head"><div><p class="site-eyebrow">WhatsApp appointment</p><h2 id="kg-rb-booking-heading">Appointment details</h2></div><button type="button" class="dialog-close" data-close-booking aria-label="Close appointment form">×</button></div>
+        <div class="booking-head"><h2 id="kg-rb-booking-heading">Enter details</h2><button type="button" class="dialog-close" data-close-booking aria-label="Close appointment form">×</button></div>
         <div class="booking-fields">
           <label>Child’s name<input id="booking-child-name" name="childName" type="text" autocomplete="name" required></label>
-          <label>Child’s age<input id="booking-child-age" name="childAge" type="number" min="0" max="18" step="0.1" required><span>years</span></label>
-          <label>Phone Number<input id="booking-phone" name="phone" type="tel" inputmode="numeric" maxlength="10" autocomplete="tel-national" required></label>
-          <label>Preferred date<input id="booking-date" name="date" type="date" required></label>
+          <label>Child’s age<input id="booking-child-age" name="childAge" type="number" min="0" step="0.1" required><span>years</span></label>
+          <label>Phone number (optional)<input id="booking-phone" name="phone" type="tel" inputmode="tel" autocomplete="tel" placeholder="Optional"></label>
+          <label class="booking-date-label">Preferred date<input id="booking-date" name="date" type="date" required></label>
           <label class="booking-time-field">Preferred time (30-minute slots)
             <input id="booking-time" name="time" type="hidden" required>
             <div id="booking-slot-grid" class="booking-slot-grid" role="group" tabindex="-1" aria-label="Available 30-minute appointment slots"></div>
@@ -494,15 +491,25 @@ const SITE_CONFIG = {
     let activeVerifyController = null;
     let lastOpener = null;
 
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    const tomorrow = new Date(today);
-    tomorrow.setDate(tomorrow.getDate() + 1);
+    let today = new Date();
+    let tomorrow = new Date(today);
     const dateKey = date => `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
-    const todayKey = dateKey(today);
-    const tomorrowKey = dateKey(tomorrow);
-    dateInput.min = todayKey;
-    dateInput.max = tomorrowKey;
+    let todayKey = "";
+    let tomorrowKey = "";
+    function refreshDateBounds() {
+      today = new Date();
+      today.setHours(0, 0, 0, 0);
+      tomorrow = new Date(today);
+      tomorrow.setDate(tomorrow.getDate() + 1);
+      todayKey = dateKey(today);
+      tomorrowKey = dateKey(tomorrow);
+      dateInput.min = todayKey;
+      dateInput.max = tomorrowKey;
+      if (dateInput.value && (dateInput.value < todayKey || dateInput.value > tomorrowKey)) {
+        dateInput.value = "";
+      }
+    }
+    refreshDateBounds();
     const dateLabel = dateInput.closest(".booking-date-label");
     if (dateLabel) dateLabel.addEventListener("click", event => {
       if (event.target !== dateInput && typeof dateInput.showPicker === "function") {
@@ -552,9 +559,9 @@ const SITE_CONFIG = {
             option.classList.add("is-booked");
             option.disabled = true;
             const state = document.createElement("small");
-            state.textContent = "BOOKED SLOT";
+            state.textContent = "Slot already booked.";
             option.append(state);
-            option.setAttribute("aria-label", `${timeText}. Already booked and unavailable.`);
+            option.setAttribute("aria-label", `${timeText}. Slot already booked.`);
           } else {
             availableCount += 1;
             option.classList.add("is-available");
@@ -580,14 +587,12 @@ const SITE_CONFIG = {
     function bookingIssues() {
       const childName = dialog.querySelector("#booking-child-name").value.trim();
       const childAge = dialog.querySelector("#booking-child-age").value.trim();
-      const phone = dialog.querySelector("#booking-phone").value.trim();
       const date = dateInput.value;
       const issues = [];
       if (!childName) issues.push({ message: "Enter the child’s name.", id: "booking-child-name" });
-      if (!childAge || !Number.isFinite(Number(childAge)) || Number(childAge) < 0 || Number(childAge) > 18) {
+      if (!childAge || !Number.isFinite(Number(childAge)) || Number(childAge) < 0) {
         issues.push({ message: "Enter a valid age.", id: "booking-child-age" });
       }
-      if (!/^[6-9]\d{9}$/.test(phone)) issues.push({ message: "Enter a valid 10-digit phone number.", id: "booking-phone" });
       if (!date || date < todayKey || date > tomorrowKey) issues.push({ message: "Enter a date.", id: "booking-date" });
       const selectedMinutes = Number(timeInput.value);
       if (!timeInput.value || !Number.isFinite(selectedMinutes) || isBooked(date, selectedMinutes)) {
@@ -597,6 +602,7 @@ const SITE_CONFIG = {
     }
 
     dateInput.addEventListener("change", () => {
+      refreshDateBounds();
       const key = dateInput.value;
       if (key && (key < todayKey || key > tomorrowKey)) {
         dateInput.value = "";
@@ -642,6 +648,7 @@ const SITE_CONFIG = {
       if (isDialogOpen()) return;
       lastOpener = opener || null;
       form.reset();
+      refreshDateBounds();
       error.textContent = "";
       selectedTimeText = "";
       if (recaptchaWidget !== null && window.grecaptcha) {
@@ -650,8 +657,7 @@ const SITE_CONFIG = {
       requestInProgress = false;
       submit.disabled = false;
       submit.textContent = "Continue to WhatsApp";
-      dateInput.min = todayKey;
-      dateInput.max = tomorrowKey;
+      refreshDateBounds();
       resetRecaptcha();
       renderSlots("");
       if (options) options.hidden = true;
@@ -805,6 +811,7 @@ const SITE_CONFIG = {
       event.preventDefault();
       if (requestInProgress) return;
       error.textContent = "";
+      refreshDateBounds();
       const childName = dialog.querySelector("#booking-child-name").value.trim();
       const childAge = dialog.querySelector("#booking-child-age").value.trim();
       const phone = dialog.querySelector("#booking-phone").value.trim();
@@ -831,7 +838,17 @@ const SITE_CONFIG = {
 
       const dateText = date.split("-").reverse().join("/");
       const timeText = selectedTimeText;
-      const message = `Hello, I would like to request an appointment with Dr. Nitin Mohan.\n\nChild: ${childName}\nAge: ${childAge} years\nParent/guardian phone: ${phone}\nPreferred date: ${dateText}\nPreferred time: ${timeText}\n\nPlease confirm availability.`;
+      const message = [
+        "Hello, I would like to request an appointment with Dr. Nitin Mohan.",
+        "",
+        `Child: ${childName}`,
+        `Age: ${childAge} years`,
+        ...(phone ? [`Parent/guardian phone: ${phone}`] : []),
+        `Preferred date: ${dateText}`,
+        `Preferred time: ${timeText}`,
+        "",
+        "Please confirm availability."
+      ].join("\n");
       const waUrl = `https://wa.me/${SITE_CONFIG.contact.phoneE164}?text=${encodeURIComponent(message)}`;
       requestInProgress = true;
       const thisAttempt = ++attemptId;
@@ -921,7 +938,8 @@ const SITE_CONFIG = {
       const top = Math.max(12, Math.min(innerHeight - button.offsetHeight - 12, dragStart.top + deltaY));
       button.style.top = `${top}px`;
       button.style.bottom = "auto";
-      button.style.right = "18px";
+      const right = Math.max(12, Math.min(18, window.innerWidth - button.offsetWidth - 12));
+      button.style.right = `${right}px`;
     });
     const finishDrag = event => {
       if (!dragStart || dragStart.pointerId !== event.pointerId) return;

@@ -1,3 +1,7 @@
+---
+layout: null
+permalink: /admin/
+---
 <!doctype html>
 <html lang="en-IN">
 <head>
@@ -5,12 +9,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="robots" content="noindex,nofollow,noarchive">
   <meta name="theme-color" content="#0759a8">
-  <link rel="icon" href="./favicon.ico" sizes="any" type="image/x-icon">
-  <link rel="apple-touch-icon" href="./assets/kg%20logo.webp">
+  <link rel="icon" href="/assets/kg%20logo.webp" type="image/webp">
+  <link rel="apple-touch-icon" href="/assets/kg%20logo.webp">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="./style-shared.css">
+  <link rel="stylesheet" href="/style-shared.css">
   <title>Authorised Access | KidsGastro</title>
   <style>
     :root { --kg-admin-blue:#0759a8; --kg-admin-navy:#0b347e; --kg-admin-yellow:#ffc400; }
@@ -53,7 +57,7 @@
   <main class="admin-shell">
     <section id="gate" aria-labelledby="admin-title">
       <div class="admin-brand">
-        <img src="./assets/kg%20logo.webp" alt="KidsGastro logo" width="58" height="58">
+        <img src="/assets/kg%20logo.webp" alt="KidsGastro logo" width="58" height="58">
         <div><span class="brand-title">KidsGastro</span><span class="brand-caption">Admin</span></div>
       </div>
       
@@ -80,7 +84,7 @@
       </div>
       
     </section>
-    <p style="text-align:center"><a class="admin-home" href="./index.html">← Return to KidsGastro website</a></p>
+    <p style="text-align:center"><a class="admin-home" href="/">← Return to KidsGastro website</a></p>
   </main>
   <script>
   (function () {
@@ -112,11 +116,11 @@
     function goToEditor() {
       const params = new URLSearchParams(location.search);
       const requested = params.get("return");
-      let destination = new URL("./updates.html", location.href);
+      let destination = new URL("/updates/", location.origin);
       if (requested) {
         try {
           const parsed = new URL(requested, location.origin);
-          if (parsed.origin === location.origin && parsed.pathname.replace(/\/+$/, "").toLowerCase() === "/updates.html") destination = parsed;
+          if (parsed.origin === location.origin && parsed.pathname.replace(/\/+$/, "").toLowerCase() === "/updates") destination = parsed;
         } catch (_) { /* Use the fixed editor destination. */ }
       }
       location.replace(destination.href);

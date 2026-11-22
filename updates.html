@@ -25,7 +25,7 @@ permalink: /updates/
     let initialExpiry = 0;
     function lock() {
       try { sessionStorage.removeItem(key); } catch (_) {}
-      const target = new URL("/admin.html", location.href);
+      const target = new URL("/admin/", location.origin);
       target.searchParams.set("return", location.pathname + location.search + location.hash);
       location.replace(target.href);
     }
@@ -232,8 +232,8 @@ permalink: /updates/
       TOKEN = "";
       window.clearTimeout(tokenTimer);
       try { sessionStorage.removeItem(SESSION_KEY); } catch (_) {}
-      const target = new URL("/admin.html", location.href);
-      target.searchParams.set("return", "/updates.html");
+      const target = new URL("/admin/", location.origin);
+      target.searchParams.set("return", "/updates/");
       location.replace(target.href);
     }
 
