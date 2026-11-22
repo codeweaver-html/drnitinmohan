@@ -2,7 +2,7 @@
    Keep this file beside the site root document and name it exactly: service-worker.js
 */
 
-const CACHE_NAME = "kidsgastro-cache-v16";
+const CACHE_NAME = "kidsgastro-cache-v17";
 const APP_ROOT = new URL(self.registration.scope);
 const APP_ORIGIN = self.location.origin;
 
@@ -19,7 +19,17 @@ const SHELL_FILES = [
   "./404.html",
   "./index.html",
   "./blog/",
+  "./about/",
+  "./treatments/",
+  "./services/",
   "./faqs/",
+  "./publications/",
+  "./testimonials/",
+  "./clinic/",
+  "./clinical/",
+  "./latest/",
+  "./newsletter/",
+  "./socials/",
   "./gallery/",
   "./about.html",
   "./clinic.html",
@@ -52,7 +62,8 @@ const SHELL_FILES = [
   "./assets/kidsgastro-video-4-thumbnail.jpg",
   "./assets/kidsgastro-video-5-thumbnail.jpg",
   "./assets/main%20pic.webp",
-  "./assets/potrait%20gallery.jpg"
+  "./assets/potrait%20gallery.jpg",
+  "./assets/new/.webp"
 ];
 
 const STATIC_DESTINATIONS = new Set([
@@ -140,13 +151,19 @@ async function networkFirst(request) {
       return response;
     }
 
-    /* Legacy root-level .html pages remain supported without moving them. */
+    /* Clean URLs are primary. For older deployed copies, resolve either a
+       root-level source page or a directory index without changing the URL. */
     if (response.status === 404 && ROOT_PAGE_SLUGS.has(cleanSlug)) {
-      const pageFile = new URL(`${cleanSlug}.html${requestedUrl.search}`, APP_ROOT);
-      const pageResponse = await fetch(pageFile.href, { cache: "no-cache" });
-      if (pageResponse.ok) {
-        await saveResponse(cache, request, pageResponse);
-        return pageResponse;
+      const candidates = [
+        new URL(`${cleanSlug}/index.html${requestedUrl.search}`, APP_ROOT),
+        new URL(`${cleanSlug}.html${requestedUrl.search}`, APP_ROOT)
+      ];
+      for (const pageFile of candidates) {
+        const pageResponse = await fetch(pageFile.href, { cache: "no-cache" });
+        if (pageResponse.ok) {
+          await saveResponse(cache, request, pageResponse);
+          return pageResponse;
+        }
       }
     }
     return response;
