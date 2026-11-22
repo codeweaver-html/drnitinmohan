@@ -161,11 +161,11 @@ html[data-nav-style="dropdown"] .site-nav-links .site-nav-login:focus-visible { 
 .site-announcement:focus-within .site-announcement-track { animation-play-state:paused; }
 .site-announcement.is-paused .site-announcement-track { animation-play-state:paused; }
 @media (hover:hover) { .site-announcement:hover .site-announcement-track { animation-play-state:paused; } }
-.site-announcement.has-flicker span { animation:kg-announcement-flicker 2.1s steps(1,end) infinite; }
+.site-announcement.has-flicker span { animation:kg-announcement-flicker 3.6s ease-in-out infinite; }
 @keyframes kg-announcement-marquee { from { transform:translateX(0); } to { transform:translateX(-25%); } }
 @keyframes kg-announcement-flicker {
-  0%, 13%, 15%, 52%, 54%, 100% { opacity:1; filter:brightness(1); }
-  14%, 53% { opacity:.48; filter:brightness(1.25); }
+  0%, 100% { opacity:1; text-shadow:none; }
+  50% { opacity:.94; text-shadow:0 0 6px rgba(0,94,184,.18); }
 }
 @media (max-width:600px) { .site-announcement { min-height:36px; font-size:.66rem; } .site-announcement span { padding:8px 20px; } }
 /* ===== END BLOCK: ANNOUNCEMENT ===== */

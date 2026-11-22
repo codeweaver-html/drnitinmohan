@@ -62,17 +62,13 @@
     .lock-button { min-height:40px; padding:8px 13px; border:1px solid #cbd9e6; border-radius:10px; background:#fff; color:#17466f; font-size:.78rem; font-weight:800; cursor:pointer; }
     .settings-panel { margin-top:16px; padding:clamp(18px,3.5vw,28px); border:1px solid #dce7f0; border-radius:18px; background:#fff; box-shadow:0 12px 34px rgba(9,52,91,.06); }
     .settings-panel h2 { margin:0; color:#0b347e; font-size:1.18rem; }
-    .settings-intro { margin:6px 0 18px; color:#667b8d; font-size:.8rem; }
     .settings-load-panel { display:grid; gap:11px; margin:0 0 18px; padding:15px; border:1px solid #cbddea; border-radius:12px; background:#f5faff; }
-    .settings-load-panel > strong { color:#17466f; font-size:.85rem; }
-    .settings-load-panel > small { color:#667b8d; font-size:.72rem; line-height:1.5; }
     .settings-source-options { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; }
     .settings-source-option { display:flex; min-width:0; align-items:flex-start; gap:10px; padding:12px; border:1px solid #d3e0eb; border-radius:10px; background:#fff; cursor:pointer; }
     .settings-source-option:has(input:checked) { border-color:#0759a8; background:#edf6ff; box-shadow:0 0 0 2px rgba(7,89,168,.08); }
     .settings-source-option input { width:17px; height:17px; flex:0 0 17px; margin:2px 0 0; accent-color:#0759a8; }
     .settings-source-option span { display:grid; gap:4px; min-width:0; }
     .settings-source-option strong { color:#29485f; font-size:.78rem; line-height:1.35; }
-    .settings-source-option small { color:#667b8d; font-size:.68rem; line-height:1.45; }
     .load-settings-button { justify-self:start; min-height:39px; padding:8px 13px; border:1px solid #0759a8; border-radius:9px; background:#fff; color:#0759a8; font-size:.76rem; font-weight:800; cursor:pointer; }
     .load-settings-button:disabled { opacity:.5; cursor:not-allowed; }
     .preference-list { display:grid; gap:12px; }
@@ -87,7 +83,6 @@
     .preference-toggle input:disabled { opacity:.55; cursor:not-allowed; }
     .preference-copy { display:grid; gap:3px; min-width:0; }
     .preference-copy strong { color:#29485f; font-size:.84rem; }
-    .preference-copy small { color:#667b8d; font-size:.74rem; line-height:1.5; }
     .preference-state { margin-left:auto; color:#536d80; font-size:.72rem; font-weight:800; }
     .field { display:grid; gap:7px; margin-top:12px; }
     .field label { color:#29485f; font-size:.81rem; font-weight:800; }
@@ -101,7 +96,6 @@
     #marquee-speed { width:100%; accent-color:#0759a8; cursor:pointer; }
     #marquee-speed:disabled { opacity:.55; cursor:not-allowed; }
     .marquee-speed-ends { display:flex; justify-content:space-between; color:#667b8d; font-size:.68rem; }
-    .marquee-speed-control > small { color:#667b8d; font-size:.72rem; }
     .authorization-confirm { display:flex; align-items:flex-start; gap:10px; margin-top:18px; padding:13px 14px; border:1px dashed #d2a54a; border-radius:11px; background:#fffaf0; cursor:pointer; }
     .authorization-confirm input { width:18px; height:18px; flex:0 0 18px; margin:2px 0 0; accent-color:#0759a8; }
     .authorization-confirm span { display:grid; gap:3px; }
@@ -163,28 +157,25 @@
 
       <section class="settings-panel" aria-labelledby="settings-title">
         <h2 id="settings-title">Current website settings</h2>
-        <p class="settings-intro">Choose which settings to load before making changes.</p>
 
-        <div class="settings-load-panel" aria-labelledby="settings-load-title">
-          <strong id="settings-load-title">Choose one starting setting</strong>
+        <div class="settings-load-panel" aria-label="Choose settings source">
           <div class="settings-source-options">
             <label class="settings-source-option" for="source-default">
               <input id="source-default" type="radio" name="settings-source" value="default">
-              <span><strong>Load default settings</strong><small>Default KidsGastro message, booking buttons ON, 30 sec/loop and flicker OFF.</small></span>
+              <span><strong>Load default settings</strong></span>
             </label>
             <label class="settings-source-option" for="source-previous">
               <input id="source-previous" type="radio" name="settings-source" value="previous">
-              <span><strong>Load previous edited settings</strong><small>Fetch the last settings published to the website.</small></span>
+              <span><strong>Load previous edited settings</strong></span>
             </label>
           </div>
-          <small>Loading a starting setting replaces any unsaved edits below.</small>
           <button class="load-settings-button" id="load-selected-setting" type="button" disabled>Load selected settings</button>
         </div>
 
         <div class="preference-list">
           <label class="preference-toggle" for="custom-announcement-enabled">
             <input id="custom-announcement-enabled" type="checkbox" disabled>
-            <span class="preference-copy"><strong>Use a custom announcement</strong><small>On: show your message. Off: use the default KidsGastro message.</small></span>
+            <span class="preference-copy"><strong>Use a custom announcement</strong></span>
             <span class="preference-state" id="announcement-state">—</span>
           </label>
 
@@ -198,17 +189,16 @@
             <label for="marquee-speed"><strong>Marquee speed</strong><output id="marquee-speed-label" for="marquee-speed">30 sec/loop</output></label>
             <input id="marquee-speed" type="range" min="3" max="30" step="1" value="30" disabled>
             <div class="marquee-speed-ends"><span>3 sec/loop · Fastest</span><span>30 sec/loop · Slowest</span></div>
-            <small>Choose any whole-second loop duration from 3 to 30 seconds. Applies to both the default and custom announcement.</small>
           </div>
 
           <label class="preference-toggle flicker-toggle" for="marquee-flicker-enabled">
             <input id="marquee-flicker-enabled" type="checkbox" disabled>
-            <span class="preference-copy"><strong>Marquee flicker animation</strong><small>Off by default. Turn on for a subtle flicker effect on the live announcement and in this preview.</small></span>
+            <span class="preference-copy"><strong>Subtle announcement pulse</strong></span>
             <span class="preference-state" id="flicker-state">OFF</span>
           </label>
 
           <div class="marquee-preview-block">
-            <strong class="marquee-preview-title">Preview · Selected announcement</strong>
+            <strong class="marquee-preview-title">Announcement preview</strong>
             <div class="site-announcement marquee-preview" id="marquee-preview" role="img" aria-label="Preview of the selected announcement">
               <div class="site-announcement-track" id="marquee-preview-track">
                 <span id="marquee-preview-text"></span><span id="marquee-preview-copy-1" aria-hidden="true"></span><span id="marquee-preview-copy-2" aria-hidden="true"></span><span id="marquee-preview-copy-3" aria-hidden="true"></span>
@@ -218,7 +208,7 @@
 
           <label class="preference-toggle" for="booking-enabled">
             <input id="booking-enabled" type="checkbox" disabled>
-            <span class="preference-copy"><strong>Appointment and floating WhatsApp buttons</strong><small>On: normal colours and animation. Off: both remain visible in black and white, with the appointment animation stopped and booking disabled.</small></span>
+            <span class="preference-copy"><strong>Appointment and floating WhatsApp buttons</strong></span>
             <span class="preference-state" id="booking-state">—</span>
           </label>
 
@@ -231,7 +221,7 @@
 
         <div class="settings-actions">
           <button class="primary-button" id="publish-changes" type="button" disabled>Publish changes</button>
-          <p id="settings-status" class="status" role="status" aria-live="polite">Choose a starting option above, then load it to begin.</p>
+          <p id="settings-status" class="status" role="status" aria-live="polite"></p>
         </div>
         <p class="settings-note">Changes are permanent. There are no start times, end times or automatic expiry.</p>
       </section>
@@ -367,7 +357,7 @@
           marqueeDuration: DEFAULT_MARQUEE_DURATION,
           marqueeFlicker: false
         });
-        setStatus(status, "Default settings loaded. Review your choices before publishing.", "success");
+        setStatus(status, "Settings loaded.", "success");
       }
 
       async function loadPreviousSettings() {
@@ -564,7 +554,7 @@
       });
 
       updateControls();
-      setStatus(status, "Choose a starting option above, then load it to begin.", "");
+      setStatus(status, "", "");
     })();
   </script>
 </body>
