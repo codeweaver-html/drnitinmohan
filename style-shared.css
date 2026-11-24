@@ -397,7 +397,6 @@ body.kg-booking-disabled #floating-booking .whatsapp-brand-mark { filter:graysca
 .booking-time-field { grid-column:1/-1; }
 .booking-slot-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:9px; margin-top:4px; }
 .booking-slot { display:flex; min-width:0; min-height:48px; flex-direction:column; align-items:flex-start; justify-content:center; gap:2px; padding:8px 11px; border:1px solid #cbd9e5; border-radius:10px; background:#fff; color:var(--kg-ink); font-size:.78rem; font-weight:700; text-align:left; transition:background-color 150ms ease,border-color 150ms ease,box-shadow 150ms ease; }
-.booking-slot.is-available:hover { border-color:var(--kg-blue); background:#f7fbff; }
 .booking-slot.is-available:focus-visible { outline:2px solid rgba(7,89,168,.2); outline-offset:2px; }
 .booking-slot.is-selected { border:2px solid var(--kg-blue); background:#eaf3fa; color:var(--kg-blue-dark); box-shadow:0 0 0 2px rgba(7,89,168,.12); }
 .booking-slot.is-booked { border:1.5px solid var(--kg-red); background:#fff2f1; color:#a51d16; cursor:not-allowed; opacity:1; }
