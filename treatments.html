@@ -464,6 +464,229 @@ body[data-site-page="treatments"] .site-page-content {
 <button aria-label="Zoom in" class="viewer-zoom-in" type="button">+</button>
 <img alt="" src=""/>
 </div>
+<script id="kg-ga4-interaction-tracking">
+(() => {
+  'use strict';
+
+  const PAGE_TYPE = document.body?.dataset?.sitePage || 'other';
+  const send = (eventName, parameters = {}) => {
+    if (typeof window.gtag !== 'function') return;
+    window.gtag('event', eventName, { page_type: PAGE_TYPE, ...parameters });
+  };
+
+  const getArea = (element) => {
+    if (element.closest('#kg-rb-booking-dialog, #booking-form')) return 'booking_form';
+    if (element.closest('#site-header-mount')) return 'site_header';
+    if (element.closest('#site-footer-mount')) return 'site_footer';
+    if (element.closest('#image-viewer')) return 'image_viewer';
+    if (element.closest('.social-links')) return 'social_section';
+    if (element.closest('.video-track, .video-controls')) return 'video_section';
+    if (element.closest('#clinic-location, .clinic-map, .kg-rb-clinic-map-actions')) return 'clinic_section';
+    if (element.closest('#booking, #appointment-options, .appointment-picker')) return 'booking_section';
+    if (element.closest('.treatments-jump')) return 'treatments_contents';
+    if (element.closest('nav')) return 'navigation';
+    if (element.closest('main')) return 'page_content';
+    return 'site_element';
+  };
+
+  const hostCategory = (hostname) => {
+    const host = (hostname || '').toLowerCase();
+    if (host === location.hostname.toLowerCase()) return 'internal';
+    if (host.includes('instagram.com')) return 'instagram';
+    if (host.includes('linkedin.com')) return 'linkedin';
+    if (host.includes('scholar.google.com')) return 'google_scholar';
+    if (host.includes('rezeptrx.com')) return 'rezeptrx';
+    if (host === 'wa.me' || host.includes('whatsapp.com')) return 'whatsapp';
+    if (host.includes('google.') && (host.includes('maps') || host.includes('goo.gl'))) return 'google_maps';
+    if (host.includes('maps.google.')) return 'google_maps';
+    if (host === 'policies.google.com' || host === 'www.google.com') return 'google_information';
+    return 'other_external';
+  };
+
+  const getLinkCategory = (anchor) => {
+    const rawHref = anchor.getAttribute('href') || '';
+    if (rawHref.startsWith('#')) return 'in_page_anchor';
+    if (/^tel:/i.test(rawHref)) return 'telephone';
+    if (/^mailto:/i.test(rawHref)) return 'email';
+    try {
+      const parsed = new URL(rawHref, location.href);
+      if (parsed.hostname.toLowerCase().includes('google.') && parsed.pathname.toLowerCase().startsWith('/maps')) return 'google_maps';
+      const category = hostCategory(parsed.hostname);
+      return category === 'internal' ? 'internal_navigation' : category;
+    } catch (_) {
+      return 'other_link';
+    }
+  };
+
+  const buttonName = (button) => {
+    if (button.id === 'appointment-trigger') return 'appointment_trigger';
+    if (button.id === 'floating-booking') return 'floating_booking';
+    if (button.id === 'back-to-top') return 'back_to_top';
+    if (button.id === 'booking-submit') return 'booking_submit';
+    if (button.id === 'booking-slot-grid' || button.closest('#booking-slot-grid')) return 'booking_time_slot';
+    if (button.id === 'booking-form' || button.closest('#booking-form')) {
+      if (button.matches('[data-close-booking]') && button.classList.contains('dialog-close')) return 'booking_close';
+      if (button.matches('[data-close-booking]')) return 'booking_cancel';
+    }
+    if (button.matches('[data-open-booking]')) return 'booking_whatsapp_option';
+    if (button.matches('[data-video-scroll]')) return Number(button.getAttribute('data-video-scroll')) < 0 ? 'video_previous' : 'video_next';
+    if (button.classList.contains('viewer-zoom-in')) return 'image_zoom_in';
+    if (button.classList.contains('viewer-zoom-out')) return 'image_zoom_out';
+    if (button.classList.contains('viewer-reset')) return 'image_zoom_reset';
+    if (button.classList.contains('viewer-close')) return 'image_viewer_close';
+    if (button.classList.contains('newsletter-submit')) return 'newsletter_submit';
+    return button.id ? 'identified_button' : 'other_button';
+  };
+
+  // Generic click measurement: records control type and a coarse category only.
+  // It never sends link URLs, query strings, button text, or form field contents.
+  document.addEventListener('click', (event) => {
+    const button = event.target.closest?.('button');
+    if (button) {
+      send('kg_button_click', {
+        button_name: buttonName(button),
+        button_area: getArea(button)
+      });
+
+      if (button.id === 'appointment-trigger') {
+        send('kg_booking_options_open', { placement: 'hero' });
+      }
+      if (button.matches('[data-open-booking]')) {
+        send('kg_booking_method_select', { booking_method: 'whatsapp' });
+        send('kg_form_open', { booking_method: 'whatsapp' });
+      }
+      if (button.id === 'floating-booking') {
+        send('kg_booking_cta_click', { placement: 'floating' });
+      }
+      if (button.closest('#booking-slot-grid')) {
+        send('kg_form_option_select');
+      }
+      if (button.matches('[data-close-booking]')) {
+        send('kg_form_close', { close_method: button.classList.contains('dialog-close') ? 'close_icon' : 'cancel_button' });
+      }
+    }
+
+    const anchor = event.target.closest?.('a[href]');
+    if (!anchor) return;
+
+    const category = getLinkCategory(anchor);
+    const area = getArea(anchor);
+    send('kg_link_click', { link_category: category, link_area: area });
+
+    if (anchor.matches('.appointment-option-rezeptrx')) {
+      send('kg_booking_method_select', { booking_method: 'rezeptrx' });
+    }
+    if (anchor.closest('.social-links')) {
+      send('kg_social_click', { platform: hostCategory((() => { try { return new URL(anchor.href).hostname; } catch (_) { return ''; } })()) });
+    }
+    if (anchor.matches('.video-card')) {
+      const cards = Array.from(document.querySelectorAll('.video-card'));
+      send('kg_video_click', { video_position: cards.indexOf(anchor) + 1, content_platform: 'instagram' });
+    }
+    if (anchor.closest('.kg-rb-clinic-map-actions, .clinic-map')) {
+      send('kg_clinic_map_click', { map_provider: 'google_maps' });
+    }
+    if (anchor.closest('#site-header-mount')) {
+      send('kg_navigation_click', { navigation_area: 'header', destination_category: category });
+    } else if (anchor.closest('#site-footer-mount')) {
+      send('kg_navigation_click', { navigation_area: 'footer', destination_category: category });
+    }
+  }, true);
+
+  // Scroll milestones are emitted once per page view. Only the percentage is sent.
+  const scrollMilestones = [25, 50, 75, 90, 100];
+  const sentScrollMilestones = new Set();
+  let scrollCheckQueued = false;
+  const checkScrollDepth = () => {
+    scrollCheckQueued = false;
+    const doc = document.documentElement;
+    const scrollableHeight = Math.max(0, doc.scrollHeight - window.innerHeight);
+    const currentScroll = Math.max(window.scrollY || 0, doc.scrollTop || 0);
+    const percent = scrollableHeight === 0 ? 100 : Math.min(100, Math.round((currentScroll / scrollableHeight) * 100));
+    for (const milestone of scrollMilestones) {
+      if (percent >= milestone && !sentScrollMilestones.has(milestone)) {
+        sentScrollMilestones.add(milestone);
+        send('kg_scroll_depth', { percent_scrolled: milestone });
+      }
+    }
+  };
+  const queueScrollCheck = () => {
+    if (scrollCheckQueued) return;
+    scrollCheckQueued = true;
+    window.requestAnimationFrame(checkScrollDepth);
+  };
+  window.addEventListener('scroll', queueScrollCheck, { passive: true });
+  window.addEventListener('resize', queueScrollCheck, { passive: true });
+  window.addEventListener('load', queueScrollCheck, { once: true });
+  queueScrollCheck();
+
+  // Booking form tracking (homepage only). No typed values or field names are read or sent.
+  const bookingForm = document.getElementById('booking-form');
+  if (bookingForm) {
+    let formStarted = false;
+    let lastProgressMilestone = 0;
+
+    const markFormStarted = () => {
+      if (formStarted) return;
+      formStarted = true;
+      send('kg_form_start');
+    };
+
+    const updateFormProgress = () => {
+      const requiredControls = Array.from(bookingForm.querySelectorAll('input[required], select[required], textarea[required]'))
+        .filter((control) => !control.disabled);
+      if (!requiredControls.length) return;
+
+      // Only a boolean validity/completion check is used locally; the underlying values
+      // are never attached to any Analytics event.
+      const completed = requiredControls.filter((control) => {
+        if (control.type === 'hidden') return String(control.value || '').trim().length > 0;
+        return control.checkValidity();
+      }).length;
+      const percent = Math.round((completed / requiredControls.length) * 100);
+      for (const milestone of [25, 50, 75, 100]) {
+        if (percent >= milestone && milestone > lastProgressMilestone) {
+          lastProgressMilestone = milestone;
+          send('kg_form_progress', { progress_percent: milestone });
+        }
+      }
+    };
+
+    bookingForm.addEventListener('focusin', markFormStarted);
+    bookingForm.addEventListener('input', () => { markFormStarted(); updateFormProgress(); });
+    bookingForm.addEventListener('change', () => { markFormStarted(); updateFormProgress(); });
+    bookingForm.addEventListener('click', (event) => {
+      if (event.target.closest('#booking-slot-grid')) {
+        markFormStarted();
+        window.setTimeout(updateFormProgress, 0);
+      }
+    });
+    bookingForm.addEventListener('submit', () => {
+      send('kg_form_submit_attempt');
+    }, true);
+
+    const bookingError = document.getElementById('booking-error');
+    if (bookingError && window.MutationObserver) {
+      let errorCurrentlyVisible = false;
+      const observer = new MutationObserver(() => {
+        const hasError = Boolean(bookingError.textContent.trim());
+        if (hasError && !errorCurrentlyVisible) {
+          send('kg_form_validation_error');
+        }
+        errorCurrentlyVisible = hasError;
+      });
+      observer.observe(bookingError, { childList: true, characterData: true, subtree: true });
+    }
+
+    const bookingDialog = document.getElementById('kg-rb-booking-dialog');
+    if (bookingDialog) {
+      bookingDialog.addEventListener('cancel', () => {
+        send('kg_form_close', { close_method: 'escape_key' });
+      });
+    }
+  }
+})();
+</script>
 <script defer="" src="/script-shared.js"></script>
 </body>
 </html>
