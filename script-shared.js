@@ -480,7 +480,7 @@ const SITE_CONFIG = {
           <label>Patient name<input id="booking-patient-name" name="patientName" type="text" autocomplete="name" required></label>
           <label>Patient age<input id="booking-patient-age" name="patientAge" type="text" autocomplete="off" maxlength="60" required></label>
           <label>Phone number<input id="booking-phone" name="phone" type="tel" inputmode="numeric" autocomplete="tel" minlength="10" maxlength="10" pattern="[0-9]{10}" placeholder="10-digit phone number" required></label>
-          <label class="booking-date-label">Preferred date<input id="booking-date" name="date" type="date" required><small class="booking-date-hint">Choose from today and tomorrow.</small></label>
+          <label class="booking-date-label">Preferred date<input id="booking-date" name="date" type="date" required><small class="booking-date-hint">Choose from today and the next day.</small></label>
           <label class="booking-time-field">Preferred time (30-minute slots)
             <input id="booking-time" name="time" type="hidden" required>
             <div id="booking-slot-grid" class="booking-slot-grid" role="group" tabindex="-1" aria-label="Available 30-minute appointment slots"></div>
@@ -537,9 +537,8 @@ const SITE_CONFIG = {
       dateRestrictionDialog.innerHTML = `
         <div class="kg-date-restriction-content">
           <button type="button" class="kg-date-restriction-close" data-close-date-restriction aria-label="Close message">×</button>
-          <p class="kg-date-restriction-kicker">Appointment date</p>
-          <h2 id="kg-date-restriction-title">Please choose today or tomorrow</h2>
-          <p>Appointments can only be booked for today or tomorrow.</p>
+          <h2 id="kg-date-restriction-title">This date can't be selected</h2>
+          <p>Appointments can only be booked for today or the next day.</p>
           <button type="button" class="kg-date-restriction-ok" data-close-date-restriction>Okay</button>
         </div>`;
       body.append(dateRestrictionDialog);
@@ -656,12 +655,11 @@ const SITE_CONFIG = {
             option.classList.add("is-available");
             option.setAttribute("aria-pressed", "false");
             option.addEventListener("click", () => {
-              slotGrid.querySelectorAll(".booking-slot.is-selected").forEach(selected => {
-                selected.classList.remove("is-selected");
-                selected.setAttribute("aria-pressed", "false");
+              slotGrid.querySelectorAll(".booking-slot").forEach(slot => {
+                const isSelected = slot === option;
+                slot.classList.toggle("is-selected", isSelected);
+                if (!slot.disabled) slot.setAttribute("aria-pressed", String(isSelected));
               });
-              option.classList.add("is-selected");
-              option.setAttribute("aria-pressed", "true");
               timeInput.value = String(mins);
               selectedTimeText = timeText;
               error.textContent = "";
@@ -682,7 +680,7 @@ const SITE_CONFIG = {
       if (!patientName) issues.push({ message: "Enter the patient name.", id: "booking-patient-name" });
       if (!patientAge) issues.push({ message: "Enter the patient age.", id: "booking-patient-age" });
       if (!/^\d{10}$/.test(phone)) issues.push({ message: "Enter a valid 10-digit phone number.", id: "booking-phone" });
-      if (!date || date < todayKey || date > tomorrowKey) issues.push({ message: "Choose a date from today or tomorrow.", id: "booking-date" });
+      if (!date || date < todayKey || date > tomorrowKey) issues.push({ message: "Choose a date from today or the next day.", id: "booking-date" });
       const selectedMinutes = Number(timeInput.value);
       if (!timeInput.value || !Number.isFinite(selectedMinutes) || isBooked(date, selectedMinutes)) {
         issues.push({ message: "Choose an available time.", id: "booking-slot-grid" });
