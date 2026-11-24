@@ -250,6 +250,20 @@ const SITE_CONFIG = {
       </footer>`;
     }
   }
+  function initHeaderFooterHaptics() {
+    if (!navigator || typeof navigator.vibrate !== "function") return;
+    document.addEventListener("click", event => {
+      const target = event.target;
+      const control = target && target.closest
+        ? target.closest(
+            "#site-header-mount a, #site-header-mount button, #site-header-mount summary, " +
+            "#site-footer-mount a, #site-footer-mount button, #site-footer-mount summary"
+          )
+        : null;
+      if (!control || control.disabled || control.getAttribute("aria-disabled") === "true") return;
+      try { navigator.vibrate(10); } catch (_) {}
+    }, { passive: true });
+  }
   /* ===== END BLOCK: HEADER_FOOTER ===== */
 
   function initBrandLogoLinks() {
@@ -408,7 +422,7 @@ const SITE_CONFIG = {
     const resumeTicker = event => {
       if (event.pointerType === "mouse") return;
       window.clearTimeout(resumeTimer);
-      resumeTimer = window.setTimeout(() => ticker.classList.remove("is-paused"), 1700);
+      resumeTimer = window.setTimeout(() => ticker.classList.remove("is-paused"), 450);
     };
 
     if ("PointerEvent" in window) {
@@ -444,7 +458,7 @@ const SITE_CONFIG = {
         <div class="booking-head"><h2 id="kg-rb-booking-heading">Enter details</h2><button type="button" class="dialog-close" data-close-booking aria-label="Close appointment form">×</button></div>
         <div class="booking-fields">
           <label>Child’s name<input id="booking-child-name" name="childName" type="text" autocomplete="name" required></label>
-          <label>Child’s age<input id="booking-child-age" name="childAge" type="number" min="0" step="0.1" required><span>years</span></label>
+          <label>Child’s age<input id="booking-child-age" name="childAge" type="text" autocomplete="off" maxlength="60" required></label>
           <label>Phone number<input id="booking-phone" name="phone" type="tel" inputmode="numeric" autocomplete="tel" minlength="10" maxlength="10" pattern="[0-9]{10}" placeholder="10-digit phone number" required></label>
           <label class="booking-date-label">Preferred date<input id="booking-date" name="date" type="date" required><small class="booking-date-hint">Choose from today and tomorrow.</small></label>
           <label class="booking-time-field">Preferred time (30-minute slots)
@@ -493,6 +507,49 @@ const SITE_CONFIG = {
     const error = dialog.querySelector("#booking-error");
     const submit = dialog.querySelector("#booking-submit");
     if (!form || !dateInput || !timeInput || !slotGrid || !error || !submit) return;
+
+    let dateRestrictionDialog = document.getElementById("kg-date-restriction-dialog");
+    if (!dateRestrictionDialog) {
+      dateRestrictionDialog = document.createElement("dialog");
+      dateRestrictionDialog.id = "kg-date-restriction-dialog";
+      dateRestrictionDialog.className = "kg-date-restriction-dialog";
+      dateRestrictionDialog.setAttribute("aria-labelledby", "kg-date-restriction-title");
+      dateRestrictionDialog.innerHTML = `
+        <div class="kg-date-restriction-content">
+          <button type="button" class="kg-date-restriction-close" data-close-date-restriction aria-label="Close message">×</button>
+          <p class="kg-date-restriction-kicker">Appointment date</p>
+          <h2 id="kg-date-restriction-title">Please choose today or tomorrow</h2>
+          <p>Appointments can only be requested for today or tomorrow.</p>
+          <button type="button" class="kg-date-restriction-ok" data-close-date-restriction>Got it</button>
+        </div>`;
+      body.append(dateRestrictionDialog);
+    }
+
+    function closeDateRestrictionNotice() {
+      if (dateRestrictionDialog.open && typeof dateRestrictionDialog.close === "function") {
+        dateRestrictionDialog.close();
+      } else {
+        dateRestrictionDialog.removeAttribute("open");
+      }
+      if (isDialogOpen() && dateInput.isConnected) dateInput.focus();
+    }
+
+    function showDateRestrictionNotice() {
+      if (dateRestrictionDialog.open) return;
+      if (typeof dateRestrictionDialog.showModal === "function") {
+        try { dateRestrictionDialog.showModal(); }
+        catch (_) { dateRestrictionDialog.setAttribute("open", ""); }
+      } else {
+        dateRestrictionDialog.setAttribute("open", "");
+      }
+    }
+
+    dateRestrictionDialog.querySelectorAll("[data-close-date-restriction]").forEach(button => {
+      button.addEventListener("click", closeDateRestrictionNotice);
+    });
+    dateRestrictionDialog.addEventListener("click", event => {
+      if (event.target === dateRestrictionDialog) closeDateRestrictionNotice();
+    });
 
     let recaptchaWidget = null;
     let recaptchaLoading = null;
@@ -603,9 +660,7 @@ const SITE_CONFIG = {
       const phone = dialog.querySelector("#booking-phone").value.trim();
       const issues = [];
       if (!childName) issues.push({ message: "Enter the child’s name.", id: "booking-child-name" });
-      if (!childAge || !Number.isFinite(Number(childAge)) || Number(childAge) < 0) {
-        issues.push({ message: "Enter a valid age.", id: "booking-child-age" });
-      }
+      if (!childAge) issues.push({ message: "Enter the child’s age.", id: "booking-child-age" });
       if (!/^\d{10}$/.test(phone)) issues.push({ message: "Enter a valid 10-digit phone number.", id: "booking-phone" });
       if (!date || date < todayKey || date > tomorrowKey) issues.push({ message: "Choose a date from today or tomorrow.", id: "booking-date" });
       const selectedMinutes = Number(timeInput.value);
@@ -615,18 +670,23 @@ const SITE_CONFIG = {
       return issues;
     }
 
-    dateInput.addEventListener("change", () => {
-      refreshDateBounds();
+    function handleDateSelection() {
       const key = dateInput.value;
+      refreshDateBounds();
       if (key && (key < todayKey || key > tomorrowKey)) {
         dateInput.value = "";
         renderSlots("");
-        error.textContent = "Enter a valid date.";
+        error.textContent = "";
+        showDateRestrictionNotice();
         return;
       }
       error.textContent = "";
       renderSlots(key);
-    });
+    }
+
+    dateInput.addEventListener("input", handleDateSelection);
+    dateInput.addEventListener("change", handleDateSelection);
+    dateInput.addEventListener("blur", handleDateSelection);
     form.addEventListener("input", () => { error.textContent = ""; });
 
     function finishClose() {
@@ -856,7 +916,7 @@ const SITE_CONFIG = {
         "Hello, I would like to request an appointment with Dr. Nitin Mohan.",
         "",
         `Child: ${childName}`,
-        `Age: ${childAge} years`,
+        `Age: ${childAge}`,
         `Parent/guardian phone: ${phone}`,
         `Preferred date: ${dateText}`,
         `Preferred time: ${timeText}`,
@@ -1272,7 +1332,7 @@ const SITE_CONFIG = {
         const current = ((track.scrollLeft % width) + width) % width;
         const next = current + direction * step;
         track.scrollLeft = next < 0 ? width + (next % width) : next % width;
-        pauseUntil = performance.now() + 1100;
+        pauseUntil = performance.now() + 400;
       });
     });
 
@@ -1291,7 +1351,7 @@ const SITE_CONFIG = {
     const finishTouch = () => {
       if (!pausedByTouch) return;
       pausedByTouch = false;
-      pauseUntil = performance.now() + 1200;
+      pauseUntil = performance.now() + 450;
     };
     track.addEventListener("pointerup", finishTouch, { passive: true });
     track.addEventListener("pointercancel", finishTouch, { passive: true });
@@ -1302,7 +1362,7 @@ const SITE_CONFIG = {
     track.addEventListener("focusout", () => {
       requestAnimationFrame(() => {
         pausedByFocus = track.contains(document.activeElement);
-        if (!pausedByFocus) pauseUntil = performance.now() + 500;
+        if (!pausedByFocus) pauseUntil = performance.now() + 200;
       });
     });
 
@@ -1316,7 +1376,7 @@ const SITE_CONFIG = {
       if (!pausedByPointer && !pausedByTouch && !pausedByFocus && timestamp >= pauseUntil) {
         const width = loopWidth();
         if (width > 0) {
-          track.scrollLeft += elapsed * 0.048;
+          track.scrollLeft += elapsed * 0.075;
           if (track.scrollLeft >= width) track.scrollLeft %= width;
         }
       }
@@ -1619,6 +1679,7 @@ const SITE_CONFIG = {
   ensureSharedAssets();
   ensureSharedShell();
   initHeaderFooter();
+  initHeaderFooterHaptics();
   /* Start the settings request before page widgets are initialized. */
   window.__kgSiteControlsReady = typeof initPersistentSiteControls === "function"
     ? initPersistentSiteControls()

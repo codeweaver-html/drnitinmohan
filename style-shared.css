@@ -404,6 +404,16 @@ body.kg-booking-disabled #floating-booking .whatsapp-brand-mark { filter:graysca
 .booking-actions { display:flex; justify-content:flex-end; gap:10px; margin-top:22px; }
 .booking-actions button { min-width:140px; }
 .recaptcha-slot { min-height:0; margin:0; }
+.kg-date-restriction-dialog { width:min(360px,calc(100vw - 32px)); max-height:80dvh; padding:0; overflow:auto; border:1px solid #dce7f0; border-radius:18px; background:#fff; color:var(--kg-ink); box-shadow:0 22px 65px rgba(0,20,48,.3); }
+.kg-date-restriction-dialog::backdrop { background:rgba(4,24,48,.58); }
+.kg-date-restriction-dialog[open] { display:block; inset:0; margin:auto; }
+.kg-date-restriction-content { position:relative; padding:25px 22px 20px; }
+.kg-date-restriction-close { position:absolute; top:12px; right:12px; display:grid; width:30px; height:30px; place-items:center; padding:0; border:0; border-radius:8px; background:#b42318; color:#fff; font-size:1.35rem; line-height:1; }
+.kg-date-restriction-kicker { margin:0 40px 7px 0; color:var(--kg-blue); font-size:.68rem; font-weight:800; letter-spacing:.1em; text-transform:uppercase; }
+.kg-date-restriction-content h2 { margin:0 30px 9px 0; color:var(--kg-navy); font-size:1.1rem; line-height:1.3; }
+.kg-date-restriction-content p:not(.kg-date-restriction-kicker) { margin:0; color:var(--kg-muted); font-size:.82rem; line-height:1.55; }
+.kg-date-restriction-ok { min-height:40px; margin-top:17px; padding:8px 17px; border:0; border-radius:9px; background:var(--kg-header-blue); color:#fff; font-size:.8rem; font-weight:800; }
+.kg-date-restriction-close:focus-visible, .kg-date-restriction-ok:focus-visible { outline:3px solid rgba(7,89,168,.25); outline-offset:3px; }
 /* ===== END BLOCK: BOOKING ===== */
 
 /* ===== BLOCK: WHATSAPP_FLOAT ===== */

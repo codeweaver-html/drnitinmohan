@@ -79,8 +79,6 @@
     .settings-source-option input { width:17px; height:17px; flex:0 0 17px; margin:2px 0 0; accent-color:#0759a8; }
     .settings-source-option span { display:grid; gap:4px; min-width:0; }
     .settings-source-option strong { color:#29485f; font-size:.78rem; line-height:1.35; }
-    .load-settings-button { justify-self:start; min-height:39px; padding:8px 13px; border:1px solid #0759a8; border-radius:9px; background:#fff; color:#0759a8; font-size:.76rem; font-weight:800; cursor:pointer; }
-    .load-settings-button:disabled { opacity:.5; cursor:not-allowed; }
     .preference-list { display:grid; gap:12px; }
     .preference-toggle { display:flex; align-items:center; gap:13px; padding:14px; border:1px solid #dce6ef; border-radius:12px; background:#fbfdff; cursor:pointer; }
     .preference-toggle input { appearance:none; position:relative; width:44px; height:25px; flex:0 0 44px; margin:0; border-radius:99px; background:#d92d20; cursor:pointer; transition:background-color 150ms ease; }
@@ -146,7 +144,6 @@
       .updates-toolbar { align-items:flex-start; }
       .settings-actions .primary-button { width:100%; }
       .settings-source-options { grid-template-columns:1fr; }
-      .load-settings-button { width:100%; }
     }
     @media(prefers-reduced-motion:reduce) { .preference-toggle input,.preference-toggle input::before { transition:none; } }
   </style>
@@ -162,9 +159,9 @@
           <img src="/assets/kg%20logo.webp" alt="KidsGastro logo" width="48" height="48">
           <div><strong>KidsGastro</strong><small>Website administration</small></div>
         </div>
-        <p class="updates-kicker">Website settings</p>
-        <h1>Updates</h1>
-        <p>Change the announcement and booking buttons. Load either the default setup or your previously published settings, then publish your updated choices.</p>
+        <p class="updates-kicker">Website administration</p>
+        <h1>Website communication centre</h1>
+        <p>Manage your website announcement, booking availability and display settings. Select a starting setup to load it automatically, make your changes and publish.</p>
       </header>
 
       <div class="updates-toolbar">
@@ -186,7 +183,6 @@
               <span><strong>Load previous edited settings</strong></span>
             </label>
           </div>
-          <button class="load-settings-button" id="load-selected-setting" type="button" disabled>Load selected settings</button>
         </div>
 
         <div class="preference-list">
@@ -293,7 +289,6 @@
       const shineToggle = $("marquee-shine-enabled");
       const authorizationAcknowledged = $("authorization-acknowledged");
       const sourceRadios = Array.from(document.querySelectorAll('input[name="settings-source"]'));
-      const loadButton = $("load-selected-setting");
       const publishButton = $("publish-changes");
       const status = $("settings-status");
       const dialog = $("publish-dialog");
@@ -383,7 +378,6 @@
         shineToggle.disabled = disabled;
         authorizationAcknowledged.disabled = disabled;
         sourceRadios.forEach(radio => { radio.disabled = loading || publishing; });
-        loadButton.disabled = loading || publishing || !selectedSource();
         publishButton.disabled = !settingsLoaded || !authorizationAcknowledged.checked || publishing || selectedSource() !== loadedSource;
         updatePreview();
       }
@@ -527,19 +521,20 @@
         if (!result || result.success !== true) throw new Error("The service did not confirm that settings were saved.");
       }
 
-      loadButton.addEventListener("click", async () => {
-        const source = selectedSource();
+      async function loadSelectedSource(source) {
         if (!source || loading || publishing) return;
-        if (settingsDirty && !window.confirm("Loading this starting point will replace your unsaved edits. Continue?")) return;
+        if (settingsDirty && !window.confirm("Loading this starting point will replace your unsaved edits. Continue?")) {
+          sourceRadios.forEach(radio => { radio.checked = radio.value === loadedSource; });
+          setStatus(status, "Your current edits have been kept.", "");
+          updateControls();
+          return;
+        }
         if (source === "default") loadDefaultSettings();
         else if (source === "previous") await loadPreviousSettings();
-      });
+      }
 
-      sourceRadios.forEach(radio => radio.addEventListener("change", () => {
-        updateControls();
-        if (settingsLoaded && selectedSource() !== loadedSource) {
-          setStatus(status, "Load the newly selected starting setting before publishing.", "");
-        }
+      sourceRadios.forEach(radio => radio.addEventListener("change", async () => {
+        await loadSelectedSource(selectedSource());
       }));
 
       publishButton.addEventListener("click", () => {
