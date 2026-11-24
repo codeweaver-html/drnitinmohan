@@ -477,8 +477,8 @@ const SITE_CONFIG = {
       <form id="booking-form" class="booking-form" novalidate>
         <div class="booking-head"><h2 id="kg-rb-booking-heading">Enter details</h2><button type="button" class="dialog-close" data-close-booking aria-label="Close appointment form">×</button></div>
         <div class="booking-fields">
-          <label>Child’s name<input id="booking-child-name" name="childName" type="text" autocomplete="name" required></label>
-          <label>Child’s age<input id="booking-child-age" name="childAge" type="text" autocomplete="off" maxlength="60" required></label>
+          <label>Patient name<input id="booking-patient-name" name="patientName" type="text" autocomplete="name" required></label>
+          <label>Patient age<input id="booking-patient-age" name="patientAge" type="text" autocomplete="off" maxlength="60" required></label>
           <label>Phone number<input id="booking-phone" name="phone" type="tel" inputmode="numeric" autocomplete="tel" minlength="10" maxlength="10" pattern="[0-9]{10}" placeholder="10-digit phone number" required></label>
           <label class="booking-date-label">Preferred date<input id="booking-date" name="date" type="date" required><small class="booking-date-hint">Choose from today and tomorrow.</small></label>
           <label class="booking-time-field">Preferred time (30-minute slots)
@@ -674,13 +674,13 @@ const SITE_CONFIG = {
     }
 
     function bookingIssues() {
-      const childName = dialog.querySelector("#booking-child-name").value.trim();
-      const childAge = dialog.querySelector("#booking-child-age").value.trim();
+      const patientName = dialog.querySelector("#booking-patient-name").value.trim();
+      const patientAge = dialog.querySelector("#booking-patient-age").value.trim();
       const date = dateInput.value;
       const phone = dialog.querySelector("#booking-phone").value.trim();
       const issues = [];
-      if (!childName) issues.push({ message: "Enter the child’s name.", id: "booking-child-name" });
-      if (!childAge) issues.push({ message: "Enter the child’s age.", id: "booking-child-age" });
+      if (!patientName) issues.push({ message: "Enter the patient name.", id: "booking-patient-name" });
+      if (!patientAge) issues.push({ message: "Enter the patient age.", id: "booking-patient-age" });
       if (!/^\d{10}$/.test(phone)) issues.push({ message: "Enter a valid 10-digit phone number.", id: "booking-phone" });
       if (!date || date < todayKey || date > tomorrowKey) issues.push({ message: "Choose a date from today or tomorrow.", id: "booking-date" });
       const selectedMinutes = Number(timeInput.value);
@@ -766,7 +766,7 @@ const SITE_CONFIG = {
       ensureRecaptcha().catch(reason => {
         if (isDialogOpen() && reason && reason.name !== "AbortError") error.textContent = reason.message;
       });
-      const name = dialog.querySelector("#booking-child-name");
+      const name = dialog.querySelector("#booking-patient-name");
       if (name) name.focus();
     }
 
@@ -906,8 +906,8 @@ const SITE_CONFIG = {
       if (requestInProgress) return;
       error.textContent = "";
       refreshDateBounds();
-      const childName = dialog.querySelector("#booking-child-name").value.trim();
-      const childAge = dialog.querySelector("#booking-child-age").value.trim();
+      const patientName = dialog.querySelector("#booking-patient-name").value.trim();
+      const patientAge = dialog.querySelector("#booking-patient-age").value.trim();
       const phone = dialog.querySelector("#booking-phone").value.trim();
       const date = dateInput.value;
       const slotValue = timeInput.value;
@@ -935,8 +935,8 @@ const SITE_CONFIG = {
       const message = [
         "Hello, I would like to request an appointment with Dr. Nitin Mohan.",
         "",
-        `Child: ${childName}`,
-        `Age: ${childAge}`,
+        `Patient name: ${patientName}`,
+        `Patient age: ${patientAge}`,
         `Parent/guardian phone: ${phone}`,
         `Preferred date: ${dateText}`,
         `Preferred time: ${timeText}`,
@@ -966,7 +966,7 @@ const SITE_CONFIG = {
         const verification = await response.json();
         if (thisAttempt !== attemptId || !isDialogOpen()) return;
         if (!verification || verification.success !== true) throw new Error("We could not verify this request. Please try again.");
-        try { sessionStorage.setItem("kg_pending_appointment_confirmation", JSON.stringify({ childName, date: dateText, time: timeText, savedAt: Date.now() })); } catch (_) {}
+        try { sessionStorage.setItem("kg_pending_appointment_confirmation", JSON.stringify({ patientName, date: dateText, time: timeText, savedAt: Date.now() })); } catch (_) {}
         requestInProgress = false;
         submit.disabled = false;
         submit.textContent = "Continue to WhatsApp";
