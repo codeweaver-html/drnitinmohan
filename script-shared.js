@@ -251,18 +251,38 @@ const SITE_CONFIG = {
     }
   }
   function initHeaderFooterHaptics() {
-    if (!navigator || typeof navigator.vibrate !== "function") return;
+    if (typeof navigator === "undefined" || typeof navigator.vibrate !== "function") return;
+    const interactiveSelector = [
+      "#site-header-mount a", "#site-header-mount button", "#site-header-mount summary",
+      "#site-footer-mount a", "#site-footer-mount button", "#site-footer-mount summary",
+      "main a[href]", "main button", "main summary", "main [role=button]",
+      ".floating-booking", ".image-viewer button", "dialog button"
+    ].join(", ");
+
     document.addEventListener("click", event => {
       const target = event.target;
-      const control = target && target.closest
-        ? target.closest(
-            "#site-header-mount a, #site-header-mount button, #site-header-mount summary, " +
-            "#site-footer-mount a, #site-footer-mount button, #site-footer-mount summary"
-          )
-        : null;
+      const control = target && target.closest ? target.closest(interactiveSelector) : null;
       if (!control || control.disabled || control.getAttribute("aria-disabled") === "true") return;
-      try { navigator.vibrate(10); } catch (_) {}
+      try { navigator.vibrate(8); } catch (_) {}
     }, { passive: true });
+  }
+
+  function initBookHaloEcho() {
+    const halo = document.querySelector(".book-halo");
+    if (!halo) return;
+    const reducedMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reducedMotion) return;
+
+    const replay = () => {
+      halo.classList.remove("is-echoing");
+      void halo.offsetWidth;
+      halo.classList.add("is-echoing");
+    };
+
+    replay();
+    window.addEventListener("pageshow", event => {
+      if (event.persisted && !document.hidden) replay();
+    });
   }
   /* ===== END BLOCK: HEADER_FOOTER ===== */
 
@@ -519,8 +539,8 @@ const SITE_CONFIG = {
           <button type="button" class="kg-date-restriction-close" data-close-date-restriction aria-label="Close message">×</button>
           <p class="kg-date-restriction-kicker">Appointment date</p>
           <h2 id="kg-date-restriction-title">Please choose today or tomorrow</h2>
-          <p>Appointments can only be requested for today or tomorrow.</p>
-          <button type="button" class="kg-date-restriction-ok" data-close-date-restriction>Got it</button>
+          <p>Appointments can only be booked for today or tomorrow.</p>
+          <button type="button" class="kg-date-restriction-ok" data-close-date-restriction>Okay</button>
         </div>`;
       body.append(dateRestrictionDialog);
     }
@@ -1689,6 +1709,7 @@ const SITE_CONFIG = {
   initBrandLogoLinks();
   initNav();
   if (typeof initHomeContent === "function") initHomeContent();
+  if (typeof initBookHaloEcho === "function") initBookHaloEcho();
   if (typeof initHeroTyping === "function") initHeroTyping();
   if (typeof initAnnouncement === "function") initAnnouncement();
   if (typeof initBooking === "function") initBooking();
