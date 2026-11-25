@@ -170,8 +170,6 @@ const SITE_CONFIG = {
 
   /* ===== BLOCK: HEADER_FOOTER ===== */
   const homeUrl = () => window.location.protocol === "file:" ? "./" : basePath;
-  /* Back to top returns to the current page, not the homepage or an in-page content anchor. */
-  const pageTopUrl = () => `${window.location.pathname}${window.location.search}`;
   const hrefFor = item => {
     if (item.href) return item.href;
     if (item.homeAnchor) return `${homeUrl()}#${encodeURIComponent(item.homeAnchor)}`;
@@ -246,7 +244,7 @@ const SITE_CONFIG = {
           <div><strong>Phone</strong><a href="tel:+${SITE_CONFIG.contact.phoneE164}">${escapeHtml(SITE_CONFIG.contact.phoneDisplay)}</a></div>
           <div id="site-footer-share-mount"></div>
         </div></div>
-        <div class="site-container site-footer-bottom"><a class="site-footer-brand" href="${escapeHtml(homeUrl())}" aria-label="KidsGastro home"><img src="${asset("assets/kg%20logo.webp")}" alt="KidsGastro logo" width="50" height="50"><span>KidsGastro<small>Paediatric Gastroenterology · Dr. Nitin Mohan</small></span></a><p>${escapeHtml(SITE_CONFIG.content.footer)}</p><a class="site-back-to-top" href="${escapeHtml(pageTopUrl())}">Back to top ↑</a></div>
+        <div class="site-container site-footer-bottom"><a class="site-footer-brand" href="${escapeHtml(homeUrl())}" aria-label="KidsGastro home"><img src="${asset("assets/kg%20logo.webp")}" alt="KidsGastro logo" width="50" height="50"><span>KidsGastro<small>Paediatric Gastroenterology · Dr. Nitin Mohan</small></span></a><p>${escapeHtml(SITE_CONFIG.content.footer)}</p><button class="site-back-to-top" type="button">Back to top ↑</button></div>
       </footer>`;
     }
   }
@@ -1591,9 +1589,17 @@ const SITE_CONFIG = {
 
   /* ===== BLOCK: BACK_TO_TOP ===== */
   function initBackToTop() {
-    /* Back-to-top is intentionally provided only by the footer link. Remove
-       legacy floating buttons that may remain in older subsite HTML files. */
+    /* Keep the shared footer control on the current page and scroll to the
+       document's actual top; do not navigate or reload the active subsite. */
     document.querySelectorAll("#back-to-top, button.back-to-top").forEach(button => button.remove());
+    const button = document.querySelector(".site-back-to-top");
+    if (!button) return;
+
+    button.addEventListener("click", () => {
+      const reduceMotion = window.matchMedia
+        && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      window.scrollTo({ top: 0, behavior: reduceMotion ? "auto" : "smooth" });
+    });
   }
   /* ===== END BLOCK: BACK_TO_TOP ===== */
 
