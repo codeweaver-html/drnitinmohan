@@ -146,22 +146,6 @@
 }</script>
   <title>Dr. Nitin Mohan | Paediatric Gastroenterologist in Hisar</title>
 
-  <!-- word fill start -->
-  <style>
-    .wf-word { display: inline; }
-    @supports (animation-timeline: view()) {
-      @media (prefers-reduced-motion: no-preference) {
-        [data-word-fill] .wf-word {
-          opacity: 0.16;
-          animation: wf-fill linear both;
-          animation-timeline: view();
-          animation-range: cover 10% cover 45%;
-        }
-      }
-    }
-    @keyframes wf-fill { to { opacity: 1; } }
-  </style>
-  <!-- word fill end -->
 </head>
 <body data-site-page="home">
   <a class="site-skip" href="#site-main">Skip to content</a>
@@ -559,87 +543,5 @@
 
   <script src="/script-shared.js" defer></script>
 
-  <!-- word fill start -->
-  <script>
-    (() => {
-      const copy = document.querySelector(".home-about-copy");
-      if (
-        !copy ||
-        !window.MutationObserver ||
-        !window.CSS ||
-        !CSS.supports("animation-timeline: view()") ||
-        (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches)
-      ) return;
-
-      const paragraphs = Array.from(copy.querySelectorAll(
-        '[data-site-copy="aboutParagraphOne"], [data-site-copy="aboutParagraphTwo"]'
-      ));
-      if (!paragraphs.length) return;
-
-      const request = window.__kgSiteControlsRequest;
-      let domReady = document.readyState !== "loading";
-      let requestReady = !request || typeof request.then !== "function";
-      const pending = new Set();
-      const observeOptions = { childList: true, characterData: true, subtree: true };
-
-      function splitWords(el) {
-        const text = el.textContent.trim().replace(/\s+/g, " ");
-        if (!text || el.dataset.wfDone === text) return;
-
-        const fragment = document.createDocumentFragment();
-        text.split(" ").forEach((word, index, words) => {
-          const span = document.createElement("span");
-          span.className = "wf-word";
-          span.textContent = word;
-          fragment.appendChild(span);
-          if (index < words.length - 1) fragment.appendChild(document.createTextNode(" "));
-        });
-
-        el.replaceChildren(fragment);
-        el.dataset.wfDone = text;
-        el.setAttribute("data-word-fill", "");
-      }
-
-      function flush() {
-        if (!domReady || !requestReady || !pending.size) return;
-        observer.disconnect();
-        pending.forEach(splitWords);
-        pending.clear();
-        observer.observe(copy, observeOptions);
-      }
-
-      const observer = new MutationObserver(records => {
-        paragraphs.forEach(paragraph => {
-          if (records.some(record =>
-            record.target === paragraph || paragraph.contains(record.target)
-          )) pending.add(paragraph);
-        });
-        flush();
-      });
-
-      observer.observe(copy, observeOptions);
-
-      if (!domReady) {
-        document.addEventListener("DOMContentLoaded", () => {
-          domReady = true;
-          paragraphs.forEach(paragraph => pending.add(paragraph));
-          flush();
-        }, { once: true });
-      } else {
-        paragraphs.forEach(paragraph => pending.add(paragraph));
-      }
-
-      Promise.resolve(request).then(() => {
-        requestReady = true;
-        paragraphs.forEach(paragraph => pending.add(paragraph));
-        flush();
-      }, () => {
-        requestReady = true;
-        paragraphs.forEach(paragraph => pending.add(paragraph));
-        flush();
-      });
-    })();
-  </script>
-  <!-- word fill end -->
 </body>
 </html>
