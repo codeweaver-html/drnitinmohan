@@ -21,63 +21,46 @@ permalink: /blog/
 .kg-blog-title-with-new { display:flex; align-items:center; gap:10px; }
 .kg-blog-new-label { display:inline-flex; flex:0 0 auto; align-items:center; margin-top:.12em; padding:5px 9px; border-radius:6px; background:#e32932; color:#fff; font-size:.68rem; font-weight:800; letter-spacing:.045em; line-height:1; }
 
-/* The L itself is one clipped grid item, not two independently animated
-   blue panels. One clip-path transition reveals/retracts both arms together. */
 body[data-site-page="blog"] .kg-blog-stage {
   --kg-blog-promo-transition:1.5s cubic-bezier(.22,.61,.36,1);
   --kg-blog-promo-side:clamp(66px,8vw,104px);
   --kg-blog-promo-bar:clamp(66px,9vh,86px);
+  box-sizing:border-box;
+  padding-left:0;
+  padding-bottom:0;
+  transition:
+    padding-left var(--kg-blog-promo-transition),
+    padding-bottom var(--kg-blog-promo-transition);
+}
+body[data-site-page="blog"] .kg-blog-stage.is-promoting {
+  padding-left:var(--kg-blog-promo-side);
+  padding-bottom:var(--kg-blog-promo-bar);
+}
+body[data-site-page="blog"] .kg-blog-promo[hidden] { display:none; }
+body[data-site-page="blog"] .kg-blog-promo:not([hidden]) {
+  position:fixed;
+  left:0;
+  right:0;
+  bottom:0;
+  top:var(--kg-promo-top, 0px);
+  z-index:50;
   display:grid;
   grid-template-columns:0px minmax(0,1fr);
   grid-template-rows:minmax(0,1fr) 0px;
-  transition:
-    grid-template-columns var(--kg-blog-promo-transition),
-    grid-template-rows var(--kg-blog-promo-transition),
-    height var(--kg-blog-promo-transition);
-  box-sizing:border-box;
-}
-body[data-site-page="blog"] .kg-blog-stage.is-promoting {
-  grid-template-columns:var(--kg-blog-promo-side) minmax(0,1fr);
-  grid-template-rows:minmax(0,1fr) var(--kg-blog-promo-bar);
-  height:var(--kg-promo-stage-height, calc(100vh - 150px));
-  min-height:240px;
-  overflow:hidden;
-}
-body[data-site-page="blog"] .kg-blog-stage.is-leaving { overflow:hidden; }
-body[data-site-page="blog"] .kg-blog-stage > main.site-main {
-  grid-column:2;
-  grid-row:1;
-  width:100%;
-  min-width:0;
-}
-body[data-site-page="blog"] .kg-blog-promo[hidden] { display:none !important; }
-body[data-site-page="blog"] .kg-blog-promo:not([hidden]) {
-  grid-column:1 / -1;
-  grid-row:1 / -1;
-  z-index:2;
-  display:grid;
-  grid-template-columns:var(--kg-blog-promo-side) minmax(0,1fr);
-  grid-template-rows:minmax(0,1fr) var(--kg-blog-promo-bar);
   min-width:0;
   min-height:0;
-  background:var(--kg-blue, #005EB8);
   color:#fff;
   pointer-events:none;
-  -webkit-clip-path:polygon(0 0, 0 0, 0 0, 0 0, 0 0, 0 0);
-  clip-path:polygon(0 0, 0 0, 0 0, 0 0, 0 0, 0 0);
   transition:
-    -webkit-clip-path var(--kg-blog-promo-transition),
-    clip-path var(--kg-blog-promo-transition);
+    grid-template-columns var(--kg-blog-promo-transition),
+    grid-template-rows var(--kg-blog-promo-transition);
 }
 body[data-site-page="blog"] .kg-blog-stage.is-promoting .kg-blog-promo:not([hidden]) {
-  -webkit-clip-path:polygon(0 0, var(--kg-blog-promo-side) 0, var(--kg-blog-promo-side) calc(100% - var(--kg-blog-promo-bar)), 100% calc(100% - var(--kg-blog-promo-bar)), 100% 100%, 0 100%);
-  clip-path:polygon(0 0, var(--kg-blog-promo-side) 0, var(--kg-blog-promo-side) calc(100% - var(--kg-blog-promo-bar)), 100% calc(100% - var(--kg-blog-promo-bar)), 100% 100%, 0 100%);
-}
-body[data-site-page="blog"] .kg-blog-stage.is-leaving .kg-blog-promo:not([hidden]) {
-  -webkit-clip-path:polygon(0 0, 0 0, 0 0, 0 0, 0 0, 0 0);
-  clip-path:polygon(0 0, 0 0, 0 0, 0 0, 0 0, 0 0);
+  grid-template-columns:var(--kg-blog-promo-side) minmax(0,1fr);
+  grid-template-rows:minmax(0,1fr) var(--kg-blog-promo-bar);
 }
 body[data-site-page="blog"] .kg-blog-promo__side {
+  background:var(--kg-blue, #005EB8);
   grid-column:1;
   grid-row:1 / span 2;
   display:flex;
@@ -114,6 +97,7 @@ body[data-site-page="blog"] .kg-blog-promo__vertical-title {
   text-align:center;
 }
 body[data-site-page="blog"] .kg-blog-promo__bar {
+  background:var(--kg-blue, #005EB8);
   grid-column:2;
   grid-row:2;
   display:flex;
@@ -132,13 +116,6 @@ body[data-site-page="blog"] .kg-blog-promo__message {
   font-size:clamp(.88rem,2vw,1.3rem);
   font-weight:700;
   line-height:1.3;
-}
-body[data-site-page="blog"] .kg-blog-stage.is-promoting > main.site-main {
-  min-height:0;
-  max-width:none;
-  overflow-y:auto;
-  overscroll-behavior:contain;
-  box-sizing:border-box;
 }
 @media (max-width:480px) {
   body[data-site-page="blog"] .kg-blog-stage {
@@ -273,57 +250,39 @@ body[data-site-page="blog"] .kg-blog-stage.is-promoting > main.site-main {
 </form></dialog><div aria-label="Image viewer" aria-modal="true" class="image-viewer" hidden="" id="image-viewer" role="dialog"><button aria-label="Close image viewer" class="viewer-close" type="button">×</button><button aria-label="Zoom out" class="viewer-zoom-out" type="button">−</button><button class="viewer-reset" type="button">Reset</button><button aria-label="Zoom in" class="viewer-zoom-in" type="button">+</button><img alt="" src=""/></div>
 <script defer="" src="/script-shared.js"></script><script>
 (() => {
-  // This temporary L-shaped commercial is restricted to the blog subsite.
   if (document.body?.dataset?.sitePage !== "blog") return;
   const stage = document.getElementById("kg-blog-stage");
   const promo = document.getElementById("kg-blog-promo");
-  const main = stage?.querySelector("main.site-main");
-  if (!stage || !promo || !main) return;
+  if (!stage || !promo) return;
 
   const DISPLAY_MS = 10000;
   const REPEAT_MS = 30000;
   const TRANSITION_MS = 1500;
-  let dismissTimer = null;
-  let finishTimer = null;
-  let repeatTimer = null;
-  let isVisible = false;
-  let isClosing = false;
-  let pageIsClosing = false;
+  let dismissTimer = null, finishTimer = null, repeatTimer = null;
+  let isVisible = false, isClosing = false, pageIsClosing = false;
 
-  const updateStageHeight = () => {
+  const updateTop = () => {
     const header = document.getElementById("site-header-mount");
     const announcement = document.getElementById("site-announcement-mount");
-    const headerBottom = Math.max(
+    const top = Math.max(
       header?.getBoundingClientRect().bottom || 0,
       announcement?.getBoundingClientRect().bottom || 0,
       0
     );
-    const availableHeight = Math.max(240, window.innerHeight - Math.min(headerBottom, window.innerHeight));
-    stage.style.setProperty("--kg-promo-stage-height", `${availableHeight}px`);
-    return availableHeight;
+    promo.style.setProperty("--kg-promo-top", `${Math.min(top, window.innerHeight - 240)}px`);
   };
 
   const showPromo = () => {
     if (pageIsClosing || isVisible || isClosing) return;
     window.clearTimeout(repeatTimer);
-
-    // Freeze the current natural page height, then animate into the L-shaped grid.
-    const naturalHeight = Math.max(stage.getBoundingClientRect().height, main.scrollHeight);
-    stage.style.height = `${naturalHeight}px`;
-    void stage.offsetHeight;
+    updateTop();
     promo.hidden = false;
     isVisible = true;
-    const availableHeight = updateStageHeight();
-    // Paint both arms in their off-canvas starting positions before moving them
-    // into place together with the grid tracks and the content reflow.
-    void stage.offsetHeight;
+    void promo.offsetHeight;
     requestAnimationFrame(() => {
       if (!isVisible) return;
-      stage.classList.remove("is-leaving");
       stage.classList.add("is-promoting");
-      stage.style.height = `${availableHeight}px`;
     });
-
     dismissTimer = window.setTimeout(dismissPromo, DISPLAY_MS);
     repeatTimer = window.setTimeout(showPromo, REPEAT_MS);
   };
@@ -333,34 +292,15 @@ body[data-site-page="blog"] .kg-blog-stage.is-promoting > main.site-main {
     isVisible = false;
     isClosing = true;
     window.clearTimeout(dismissTimer);
-
-    // Animate the stage back to the full article height before removing the advert.
-    const currentHeight = stage.getBoundingClientRect().height;
-    const naturalHeight = Math.max(main.scrollHeight, currentHeight);
-    stage.style.height = `${currentHeight}px`;
-    void stage.offsetHeight;
-    // Both L arms retract on the same frame and use the same transition curve.
     stage.classList.remove("is-promoting");
-    stage.classList.add("is-leaving");
-    stage.style.height = `${naturalHeight}px`;
-
     finishTimer = window.setTimeout(() => {
       promo.hidden = true;
-      stage.classList.remove("is-leaving");
-      stage.style.height = "";
-      stage.style.removeProperty("--kg-promo-stage-height");
       isClosing = false;
     }, TRANSITION_MS + 80);
   };
 
-  window.addEventListener("resize", () => {
-    if (isVisible) {
-      const availableHeight = updateStageHeight();
-      stage.style.height = `${availableHeight}px`;
-    }
-  }, { passive:true });
+  window.addEventListener("resize", () => { if (isVisible) updateTop(); }, { passive:true });
 
-  // Wait for the shared header and announcement to mount before measuring the page.
   if (document.readyState === "loading") {
     document.addEventListener("DOMContentLoaded", showPromo, { once:true });
   } else {
