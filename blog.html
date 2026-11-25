@@ -18,8 +18,123 @@ permalink: /blog/
 .kg-blog-list > article > div > p:first-child { margin:0 0 8px; color:var(--kg-blue); font-size:.72rem; font-weight:800; letter-spacing:.045em; text-transform:uppercase; }
 .kg-blog-list .kg-blog-card-featured { border-color:#a9cbe6; box-shadow:0 12px 32px rgba(9,52,91,.09); }
 .kg-blog-list h2 { margin:4px 0 10px; padding:0; border:0; font-size:clamp(1.15rem,2.2vw,1.48rem); }
-.kg-blog-title-with-image { display:flex; align-items:center; gap:13px; }
-.kg-blog-list .kg-blog-latest-image { display:block; width:58px; height:58px; max-height:58px; flex:0 0 58px; object-fit:cover; border-radius:10px; }
+.kg-blog-title-with-new { display:flex; align-items:center; gap:10px; }
+.kg-blog-new-label { display:inline-flex; flex:0 0 auto; align-items:center; margin-top:.12em; padding:5px 9px; border-radius:6px; background:#e32932; color:#fff; font-size:.68rem; font-weight:800; letter-spacing:.045em; line-height:1; }
+
+/* Temporary in-flow L-shaped blog commercial. Both arms share one transition
+   clock and enter/leave together while the article area makes room for them. */
+body[data-site-page="blog"] .kg-blog-stage {
+  --kg-blog-promo-transition:1.5s cubic-bezier(.22,.61,.36,1);
+  display:grid;
+  grid-template-columns:0px minmax(0,1fr);
+  grid-template-rows:minmax(0,1fr) 0px;
+  transition:
+    grid-template-columns var(--kg-blog-promo-transition),
+    grid-template-rows var(--kg-blog-promo-transition),
+    height var(--kg-blog-promo-transition);
+  box-sizing:border-box;
+}
+body[data-site-page="blog"] .kg-blog-stage.is-promoting {
+  grid-template-columns:clamp(66px,8vw,104px) minmax(0,1fr);
+  grid-template-rows:minmax(0,1fr) clamp(66px,9vh,86px);
+  height:var(--kg-promo-stage-height, calc(100vh - 150px));
+  min-height:240px;
+  overflow:hidden;
+}
+body[data-site-page="blog"] .kg-blog-stage.is-leaving { overflow:hidden; }
+body[data-site-page="blog"] .kg-blog-stage > main.site-main {
+  grid-column:2;
+  grid-row:1;
+  width:100%;
+  min-width:0;
+}
+body[data-site-page="blog"] .kg-blog-promo[hidden] { display:none !important; }
+body[data-site-page="blog"] .kg-blog-promo:not([hidden]) { display:contents; }
+body[data-site-page="blog"] .kg-blog-promo__side {
+  grid-column:1;
+  grid-row:1 / span 2;
+  display:flex;
+  min-width:0;
+  flex-direction:column;
+  align-items:center;
+  justify-content:flex-start;
+  gap:clamp(18px,4vh,34px);
+  padding:14px 8px;
+  box-sizing:border-box;
+  overflow:hidden;
+  background:var(--kg-blue, #005EB8);
+  color:#fff;
+  transform:translate3d(-105%,0,0);
+  transition:transform var(--kg-blog-promo-transition);
+  will-change:transform;
+}
+body[data-site-page="blog"] .kg-blog-promo__brand img {
+  display:block;
+  width:clamp(38px,5.2vw,64px);
+  height:clamp(38px,5.2vw,64px);
+  object-fit:contain;
+}
+body[data-site-page="blog"] .kg-blog-promo__vertical-title {
+  margin:0;
+  color:#fff;
+  font-size:clamp(1rem,2vw,1.4rem);
+  font-weight:800;
+  letter-spacing:.075em;
+  line-height:1.1;
+  white-space:nowrap;
+  writing-mode:vertical-rl;
+  transform:rotate(180deg);
+  text-align:center;
+}
+body[data-site-page="blog"] .kg-blog-promo__bar {
+  grid-column:2;
+  grid-row:2;
+  display:flex;
+  min-width:0;
+  align-items:center;
+  justify-content:center;
+  padding:10px clamp(12px,3vw,30px);
+  box-sizing:border-box;
+  background:var(--kg-blue, #005EB8);
+  color:#fff;
+  text-align:center;
+  transform:translate3d(0,105%,0);
+  transition:transform var(--kg-blog-promo-transition);
+  will-change:transform;
+}
+body[data-site-page="blog"] .kg-blog-promo__message {
+  margin:0;
+  color:#fff;
+  font-size:clamp(.88rem,2vw,1.3rem);
+  font-weight:700;
+  line-height:1.3;
+}
+body[data-site-page="blog"] .kg-blog-stage.is-promoting .kg-blog-promo__side,
+body[data-site-page="blog"] .kg-blog-stage.is-promoting .kg-blog-promo__bar {
+  transform:translate3d(0,0,0);
+}
+body[data-site-page="blog"] .kg-blog-stage.is-promoting > main.site-main {
+  min-height:0;
+  max-width:none;
+  overflow-y:auto;
+  overscroll-behavior:contain;
+  box-sizing:border-box;
+}
+@media (max-width:480px) {
+  body[data-site-page="blog"] .kg-blog-stage.is-promoting {
+    grid-template-columns:58px minmax(0,1fr);
+    grid-template-rows:minmax(0,1fr) 70px;
+  }
+  body[data-site-page="blog"] .kg-blog-promo__side { padding:12px 5px; }
+  body[data-site-page="blog"] .kg-blog-promo__brand img { width:38px; height:38px; }
+  body[data-site-page="blog"] .kg-blog-promo__vertical-title { font-size:.9rem; }
+  body[data-site-page="blog"] .kg-blog-promo__message { font-size:.82rem; }
+}
+@media (prefers-reduced-motion:reduce) {
+  body[data-site-page="blog"] .kg-blog-stage,
+  body[data-site-page="blog"] .kg-blog-promo__side,
+  body[data-site-page="blog"] .kg-blog-promo__bar { transition:none; }
+}
 .kg-blog-list time { color:var(--kg-muted); font-size:.76rem; }
 .kg-blog-card-details { margin-top:14px; }
 .kg-blog-summary-toggle { display:inline-flex; min-height:42px; align-items:center; padding:9px 17px; list-style:none; cursor:pointer; }
@@ -39,20 +154,28 @@ permalink: /blog/
 .kg-blog-back { margin-top:26px; font-weight:800; }
 @media (max-width:680px) {
   .kg-blog-list > article { padding:17px; }
-  .kg-blog-title-with-image { align-items:flex-start; gap:10px; }
-  .kg-blog-list .kg-blog-latest-image { width:48px; height:48px; max-height:48px; flex-basis:48px; }
+  .kg-blog-title-with-new { align-items:flex-start; gap:9px; }
   .kg-blog-booking { padding:18px; }
 }
 /* ===== END BLOCK: BLOG_CONTENT ===== */
 </style>
 </head>
 <body data-site-page="blog"><a class="site-skip" href="#site-main">Skip to content</a><div id="site-header-mount"></div><div id="site-announcement-mount"></div>
+
 <noscript><div class="site-noscript-nav"><a href="/treatments/">Treatments</a><a href="/services/">Services</a><a href="/faqs/">FAQs</a><a href="/blog/">Blog</a><a href="/testimonials/">Testimonials</a><a href="/gallery/">Gallery</a><a href="/publications/">Research articles &amp; publications</a><a href="/#site-footer-mount">Contact Us</a></div></noscript>
+<div class="kg-blog-stage" id="kg-blog-stage">
+<aside aria-label="New KidsGastro blog announcement" class="kg-blog-promo" hidden="" id="kg-blog-promo">
+  <div class="kg-blog-promo__side">
+    <div class="kg-blog-promo__brand"><img alt="KidsGastro logo" decoding="async" height="64" src="/assets/kg%20logo.webp?v=20261122" width="64"/></div>
+    <p class="kg-blog-promo__vertical-title">NEW BLOG OUT NOW</p>
+  </div>
+  <div class="kg-blog-promo__bar"><p class="kg-blog-promo__message">Check the top of the page to know more!</p></div>
+</aside>
 <main class="site-main site-page-main" id="site-main"><div class="site-container"><div class="site-page-content" data-searchable="" id="site-page-content"><span class="site-eyebrow">KidsGastro Blog</span><h1 id="latest-articles-heading">Latest Articles</h1><p class="kg-blog-intro">Research summaries on child health, prevention and paediatric care. Please read the original sources linked in each article.</p><section aria-label="Latest KidsGastro articles" class="kg-blog-list" id="article-list"><article class="kg-blog-card kg-blog-card-featured" data-published="2026-11-22T10:00:00+05:30">
 
 <div>
 <p>Global · Paediatric hepatology · October 2026</p>
-<h2 class="kg-blog-title-with-image"><img alt="Latest article" class="kg-blog-latest-image" decoding="async" height="58" loading="lazy" src="/assets/new.webp" width="58"/>Hepatitis C in Children: Silent, Often Missed, and Treatable</h2>
+<h2 class="kg-blog-title-with-new"><span class="kg-blog-new-label">NEW</span><span>Hepatitis C in Children: Silent, Often Missed, and Treatable</span></h2>
 <p>Chronic hepatitis C in children rarely causes symptoms, which is why many cases go undiagnosed. A global burden study published in October 2026 in <em>eClinicalMedicine</em> used Global Burden of Disease 2023 estimates to track paediatric hepatitis C from 1990 to 2023 and to ask how far the world is from the WHO 2030 elimination goal. The authors point out that the infection is often…</p>
 <p><time datetime="2026-11-22T10:00:00+05:30">Published 22 November 2026 · 10:00 AM IST</time></p>
 
@@ -122,10 +245,114 @@ permalink: /blog/
 </details>
 </div>
 </article><article class="kg-blog-card" data-published="2026-10-26T10:42:00+05:30"><div><p>India · National health survey · 2026</p><h2>India Reports Progress in Childhood Vaccination and Nutrition</h2><p>India’s latest National Family Health Survey (NFHS-6), released in May 2026, reports encouraging improvements in childhood immunisation and nutrition. Full vaccination coverage among children aged 12–23 months increased from 83.8% to 87.1%. The survey also recorded…</p><p><time datetime="2026-10-26T10:42:00+05:30">Published 26 October 2026 · 10:42 AM IST</time></p><details class="kg-blog-card-details"><summary class="site-button site-button-secondary kg-blog-summary-toggle">Read full summary</summary><div><p>Nutritional indicators also showed progress. Stunting among children under five declined from 35.5% to 29.3%, while severe wasting decreased from 7.7% to 5.2%. These findings suggest improvements in several important dimensions of child health, although undernutrition remains a significant public health concern.</p><p>The results reinforce the importance of routine immunisation, breastfeeding support, appropriate complementary feeding and early identification of growth faltering. Healthcare professionals and families both have an essential role in ensuring that children receive timely preventive care.</p><p>However, national averages can conceal differences between states, districts and socioeconomic groups. Continued investment in primary healthcare, nutrition programmes and community-based follow-up will be necessary to sustain progress and reach vulnerable populations.</p><p>The key message is clear: improving child health requires not only access to treatment but also strong preventive healthcare from pregnancy through early childhood.</p><p>Source: <a href="https://www.pib.gov.in/PressReleasePage.aspx?PRID=2266600&amp;lang=2&amp;reg=3" rel="noopener noreferrer" target="_blank">Press Information Bureau — NFHS-6, May 2026 ↗</a></p></div></details></div></article><article class="kg-blog-card" data-published="2026-10-21T16:18:00+05:30"><div><p>India · Infectious diseases · April 2026</p><h2>Typhoid Antibiotic Resistance in India: New Research Offers Important Insights</h2><p>A 2026 study examining nearly five decades of data on typhoid fever in India has highlighted important changes in antibiotic resistance. Researchers found that multidrug-resistant Salmonella Typhi, which was a major concern in earlier decades, has…</p><p><time datetime="2026-10-21T16:18:00+05:30">Published 21 October 2026 · 4:18 PM IST</time></p><details class="kg-blog-card-details"><summary class="site-button site-button-secondary kg-blog-summary-toggle">Read full summary</summary><div><p>These findings demonstrate why antibiotic selection must be guided by current evidence rather than historical prescribing habits. A medicine that was effective in the past may no longer provide reliable treatment when bacterial resistance changes. Conversely, some older antibiotics may regain a role when laboratory testing confirms susceptibility.</p><p>For clinicians, blood culture and antimicrobial susceptibility testing can help guide appropriate treatment wherever feasible. Local resistance patterns are particularly important because bacterial susceptibility may vary across regions and healthcare settings.</p><p>Prevention remains equally essential. Typhoid vaccination, safe drinking water, sanitation, hand hygiene and food safety can reduce transmission and the need for antibiotic treatment.</p><p>The study does not mean that antibiotics should be changed routinely or that older drugs are suitable for every patient. Treatment decisions must remain individualised and follow current clinical guidance.</p><p>The broader lesson is that continuous resistance surveillance and responsible antibiotic use are essential to preserving effective treatments for future generations.</p><p>Source: <a href="https://www.lshtm.ac.uk/newsevents/news/2026/new-study-shows-shifting-typhoid-resistance-india" rel="noopener noreferrer" target="_blank">London School of Hygiene &amp; Tropical Medicine — Typhoid resistance in India ↗</a></p></div></details></div></article><article class="kg-blog-card" data-published="2026-10-15T09:26:00+05:30"><div><p>India · Paediatric research · October 2026</p><h2>Childhood Scrub Typhus: Can Early Laboratory Markers Predict Severe Illness?</h2><p>Scrub typhus remains an important cause of acute febrile illness in children across South Asia. A study published in October 2026 examined children admitted with confirmed scrub typhus to a tertiary-care centre in South India, investigating…</p><p><time datetime="2026-10-15T09:26:00+05:30">Published 15 October 2026 · 9:26 AM IST</time></p><details class="kg-blog-card-details"><summary class="site-button site-button-secondary kg-blog-summary-toggle">Read full summary</summary><div><p>The researchers studied 181 children aged 1–14 years. Critical deterioration occurred in 34.3% of the cohort, using a composite outcome that included complications such as shock, acute respiratory distress syndrome and multiple organ dysfunction. Among the children who experienced critical deterioration, the reported case fatality rate was 12.9%.</p><p>Several admission findings were associated with worsening illness, including an elevated neutrophil-to-lymphocyte ratio, increased C-reactive protein, lower serum sodium and delays in starting doxycycline. Serum albumin also showed strong discriminatory performance in the study’s initial analyses.</p><p>These findings may help clinicians identify children who require closer monitoring and timely assessment for complications. Nevertheless, the study was retrospective and conducted at a single tertiary-care centre. Its predictive model requires external validation before routine clinical use.</p><p>Clinicians should not rely on any single laboratory marker to determine severity or treatment. Clinical examination, haemodynamic status, organ function and the overall pattern of illness remain essential.</p><p>The study highlights the importance of early recognition, appropriate antimicrobial treatment and careful monitoring of children with suspected severe scrub typhus.</p><p>Source: <a href="https://pubmed.ncbi.nlm.nih.gov/42875176/" rel="noopener noreferrer" target="_blank">PubMed — Clinical and biochemical determinants of critical deterioration in paediatric scrub typhus ↗</a></p></div></details></div></article><article class="kg-blog-card" data-published="2026-10-08T14:37:00+05:30"><div><p>Global · Vaccine-preventable diseases · 2026</p><h2>Whooping Cough Worldwide: Why Pertussis Surveillance Still Matters</h2><p>Pertussis, commonly known as whooping cough, continues to be an important vaccine-preventable respiratory infection worldwide. A global burden study published in October 2026 in Nature Medicine analysed pertussis estimates covering 1990–2023, providing an updated perspective on…</p><p><time datetime="2026-10-08T14:37:00+05:30">Published 8 October 2026 · 2:37 PM IST</time></p><details class="kg-blog-card-details"><summary class="site-button site-button-secondary kg-blog-summary-toggle">Read full summary</summary><div><p>Pertussis is caused by Bordetella pertussis and spreads through respiratory droplets and close contact. Although infection can affect people of any age, infants are particularly vulnerable to severe complications, including pneumonia, apnoea and hospitalisation. Early symptoms may resemble a common cold before persistent coughing develops.</p><p>The findings reinforce the importance of maintaining high vaccination coverage and reliable disease surveillance. Routine childhood immunisation remains central to prevention, while vaccination during pregnancy, where recommended under national guidelines, can help protect young infants before they complete their own vaccine series.</p><p>Healthcare professionals should remain alert to suspected pertussis in infants with coughing episodes, breathing pauses or feeding difficulties, particularly when there is a history of exposure. Testing and treatment decisions should follow applicable clinical guidance.</p><p>Global estimates are valuable for identifying changes in disease burden and gaps in prevention, but they do not replace local surveillance data. Differences in testing, reporting and healthcare access can affect comparisons between countries.</p><p>The central message is that vaccine-preventable diseases require continued attention even when effective vaccines are available. High coverage, early recognition and timely public health action remain essential.</p><p>Source: <a href="https://www.nature.com/articles/s41591-026-04660-8" rel="noopener noreferrer" target="_blank">Nature Medicine — Global burden of pertussis, 1990–2023 ↗</a></p></div></details></div></article><article class="kg-blog-card" data-published="2026-10-02T11:05:00+05:30"><div><p>Global · Medical education and technology · 2026</p><h2>Artificial Intelligence in Paediatrics: Helpful Assistant or Clinical Risk?</h2><p>Artificial intelligence is increasingly being explored as a tool for medical education, clinical decision support and patient communication. A comparative study published in 2026 in Pediatric Research evaluated the performance of large language models in paediatric…</p><p><time datetime="2026-10-02T11:05:00+05:30">Published 2 October 2026 · 11:05 AM IST</time></p><details class="kg-blog-card-details"><summary class="site-button site-button-secondary kg-blog-summary-toggle">Read full summary</summary><div><p>Such research addresses an important question: can AI systems provide sufficiently accurate explanations of childhood infections to support learning and clinical reasoning? These tools can summarise medical information, generate practice questions and help learners organise complex topics. However, their ability to produce convincing explanations does not guarantee clinical accuracy.</p><p>Paediatrics presents particular challenges because diagnosis and treatment often depend on age, weight, developmental stage and rapidly changing clinical status. An incorrect medication dose or missed warning sign can have serious consequences. AI systems may also overlook unusual presentations, reproduce biases in training data or provide outdated recommendations.</p><p>For these reasons, AI should complement rather than replace established clinical resources, professional judgement and direct patient assessment. Medical students and doctors should verify recommendations against trusted guidelines, current evidence and local protocols.</p><p>Before AI tools are incorporated into clinical workflows, they require appropriate validation, privacy safeguards and monitoring for errors. Educational performance alone is not proof of improved patient outcomes.</p><p>The future of AI in paediatrics will depend not simply on more capable models, but on safe implementation and accountability. Used carefully, AI may support learning and efficiency while keeping clinicians responsible for decisions that affect children’s health.</p><p>Source: <a href="https://www.nature.com/articles/s41390-026-05578-0" rel="noopener noreferrer" target="_blank">Pediatric Research — Large language models in paediatric infectious disease education ↗</a></p></div></details></div></article></section><p class="kg-blog-disclaimer">Blog posts are for general educational purposes only and do not replace consultation, diagnosis or treatment by a qualified healthcare professional. For urgent or emergency symptoms, seek immediate medical attention; do not rely on this website for emergency care. Research summaries are not independent clinical guidelines; verify the original papers, methods and findings before relying on specific results for clinical decisions.</p></div></div></main>
+</div>
 <div id="site-footer-mount"></div><button aria-label="Book via WhatsApp" class="floating-booking" hidden="" id="floating-booking" type="button">Book via WhatsApp</button><div aria-hidden="true" class="scroll-progress" hidden="" id="scroll-progress"></div>
 <dialog aria-labelledby="kg-rb-booking-heading" class="kg-rb-booking-dialog" id="kg-rb-booking-dialog"><form class="booking-form" id="booking-form" novalidate="">
 <div class="booking-head"><div><p class="site-eyebrow">WhatsApp appointment</p><h2 id="kg-rb-booking-heading">Appointment details</h2></div><button aria-label="Close appointment form" class="dialog-close" data-close-booking="" type="button">×</button></div>
 <div class="booking-fields"><label>Child’s name<input autocomplete="name" id="booking-child-name" name="childName" required="" type="text"/></label><label>Child’s age<input id="booking-child-age" max="18" min="0" name="childAge" required="" step="0.1" type="number"/><span>years</span></label><label>Phone Number<input autocomplete="tel-national" id="booking-phone" inputmode="numeric" maxlength="10" name="phone" required="" type="tel"/></label><label>Preferred date<input id="booking-date" name="date" required="" type="date"/><small>Choose today or a future date.</small></label><label>Preferred time (30-minute slots)<select disabled="" id="booking-time" name="time" required=""><option value="">Select a date first to see available 30-minute appointment slots.</option></select></label></div>
 <p class="captcha-disclosure">This site is protected by reCAPTCHA. Google <a href="https://policies.google.com/privacy" rel="noopener" target="_blank">Privacy Policy</a> and <a href="https://policies.google.com/terms" rel="noopener" target="_blank">Terms of Service</a> apply.</p><p aria-live="polite" class="site-status" id="booking-error"></p><div aria-hidden="true" id="recaptcha-slot"></div><div class="booking-actions"><button class="site-button site-button-secondary" data-close-booking="" type="button">Cancel</button><button class="site-button site-button-primary" id="booking-submit" type="submit">Continue to WhatsApp</button></div>
 </form></dialog><div aria-label="Image viewer" aria-modal="true" class="image-viewer" hidden="" id="image-viewer" role="dialog"><button aria-label="Close image viewer" class="viewer-close" type="button">×</button><button aria-label="Zoom out" class="viewer-zoom-out" type="button">−</button><button class="viewer-reset" type="button">Reset</button><button aria-label="Zoom in" class="viewer-zoom-in" type="button">+</button><img alt="" src=""/></div>
-<script defer="" src="/script-shared.js"></script></body></html>
+<script defer="" src="/script-shared.js"></script><script>
+(() => {
+  // This temporary L-shaped commercial is restricted to the blog subsite.
+  if (document.body?.dataset?.sitePage !== "blog") return;
+  const stage = document.getElementById("kg-blog-stage");
+  const promo = document.getElementById("kg-blog-promo");
+  const main = stage?.querySelector("main.site-main");
+  if (!stage || !promo || !main) return;
+
+  const DISPLAY_MS = 10000;
+  const REPEAT_MS = 30000;
+  const TRANSITION_MS = 1500;
+  let dismissTimer = null;
+  let finishTimer = null;
+  let repeatTimer = null;
+  let isVisible = false;
+  let isClosing = false;
+  let pageIsClosing = false;
+
+  const updateStageHeight = () => {
+    const header = document.getElementById("site-header-mount");
+    const announcement = document.getElementById("site-announcement-mount");
+    const headerBottom = Math.max(
+      header?.getBoundingClientRect().bottom || 0,
+      announcement?.getBoundingClientRect().bottom || 0,
+      0
+    );
+    const availableHeight = Math.max(240, window.innerHeight - Math.min(headerBottom, window.innerHeight));
+    stage.style.setProperty("--kg-promo-stage-height", `${availableHeight}px`);
+    return availableHeight;
+  };
+
+  const showPromo = () => {
+    if (pageIsClosing || isVisible || isClosing) return;
+    window.clearTimeout(repeatTimer);
+
+    // Freeze the current natural page height, then animate into the L-shaped grid.
+    const naturalHeight = Math.max(stage.getBoundingClientRect().height, main.scrollHeight);
+    stage.style.height = `${naturalHeight}px`;
+    void stage.offsetHeight;
+    promo.hidden = false;
+    isVisible = true;
+    const availableHeight = updateStageHeight();
+    // Paint both arms in their off-canvas starting positions before moving them
+    // into place together with the grid tracks and the content reflow.
+    void stage.offsetHeight;
+    requestAnimationFrame(() => {
+      if (!isVisible) return;
+      stage.classList.remove("is-leaving");
+      stage.classList.add("is-promoting");
+      stage.style.height = `${availableHeight}px`;
+    });
+
+    dismissTimer = window.setTimeout(dismissPromo, DISPLAY_MS);
+    repeatTimer = window.setTimeout(showPromo, REPEAT_MS);
+  };
+
+  const dismissPromo = () => {
+    if (!isVisible || isClosing) return;
+    isVisible = false;
+    isClosing = true;
+    window.clearTimeout(dismissTimer);
+
+    // Animate the stage back to the full article height before removing the advert.
+    const currentHeight = stage.getBoundingClientRect().height;
+    const naturalHeight = Math.max(main.scrollHeight, currentHeight);
+    stage.style.height = `${currentHeight}px`;
+    void stage.offsetHeight;
+    // Both L arms retract on the same frame and use the same transition curve.
+    stage.classList.remove("is-promoting");
+    stage.classList.add("is-leaving");
+    stage.style.height = `${naturalHeight}px`;
+
+    finishTimer = window.setTimeout(() => {
+      promo.hidden = true;
+      stage.classList.remove("is-leaving");
+      stage.style.height = "";
+      stage.style.removeProperty("--kg-promo-stage-height");
+      isClosing = false;
+    }, TRANSITION_MS + 80);
+  };
+
+  window.addEventListener("resize", () => {
+    if (isVisible) {
+      const availableHeight = updateStageHeight();
+      stage.style.height = `${availableHeight}px`;
+    }
+  }, { passive:true });
+
+  // Wait for the shared header and announcement to mount before measuring the page.
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", showPromo, { once:true });
+  } else {
+    showPromo();
+  }
+
+  window.addEventListener("pagehide", () => {
+    pageIsClosing = true;
+    window.clearTimeout(dismissTimer);
+    window.clearTimeout(finishTimer);
+    window.clearTimeout(repeatTimer);
+  }, { once:true });
+})();
+</script></body></html>
