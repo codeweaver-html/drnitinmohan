@@ -422,7 +422,7 @@ body.kg-booking-disabled #floating-booking .whatsapp-brand-mark { filter:graysca
 .floating-booking { position:fixed; right:18px; bottom:20px; z-index:800; width:68px; height:68px; max-width:calc(100vw - 24px); place-items:center; padding:0; border:4px solid #fff; border-radius:50%; background:#25D366; color:#fff; box-shadow:0 10px 28px rgba(37,211,102,.32); touch-action:none; cursor:grab; }
 .floating-booking:not([hidden]) { display:grid; }
 .floating-booking:active { cursor:grabbing; }
-.whatsapp-brand-mark { display:block; width:38px; height:38px; flex:0 0 auto; object-fit:contain; }
+.whatsapp-brand-mark { display:block; width:64%; height:64%; aspect-ratio:1; flex:0 0 auto; object-fit:contain; }
 .floating-booking-label { position:absolute; right:calc(100% + 10px); top:50%; width:max-content; max-width:180px; padding:8px 12px; border:1px solid #d2efe0; border-radius:999px; background:#fff; color:#126a42; box-shadow:0 6px 18px rgba(13,95,54,.16); font-size:.76rem; font-weight:800; white-space:nowrap; opacity:0; pointer-events:none; transform:translate(6px,-50%); transition:opacity 160ms ease,transform 160ms ease; }
 .floating-booking:hover .floating-booking-label, .floating-booking:focus-visible .floating-booking-label { opacity:1; transform:translate(0,-50%); }
 .floating-booking:focus-visible { outline:3px solid var(--kg-yellow); outline-offset:4px; }
