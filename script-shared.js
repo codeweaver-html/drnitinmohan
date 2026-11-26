@@ -1000,7 +1000,7 @@ const SITE_CONFIG = {
     button.title = "Book via WhatsApp";
     button.disabled = !siteControlsResolved || !siteBookingEnabled;
     button.setAttribute("aria-disabled", String(button.disabled));
-    button.innerHTML = `<img class="whatsapp-brand-mark" src="${asset("assets/whatsapp.svg")}" alt="" width="38" height="38"><span class="floating-booking-label"><strong>Book via WhatsApp</strong></span>`;
+    button.innerHTML = `<img class="whatsapp-brand-mark" src="${asset("assets/wp%20logo.svg")}" alt="" width="38" height="38"><span class="floating-booking-label"><strong>Book via WhatsApp</strong></span>`;
     if (!feature("whatsappFloat")) { button.hidden = true; return; }
     button.hidden = false;
 

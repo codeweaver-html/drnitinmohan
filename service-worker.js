@@ -2,7 +2,7 @@
    Keep this file beside the site root document and name it exactly: service-worker.js.
 */
 
-const CACHE_NAME = "kidsgastro-cache-v35";
+const CACHE_NAME = "kidsgastro-cache-v36";
 const APP_ROOT = new URL(self.registration.scope);
 const APP_ORIGIN = self.location.origin;
 
@@ -20,7 +20,7 @@ const SHELL_FILES = [
   "./service-worker.js",
   "./assets/kg%20logo.webp",
   "./assets/main%20pic.webp",
-  "./assets/whatsapp.svg"
+  "./assets/wp%20logo.svg"
 ];
 
 const STATIC_DESTINATIONS = new Set([
